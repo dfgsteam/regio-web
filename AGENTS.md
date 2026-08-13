@@ -1,324 +1,1314 @@
-# AGENTS.md — hunold24-skeleton
+# AGENTS.md
 
-Arbeitsauftrag für Coding-Agenten/Entwickler, die dieses Skeleton bauen oder
-warten. Ziel: ein Git-Template-Repo, das bei jeder neuen hunold24/dfgsteam-
-Produkt-App per `git clone` als Startpunkt dient und Mandant/License/Auth
-vollständig regelt.
+## Project Overview
 
-Baue die Phasen in Reihenfolge (siehe `BUILDPLAN.md`). Jede Phase muss
-eigenständig lauffähig/testbar sein, bevor die nächste beginnt.
+This repository contains the new website for **SMJ Regio Wegweiser**.
+
+The site is a highly visual, content-driven Astro website with strong scroll storytelling, an outdoor/adventure aesthetic, event data prepared for CiviCRM integration, and a yearly customizable Zeltlager campaign system.
+
+The existing website at `https://smj-wegweiser.de/` is primarily a **content source**, not a visual or technical reference.
+
+The new site should feel like an adventure brand first and a youth organization website second.
+
+Primary audience:
+
+- boys aged 9–14
+- parents as an important secondary audience
+- older participants for selected special events
+
+The main visual direction is:
+
+- outdoor
+- expedition
+- rough
+- young
+- bold
+- masculine without looking military
+- cinematic
+- editorial
+- highly animated
+
+Primary homepage claim direction:
+
+> RAUS. INS ABENTEUER.
 
 ---
 
-## Nicht verhandelbare Prinzipien
+## Core Technology
 
-1. Kein Code-Pfad spricht Authentik direkt an, außer dem OIDC-Login-Flow
-   (Phase 4). Nutzer-/Gruppenverwaltung läuft ausschließlich über die
-   Control-Plane User-API.
-2. Rechte/Rollen innerhalb der App gehören der App. Control-Plane liefert nur
-   Mandantenzugehörigkeit + Admin-Flag.
-3. Entitlements werden fertig gemerged empfangen, lokal gecacht, fachlich
-   durchgesetzt — nie selbst zusammengeführt.
-4. Alle Calls zwischen App und Control-Plane (beide Richtungen) sind
-   HMAC-signiert nach dem unten definierten Canonical-String-Schema.
-5. Provisioning-Endpunkte sind **synchron**: Signatur/Nonce/Timestamp/
-   Idempotency prüfen → sofort verarbeiten → antworten. Kein Messenger-
-   Dispatch dazwischen.
+Use the following stack unless there is a strong technical reason not to.
+
+- Astro 5
+- TypeScript
+- Tailwind CSS v4
+- GSAP
+- GSAP ScrollTrigger
+- Astro Content Collections
+- MDX
+- Lucide icons
+- Astro Islands only when actual client-side state is required
+- Astro Node adapter for server-side endpoints and future CiviCRM integration
+- Docker for production delivery
+
+Do **not** introduce React, Vue, Svelte, Three.js, a CMS, or a large component library without explicit approval.
+
+The default implementation should prefer:
+
+- Astro components
+- semantic HTML
+- CSS
+- small TypeScript modules
+- GSAP only where motion adds meaningful value
 
 ---
 
-## Signatur-Konvention (beide Richtungen)
+## General Engineering Principles
 
-Header pro Call:
+Prefer simple, explicit architecture over abstraction for its own sake.
 
-| Header | Inhalt |
-|---|---|
-| `X-Signature` | HMAC-SHA256 (hex) über Canonical String, Secret = `WEBHOOK_SECRET` |
-| `X-Timestamp` | Unix-Sekunden |
-| `X-Nonce` | 32 Hex-Zeichen, einmalig |
-| `Idempotency-Key` | Pflicht bei mutierenden Calls |
-| `X-Product` | nur bei Calls AN Control-Plane: `PRODUCT_SLUG` |
+Keep the frontend bundle small.
 
-Canonical String:
+Avoid client-side JavaScript when static HTML is sufficient.
+
+Keep data access separate from presentation.
+
+Use strongly typed content and domain models.
+
+Components should be reusable where repetition is real, but avoid creating generic abstractions prematurely.
+
+Do not reproduce generic SaaS component patterns.
+
+Avoid components such as generic `Card`, `CardHeader`, `CardBody` abstractions unless they genuinely improve reuse.
+
+Instead prefer domain-specific components such as:
+
+```text
+EventCard
+CampHero
+FieldJournalEntry
+ParentInfoSection
+AdventureTeaser
+PillarStory
 ```
-METHOD\nPATH\nTIMESTAMP\nNONCE\nBODY
+
+---
+
+## Project Structure
+
+Target structure:
+
+```text
+src/
+├── components/
+│   ├── common/
+│   ├── navigation/
+│   ├── home/
+│   ├── events/
+│   ├── camp/
+│   ├── journal/
+│   └── sections/
+│
+├── content/
+│   ├── posts/
+│   ├── camps/
+│   ├── special-events/
+│   └── config.ts
+│
+├── layouts/
+│   ├── BaseLayout.astro
+│   ├── ContentLayout.astro
+│   ├── PostLayout.astro
+│   └── CampLayout.astro
+│
+├── lib/
+│   ├── civicrm/
+│   └── events/
+│
+├── pages/
+│
+├── scripts/
+│   └── animations/
+│
+├── styles/
+│   ├── global.css
+│   ├── typography.css
+│   └── textures.css
+│
+└── assets/
+    ├── textures/
+    ├── images/
+    └── camps/
 ```
 
-```php
-$canonical = implode("\n", [strtoupper($method), $path, $timestamp, $nonce, $body]);
-$signature = hash_hmac('sha256', $canonical, $webhookSecret);
-// Verifikation: hash_equals(), NIE ==
+Keep feature-specific files close together.
+
+Do not place all components into a single flat folder.
+
+---
+
+## Routing
+
+Expected main routes:
+
+```text
+/
+├── /abenteuer/
+│   ├── /zeltlager/
+│   ├── /zeltlager/[year]/
+│   └── /[special-event-slug]/
+│
+├── /ueber-uns/
+├── /grundsaetze/
+├── /team/
+├── /journal/
+│   └── /[slug]/
+├── /galerie/
+├── /kontakt/
+├── /impressum/
+└── /datenschutz/
 ```
 
-Als Empfänger prüfen (sonst 401):
-- Signatur via `hash_equals`
-- Timestamp innerhalb ±300s
-- Nonce noch nicht gesehen (Redis-Set, TTL 5 min)
-- `Idempotency-Key`: siehe unten
+The Schönstatt background should be integrated into `/ueber-uns/` instead of becoming a major top-level navigation item.
 
-## Idempotency-Store (Postgres, `idempotency_records`)
+---
 
-Vor Verarbeitung eines mutierenden Requests:
+## Homepage Philosophy
 
-```php
-$existing = $idempotencyRepository->find($idempotencyKey);
-if ($existing !== null) {
-    if ($existing->requestHash !== hash('sha256', $rawBody)) {
-        throw new IdempotencyConflictException(); // -> 409 idempotency_conflict
-    }
-    return new JsonResponse($existing->responseBody, $existing->responseStatus);
+The homepage is a **scroll-driven story**, not a list of independent content blocks.
+
+The primary audience for the emotional storytelling is boys aged 9–14.
+
+Parents receive a deliberate secondary information layer later in the page.
+
+The homepage should roughly follow this narrative:
+
+```text
+1. Hero / Der Ruf
+2. Was erwartet dich?
+3. Expedition Reel
+4. Die fünf Säulen
+5. Events
+6. Zeltlager
+7. Eltern
+8. Glaube
+9. Journal / letzte Beiträge
+10. Finaler CTA
+```
+
+Do not make the homepage feel institutional.
+
+Prefer direct language, short phrases, bold headlines, real experiences and strong imagery.
+
+---
+
+## Copy Style
+
+Homepage copy may be bold, short and direct.
+
+Good direction:
+
+```text
+DRECK AN DEN SCHUHEN.
+RAUCH IN DEN KLAMOTTEN.
+GESCHICHTEN IM KOPF.
+```
+
+Avoid bureaucratic introductions such as:
+
+```text
+Die Schönstatt-Mannesjugend Regio Wegweiser ist eine katholische Jugendorganisation...
+```
+
+Institutional explanations belong further down the page or on dedicated content pages.
+
+The Christian identity must not be hidden, but the homepage narrative should lead with:
+
+- adventure
+- community
+- challenge
+- responsibility
+- growth
+
+Faith should appear naturally as part of the experience rather than as the first sales message.
+
+---
+
+## Design System
+
+The default visual direction uses:
+
+```css
+--forest-950: #111713;
+--forest-900: #182019;
+--paper:      #F1EBDD;
+--sand:       #C9BA99;
+--orange:     #FF5A1F;
+--ember:      #D73B17;
+--muted:      #8D9389;
+```
+
+These values may be refined during implementation.
+
+Visual vocabulary:
+
+- dark forest tones
+- warm off-white
+- signal orange
+- paper texture
+- film grain
+- topographic lines
+- coordinates
+- maps
+- stamps
+- handwritten annotations
+- tape / sticker elements
+- rough image crops
+- bold condensed display type
+
+Do not turn the site into a clean white corporate website.
+
+Do not use gradients, glassmorphism or generic startup aesthetics unless there is a very deliberate reason.
+
+---
+
+## Typography
+
+Use three conceptual typography layers:
+
+### Display
+
+Large condensed bold font.
+
+Used for major statements and chapter transitions.
+
+Example:
+
+```text
+RAUS.
+INS
+ABENTEUER.
+```
+
+### Body
+
+Highly readable modern sans-serif.
+
+Used for normal content and parent information.
+
+### Utility / Expedition
+
+Optional monospace or technical-looking font.
+
+Use sparingly for:
+
+```text
+FIELD NOTE 03
+TAG 7
+06:14 UHR
+N 51° 22' 44"
+```
+
+Do not overuse the utility font.
+
+---
+
+## Animation Principles
+
+Animation is a major part of the experience.
+
+Use:
+
+- GSAP
+- ScrollTrigger
+
+Do not use animation everywhere.
+
+There are three motion levels.
+
+### Signature Motion
+
+Use for only a few major sequences:
+
+- Hero → expedition/map transition
+- Expedition Reel
+- Five pillars sequence
+- Zeltlager campaign moment
+
+### Supporting Motion
+
+Use for:
+
+- image reveals
+- text reveals
+- parallax
+- layered cards
+- section transitions
+
+### Micro Motion
+
+Use for:
+
+- buttons
+- navigation
+- hover states
+- cursor feedback
+
+The site should feel cinematic, not chaotic.
+
+---
+
+## GSAP Architecture
+
+Do not scatter large animation setup blocks across Astro components.
+
+Prefer dedicated files:
+
+```text
+src/scripts/animations/
+├── hero.ts
+├── expedition-reel.ts
+├── pillars.ts
+├── journal.ts
+├── navigation.ts
+└── cleanup.ts
+```
+
+Each animation module should:
+
+- initialize only when the required DOM exists
+- scope selectors to its own section
+- clean up ScrollTriggers
+- work with resize and responsive breakpoints
+- respect reduced motion
+- avoid leaking event listeners
+- avoid global selectors where possible
+
+Use `gsap.context()` or equivalent scoping patterns where appropriate.
+
+Always clean up created ScrollTriggers.
+
+---
+
+## Scroll Behavior
+
+Do not implement scroll-jacking.
+
+The user must retain normal browser scrolling.
+
+Pinning is allowed.
+
+Scrubbing is allowed.
+
+Horizontal sequences driven by vertical scrolling are allowed.
+
+The page should never trap the user inside an interaction.
+
+Avoid excessively long pinned sections.
+
+---
+
+## Reduced Motion
+
+`prefers-reduced-motion` support is mandatory.
+
+When reduced motion is enabled:
+
+- disable scrubbing
+- disable long pinned animations
+- remove strong parallax
+- avoid large scale/rotation movement
+- keep all content visible
+- preserve the entire information hierarchy
+
+Use both CSS and JavaScript handling where necessary.
+
+Example:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  /* simplified motion */
 }
-// ... Request normal verarbeiten ...
-$idempotencyRepository->store($idempotencyKey, $requestHash, $status, $responseBody);
 ```
 
-Cleanup: Scheduler-Job löscht Einträge älter als 7 Tage.
+Use GSAP matchMedia or an equivalent pattern.
 
 ---
 
-## Phase 1 — Signatur-Infrastruktur
+## Responsive Motion
 
-Baue:
-- `App\Security\Hmac\HmacSignatureVerifier` — prüft eingehende Requests
-- `App\Security\Hmac\HmacSignatureSigner` — signiert ausgehende Requests
-  (genutzt vom `LicenseAppClient` aus Phase 3)
-- `App\Security\Hmac\NonceGuard` (Redis-backed)
-- `App\Entity\IdempotencyRecord` + Migration + `IdempotencyGuard`-Service
+Do not simply shrink desktop animation timelines for mobile.
 
-Als Symfony-`RequestSubscriber` oder Controller-Argument-Resolver
-implementieren, damit Phase 2 die Prüfung nicht pro Endpoint dupliziert.
+Mobile may use a completely different layout and animation strategy.
 
----
+Example:
 
-## Phase 2 — Provisioning-Contract (eingehend)
+Desktop:
 
-Vier Endpunkte, alle unter `App\Controller\ProvisioningController`, alle
-durch die Guards aus Phase 1 abgesichert:
-
-### `POST /provisioning/tenant`
-Request: `externalTenantId`, `slug`, `plan`, `entitlements` (JSON, fertig
-gemerged), `admin.email`.
-
-Ablauf: `Tenant`-Entity anlegen (Mapping `externalTenantId` → interne ID),
-`entitlements` als JSON persistieren, `status = active`. Admin-User wird
-NICHT hier angelegt — das passiert JIT beim ersten OIDC-Login (Phase 4).
-Antwort `201`: `{"appInternalId": "<interne ID>"}`. Bei Wiederholung
-(gleicher Idempotency-Key) `200` mit gespeicherter Antwort.
-
-### `PATCH /provisioning/tenant/{externalTenantId}`
-Actions: `suspend`, `resume`, `updateEntitlements`.
-- `suspend`/`resume`: `Tenant.status` setzen — Zugriff wird über
-  `TenantAccessVoter` (prüft `status === active`) app-seitig durchgesetzt.
-- `updateEntitlements`: `entitlements`-JSON ersetzen (kompletter neuer Satz,
-  nicht mergen).
-Unbekannter Tenant → `404`.
-
-### `DELETE /provisioning/tenant/{externalTenantId}`
-Deprovisionieren. Idempotent — bereits gelöschter Tenant → `200`.
-
-### `GET /provisioning/tenant/{externalTenantId}/usage`
-```json
-{"metrics": {"<entitlement_key>": <aktueller_wert>}}
-```
-**App-spezifisch zu implementieren** — das Skeleton liefert nur ein
-`UsageMetricsProviderInterface`, das jede Produkt-App konkret umsetzt (z. B.
-`max_users` = Anzahl aktiver `TenantMembership`-Zeilen).
-
-Contract gilt erst als fertig, wenn `contract-kit/verify.php` grün läuft.
-
----
-
-## Phase 3 — User-API-Client (ausgehend)
-
-`App\Service\LicenseAppClient`:
-
-```php
-public function createUser(string $externalTenantId, string $email, string $name, bool $isAdmin): CreatedUser;
-public function updateUserAdminFlag(string $externalTenantId, string $userId, bool $isAdmin): void;
-public function deleteUser(string $externalTenantId, string $userId): void;
-public function getTenant(string $externalTenantId): TenantStatus;
+```text
+vertical scroll
+→ pinned section
+→ horizontal image sequence
 ```
 
-Jeder Call signiert (Phase 1, `HmacSignatureSigner`), inkl. `X-Product:
-{PRODUCT_SLUG}`. `createUser()` speichert `userId` +
-`authentikUserId`/`username` in `TenantMembership.licenseAppUserId` für
-spätere PATCH/DELETE-Calls.
+Mobile:
 
-Fehler-Mapping (RFC 7807, Feld `code`) auf `LicenseAppException`-Subklassen:
-
-| code | Exception | UI-Reaktion |
-|---|---|---|
-| `seat_limit_exceeded` | `SeatLimitExceededException` | "Limit erreicht — Upgrade nötig", kein Retry |
-| `tenant_suspended` | `TenantSuspendedException` | Mandant gesperrt anzeigen |
-| `tenant_not_found` | `TenantNotFoundException` | Konfigurationsfehler loggen |
-| `product_scope_violation` | `ProductScopeViolationException` | Bug-Alert (falscher Tenant/Product) |
-| `validation_failed` | `ValidationFailedException` | Eingabefehler im UI |
-| `idempotency_conflict` | `IdempotencyConflictException` | Bug-Alert |
-| `unauthorized` | `UnauthorizedException` | Signatur/Secret/Uhrzeit prüfen |
-
----
-
-## Phase 4 — Authentik OIDC Login
-
-**Wortgleich aus dem Integrations-Dokument übernehmen** (Teil 3 des
-Original-Prompts) — Stack, Konfiguration, Klassennamen, Routen sind dort
-bereits vollständig spezifiziert und nicht zu verändern:
-
-- `composer require knpuniversity/oauth2-client-bundle:^2.20`
-- `config/packages/knpu_oauth2_client.yaml` — Client-Key `authentik`
-- Routen: `login`, `login_authentik`, `oidc_callback`, `app_logout`
-- `src/Security/OidcAuthenticator.php`
-- `src/Security/GroupRoleMapper.php` — Regex-Mapping:
-  - `app_{slug}_admin` (exakt, zuerst prüfen) → globaler Admin, alle Mandanten
-  - `app_{slug}` (exakt) → Basiszugang
-  - `tenant_{slug}_{tenantSlug}` → Mitgliedschaft
-  - `tenant_{slug}_{tenantSlug}_admin` → Mandanten-Admin
-  - `{slug}` = injizierter `PRODUCT_SLUG`, nie hardcoden
-- `src/Security/UserProvisioner.php` — JIT-Anlage, Dedup-Key = lowercased E-Mail
-- Dev-Login (nur `when@dev`, compile-time gegatet):
-  - `src/Controller/Dev/DevLoginController.php`
-  - `src/Security/Dev/DevLoginAuthenticator.php`
-  - `src/Security/Dev/DevUserProvider.php` (3 Demo-User, Passwort `dev`)
-  - `templates/security/dev_login.html.twig`
-- Login-Button-Text wortwörtlich: **"Login mit Hunold24 Auth"**
-
-Beim JIT-Login (`UserProvisioner`): pro `tenant_…`-Gruppentreffer eine
-`TenantMembership`-Zeile anlegen/aktualisieren (verknüpft mit dem lokalen
-`Tenant` über `externalTenantId` — falls der Tenant hier noch nicht bekannt
-ist, ist das ein Konfigurationsfehler: Login ablehnen + loggen, da
-Provisioning laut Prinzip 5 immer vor dem ersten Login gelaufen sein muss).
-
----
-
-## Phase 5 — Tenant-Kontext & Scoping
-
-- `App\Tenant\CurrentTenant` — hält aktiven Tenant für den Request, gesetzt:
-  - automatisch bei genau einer `TenantMembership`
-  - per Tenant-Wechsel-UI, wenn mehrere vorhanden (Session-Wert
-    `current_tenant_id`)
-- `TenantContextSubscriber` (kernel.request, früh) — lädt `CurrentTenant`
-  aus Session, leitet bei fehlendem/ungültigem Tenant auf Auswahl-Screen um
-- Doctrine-Filter (`SQLFilter`) scoped alle `Tenant`-abhängigen Entities
-  automatisch auf `CurrentTenant`
-- `TenantAccessVoter` — verweigert Zugriff, wenn `Tenant.status !== active`
-
----
-
-## Phase 6 — Reconciliation
-
-`App\Command\ReconcileTenantsCommand`, täglich per Symfony Scheduler:
-
-```
-für jeden lokalen Tenant:
-  GET {LIZENZ_APP_URL}/api/tenants/{externalTenantId}  (signiert)
-  falls status oder entitlements abweichen:
-    lokal korrigieren
-    loggen (Abweichung + alter/neuer Wert)
+```text
+normal vertical flow
+→ large images
+→ subtle parallax
+→ text reveals
 ```
 
-Dient als Sicherheitsnetz, falls ein `PATCH /provisioning/tenant/...`-Call
-mal nicht ankam. Läuft unabhängig vom synchronen Contract aus Phase 2.
+Performance on mid-range smartphones matters more than reproducing every desktop effect.
 
-**Healthchecks.io-Anbindung**: nach erfolgreichem Lauf `HealthchecksClient::ping()`
-aufrufen (Check-URL aus `.env`, analog zum bestehenden Muster in anderen
-Projekten). Bei Exception im Job **kein** Ping — Healthchecks.io meldet dann
-automatisch nach Ablauf des Grace-Periods.
+---
 
-## Phase 6a — Lokales Fixture-Tooling
+## Navigation
 
-`App\Command\Dev\ProvisionFakeTenantCommand` (nur `when@dev` registriert,
-analog zum Dev-Login-Pattern aus Phase 4):
+Desktop navigation may begin transparent over the hero.
 
+It can transition into a compact navigation during scrolling.
+
+Suggested top-level items:
+
+```text
+Start
+Abenteuer
+Über uns
+Grundsätze
+Team
+Journal
 ```
-bin/console app:dev:provision-fake-tenant [--suspend] [--entitlements=key:val,...]
+
+Primary CTA:
+
+```text
+NÄCHSTES ABENTEUER →
 ```
 
-Ruft intern denselben Service-Code auf, den auch `ProvisioningController`
-nutzt (kein Logik-Duplikat) — simuliert also `POST /provisioning/tenant`
-bzw. `PATCH .../tenant/{id}` ohne HTTP-Roundtrip und ohne echte Control-
-Plane-Instanz. Nützlich für lokale Entwicklung und für Tests des
-Reconciliation-Jobs (bewusst abweichenden Zustand erzeugen und prüfen, ob
-Phase 6 ihn korrigiert).
+Mobile navigation should use a fullscreen overlay and may have experimental visual treatment.
+
+Suggested numbering:
+
+```text
+01 Abenteuer
+02 Über uns
+03 Grundsätze
+04 Team
+05 Journal
+```
+
+Accessibility must not be sacrificed for experimentation.
 
 ---
 
-## Phase 7 — Verbindungstest
+## Events
 
-- Sicherstellen, dass `contract-kit/verify.php <baseUrl> <webhookSecret>`
-  gegen Staging grün läuft (inkl. Signatur-Ablehnung, Idempotenz-Checks,
-  Replay-Schutz: gleiche Nonce zweimal → `401`)
-- README-Abschnitt für neue Apps: wie man den Verbindungstest von
-  Control-Plane-Seite auslöst (`/admin/connections` bzw.
-  `bin/console app:connections:check`)
+Regular events will eventually come from CiviCRM.
+
+Initially use mock data.
+
+The UI must not depend directly on CiviCRM response shapes.
+
+Use an abstraction similar to:
+
+```ts
+interface EventProvider {
+  getEvents(): Promise<Event[]>
+  getEvent(id: string): Promise<Event | null>
+}
+```
+
+Initial implementation:
+
+```text
+MockEventProvider
+```
+
+Future implementation:
+
+```text
+CiviCrmEventProvider
+```
+
+Suggested event model:
+
+```ts
+interface Event {
+  id: string
+  title: string
+  slug: string
+
+  start: Date
+  end: Date
+
+  location?: string
+
+  ageMin?: number
+  ageMax?: number
+
+  teaser?: string
+  description?: string
+
+  registrationUrl?: string
+  registrationDeadline?: Date
+
+  category:
+    | 'weekend'
+    | 'camp'
+    | 'special'
+
+  contact?: EventContact
+}
+```
+
+Regular events do not need elaborate landing pages.
+
+Typical event UI includes:
+
+- title
+- date
+- location
+- age group
+- teaser
+- registration / details CTA
 
 ---
 
-## Sicherheits- & Betriebs-Ergänzungen (gelten übergreifend)
+## CiviCRM
 
-- `TenantAccessVoter` (Phase 5) muss bei **jedem** Request greifen, nicht
-  nur beim Login — ein `suspend`-Call muss auch bei bereits eingeloggten
-  Nutzern sofort wirken.
-- Server-Uhren müssen NTP-synchron sein (Voraussetzung für die ±300s-HMAC-
-  Toleranz) — im README als Setup-Voraussetzung dokumentieren.
-- Rate-Limiting (Symfony RateLimiter) auf `/provisioning/*` als
-  Zusatzschutz einplanen.
-- `WEBHOOK_SECRET`-Rotation: Verifier akzeptiert optional zusätzlich
-  `WEBHOOK_SECRET_PREVIOUS` während eines Übergangsfensters.
-- Logging rund um Provisioning-/User-API-Calls immer mit
-  `Idempotency-Key` als Correlation-ID versehen.
-- `CHANGELOG.md` im Skeleton pflegen — einziger Weg, um Fixes nachträglich
-  gezielt in bereits laufende Apps zu übernehmen (kein zentrales Update
-  wie bei einem Composer-Package).
+Keep all CiviCRM code isolated.
 
-## Phase 0b — UI-Basis (Tabler.io, Symfony UX, Icons)
+Preferred structure:
 
-- **Tabler.io** als CSS-Framework, per AssetMapper lokal vendored (kein
-  Node-Build-Zwang, kein CDN-Zugriff zur Laufzeit).
-- **Symfony UX** (Turbo + Stimulus) für Interaktivität. Tablers eigenes
-  Bootstrap-JS (Sidebar, Dropdowns, Modals) wird **nicht** direkt verwendet
-  — stattdessen eigene, schlanke Stimulus-Controller (`sidebar_controller.js`,
-  `dropdown_controller.js`, ...), damit es nicht zu doppelten JS-
-  Interaktionsschichten kommt und Turbo-Navigation sauber funktioniert.
-- **Icons: Lucide**, eingebunden über eine Twig-Funktion `icon(name, class)`,
-  die das SVG inline rendert (`App\Twig\IconExtension`). Kein Icon-Font.
-- `templates/base.html.twig`: Tabler-Sidebar+Topbar-Layout für eingeloggte
-  Bereiche. Separates schlankes Layout für Login-Screens (Phase 4), gleiche
-  Tabler-CSS-Basis, aber ohne Sidebar/Navigation.
-- Viewport-Meta, Favicon-Set, `manifest.json` als Basis-Webapp-Grundlage.
-  Kein Offline-/Service-Worker-Anspruch im Skeleton (das bleibt optional
-  und App-spezifisch, wie das `/field`-PWA bei D2D-Platform).
+```text
+src/lib/civicrm/
+├── client.ts
+├── events.ts
+├── mapper.ts
+├── types.ts
+└── mock.ts
+```
 
----
+Expected environment variables may include:
 
-## Phase 8 — Mail-Versand
+```text
+CIVICRM_BASE_URL
+CIVICRM_API_KEY
+CIVICRM_SITE_KEY
+```
 
-- `symfony/mailer`, `MAILER_DSN` als Env-Var.
-- `App\Command\TestMailCommand` (`bin/console app:mail:test <empfänger>`)
-  — schickt eine Test-Mail über den konfigurierten Transport, meldet Erfolg/
-  Fehler klar (Transport-Verbindungstest, analog zum Gedanken aus Phase 7).
-- `templates/emails/base.html.twig`: eigenes, **inline-gestyltes**
-  Table-Layout im Tabler-Farb-/Font-Schema — kein `<link>` auf die Tabler-
-  CSS-Datei, da E-Mail-Clients externes/globales CSS nicht zuverlässig
-  unterstützen. Farbwerte/Radii als Twig-Variablen, damit sie mit dem
-  Web-Layout im Tabler-Look übereinstimmen.
-- `templates/emails/notification.html.twig` als Beispiel-Vorlage, von der
-  aus app-spezifische Mails (Einladungen, Hinweise, Reports) abgeleitet
-  werden.
+Never expose CiviCRM secrets in the browser.
+
+Normalize CiviCRM data into internal domain models before passing it into UI components.
+
+Do not make UI components consume raw CiviCRM payloads.
+
+Plan for caching.
+
+The site must remain usable when CiviCRM is temporarily unavailable.
+
+A future implementation may use:
+
+```text
+CiviCRM
+→ server fetch
+→ normalize
+→ cache
+→ Astro
+```
 
 ---
 
-1. Alle vier Provisioning-Endpunkte implementiert, Contract-Kit grün.
-2. Nutzeranlage läuft über `LicenseAppClient`; `seat_limit_exceeded` sauber
-   im UI behandelt; `userId` in `TenantMembership` gespeichert.
-3. Entitlements lokal gecacht, fachlich durchgesetzt; `updateEntitlements`
-   greift ohne Neustart.
-4. Login läuft über `knpuniversity/oauth2-client-bundle`, exakte Routen-/
-   Klassennamen wie oben.
-5. `GroupRoleMapper` mappt korrekt; JIT-Anlage funktioniert; Dev-Login mit
-   3 Demo-Usern funktioniert ohne Authentik-Verbindung.
-6. Multi-Tenant-User können zwischen Mandanten wechseln; Doctrine-Filter
-   scoped korrekt.
-7. Reconciliation-Job läuft im Scheduler und korrigiert simulierte
-   Abweichungen.
-8. Kein Code-Pfad ruft Authentik direkt auf außer dem OIDC-Login.
-9. Replay-Schutz nachweisbar: wiederholter Request mit gleicher Nonce → 401.
+## Zeltlager Architecture
+
+The Zeltlager is not a normal event page.
+
+It is an annual campaign.
+
+Default target age:
+
+```text
+9–14
+```
+
+The theme may change completely every year.
+
+Examples:
+
+```text
+Piraten
+Expedition
+Wilder Westen
+Abenteuer
+Mittelalter
+```
+
+The yearly visual theme must not affect the global SMJ website design.
+
+Architecture:
+
+```text
+SMJ Design System
+        ↓
+Zeltlager Design System
+        ↓
+Annual Campaign Theme
+```
+
+---
+
+## Zeltlager Content
+
+Store yearly camps in Astro Content Collections / MDX.
+
+Example:
+
+```text
+src/content/camps/
+├── 2026.mdx
+├── 2027.mdx
+└── 2028.mdx
+```
+
+Assets:
+
+```text
+src/assets/camps/
+├── 2026/
+├── 2027/
+└── 2028/
+```
+
+Suggested frontmatter:
+
+```yaml
+year: 2027
+
+title: Zeltlager 2027
+motto: Die verlorene Expedition
+
+date:
+  start: 2027-07-09
+  end: 2027-07-18
+
+age:
+  min: 9
+  max: 14
+
+location:
+  name: Wiesenthal bei Thalwenden
+
+theme:
+  id: expedition
+
+  colors:
+    background: "#182019"
+    foreground: "#F1EBDD"
+    accent: "#E2A93B"
+
+  assets:
+    hero: "./hero.jpg"
+    texture: "./map.webp"
+
+registration:
+  enabled: true
+  url: "..."
+```
+
+---
+
+## Zeltlager Components
+
+Most yearly camp pages should reuse stable components.
+
+Examples:
+
+```astro
+<CampHero />
+<CampFacts />
+<CampStory />
+<CampGallery />
+<CampParents />
+<CampFaq />
+<CampRegistration />
+```
+
+However, yearly campaigns must be able to inject unique MDX components.
+
+Example:
+
+```mdx
+<PirateMap />
+```
+
+or:
+
+```mdx
+<ExpeditionRoute />
+```
+
+The goal is approximately:
+
+- 80–90% reusable structure
+- 10–20% yearly visual experimentation
+
+Do not hardcode one camp theme into shared components.
+
+---
+
+## Special Event for Older Participants
+
+There may be one additional major special event for older participants.
+
+It may not happen every year.
+
+Do not reserve an empty slot for it.
+
+Model it with configuration such as:
+
+```yaml
+active: true
+featured: true
+```
+
+When inactive:
+
+```yaml
+active: false
+```
+
+The homepage and event page must automatically close the layout gap.
+
+---
+
+## Content Collections
+
+At minimum:
+
+```text
+posts
+camps
+specialEvents
+```
+
+Editorial content should remain in Git / MDX.
+
+Live event data should come through the event provider abstraction.
+
+Keep this boundary clear:
+
+```text
+Editorial content → Git / MDX
+Live events        → CiviCRM
+```
+
+---
+
+## Journal
+
+The gallery should behave more like a **Field Journal** than a standard photo gallery.
+
+Prefer:
+
+- large photography
+- mixed landscape and portrait images
+- asymmetrical layouts
+- year-based grouping
+- short field notes
+- event labels
+- occasional horizontal storytelling
+
+Example:
+
+```text
+TAG 04
+22:37 UHR
+
+Das Feuer hat den Regen überlebt.
+```
+
+Avoid huge grids of tiny thumbnails.
+
+---
+
+## Posts
+
+Posts are secondary content.
+
+The homepage should show only a small selection of recent posts, likely the latest three.
+
+Store posts as MDX.
+
+Suggested fields:
+
+```ts
+{
+  title,
+  description,
+  publishedAt,
+  author,
+  image,
+  tags,
+  draft
+}
+```
+
+Do not turn the project into a news portal.
+
+---
+
+## Parent Experience
+
+Parents are a major secondary audience.
+
+The homepage should contain a dedicated section such as:
+
+```text
+UND WAS SAGEN
+DEINE ELTERN DAZU?
+```
+
+Parent-focused information should be calmer and more structured.
+
+Typical questions:
+
+```text
+WER PASST AUF?
+WAS KOSTET ES?
+WAS MUSS MIT?
+WOFÜR STEHT DIE SMJ?
+```
+
+Event pages should also include event-specific parent information where relevant.
+
+---
+
+## Team and Contact
+
+There is one central contact point for the organization.
+
+Events may have dedicated contacts.
+
+Do not expose unnecessary personal contact data across the site.
+
+The team page should emphasize:
+
+- the people behind the activities
+- youth-leading-youth
+- responsibility
+- experience
+- trust
+
+Avoid a sterile employee directory.
+
+---
+
+## Forms
+
+V1 contact form should use an Astro server endpoint.
+
+Example:
+
+```text
+POST /api/contact
+```
+
+Implement:
+
+- server-side validation
+- honeypot
+- spam protection
+- rate limiting where practical
+- mail transport
+- accessible error states
+
+A mailto link may exist only as fallback.
+
+---
+
+## Images
+
+Use Astro image optimization.
+
+Prefer:
+
+- AVIF
+- WebP
+- responsive `srcset`
+- lazy loading outside critical viewport
+- preloading only for truly critical hero imagery
+
+Do not ship multi-megabyte original JPEGs directly to mobile devices.
+
+Image slots should have explicit intended ratios.
+
+Examples:
+
+```text
+Hero:
+landscape
+minimum ~2400px source width
+
+Story:
+portrait / 4:5
+
+Journal:
+mixed portrait and landscape
+```
+
+Actual photography will be supplied later.
+
+Until then, placeholders must preserve intended framing and aspect ratios.
+
+---
+
+## Performance
+
+The site may be animation-heavy, but performance is a requirement.
+
+Targets:
+
+```text
+LCP < 2.5s
+CLS < 0.1
+```
+
+Keep initial JavaScript as small as practical.
+
+Avoid:
+
+- unnecessary hydration
+- autoplay video on mobile
+- huge canvas effects
+- Three.js
+- excessive blur filters
+- dozens of simultaneous ScrollTriggers
+- expensive layout thrashing
+
+Test on lower-end mobile devices.
+
+---
+
+## Accessibility
+
+Awwwards-style visuals do not justify inaccessible behavior.
+
+Required:
+
+- semantic HTML
+- correct heading hierarchy
+- keyboard navigation
+- visible focus states
+- good contrast
+- meaningful alt text
+- reduced motion support
+- accessible mobile navigation
+- no information communicated only through motion
+- no scroll traps
+
+Interactive elements must use actual links/buttons.
+
+Do not make `div` elements behave as buttons.
+
+---
+
+## SEO
+
+Each relevant page should support:
+
+```text
+title
+description
+canonical
+OpenGraph
+structured data
+```
+
+Use schema.org where useful.
+
+Examples:
+
+- `Organization`
+- `Event`
+- `Article`
+
+Create:
+
+- sitemap
+- robots.txt
+- redirects from old WordPress URLs where necessary
+
+---
+
+## Tailwind
+
+Use Tailwind CSS v4 for layout, utilities and design tokens.
+
+Avoid a giant design-system abstraction.
+
+Useful reusable primitives may include:
+
+```text
+Container
+Section
+Eyebrow
+Button
+ImageFrame
+Texture
+Sticker
+Coordinates
+Marquee
+```
+
+Do not recreate Bootstrap-like component APIs.
+
+---
+
+## Icons
+
+Use Lucide.
+
+Keep icon usage restrained.
+
+The visual identity should primarily come from:
+
+- typography
+- photography
+- texture
+- composition
+- motion
+
+not from large quantities of UI icons.
+
+---
+
+## CI/CD
+
+The repository should support automated validation and deployment.
+
+Expected pipeline:
+
+```text
+git push
+   ↓
+lint
+   ↓
+typecheck
+   ↓
+astro check
+   ↓
+build
+   ↓
+Docker image
+   ↓
+deploy
+```
+
+Use GitHub Actions or GitLab CI depending on repository hosting.
+
+Do not merge code that fails:
+
+- TypeScript checks
+- Astro checks
+- build
+- linting
+
+---
+
+## Docker
+
+Prepare production for Astro Node.
+
+High-level architecture:
+
+```text
+Node container
+↓
+Astro server / hybrid output
+↓
+reverse proxy
+```
+
+Content-heavy pages may still be prerendered.
+
+Server mode is primarily required for:
+
+- contact endpoints
+- future CiviCRM access
+- server-side integration logic
+
+---
+
+## Environment Variables
+
+Secrets must never be committed.
+
+Keep a documented `.env.example`.
+
+Potential values:
+
+```text
+CIVICRM_BASE_URL=
+CIVICRM_API_KEY=
+CIVICRM_SITE_KEY=
+
+MAIL_HOST=
+MAIL_PORT=
+MAIL_USER=
+MAIL_PASSWORD=
+MAIL_FROM=
+MAIL_TO=
+```
+
+Do not place real credentials in documentation, fixtures or tests.
+
+---
+
+## Testing and Quality
+
+Before considering a feature complete, verify:
+
+### Desktop
+
+- Chrome
+- Firefox
+- Safari
+
+### Mobile
+
+- iOS Safari
+- Chrome Android
+
+### Additional
+
+- keyboard navigation
+- reduced motion
+- slow network
+- narrow screens
+- low-end mobile performance
+- empty event states
+- CiviCRM failure states
+- missing optional images
+- missing special event
+- Zeltlager yearly theme override
+
+---
+
+## Code Style
+
+Use TypeScript strict mode.
+
+Prefer explicit types at domain boundaries.
+
+Avoid `any`.
+
+Prefer small functions.
+
+Use descriptive names.
+
+Avoid deep nesting.
+
+Do not create helper abstractions that are only used once unless they materially improve readability.
+
+Keep Astro components focused.
+
+Separate:
+
+```text
+data fetching
+domain mapping
+presentation
+animation
+```
+
+Do not mix all four responsibilities into one page component.
+
+---
+
+## Comments
+
+Comments should explain **why**, not restate what the code does.
+
+Good:
+
+```ts
+// Keep this value below the header transition threshold so the
+// navigation finishes before the next pinned section begins.
+```
+
+Bad:
+
+```ts
+// Set opacity to 0
+element.style.opacity = '0'
+```
+
+---
+
+## Content Migration
+
+When migrating content from the old website:
+
+- preserve factual meaning
+- modernize language
+- shorten unnecessarily institutional copy
+- do not blindly copy WordPress markup
+- remove obsolete formatting
+- verify team and contact data before publishing
+- separate evergreen content from event-specific information
+
+The old site is a source, not the implementation reference.
+
+---
+
+## What Not to Build in V1
+
+Do not add the following without explicit approval:
+
+- CMS
+- React
+- Vue
+- Svelte
+- Three.js
+- WebGL-heavy scenes
+- user accounts
+- event administration UI
+- visual page builder
+- WordPress compatibility layer
+- custom analytics platform
+
+---
+
+## Definition of Done
+
+A V1 is considered structurally successful when:
+
+1. The website runs on Astro 5.
+2. Content pages are managed through MDX / Content Collections.
+3. Posts can be added through MDX.
+4. Regular events are displayed through an abstract event provider.
+5. Mock event data can later be replaced with CiviCRM without rebuilding the UI.
+6. A Zeltlager year can be created from a new MDX content entry and theme configuration.
+7. Each Zeltlager year can have a distinct visual identity.
+8. A variable special event can be enabled or omitted without leaving layout gaps.
+9. Desktop and mobile have intentionally different animation strategies.
+10. Reduced-motion users receive the full content without heavy motion.
+11. CI/CD and Docker deployment are prepared.
+12. The homepage feels like an adventure experience rather than a generic youth organization website.
+
+---
+
+## Final Rule
+
+Whenever there is a conflict between:
+
+```text
+visual spectacle
+and
+clarity / accessibility / performance
+```
+
+choose the solution that preserves the strong visual idea **without sacrificing usability**.
+
+The site should feel bold and memorable, but it must still be fast, understandable and robust.
