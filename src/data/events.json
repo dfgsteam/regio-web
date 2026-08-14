@@ -1,0 +1,908 @@
+[
+  {
+    "id": "41eel8kqgrm8soof5qd0clibsc@google.com",
+    "title": "Bistumsjugendtag",
+    "slug": "bistumsjugendtag-2021",
+    "start": "2021-07-16T07:00:00.000Z",
+    "end": "2021-07-19T07:00:00.000Z",
+    "location": "Region Wegweiser",
+    "address": "",
+    "teaser": "Herzliche Einladung zu Bistumsjugendtag der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Bistumsjugendtag der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "7tds6f5umcslfoqvgpq6jgfppj@google.com",
+    "title": "Griechen-Zeltlager - Der Ruf der Götter",
+    "slug": "zeltlager-2-2021",
+    "start": "2021-07-29T07:00:00.000Z",
+    "end": "2021-08-08T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Für alle Jungs von 10-14 Jahre",
+    "description": "Für alle Jungs von 10-14 Jahre",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "1tappor8r3dviteta27dmngpnn@google.com",
+    "title": "Zeltlagernachtreffen",
+    "slug": "zeltlager-2021",
+    "start": "2021-10-22T07:00:00.000Z",
+    "end": "2021-10-25T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "0h5mhjn9tlf6rqcc0qmsaorbqi@google.com",
+    "title": "Gruppenleiterschulung",
+    "slug": "gruppenleiterschulung-2021",
+    "start": "2021-10-29T07:00:00.000Z",
+    "end": "2021-11-03T08:00:00.000Z",
+    "location": "Jugendzentrum Marienberg, Am Marienberg 4, 56179 Vallendar, Deutschland",
+    "address": "Jugendzentrum Marienberg, Am Marienberg 4, 56179 Vallendar, Deutschland",
+    "teaser": "Herzliche Einladung zu Gruppenleiterschulung der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Gruppenleiterschulung der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "h4pfpccj618vk6p0bpo99nbomc4pkqctqsjmina3j9u3m34hjs4dr7vu8q@google.com",
+    "title": "Actionwochenende",
+    "slug": "actionwochenende-2-2022",
+    "start": "2022-06-10T16:00:00.000Z",
+    "end": "2022-06-12T13:00:00.000Z",
+    "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "tq3jp0bn18450ie580913mv6udfs8257r570am17mvv6ub6llfl37sd88r@google.com",
+    "title": "Actionwoche in München",
+    "slug": "actionwoche-in-muenchen-2022",
+    "start": "2022-07-19T07:00:00.000Z",
+    "end": "2022-07-26T07:00:00.000Z",
+    "location": "Herzerichstraße 138-140, 81477 München",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Actionwoche für Jungs ab 15 Jahre.\ngemeinsame Anreise von Heilbad Heiligenstadt.",
+    "description": "Actionwoche für Jungs ab 15 Jahre.\ngemeinsame Anreise von Heilbad Heiligenstadt.",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "c26i9ols0mkh5th1kj1358lu44vdblu6k094j6nvnniadtbru46kgibfqn@google.com",
+    "title": "Western-Zeltlager Thalwenden",
+    "slug": "zeltlager-2022",
+    "start": "2022-08-04T13:00:00.000Z",
+    "end": "2022-08-13T12:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Zeltlager für Jungs von 10-14 Jahren.",
+    "description": "Zeltlager für Jungs von 10-14 Jahren.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "jk5esg80me7npt6rnaj3dmkkt6c7t0e43uiglrgr1thr14jofp6f19pjpq@google.com",
+    "title": "Zeltlagernachtreffen",
+    "slug": "zeltlager-2-2022",
+    "start": "2022-11-11T17:00:00.000Z",
+    "end": "2022-11-13T14:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "845o4m0qvog8dl8e5pd9qd0oc1gl8m3a00ve54ie3s76cu63d1j96hca1h@google.com",
+    "title": "Actionwochenende",
+    "slug": "actionwochenende-2022",
+    "start": "2022-12-02T17:00:00.000Z",
+    "end": "2022-12-04T14:00:00.000Z",
+    "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "vrpkdo4caq4b0oa4jpff7fhcllv65ghi9duga9lte8v2fqqcabcbkn1d9f@google.com",
+    "title": "Zeltlager Thalwenden",
+    "slug": "zeltlager-2-2023",
+    "start": "2023-07-20T07:00:00.000Z",
+    "end": "2023-07-30T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Für Jungs von 10 bis 15 Jahre",
+    "description": "Für Jungs von 10 bis 15 Jahre",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "d8q66n95i5l8jlsal0111gaea7penaa5lb7tv2ug13piqn3k92gvu6kvi6@google.com",
+    "title": "Utopia Island - eine neue Welt",
+    "slug": "utopia-island-eine-neue-welt-2023",
+    "start": "2023-08-07T07:00:00.000Z",
+    "end": "2023-08-14T07:00:00.000Z",
+    "location": "Kiehnwerder, 14776 Brandenburg an der Havel, Deutschland",
+    "address": "Kiehnwerder, 14776 Brandenburg an der Havel, Deutschland",
+    "teaser": "Herzliche Einladung zu Utopia Island - eine neue Welt der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Utopia Island - eine neue Welt der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "2n7qh5te42git59jeu7ban7lm8@google.com",
+    "title": "Sterntreffen (Zeltlagernachtreffen)",
+    "slug": "zeltlager-2023",
+    "start": "2023-10-13T16:00:00.000Z",
+    "end": "2023-10-15T12:30:00.000Z",
+    "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "30 € (inkl. Verpflegung, Unterkunft und Betreuung)",
+    "teaser": "Hier gibt's Infos oder gleich jetzt !",
+    "description": "Hier gibt's Infos oder gleich jetzt !",
+    "highlights": [
+      "Großes Wiedersehen der Zeltgemeinschaft",
+      "Lager-Rückblick, Zeltlagerfotos & wilde Geschichten",
+      "Geländespiele & Mutproben rund um die Klause 2.0",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Kleidung für Abenteuer & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/info/?reset=1&id=22",
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan Hunold",
+      "role": "Zeltlagerleitung",
+      "email": "zeltlager@smj-wegweiser.de",
+      "phone": "0179 6353443"
+    }
+  },
+  {
+    "id": "0n59rb2mpk1erjiuvr2vfmdfbu@google.com",
+    "title": "Actionwochenende 3",
+    "slug": "actionwochenende-3-2023",
+    "start": "2023-12-01T17:00:00.000Z",
+    "end": "2023-12-03T13:30:00.000Z",
+    "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=23",
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "6eam9hg7qikhvkhujlb9s7bbiq@google.com",
+    "title": "Actionwochenende I",
+    "slug": "actionwochenende-1-2024",
+    "start": "2024-02-02T16:00:00.000Z",
+    "end": "2024-02-04T14:00:00.000Z",
+    "location": "Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "crs09ct6fc273pn2sbbg7ms43fottualsb9un5a7a5t5oul4gd11ijbqc7@google.com",
+    "title": "72h Aktion des BDKJ",
+    "slug": "72h-aktion-des-bdkj-2024",
+    "start": "2024-04-18T07:00:00.000Z",
+    "end": "2024-04-22T07:00:00.000Z",
+    "location": "Region Wegweiser",
+    "address": "",
+    "teaser": "Herzliche Einladung zu 72h Aktion des BDKJ der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu 72h Aktion des BDKJ der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "49pljnic1git7qjkovvofs9m7o@google.com",
+    "title": "72h Aktion - Kindertag",
+    "slug": "72h-aktion-kindertag-2024",
+    "start": "2024-04-20T07:00:00.000Z",
+    "end": "2024-04-21T07:00:00.000Z",
+    "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "teaser": "72h-Aktion: Spiel, Spaß und Spannung für die ganze Familie! Gemeinsam mit der MJF Erfurt und leicht verspielt veranstalten wir im Rahmen der bundesweiten 72h-Ak...",
+    "description": "72h-Aktion: Spiel, Spaß und Spannung für die ganze Familie! Gemeinsam mit der MJF Erfurt und leicht verspielt veranstalten wir im Rahmen der bundesweiten 72h-Aktion ein Kinder- und Familienfest, das ihr nicht verpassen solltet! Mehr Infos hier oder hier",
+    "registrationUrl": "https://www.72stunden.de/aktion/gruppe/SMJ%20Regio%20Wegweiser",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "45op3mg64cjldk13aknc2t5nr1@google.com",
+    "title": "Actionwochenende II",
+    "slug": "actionwochenende-2-2024",
+    "start": "2024-06-14T15:00:00.000Z",
+    "end": "2024-06-16T13:00:00.000Z",
+    "location": "Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "1n1jmdpgfimh9m11piimdoni42@google.com",
+    "title": "Zeltlager Thalwenden",
+    "slug": "zeltlager-2024",
+    "start": "2024-06-27T07:00:00.000Z",
+    "end": "2024-07-07T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "1tgl95fhhfpcpm2p666tk1k0cb@google.com",
+    "title": "Sterntreffen",
+    "slug": "sterntreffen-2024",
+    "start": "2024-08-09T15:00:00.000Z",
+    "end": "2024-08-11T13:00:00.000Z",
+    "location": "Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "30 € (inkl. Verpflegung, Unterkunft und Betreuung)",
+    "teaser": "Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wieder...",
+    "description": "Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wiedersehen der Zeltgemeinschaft in der Klause 2.0 in Heiligenstadt.\n\nGemeinsam lassen wir die Erlebnisse des Zeltlagers wieder aufleben, schauen die Zeltlagerfotos an, kochen zusammen und verbringen gemütliche Abende am Kamin und Lagerfeuer.",
+    "highlights": [
+      "Großes Wiedersehen der Zeltgemeinschaft",
+      "Lager-Rückblick, Zeltlagerfotos & wilde Geschichten",
+      "Geländespiele & Mutproben rund um die Klause 2.0",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Kleidung für Abenteuer & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan Hunold",
+      "role": "Zeltlagerleitung",
+      "email": "zeltlager@smj-wegweiser.de",
+      "phone": "0179 6353443"
+    }
+  },
+  {
+    "id": "6hhe12c6gau5h0amfj7gla5mlk@google.com",
+    "title": "Nacht des Heiligtums",
+    "slug": "nacht-des-heiligtums-2024",
+    "start": "2024-08-30T14:00:00.000Z",
+    "end": "2024-09-01T13:00:00.000Z",
+    "location": "Urheiligtum Schönstatt, 56179 Vallendar, Deutschland",
+    "address": "Urheiligtum Schönstatt, 56179 Vallendar, Deutschland",
+    "teaser": "Herzliche Einladung zu Nacht des Heiligtums der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Nacht des Heiligtums der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "dqm0fs2qgt7l79ihips8t994d0pml52rmut80dgp9q0pi55uc4a8m114jq@google.com",
+    "title": "Herbstwoche für Ältere",
+    "slug": "herbstwoche-fuer-aeltere-2024",
+    "start": "2024-09-30T07:00:00.000Z",
+    "end": "2024-10-07T07:00:00.000Z",
+    "location": "Region Wegweiser",
+    "address": "",
+    "teaser": "Herzliche Einladung zu Herbstwoche für Ältere der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Herbstwoche für Ältere der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "78j7i02p8g0uqbf7vvbkr5krfq@google.com",
+    "title": "Actionwochenende III",
+    "slug": "actionwochenende-3-2024",
+    "start": "2024-11-08T16:00:00.000Z",
+    "end": "2024-11-10T14:00:00.000Z",
+    "location": "Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "g9scr8blg95vbornihr55ctii5tqn2i946o0u6521p10010682o9dbuemq@google.com",
+    "title": "Actionwochenende",
+    "slug": "actionwochenende-2025",
+    "start": "2025-04-25T07:00:00.000Z",
+    "end": "2025-04-28T07:00:00.000Z",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "471u1d0aeele4ganhpu6ci68mksq8gi6hpg3o4v3m79v3k71itu0urilco@google.com",
+    "title": "Zeltlager 2025",
+    "slug": "zeltlager-2025",
+    "start": "2025-07-03T07:00:00.000Z",
+    "end": "2025-07-13T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Herzliche Einladung zu Zeltlager 2025 der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Zeltlager 2025 der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "2pm8h0lktjfouv1m2800d71gm2@google.com",
+    "title": "Actionwochenende 3",
+    "slug": "actionwochenende-3-2025",
+    "start": "2025-11-28T08:00:00.000Z",
+    "end": "2025-12-01T08:00:00.000Z",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "5kciib7rruqmg4f6ps8up44ier@google.com",
+    "title": "Actionwochenende 1",
+    "slug": "actionwochenende-1-2026",
+    "start": "2026-01-30T16:00:00.000Z",
+    "end": "2026-02-01T15:00:00.000Z",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=56",
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "6p0pd8t82f2bqci0sgosjhq84g@google.com",
+    "title": "Familientag im Rahmen der BDKJ Sozialaktion",
+    "slug": "familientag-im-rahmen-der-bdkj-sozialaktion-2026",
+    "start": "2026-04-25T07:00:00.000Z",
+    "end": "2026-04-26T07:00:00.000Z",
+    "location": "Region Wegweiser",
+    "address": "",
+    "teaser": "Herzliche Einladung zu Familientag im Rahmen der BDKJ Sozialaktion der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Ü...",
+    "description": "Herzliche Einladung zu Familientag im Rahmen der BDKJ Sozialaktion der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "category": "general",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "3f5en6h897uqgr7g37nma14vpn@google.com",
+    "title": "Actionwochenende 2",
+    "slug": "actionwochenende-2-2026",
+    "start": "2026-05-08T16:00:00.000Z",
+    "end": "2026-05-10T13:00:00.000Z",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?id=57&reset=1",
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "3aou5v62ip2mlsb79havsrakur@google.com",
+    "title": "Zeltlager Thalwenden",
+    "slug": "zeltlager-2026",
+    "start": "2026-07-08T07:00:00.000Z",
+    "end": "2026-07-18T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "teaser": "Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=55",
+    "category": "camp",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Lager- & Eventleitung",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  },
+  {
+    "id": "245fiaddbntagqf2d5n4a0c6na@google.com",
+    "title": "Sterntreffen",
+    "slug": "sterntreffen-2026",
+    "start": "2026-08-28T15:00:00.000Z",
+    "end": "2026-08-30T14:00:00.000Z",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "30 € (inkl. Verpflegung, Unterkunft und Betreuung)",
+    "teaser": "Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wieder...",
+    "description": "Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wiedersehen der Zeltgemeinschaft in der Klause 2.0 in Heiligenstadt.\n\nGemeinsam lassen wir die Erlebnisse des Zeltlagers wieder aufleben, schauen die Zeltlagerfotos an, kochen zusammen und verbringen gemütliche Abende am Kamin und Lagerfeuer.",
+    "highlights": [
+      "Großes Wiedersehen der Zeltgemeinschaft",
+      "Lager-Rückblick, Zeltlagerfotos & wilde Geschichten",
+      "Geländespiele & Mutproben rund um die Klause 2.0",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Kleidung für Abenteuer & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=59",
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan Hunold",
+      "role": "Zeltlagerleitung",
+      "email": "zeltlager@smj-wegweiser.de",
+      "phone": "0179 6353443"
+    }
+  },
+  {
+    "id": "1t4tc4h6ooi3pd75vgb68q8ujd@google.com",
+    "title": "Actionwochenende 3",
+    "slug": "actionwochenende-3-2026",
+    "start": "2026-11-20T16:00:00.000Z",
+    "end": "2026-11-22T15:00:00.000Z",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ],
+    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=58",
+    "category": "weekend",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  }
+]

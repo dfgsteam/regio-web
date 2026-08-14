@@ -11,6 +11,7 @@
     "start": "astro dev",
     "preview": "astro preview",
     "build": "astro build",
+    "sync:calendar": "node scripts/sync-calendar.mjs",
     "astro": "astro",
     "check": "astro check",
     "typecheck": "astro check",
