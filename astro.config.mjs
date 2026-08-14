@@ -8,6 +8,13 @@ export default defineConfig({
   site: 'https://smj-wegweiser.de',
   adapter: node({ mode: 'standalone' }),
   integrations: [mdx(), sitemap()],
+  redirects: {
+    '/zeltlager': '/abenteuer/zeltlager/',
+    '/zeltlager-2026': '/abenteuer/zeltlager/2026/',
+    '/zeltlager-2027': '/abenteuer/zeltlager/2027/',
+    '/abenteuer/zeltlager-2026': '/abenteuer/zeltlager/2026/',
+    '/abenteuer/zeltlager-2027': '/abenteuer/zeltlager/2027/',
+  },
   vite: {
     plugins: [tailwindcss()],
   },

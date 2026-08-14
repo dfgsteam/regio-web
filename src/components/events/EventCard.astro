@@ -11,7 +11,13 @@ interface Props {
 const { event, href, featured = false } = Astro.props
 const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('zeltlager')
 const isFeatured = featured || isCamp
-const targetUrl = href ?? (isCamp ? '/abenteuer/zeltlager/' : `/abenteuer/${event.slug}/`)
+const eventYear = event.start.getFullYear()
+const isPast = event.end < new Date()
+
+// Past camps link to their specific year page /abenteuer/zeltlager/[year]/
+// Current camp links to /abenteuer/zeltlager/ (which is also reachable via /abenteuer/zeltlager/[year]/)
+const campUrl = isPast ? `/abenteuer/zeltlager/${eventYear}/` : '/abenteuer/zeltlager/'
+const targetUrl = href ?? (isCamp ? campUrl : `/abenteuer/${event.slug}/`)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 ---
 
