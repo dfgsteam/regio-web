@@ -2,32 +2,185 @@
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
-import JournalGallery from '../../components/journal/JournalGallery.astro'
-import { galleryYears } from '../../lib/journal/gallery'
+import Coordinates from '../../components/common/Coordinates.astro'
+import { instagramPosts } from '../../lib/instagram/feed'
 ---
 
 <ContentLayout
-  title="Galerie – SMJ Regio Wegweiser"
-  description="Das Field Journal der Regio Wegweiser: große Bilder, Feldnotizen und die besten Momente aus Lager und Wochenenden."
+  title="Galerie & Instagram – SMJ Regio Wegweiser"
+  description="Aktuelle Eindrücke, Fotos und Live-Storys von den Zeltlagern und Aktionen der SMJ Regio Wegweiser direkt aus unserem Instagram-Feed @regio.wegweiser."
 >
-  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+  <section class="texture-paper relative bg-paper pb-20 pt-40 text-forest-950">
     <Container>
-      <Eyebrow label="Galerie" muted />
-      <h1 class="display display-xl mt-6 text-forest-950">
-        Field<br />
-        <span class="text-orange">Journal.</span>
-      </h1>
-      <p class="mt-8 max-w-xl leading-relaxed text-forest-950/75">
-        Keine Bildergalerie im Raster. Sondern ein Journal: große Bilder, schief aufgeklebt, mit Notizen am Rand – Jahr für Jahr.
-      </p>
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <Eyebrow label="Live-Eindrücke & Galerie" muted />
+          <h1 class="display display-xl mt-6 text-forest-950">
+            Instagram<br />
+            <span class="text-orange">Galerie.</span>
+          </h1>
+          <p class="mt-6 max-w-xl text-sm leading-relaxed text-forest-950/75">
+            Aktuelle Fotos, Storys und Impressionen direkt aus unserem Kanal <strong class="text-forest-950 font-bold">@regio.wegweiser</strong> – vom Zeltlager, den Wochenenden und Aktionen unserer Leiterrunde.
+          </p>
+        </div>
+
+        <a
+          href="https://www.instagram.com/regio.wegweiser/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 bg-orange px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-forest-950 transition-all hover:bg-forest-950 hover:text-paper"
+        >
+          <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          <span>@regio.wegweiser folgen →</span>
+        </a>
+      </div>
     </Container>
   </section>
 
-  <section class="bg-forest-950 pb-24">
+  <!-- Instagram Grid -->
+  <section class="bg-forest-950 py-20">
     <Container>
-      {galleryYears.map((year) => (
-        <JournalGallery year={year} />
-      ))}
+      <div class="mb-10 flex items-center justify-between border-b border-paper/10 pb-6">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center border-2 border-orange bg-forest-900 text-orange font-bold text-sm">
+            SMJ
+          </div>
+          <div>
+            <p class="font-display text-lg text-paper">@regio.wegweiser</p>
+            <p class="mono-label text-[0.68rem] text-paper/50">Offizieller Instagram Feed</p>
+          </div>
+        </div>
+
+        <span class="mono-label hidden text-xs text-orange sm:inline-block">
+          ● Live-Feed Synchronisiert
+        </span>
+      </div>
+
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          instagramPosts.map((post) => (
+            <article class="group flex flex-col justify-between border-2 border-paper/15 bg-forest-900 overflow-hidden transition-all duration-300 hover:border-orange">
+              <!-- Post Header -->
+              <div class="flex items-center justify-between p-4 border-b border-paper/10 bg-forest-950/60">
+                <div class="flex items-center gap-2.5">
+                  <div class="flex h-7 w-7 items-center justify-center border border-orange bg-forest-900 font-mono text-[0.65rem] text-orange">
+                    SMJ
+                  </div>
+                  <div>
+                    <a
+                      href={post.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block font-mono text-xs font-bold text-paper transition-colors hover:text-orange"
+                    >
+                      regio.wegweiser
+                    </a>
+                    <span class="block font-mono text-[0.65rem] text-paper/50">{post.location}</span>
+                  </div>
+                </div>
+
+                <a
+                  href={post.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Auf Instagram öffnen"
+                  class="text-paper/40 transition-colors hover:text-orange"
+                >
+                  <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                </a>
+              </div>
+
+              <!-- Post Media -->
+              <a
+                href={post.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="relative block aspect-[4/5] overflow-hidden bg-forest-950"
+              >
+                <img
+                  src={post.image}
+                  alt={post.alt}
+                  loading="lazy"
+                  class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-forest-950/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center">
+                  <span class="inline-flex items-center gap-2 bg-forest-950/90 border border-orange px-3.5 py-1.5 font-mono text-xs text-paper">
+                    Auf Instagram ansehen ↗
+                  </span>
+                </div>
+              </a>
+
+              <!-- Post Actions & Caption -->
+              <div class="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-paper/70 mb-3 text-xs">
+                    <div class="flex items-center gap-4">
+                      <span class="inline-flex items-center gap-1 text-orange">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current stroke-none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <strong class="font-mono text-[0.72rem] text-paper">{post.likes}</strong>
+                      </span>
+                      <span class="inline-flex items-center gap-1 text-paper/60">
+                        <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        <strong class="font-mono text-[0.72rem] text-paper/80">{post.comments}</strong>
+                      </span>
+                    </div>
+                    <time class="font-mono text-[0.68rem] text-paper/40">{post.date}</time>
+                  </div>
+
+                  <p class="text-xs leading-relaxed text-paper/85">
+                    <strong class="text-paper font-bold mr-1">regio.wegweiser</strong>
+                    {post.caption}
+                  </p>
+
+                  <div class="mt-3 flex flex-wrap gap-1.5">
+                    {post.tags.map((tag) => (
+                      <span class="font-mono text-[0.65rem] text-orange/80">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <a
+                  href={post.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-5 inline-flex items-center gap-1.5 border-t border-paper/10 pt-3 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-paper/60 transition-colors hover:text-orange"
+                >
+                  <span>Post auf Instagram öffnen</span>
+                  <span class="text-orange">↗</span>
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Bottom Follow Banner -->
+      <div class="mt-16 border-2 border-orange bg-forest-900 p-8 sm:p-12 text-center">
+        <p class="eyebrow justify-center mb-3 text-xs">Nichts mehr verpassen</p>
+        <h2 class="display display-md text-paper">
+          Tägliche Storys & Highlights im <span class="text-orange">Sommerlager.</span>
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-paper/80">
+          Während des Zeltlagers posten wir regelmäßige Foto-Updates und Storys für Eltern, Freunde und Daheimgebliebene. Folge unserem Profil, um live dabei zu sein.
+        </p>
+        <div class="mt-8 flex justify-center">
+          <a
+            href="https://www.instagram.com/regio.wegweiser/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-3 bg-orange px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-forest-950 transition-all hover:bg-paper"
+          >
+            <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            <span>Instagram Profil @regio.wegweiser öffnen →</span>
+          </a>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 pb-20 pt-4">
+    <Container class="flex justify-center">
+      <Coordinates value="INSTAGRAM · @REGIO.WEGWEISER · N 51° 22' 44 · E 10° 08' 17" />
     </Container>
   </section>
 </ContentLayout>
