@@ -9,12 +9,14 @@ const { meta, rotate = '1.5deg', class: className } = Astro.props
 ---
 
 <figure
-  class:list={['relative max-w-sm border border-paper/20 bg-forest-900/80 p-4 shadow-lg backdrop-blur-sm', className]}
-  style={`transform: rotate(${rotate})`}
+  class:list={['field-note stamp-element relative max-w-sm border border-paper/20 bg-forest-900/90 p-4 shadow-xl backdrop-blur-sm', className]}
+  data-rotate={rotate}
+  data-stamp="true"
+  style={`transform: rotate(${rotate});`}
 >
   <div class="texture-tape absolute inset-x-0 -top-2.5 mx-auto h-5 w-28" aria-hidden="true" />
   <figcaption class="mono-label mb-2 text-orange">{meta}</figcaption>
-  <blockquote class="text-sm leading-relaxed text-paper/90">
+  <blockquote class="text-sm leading-relaxed text-paper/90 font-medium">
     <slot />
   </blockquote>
 </figure>

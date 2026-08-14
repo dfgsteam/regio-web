@@ -16,8 +16,10 @@ const tones = {
 ---
 
 <span
-  class:list={['inline-block border px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] shadow-sm', tones[tone], className]}
-  style={`transform: rotate(${rotate})`}
+  class:list={['sticker stamp-element inline-block border px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] shadow-md', tones[tone], className]}
+  data-rotate={rotate}
+  data-stamp="true"
+  style={`transform: rotate(${rotate});`}
 >
   {label}
 </span>

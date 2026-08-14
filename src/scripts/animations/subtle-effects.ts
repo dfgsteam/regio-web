@@ -7,33 +7,37 @@ export function initSubtleEffects(): void {
   const mm = gsap.matchMedia()
 
   mm.add('(prefers-reduced-motion: no-preference)', () => {
-    // 1. Physical Stamp In Effect for Stickers & Field Notes
+    // 1. Robust Physical Stamp In Effect for Field Notes, Stickers & Stamps
     const stampElements = document.querySelectorAll<HTMLElement>(
-      '.sticker, .field-note, [data-stamp], #expect .sticker'
+      '.stamp-element, .field-note, .sticker, [data-stamp], #expect .sticker, figure.field-note'
     )
+
     stampElements.forEach((el, index) => {
-      const initialRotation = el.style.transform.match(/rotate\(([-0-9.]+deg)\)/)?.[1] || '-2deg'
-      const numRotation = parseFloat(initialRotation) || (index % 2 === 0 ? -2.5 : 2.5)
+      const rawRotate = el.dataset.rotate || el.style.transform || '-2deg'
+      const targetRotate = parseFloat(rawRotate.replace(/[^0-9.-]/g, '')) || (index % 2 === 0 ? -2.5 : 2.5)
+
+      // Reset inline transform to avoid GSAP style collision
+      el.style.transform = ''
 
       gsap.fromTo(
         el,
         {
-          scale: 1.32,
+          scale: 1.45,
           opacity: 0,
-          rotate: numRotation - (index % 2 === 0 ? 8 : -8),
-          y: -12,
+          rotate: targetRotate + (index % 2 === 0 ? -12 : 12),
+          y: -22,
         },
         {
           scale: 1,
           opacity: 1,
-          rotate: numRotation,
+          rotate: targetRotate,
           y: 0,
-          duration: 0.5,
-          delay: (index % 3) * 0.08,
-          ease: 'back.out(2.2)',
+          duration: 0.55,
+          delay: (index % 4) * 0.09,
+          ease: 'back.out(2.4)',
           scrollTrigger: {
             trigger: el,
-            start: 'top 88%',
+            start: 'top 90%',
             toggleActions: 'play none none none',
           },
         }
@@ -110,11 +114,12 @@ export function initSubtleEffects(): void {
   })
 }
 
-// Auto-run on load
+// Auto-run on load & Astro page-load
 if (typeof window !== 'undefined') {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSubtleEffects)
   } else {
     initSubtleEffects()
   }
+  document.addEventListener('astro:page-load', initSubtleEffects)
 }
