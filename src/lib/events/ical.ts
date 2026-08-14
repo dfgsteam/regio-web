@@ -101,11 +101,13 @@ function transformVEvent(raw: Record<string, string>): Event | null {
 
   const rawLocation = decodeIcsText(raw['LOCATION'] || '').trim()
   const rawDesc = decodeIcsText(raw['DESCRIPTION'] || '').trim()
-  const cleanDesc = stripHtml(rawDesc)
 
-  // Extract CiviCRM or external registration link from description
+  // Extract CiviCRM or external registration link from description before cleaning
   const regUrlMatch = rawDesc.match(/https?:\/\/[^\s"'<>]+/i)
   const registrationUrl = regUrlMatch ? regUrlMatch[0].replace(/&amp;/g, '&') : undefined
+
+  // Clean raw description by removing redundant registration links and boilerplate
+  const cleanDesc = sanitizeEventDescription(rawDesc)
 
   // Determine category & template defaults
   const normalizedTitle = summary.toLowerCase()
@@ -189,13 +191,17 @@ function transformVEvent(raw: Record<string, string>): Event | null {
 
   // Build authentic description
   let description = cleanDesc
-  if (!description || description.length < 20) {
+  if (!description || description.length < 15) {
     if (category === 'weekend') {
       description = `Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!`
+    } else if (category === 'special') {
+      description = `Das Sterntreffen bringt alle Jugendlichen und jungen Erwachsenen ab 15 Jahren zusammen, die der SMJ Regio Wegweiser verbunden sind: Ehemalige Zeltlager-Teilnehmer, Gruppenleiter und Interessierte. Ein Wochenende für tiefgehende Werkstattrunden, Austausch auf Augenhöhe, Visionen für die Region, Kaminabende und gelebten Glauben.`
     } else {
-      description = `Herzliche Einladung zu ${summary} der SMJ Regio Wegweiser!`
+      description = `Herzliche Einladung zu ${summary} der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.`
     }
   }
+
+  const teaser = description.length > 0 ? description.slice(0, 160) + (description.length > 160 ? '...' : '') : undefined
 
   return {
     id,
@@ -208,7 +214,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
     ageMin,
     ageMax,
     price,
-    teaser: cleanDesc.length > 0 ? cleanDesc.slice(0, 160) + (cleanDesc.length > 160 ? '...' : '') : undefined,
+    teaser,
     description,
     highlights,
     packingList,
@@ -230,8 +236,25 @@ function decodeIcsText(str: string): string {
     .replace(/\\\\/g, '\\')
 }
 
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()
+/**
+ * Strips raw HTML and removes redundant "Anmeldung unter: https://..." links
+ * because the UI already has a dedicated primary registration button.
+ */
+function sanitizeEventDescription(raw: string): string {
+  if (!raw) return ''
+  return raw
+    // Remove "Anmeldung/Anmelden unter: https://..." patterns
+    .replace(/anmeld(ung|en)\s+(unter|hier)?[:\s]+https?:\/\/[^\s"'<>]+/gi, '')
+    .replace(/hier\s+gibt'?s\s+infos\s+oder\s+gleich\s+jetzt\s+anmelden!?/gi, '')
+    .replace(/jetzt\s+(gleich\s+)?anmelden!?/gi, '')
+    // Remove standalone URLs
+    .replace(/https?:\/\/[^\s"'<>]+/gi, '')
+    // Remove HTML tags
+    .replace(/<[^>]*>?/gm, ' ')
+    // Normalize spaces and line breaks
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n\s*\n+/g, '\n\n')
+    .trim()
 }
 
 function parseIcsDate(rawDate?: string, isDateOnly = false): Date | null {
