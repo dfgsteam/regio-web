@@ -92,24 +92,80 @@ export function normalizeEventSlug(title: string, year: number): string {
   return cleaned.endsWith(yearStr) ? cleaned : `${cleaned}-${yearStr}`
 }
 
-export function getSlugVariants(slug: string): string[] {
-  const variants = new Set<string>([slug])
+/**
+ * Generates all natural alias slugs for an event:
+ * - With and without year (e.g. familientag-2026, familientag)
+ * - Short prefix before separators (e.g. "Familientag im Rahmen..." -> "familientag-2026", "familientag")
+ * - Arabic numbers and Roman numerals (e.g. actionwochenende-2-2026, actionwochenende-ii-2026, actionwochenende-2)
+ */
+export function getSlugVariants(eventOrSlug: string, title?: string, year?: number): string[] {
+  const variants = new Set<string>()
 
-  // Bidirectional mapping between Arabic numbers and Roman numerals
-  // e.g. actionwochenende-2-2026 <-> actionwochenende-ii-2026
-  if (slug.includes('-1-')) variants.add(slug.replace('-1-', '-i-'))
-  if (slug.includes('-2-')) variants.add(slug.replace('-2-', '-ii-'))
-  if (slug.includes('-3-')) variants.add(slug.replace('-3-', '-iii-'))
-  if (slug.includes('-4-')) variants.add(slug.replace('-4-', '-iv-'))
-  if (slug.includes('-5-')) variants.add(slug.replace('-5-', '-v-'))
+  const baseSlug = typeof eventOrSlug === 'string' ? eventOrSlug : ''
+  if (baseSlug) variants.add(baseSlug)
 
-  if (slug.includes('-i-')) variants.add(slug.replace('-i-', '-1-'))
-  if (slug.includes('-ii-')) variants.add(slug.replace('-ii-', '-2-'))
-  if (slug.includes('-iii-')) variants.add(slug.replace('-iii-', '-3-'))
-  if (slug.includes('-iv-')) variants.add(slug.replace('-iv-', '-4-'))
-  if (slug.includes('-v-')) variants.add(slug.replace('-v-', '-5-'))
+  // 1. If we have a year or slug ends with -YYYY
+  const yearMatch = baseSlug.match(/-(\d{4})$/)
+  const eventYear = year ?? (yearMatch?.[1] ? parseInt(yearMatch[1], 10) : undefined)
+  const slugWithoutYear = yearMatch ? baseSlug.replace(/-(\d{4})$/, '') : baseSlug
 
-  return Array.from(variants)
+  if (slugWithoutYear) {
+    variants.add(slugWithoutYear)
+    if (eventYear) {
+      variants.add(`${slugWithoutYear}-${eventYear}`)
+    }
+  }
+
+  // 2. Short title / prefix extraction
+  // If title was "Familientag im Rahmen der BDKJ Sozialaktion", short prefix is "Familientag"
+  const rawTitle = title || baseSlug
+  const cleanTitle = rawTitle
+    .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+
+  const prefixMatch = cleanTitle.match(/^([a-z0-9]+(?:\s+[a-z0-9]+)?)(?:\s+(?:im|in|fuer|für|der|des|-|–|\(|\/)|$)/i)
+  if (prefixMatch && prefixMatch[1]) {
+    const shortSlug = prefixMatch[1].replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+    if (shortSlug && shortSlug.length >= 3) {
+      variants.add(shortSlug)
+      if (eventYear) {
+        variants.add(`${shortSlug}-${eventYear}`)
+      }
+    }
+  }
+
+  // 3. Bidirectional mapping between Arabic numbers and Roman numerals
+  const allCurrent = Array.from(variants)
+  for (const s of allCurrent) {
+    if (s.includes('-1-')) variants.add(s.replace('-1-', '-i-'))
+    if (s.includes('-2-')) variants.add(s.replace('-2-', '-ii-'))
+    if (s.includes('-3-')) variants.add(s.replace('-3-', '-iii-'))
+    if (s.includes('-4-')) variants.add(s.replace('-4-', '-iv-'))
+    if (s.includes('-5-')) variants.add(s.replace('-5-', '-v-'))
+
+    if (s.endsWith('-1')) variants.add(s.replace(/-1$/, '-i'))
+    if (s.endsWith('-2')) variants.add(s.replace(/-2$/, '-ii'))
+    if (s.endsWith('-3')) variants.add(s.replace(/-3$/, '-iii'))
+    if (s.endsWith('-4')) variants.add(s.replace(/-4$/, '-iv'))
+    if (s.endsWith('-5')) variants.add(s.replace(/-5$/, '-v'))
+
+    if (s.includes('-i-')) variants.add(s.replace('-i-', '-1-'))
+    if (s.includes('-ii-')) variants.add(s.replace('-ii-', '-2-'))
+    if (s.includes('-iii-')) variants.add(s.replace('-iii-', '-3-'))
+    if (s.includes('-iv-')) variants.add(s.replace('-iv-', '-4-'))
+    if (s.includes('-v-')) variants.add(s.replace('-v-', '-5-'))
+
+    if (s.endsWith('-i')) variants.add(s.replace(/-i$/, '-1'))
+    if (s.endsWith('-ii')) variants.add(s.replace(/-ii$/, '-2'))
+    if (s.endsWith('-iii')) variants.add(s.replace(/-iii$/, '-3'))
+    if (s.endsWith('-iv')) variants.add(s.replace(/-iv$/, '-4'))
+    if (s.endsWith('-v')) variants.add(s.replace(/-v$/, '-5'))
+  }
+
+  return Array.from(variants).filter((v) => v.length > 0)
 }
 
 export function formatDateRange(start: Date, end: Date, locale = 'de-DE'): string {

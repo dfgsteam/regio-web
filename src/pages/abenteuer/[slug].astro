@@ -41,8 +41,9 @@ export async function getStaticPaths() {
   const seenSlugs = new Set<string>()
 
   for (const event of nonDedicatedCampEvents) {
-    const variants = getSlugVariants(event.slug)
+    const variants = getSlugVariants(event.slug, event.title, event.start.getFullYear())
     for (const slug of variants) {
+      if (slug === 'zeltlager') continue
       if (!seenSlugs.has(slug)) {
         seenSlugs.add(slug)
         paths.push({
@@ -57,10 +58,22 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  event: Event
+  event?: Event
 }
 
-const { event } = Astro.props
+let event = Astro.props.event
+if (!event) {
+  const currentSlug = Astro.params.slug
+  const allEvents = await eventProvider.getEvents()
+  event = allEvents.find((e) => {
+    const variants = getSlugVariants(e.slug, e.title, e.start.getFullYear())
+    return variants.includes(currentSlug ?? '')
+  })
+}
+
+if (!event) {
+  return Astro.redirect('/abenteuer/')
+}
 const templateType = getEventTemplateType(event.title, event.category)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 const formattedDate = formatDateRange(event.start, event.end)
