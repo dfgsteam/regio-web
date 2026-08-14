@@ -142,7 +142,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
       '100% handyfreie Zeit – echte Gemeinschaft',
     ]
     packingList = [
-      'Persohnliche Sachen, Hausschuhe & Kulturbeutel',
+      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
       'Krankenkassenkarte & Impfausweis',
       'Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)',
       'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
