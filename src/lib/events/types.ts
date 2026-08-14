@@ -38,7 +38,11 @@ export interface EventProvider {
 
 export function getEventTemplateType(title: string, category?: string): EventTemplateType {
   const normalized = title.trim().toLowerCase()
-  if (normalized.startsWith('sterntreffen') || normalized.includes('sterntreffen')) {
+  if (
+    normalized.startsWith('sterntreffen') ||
+    normalized.includes('sterntreffen') ||
+    normalized.includes('nachtreffen')
+  ) {
     return 'sterntreffen'
   }
   if (
@@ -54,21 +58,21 @@ export function getEventTemplateType(title: string, category?: string): EventTem
 
 /**
  * Normalizes an event title into a clean URL slug according to the workflow rules:
- * 1. Zeltlager: Regardless of what comes after the word Zeltlager -> zeltlager-{year}
- * 2. Sterntreffen: Regardless of what comes after -> sterntreffen-{year}
+ * 1. Sterntreffen / Zeltlagernachtreffen: Regardless of wording -> sterntreffen-{year}
+ * 2. Zeltlager: Regardless of what comes after the word Zeltlager (except Nachtreffen) -> zeltlager-{year}
  * 3. All other calendar events: Take full calendar name (with Roman numerals/numbers or no numbers) + -{year}
  */
 export function normalizeEventSlug(title: string, year: number): string {
   const normalizedTitle = title.trim().toLowerCase()
 
-  // Zeltlager rule: regardless of extra text in the title -> zeltlager-{year}
-  if (normalizedTitle.includes('zeltlager')) {
-    return `zeltlager-${year}`
+  // Sterntreffen / Zeltlagernachtreffen rule: always maps to sterntreffen-{year}
+  if (normalizedTitle.includes('sterntreffen') || normalizedTitle.includes('nachtreffen')) {
+    return `sterntreffen-${year}`
   }
 
-  // Sterntreffen rule: regardless of extra text in the title -> sterntreffen-{year}
-  if (normalizedTitle.includes('sterntreffen')) {
-    return `sterntreffen-${year}`
+  // Zeltlager rule (pure camp only): regardless of extra text in the title -> zeltlager-{year}
+  if (normalizedTitle.includes('zeltlager')) {
+    return `zeltlager-${year}`
   }
 
   // All other calendar events: take calendar name, normalize characters/Roman numerals, append -{year}

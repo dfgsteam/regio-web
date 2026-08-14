@@ -52,34 +52,35 @@
   {
     "id": "1tappor8r3dviteta27dmngpnn@google.com",
     "title": "Zeltlagernachtreffen",
-    "slug": "zeltlager-2-2021",
+    "slug": "sterntreffen-2021",
     "start": "2021-10-22T07:00:00.000Z",
     "end": "2021-10-25T07:00:00.000Z",
     "location": "Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
     "address": "Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
     "ageMin": 9,
-    "ageMax": 14,
-    "teaser": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
-    "description": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "ageMax": 15,
+    "price": "30 € (inkl. Verpflegung, Unterkunft und Betreuung)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
     "highlights": [
-      "Zeltdorf im malerischen Wiesental",
-      "Nachtwache, Bundesfeuer & Fackelläufe",
-      "Großes Lagerspiel nach Motto-Storyline",
-      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+      "Großes Wiedersehen der Zeltgemeinschaft",
+      "Lager-Rückblick, Zeltlagerfotos & wilde Geschichten",
+      "Geländespiele & Mutproben rund um die Klause 2.0",
+      "100% handyfreie Zeit – echte Gemeinschaft"
     ],
     "packingList": [
-      "Warmer Schlafsack & dicke Isomatte / Luftbett",
-      "Wanderstiefel, feste Schuhe & Gummistiefel",
-      "Regenfeste Kleidung, warme Jacke & Badesachen",
-      "Essgeschirr, Becher & Besteck im Stoffbeutel",
-      "Taschenlampe / Kopflampe mit Ersatzbatterien",
-      "Krankenkassenkarte & Impfausweis"
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Kleidung für Abenteuer & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
     ],
-    "category": "camp",
+    "category": "weekend",
     "contact": {
-      "name": "Vinzenz Hupe & Kilian Schlosser",
-      "role": "Lagerleitung",
-      "email": "vinzenz.hupe@smj-wegweiser.de"
+      "name": "Jonathan Hunold",
+      "role": "Zeltlagerleitung",
+      "email": "zeltlager@smj-wegweiser.de",
+      "phone": "0179 6353443"
     }
   },
   {
@@ -102,7 +103,7 @@
   {
     "id": "h4pfpccj618vk6p0bpo99nbomc4pkqctqsjmina3j9u3m34hjs4dr7vu8q@google.com",
     "title": "Actionwochenende",
-    "slug": "actionwochenende-2-2022",
+    "slug": "actionwochenende-1-2022",
     "start": "2022-06-10T16:00:00.000Z",
     "end": "2022-06-12T13:00:00.000Z",
     "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
@@ -168,7 +169,7 @@
   {
     "id": "c26i9ols0mkh5th1kj1358lu44vdblu6k094j6nvnniadtbru46kgibfqn@google.com",
     "title": "Western-Zeltlager Thalwenden",
-    "slug": "zeltlager-2-2022",
+    "slug": "zeltlager-2022",
     "start": "2022-08-04T13:00:00.000Z",
     "end": "2022-08-13T12:00:00.000Z",
     "location": "Birkenfelder Straße, Birkenfelder Str., 37318 Thalwenden, Deutschland",
@@ -201,40 +202,41 @@
   {
     "id": "jk5esg80me7npt6rnaj3dmkkt6c7t0e43uiglrgr1thr14jofp6f19pjpq@google.com",
     "title": "Zeltlagernachtreffen",
-    "slug": "zeltlager-2022",
+    "slug": "sterntreffen-2022",
     "start": "2022-11-11T17:00:00.000Z",
     "end": "2022-11-13T14:00:00.000Z",
     "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
     "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
     "ageMin": 9,
-    "ageMax": 14,
-    "teaser": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
-    "description": "Herzliche Einladung zu Zeltlagernachtreffen der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "ageMax": 15,
+    "price": "30 € (inkl. Verpflegung, Unterkunft und Betreuung)",
+    "teaser": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...",
+    "description": "Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!",
     "highlights": [
-      "Zeltdorf im malerischen Wiesental",
-      "Nachtwache, Bundesfeuer & Fackelläufe",
-      "Großes Lagerspiel nach Motto-Storyline",
-      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+      "Großes Wiedersehen der Zeltgemeinschaft",
+      "Lager-Rückblick, Zeltlagerfotos & wilde Geschichten",
+      "Geländespiele & Mutproben rund um die Klause 2.0",
+      "100% handyfreie Zeit – echte Gemeinschaft"
     ],
     "packingList": [
-      "Warmer Schlafsack & dicke Isomatte / Luftbett",
-      "Wanderstiefel, feste Schuhe & Gummistiefel",
-      "Regenfeste Kleidung, warme Jacke & Badesachen",
-      "Essgeschirr, Becher & Besteck im Stoffbeutel",
-      "Taschenlampe / Kopflampe mit Ersatzbatterien",
-      "Krankenkassenkarte & Impfausweis"
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Kleidung für Abenteuer & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
     ],
-    "category": "camp",
+    "category": "weekend",
     "contact": {
-      "name": "Vinzenz Hupe & Kilian Schlosser",
-      "role": "Lagerleitung",
-      "email": "vinzenz.hupe@smj-wegweiser.de"
+      "name": "Jonathan Hunold",
+      "role": "Zeltlagerleitung",
+      "email": "zeltlager@smj-wegweiser.de",
+      "phone": "0179 6353443"
     }
   },
   {
     "id": "845o4m0qvog8dl8e5pd9qd0oc1gl8m3a00ve54ie3s76cu63d1j96hca1h@google.com",
     "title": "Actionwochenende",
-    "slug": "actionwochenende-2022",
+    "slug": "actionwochenende-2-2022",
     "start": "2022-12-02T17:00:00.000Z",
     "end": "2022-12-04T14:00:00.000Z",
     "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland",
@@ -267,7 +269,7 @@
   {
     "id": "vrpkdo4caq4b0oa4jpff7fhcllv65ghi9duga9lte8v2fqqcabcbkn1d9f@google.com",
     "title": "Zeltlager Thalwenden",
-    "slug": "zeltlager-2-2023",
+    "slug": "zeltlager-2023",
     "start": "2023-07-20T07:00:00.000Z",
     "end": "2023-07-30T07:00:00.000Z",
     "location": "Wiesental, Birkenfelder Str., 37318 Thalwenden, Deutschland",
@@ -317,7 +319,7 @@
   {
     "id": "2n7qh5te42git59jeu7ban7lm8@google.com",
     "title": "Sterntreffen (Zeltlagernachtreffen)",
-    "slug": "zeltlager-2023",
+    "slug": "sterntreffen-2023",
     "start": "2023-10-13T16:00:00.000Z",
     "end": "2023-10-15T12:30:00.000Z",
     "location": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",

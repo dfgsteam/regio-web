@@ -38,12 +38,14 @@ function loadJsonSafe(filePath, fallback = {}) {
 function normalizeEventSlug(title, year) {
   const normalizedTitle = title.trim().toLowerCase()
 
-  if (normalizedTitle.includes('zeltlager')) {
-    return `zeltlager-${year}`
+  // Sterntreffen & Zeltlagernachtreffen rule: always maps to sterntreffen-{year}
+  if (normalizedTitle.includes('sterntreffen') || normalizedTitle.includes('nachtreffen')) {
+    return `sterntreffen-${year}`
   }
 
-  if (normalizedTitle.includes('sterntreffen')) {
-    return `sterntreffen-${year}`
+  // Zeltlager rule (pure camp only):
+  if (normalizedTitle.includes('zeltlager')) {
+    return `zeltlager-${year}`
   }
 
   let cleaned = normalizedTitle
@@ -144,7 +146,7 @@ function transformVEvent(raw, defaults = {}, overrides = {}) {
   if (normalizedTitle.includes('actionwochenende') || normalizedTitle.includes('actionwoche')) {
     categoryKey = 'weekend'
     category = 'weekend'
-  } else if (normalizedTitle.includes('sterntreffen')) {
+  } else if (normalizedTitle.includes('sterntreffen') || normalizedTitle.includes('nachtreffen')) {
     categoryKey = 'sterntreffen'
     category = 'weekend'
   } else if (normalizedTitle.includes('zeltlager')) {
@@ -281,7 +283,10 @@ export function parseIcs(icsText, defaults = {}, overrides = {}) {
     }
   }
 
-  // Disambiguate duplicate slugs
+  // 1. Sort all events strictly by start date first
+  events.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+
+  // 2. Disambiguate duplicate slugs in strict chronological order
   const slugCounts = new Map()
   for (const ev of events) {
     const count = (slugCounts.get(ev.slug) || 0) + 1
@@ -293,19 +298,15 @@ export function parseIcs(icsText, defaults = {}, overrides = {}) {
     if (slugCounts.get(ev.slug) > 1) {
       const currentIdx = (seenSlugs.get(ev.slug) || 0) + 1
       seenSlugs.set(ev.slug, currentIdx)
-      if (currentIdx > 1) {
-        const yearMatch = ev.slug.match(/-(\d{4})$/)
-        if (yearMatch) {
-          const base = ev.slug.replace(/-(\d{4})$/, '')
-          ev.slug = `${base}-${currentIdx}-${yearMatch[1]}`
-        } else {
-          ev.slug = `${ev.slug}-${currentIdx}`
-        }
+      const yearMatch = ev.slug.match(/-(\d{4})$/)
+      if (yearMatch) {
+        const base = ev.slug.replace(/-(\d{4})$/, '')
+        ev.slug = `${base}-${currentIdx}-${yearMatch[1]}`
+      } else {
+        ev.slug = `${ev.slug}-${currentIdx}`
       }
     }
   }
-
-  events.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
 
   return events
 }
