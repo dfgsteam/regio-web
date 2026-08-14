@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-  <rect width="200" height="200" rx="32" fill="#111713"/>
-  <!-- SMJ Cross (Paper White) -->
-  <g fill="#F1EBDD" opacity="0.85">
+  <!-- 1. SMJ Cross (Navy Blue) -->
+  <g fill="#134675">
     <path d="M 74 54 A 48 48 0 0 1 126 54 L 120 64 A 36 36 0 0 0 80 64 Z" />
     <path d="M 146 74 A 48 48 0 0 1 146 126 L 136 120 A 36 36 0 0 0 136 80 Z" />
     <path d="M 126 146 A 48 48 0 0 1 74 146 L 80 136 A 36 36 0 0 0 120 136 Z" />
@@ -13,25 +12,26 @@
     <path d="M 188 88 L 188 112 L 164 112 L 164 106 L 130 106 L 130 94 L 164 94 L 164 88 Z" />
   </g>
 
-  <!-- Separation Stroke -->
-  <g stroke="#111713" stroke-width="4.5" stroke-linejoin="round">
+  <!-- 2. White Separation Stroke -->
+  <g stroke="#FFFFFF" stroke-width="4.5" stroke-linejoin="round">
     <path d="M 100 16 L 82 48 L 88 48 L 88 74 L 112 74 L 112 48 L 118 48 Z" fill="none" />
     <rect x="94" y="126" width="12" height="66" fill="none" />
     <path d="M 8 100 L 46 72 Q 100 80 154 72 L 192 100 L 154 128 Q 100 120 46 128 Z" fill="none" />
   </g>
 
-  <!-- Foreground (Orange) -->
-  <g fill="#FF5A1F">
+  <!-- 3. Foreground Elements (Leaf Green) -->
+  <g fill="#60A238">
     <path d="M 100 16 L 82 48 L 88 48 L 88 74 L 112 74 L 112 48 L 118 48 Z" />
-    <path d="M 96 52 A 4 4 0 0 1 104 52 L 104 64 L 96 64 Z" fill="#111713" />
+    <path d="M 96 52 A 4 4 0 0 1 104 52 L 104 64 L 96 64 Z" fill="#FFFFFF" />
     <rect x="95" y="124" width="10" height="68" />
     <path d="M 8 100 L 46 72 Q 100 80 154 72 L 192 100 L 154 128 Q 100 120 46 128 Z" />
   </g>
 
+  <!-- 4. Text "WEGWEISER" -->
   <text
     x="100"
     y="106"
-    fill="#111713"
+    fill="#FFFFFF"
     font-family="system-ui, -apple-system, sans-serif"
     font-weight="800"
     font-size="19"
