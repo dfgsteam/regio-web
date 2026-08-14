@@ -15,9 +15,9 @@ const dateLabel = `${camp.data.date.start.toLocaleDateString('de-DE')} – ${cam
     <div class="absolute inset-0" style={`background: linear-gradient(to top, var(--camp-bg) 15%, transparent 60%)`} aria-hidden="true" />
   </div>
 
-  <div class="relative z-10 mx-auto w-full max-w-6xl px-5 pt-28 pb-20 sm:px-8">
-    <p class="eyebrow mb-5">Zeltlager {year}</p>
-    <h1 class="display text-[clamp(3.2rem,11vw,9rem)] leading-none camp-fg">
+  <div class="relative z-10 mx-auto w-full max-w-6xl px-5 pt-32 pb-24 sm:px-8">
+    <p class="eyebrow mb-5">Zeltlager {year} · Das große Abenteuer</p>
+    <h1 class="display text-[clamp(3rem,9.5vw,7.8rem)] leading-[1.02] camp-fg">
       {motto}
     </h1>
     <p class="mt-4 font-display text-2xl uppercase tracking-wide camp-accent sm:text-3xl">{title}</p>
@@ -25,11 +25,15 @@ const dateLabel = `${camp.data.date.start.toLocaleDateString('de-DE')} – ${cam
     <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-3 font-mono text-[0.7rem] uppercase tracking-[0.2em]">
       <div class="flex items-center gap-3">
         <dt class="opacity-60">Wann</dt>
-        <dd class="camp-fg">{dateLabel}</dd>
+        <dd class="camp-fg font-bold">{dateLabel}</dd>
       </div>
       <div class="flex items-center gap-3">
         <dt class="opacity-60">Wo</dt>
-        <dd class="camp-fg">{location.name}</dd>
+        <dd class="camp-fg font-bold">{location.name}</dd>
+      </div>
+      <div class="flex items-center gap-3">
+        <dt class="opacity-60">Alter</dt>
+        <dd class="camp-fg font-bold">{camp.data.age.min}–{camp.data.age.max} Jahre</dd>
       </div>
     </dl>
 
@@ -38,5 +42,10 @@ const dateLabel = `${camp.data.date.start.toLocaleDateString('de-DE')} – ${cam
         <Coordinates value={location.coordinates} />
       </div>
     )}
+  </div>
+
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none" aria-hidden="true">
+    <span class="font-mono text-[0.6rem] uppercase tracking-[0.3em] camp-fg/60">Chronik scrollen</span>
+    <span class="mt-1 block font-display text-lg camp-accent">↓</span>
   </div>
 </section>

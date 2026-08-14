@@ -1,0 +1,105 @@
+---
+import Container from '../common/Container.astro'
+
+const waypoints = [
+  { name: 'Basislager Wiesenthal', coords: 'N 51° 22\' 44"', x: 130, y: 310, note: 'Zeltdorf & Feuerstelle' },
+  { name: 'Schattenforst', coords: 'N 51° 23\' 50"', x: 320, y: 220, note: 'Geländespiel-Areal' },
+  { name: 'Glutschlucht', coords: 'N 51° 25\' 10"', x: 520, y: 280, note: 'Späherposten' },
+  { name: 'Hohe Wacht', coords: 'N 51° 26\' 15"', x: 680, y: 130, note: 'Nachtwache' },
+  { name: 'Das Bundesfeuer', coords: 'N 51° 27\' 00"', x: 800, y: 200, note: 'Abschlusskreis' },
+]
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <Container>
+    <p class="eyebrow mb-4">Das Gelände</p>
+    <h2 class="display display-md camp-fg mb-10">Die Karte des Wiesenthals.</h2>
+
+    <div class="relative overflow-hidden border-2 camp-border bg-forest-950/80 p-6 sm:p-10 shadow-2xl">
+      <svg viewBox="0 0 920 440" class="h-auto w-full" role="img" aria-label="Karte des Zeltlagergeländes und der Stationen">
+        <!-- Topografische Höhenlinien -->
+        <g fill="none" stroke="var(--camp-fg)" stroke-opacity="0.07" stroke-width="1.5">
+          <ellipse cx="460" cy="220" rx="90" ry="60" />
+          <ellipse cx="460" cy="220" rx="190" ry="120" />
+          <ellipse cx="460" cy="220" rx="310" ry="190" />
+          <ellipse cx="460" cy="220" rx="430" ry="260" />
+          <ellipse cx="250" cy="140" rx="140" ry="90" />
+          <ellipse cx="700" cy="300" rx="170" ry="100" />
+        </g>
+
+        <!-- Pfad & Verbindungslinien -->
+        <path
+          d="M130 310 Q 230 270 320 220 T 520 280 T 680 130 T 800 200"
+          fill="none"
+          stroke="var(--camp-accent)"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-dasharray="4 8"
+        />
+
+        <!-- Waypoints & Markierungen -->
+        {
+          waypoints.map((point, index) => (
+            <g>
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r="9"
+                fill="var(--camp-bg)"
+                stroke="var(--camp-accent)"
+                stroke-width="3"
+              />
+              <circle cx={point.x} cy={point.y} r="3" fill="var(--camp-accent)" />
+
+              <text
+                x={point.x + (point.x > 700 ? -16 : 16)}
+                y={point.y - 12}
+                text-anchor={point.x > 700 ? 'end' : 'start'}
+                font-family="'Anton', sans-serif"
+                font-size="16"
+                fill="var(--camp-fg)"
+                letter-spacing="1"
+              >
+                0{index + 1} {point.name}
+              </text>
+              <text
+                x={point.x + (point.x > 700 ? -16 : 16)}
+                y={point.y + 6}
+                text-anchor={point.x > 700 ? 'end' : 'start'}
+                font-family="'Space Mono', monospace"
+                font-size="10.5"
+                fill="var(--camp-accent)"
+                letter-spacing="1.5"
+              >
+                {point.coords} · {point.note}
+              </text>
+            </g>
+          ))
+        }
+
+        <!-- Kompassrose -->
+        <g transform="translate(830, 70)">
+          <circle r="30" fill="none" stroke="var(--camp-fg)" stroke-opacity="0.2" stroke-width="1.5" />
+          <path d="M0 -22 L 6 0 L 0 22 L -6 0 Z" fill="var(--camp-accent)" />
+          <path d="M-22 0 L 0 -6 L 22 0 L 0 6 Z" fill="var(--camp-fg)" opacity="0.5" />
+          <text y="-36" text-anchor="middle" font-family="'Space Mono', monospace" font-size="12" fill="var(--camp-fg)" letter-spacing="2">
+            N
+          </text>
+        </g>
+
+        <!-- Kartenmassstab -->
+        <g font-family="'Space Mono', monospace" font-size="10" fill="var(--camp-fg)" opacity="0.6">
+          <line x1="60" y1="400" x2="160" y2="400" stroke="var(--camp-fg)" stroke-width="1.5" />
+          <line x1="60" y1="394" x2="60" y2="406" stroke="var(--camp-fg)" stroke-width="1.5" />
+          <line x1="160" y1="394" x2="160" y2="406" stroke="var(--camp-fg)" stroke-width="1.5" />
+          <text x="60" y="418">0 KM</text>
+          <text x="135" y="418">5 KM</text>
+        </g>
+      </svg>
+
+      <p class="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.26em] camp-fg/60">
+        Feldnotiz: Das Gelände wird vor Ort erkundet. Orientierung mit Kompass, Karte und Sternenhimmel.
+      </p>
+    </div>
+  </Container>
+</section>

@@ -1,60 +1,76 @@
 ---
 year: 2026
 title: Zeltlager 2026
-motto: Piraten
-active: false
+motto: Wegweiser des Schattens
+active: true
 date:
-  start: 2026-07-10
-  end: 2026-07-19
+  start: 2026-07-08
+  end: 2026-07-17
 age:
   min: 9
   max: 14
 location:
   name: Wiesenthal bei Thalwenden
+  coordinates: N 51° 22' 44" / E 10° 08' 17"
 theme:
-  id: pirate
+  id: shadow
   colors:
-    background: '#0E1A24'
+    background: '#090D10'
     foreground: '#F1EBDD'
-    accent: '#C97B3D'
+    accent: '#FF7A1A'
   assets:
     hero: /placeholders/camp-hero.svg
+    texture: /placeholders/wide.svg
 registration:
-  enabled: false
+  enabled: true
+  url: https://smj-wegweiser.de/anmeldung-zeltlager-2026
+  deadline: 2026-06-15
 images:
   - src: /placeholders/reel.svg
-    alt: Platzhalterbild – Piratenschiff-Konstruktion
+    alt: Platzhalterbild – Lagerfeuer in der Dämmerung
     ratio: 5:3
   - src: /placeholders/story.svg
-    alt: Platzhalterbild – Flagge hissen
+    alt: Platzhalterbild – Fackelzug durch den Wald
     ratio: 4:5
+  - src: /placeholders/wide.svg
+    alt: Platzhalterbild – Morgennebel über dem Wiesenthal
+    ratio: 16:10
 story: >-
-  Zehn Tage auf einer Insel, die es nicht gibt. Die Flotte aus selbst
-  gebauten Flößen musste halten. Die Flagge wurde erobert und zurückerobert.
-  Und am letzten Abend gab es einen Schatz – der, wie sich herausstellte,
-  die ganze Zeit die Gruppe selbst war. Manchmal dauert es zehn Tage, bis
-  man das versteht.
+  In den Tiefen des Wiesenthals senkt sich der Schatten über die alten Pfade.
+  Gerüchte sprechen von einem verlorenen Bündnis, von Prüfungen in der Finsternis
+  und einem Geheimnis, das nur die entschlossensten Späher lüften können.
+  Zehn Tage ohne Strom, ohne Alltag, nur das Licht der Fackeln und der
+  Zusammenhalt der Gruppe. Wenn die Nacht anbricht, trennt sich der Schein
+  vom Sein: Wer wird zum Wegweiser des Schattens?
 faq:
-  - question: War das Lager nur für "Piraten-Fans"?
-    answer: Nein. Das Thema ist Einstieg, nicht Bedingung. Wer kein Piratenlied kennt, lernt es in den ersten Stunden – und sei es einstimmig falsch.
+  - question: Was bedeutet das Motto "Wegweiser des Schattens"?
+    answer: Jedes Jahr hat das Zeltlager eine packende Rahmenhandlung. 2026 dreht sich alles um Späher, Nachtmissionen, Teamgeist und die Kunst, auch in der Dunkelheit Orientierung zu behalten. Das Thema zieht sich durch Geländespiele, Theater und Bauprojekte.
+  - question: Finden Aktionen nur nachts statt?
+    answer: Nein. Der Tag ist vollgepackt mit Bauprojekten, Turnieren, Geländespielen, Workshops und Baden im Fluss. Nachts gibt es spannende Nachtwachen, Lagerfeuerrunden und ausgewählte Nachtgeländespiele – altersgerecht und sicher begleitet.
+  - question: Brauchen die Teilnehmer besondere Ausrüstung?
+    answer: Eine gute Taschen- oder Stirnlampe (am besten mit Rotlicht), robuste Wanderschuhe, wetterfeste Kleidung und Schlafsack/Isomatte. Eine genaue Packliste gibt es rechtzeitig vor dem Lager.
+  - question: Wie läuft die Betreuung ab?
+    answer: Unsere Gruppenleiter sind erfahrene, geschulte Gruppenleiter aus der SMJ. In kleinen Zeltgruppen (6–8 Jungs) ist immer ein fester Ansprechpartner da. Im Hintergrund unterstützen Küchenteam, Sanitäter und erfahrene Lagerleiter.
+  - question: Kann ich mein Handy mitnehmen?
+    answer: Handys bleiben während des Lagers in der Verwahrung der Lagerleitung. Wir wollen zehn Tage echten Ausstieg aus dem digitalen Alltag – für Notfälle sind die Leiter jederzeit für Eltern erreichbar.
 ---
 
 import CampHero from '../../components/camp/CampHero.astro'
 import CampFacts from '../../components/camp/CampFacts.astro'
-import CampStory from '../../components/camp/CampStory.astro'
+import ShadowStory from '../../components/camp/ShadowStory.astro'
+import ShadowMap from '../../components/camp/ShadowMap.astro'
 import CampGallery from '../../components/camp/CampGallery.astro'
 import CampParents from '../../components/camp/CampParents.astro'
 import CampFaq from '../../components/camp/CampFaq.astro'
 import CampRegistration from '../../components/camp/CampRegistration.astro'
-import PirateMap from '../../components/camp/PirateMap.astro'
 
 <CampHero />
 
 <CampFacts />
 
-<PirateMap />
+<ShadowStory />
 
-<CampStory />
+<ShadowMap />
 
 <CampGallery />
 

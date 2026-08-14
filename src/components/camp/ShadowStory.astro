@@ -1,0 +1,205 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+
+const chapters = [
+  {
+    number: '01',
+    day: 'TAG 01–03',
+    title: 'Der Einbruch der Dunkelheit',
+    tagline: 'Das Wiesenthal schließt die Tore zur Außenwelt.',
+    body: 'Wenn der Nebel über die Wiesen von Thalwenden kriecht, beginnt die Verwandlung. Kein Strom, kein Netz, kein Alltag. Mit Axt, Spaten und Zeltbahnen errichten wir unser Basislager. Doch in den Schatten des Waldes warten die ersten Prüfungen: Wer behält im Dunkeln die Ruhe?',
+    quote: 'Die Taschenlampen bleiben aus. Wer die Dunkelheit fürchtet, lernt hier, ihr ins Auge zu sehen.',
+    meta: 'FIELD NOTE · 22:15 UHR · WALDRAND',
+    visual: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Lagerfeuer in der Dämmerung',
+  },
+  {
+    number: '02',
+    day: 'TAG 04–06',
+    title: 'Das Labyrinth der Späher',
+    tagline: 'Nachtgeländespiel, Tarnung und Geheimpfade.',
+    body: 'In den Schluchten und Tälern liegt das Geheimnis der Schattenwacht. In kleinen Sippen schleichen wir durchs Unterholz, sichern Wachposten und lösen Rätsel aus vergangenen Zeiten. Hier zählt kein lautes Wort – nur Orientierungssinn, Vertrauen und das Zeichen des Kompasses.',
+    quote: 'Kein Laut im Gehölz. Zehn Jungs, ein Ziel: die Flagge vor dem ersten Morgengrauen.',
+    meta: 'FIELD NOTE · 02:40 UHR · SCHATTENFORST',
+    visual: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Nachtgeländespiel im Wald',
+  },
+  {
+    number: '03',
+    day: 'TAG 07–08',
+    title: 'Die Glut in der Tiefe',
+    tagline: 'Feuer machen bei Wind und Regen. Niemand gibt auf.',
+    body: 'Wenn der Regen an die Zeltwände trommelt und der Wind auffrischt, zeigt sich, was echte Gemeinschaft bedeutet. Das Wachfeuer in der Mitte des Lagers darf niemals erlöschen. Gemeinsam schlagen wir trockenes Holz, kochen über offener Flamme und wärmen uns an Liedern und Geschichten.',
+    quote: 'Holz spalten im Matsch. Wenn alle anpacken, brennt die Glut heißer als der Sturm.',
+    meta: 'FIELD NOTE · 19:30 UHR · FEUERKREIS',
+    visual: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Glut und Funkenflug am Feuer',
+  },
+  {
+    number: '04',
+    day: 'TAG 09–10',
+    title: 'Das Siegel des Lichts',
+    tagline: 'Der Kreis schließt sich. Aus Fremden wurden Brüder.',
+    body: 'Am letzten Abend lodert das große Bundesfeuer bis in die Sternennacht. Der Schatten ist gewichen. Jeder Teilnehmer empfängt das Zeichen der Wegweiser – als Erinnerung daran, dass Mut und Verantwortung nicht im Scheinwerferlicht wachsen, sondern wenn es darauf ankommt.',
+    quote: 'Zehn Tage, die anders sind als alles davor. Du gehst als anderer Mensch nach Hause.',
+    meta: 'FIELD NOTE · 23:55 UHR · BUNDESFEUER',
+    visual: '/placeholders/wide.svg',
+    alt: 'Platzhalterbild – Großer Fackelkreis in der Nacht',
+  },
+]
+---
+
+<!-- Mobile Narrative Flow -->
+<section id="shadow-story-mobile" class="camp-bg relative py-20 lg:hidden overflow-hidden">
+  <div class="texture-topo absolute inset-0 opacity-40 pointer-events-none" aria-hidden="true" />
+  
+  <Container class="relative">
+    <div class="mb-12">
+      <Eyebrow label="Die Kampagne · Wegweiser des Schattens" />
+      <h2 class="display text-3xl sm:text-4xl mt-3 camp-fg">
+        Die Chronik der <span class="camp-accent">zehn Nächte.</span>
+      </h2>
+      <p class="mt-4 text-sm leading-relaxed camp-fg/75 max-w-lg">
+        Das Zeltlager 2026 ist kein gewöhnlicher Zelturlaub. Es ist eine fortlaufende Geschichte, in der jeder Teilnehmer zur Hauptfigur wird.
+      </p>
+    </div>
+
+    <div class="space-y-12">
+      {
+        chapters.map((chapter) => (
+          <article class="story-mobile-card border-2 camp-border bg-forest-950/70 p-6 sm:p-8 relative overflow-hidden backdrop-blur-sm">
+            <div class="flex items-baseline justify-between border-b camp-border pb-3 mb-5">
+              <span class="font-mono text-xs font-bold uppercase tracking-[0.25em] camp-accent">
+                Kapitel {chapter.number}
+              </span>
+              <span class="mono-label text-[0.65rem] camp-fg/60">
+                {chapter.day}
+              </span>
+            </div>
+
+            <h3 class="display text-2xl sm:text-3xl camp-fg">
+              {chapter.title}
+            </h3>
+            
+            <p class="font-mono text-xs uppercase tracking-[0.16em] camp-accent mt-2">
+              {chapter.tagline}
+            </p>
+
+            <p class="mt-4 text-sm leading-relaxed camp-fg/80">
+              {chapter.body}
+            </p>
+
+            <div class="mt-6 border-l-2 border-[color:var(--camp-accent)] pl-4 py-1">
+              <p class="text-xs italic leading-relaxed camp-fg/90">
+                „{chapter.quote}“
+              </p>
+              <p class="mono-label text-[0.6rem] mt-2 camp-accent">
+                {chapter.meta}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<!-- Desktop Pinned Scroll Story -->
+<section id="shadow-story-desktop" class="camp-bg relative hidden lg:block overflow-hidden">
+  <div class="texture-topo absolute inset-0 opacity-30 pointer-events-none" aria-hidden="true" />
+
+  <div class="story-sticky flex h-svh items-center overflow-hidden">
+    <Container class="grid w-full grid-cols-[80px_1.1fr_1fr] items-center gap-12 xl:gap-16">
+      
+      <!-- Progress Bar & Indicator -->
+      <div class="flex flex-col items-center justify-between h-[55vh] py-6 border-r camp-border">
+        <span class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.25em] camp-accent -rotate-90 origin-center whitespace-nowrap">
+          CHRONIK
+        </span>
+        <div class="relative w-1 flex-1 my-6 bg-paper/15 rounded-full overflow-hidden">
+          <div class="story-progress-bar absolute inset-x-0 top-0 w-full h-full bg-[color:var(--camp-accent)] origin-top scale-y-0" />
+        </div>
+        <span class="font-mono text-xs font-bold camp-fg/70">
+          2026
+        </span>
+      </div>
+
+      <!-- Chapter Text Stack -->
+      <div class="story-stack relative h-[65vh] min-h-[440px]">
+        {
+          chapters.map((chapter, index) => (
+            <article
+              class="story-chapter absolute inset-0 flex flex-col justify-center pr-4"
+              style={index === 0 ? '' : 'opacity: 0; pointer-events: none; transform: translateY(40px);'}
+            >
+              <div class="flex items-center gap-4 mb-4">
+                <span class="font-mono text-xs font-bold uppercase tracking-[0.28em] camp-accent">
+                  Kapitel {chapter.number}
+                </span>
+                <span class="h-px w-8 bg-[color:var(--camp-accent)]/50" />
+                <span class="mono-label text-xs">
+                  {chapter.day}
+                </span>
+              </div>
+
+              <h3 class="display text-3xl sm:text-4xl xl:text-5xl camp-fg leading-tight">
+                {chapter.title}
+              </h3>
+
+              <p class="font-mono text-xs uppercase tracking-[0.2em] camp-accent mt-3">
+                {chapter.tagline}
+              </p>
+
+              <p class="mt-6 text-base leading-relaxed camp-fg/80 max-w-xl">
+                {chapter.body}
+              </p>
+
+              <div class="mt-8 border-l-2 border-[color:var(--camp-accent)] pl-5 py-1">
+                <p class="text-sm italic leading-relaxed camp-fg/90">
+                  „{chapter.quote}“
+                </p>
+                <p class="mono-label text-[0.65rem] mt-2 camp-accent">
+                  {chapter.meta}
+                </p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <!-- Chapter Visual Stack -->
+      <div class="story-visuals relative h-[65vh] min-h-[440px]">
+        {
+          chapters.map((chapter, index) => (
+            <div
+              class="story-visual absolute inset-0 flex items-center justify-center"
+              style={index === 0 ? '' : 'opacity: 0; pointer-events: none;'}
+            >
+              <div class="relative w-full h-full max-h-[520px] overflow-hidden border-2 camp-border shadow-2xl bg-forest-950/80">
+                <img
+                  src={chapter.visual}
+                  alt={chapter.alt}
+                  class="h-full w-full object-cover"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[color:var(--camp-bg)]/80 via-transparent to-transparent" />
+                
+                <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+                  <span class="bg-[color:var(--camp-bg)]/90 px-3 py-1.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] camp-fg border camp-border">
+                    {chapter.day} · {chapter.title}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+    </Container>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/animations/camp-story'
+</script>
