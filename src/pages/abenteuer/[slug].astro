@@ -20,15 +20,27 @@ import {
 } from '../../lib/events'
 import type { Event } from '../../lib/events'
 
+import { getCollection } from 'astro:content'
+
 export async function getStaticPaths() {
-  const events = await eventProvider.getEvents()
-  // Filter out Zeltlager events as they have dedicated campaign routes under /abenteuer/zeltlager-[year]/
-  const nonCampEvents = events.filter((event) => event.category !== 'camp' && event.slug !== 'zeltlager')
+  const [events, camps] = await Promise.all([
+    eventProvider.getEvents(),
+    getCollection('camps'),
+  ])
+  const campYears = new Set(camps.map((c) => c.data.year))
+
+  // Only filter out camps that already have a dedicated MDX page in camps collection (e.g. 2026, 2027)
+  const nonDedicatedCampEvents = events.filter((event) => {
+    const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('zeltlager')
+    if (!isCamp) return true
+    const eventYear = event.start.getFullYear()
+    return !campYears.has(eventYear)
+  })
 
   const paths: { params: { slug: string }; props: { event: Event } }[] = []
   const seenSlugs = new Set<string>()
 
-  for (const event of nonCampEvents) {
+  for (const event of nonDedicatedCampEvents) {
     const variants = getSlugVariants(event.slug)
     for (const slug of variants) {
       if (!seenSlugs.has(slug)) {
