@@ -1,6 +1,5 @@
-import { MockEventProvider } from './mock'
+import { ICalEventProvider } from './ical'
 import type { EventProvider } from './types'
 
-// The UI never knows where event data comes from.
-// Swap this for a CiviCrmEventProvider later without touching components.
-export const eventProvider: EventProvider = new MockEventProvider()
+// Fetches live from Google Calendar iCal feed with fallback to MockEventProvider
+export const eventProvider: EventProvider = new ICalEventProvider()
