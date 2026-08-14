@@ -34,6 +34,7 @@ const camps = defineCollection({
       min: z.number().int(),
       max: z.number().int(),
     }),
+    price: z.string().default('189 €'),
     location: z.object({
       name: z.string(),
       coordinates: z.string().optional(),

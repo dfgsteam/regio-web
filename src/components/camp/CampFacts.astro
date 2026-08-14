@@ -12,7 +12,7 @@ const facts = [
   { label: 'Datum', value: `${date.start.toLocaleDateString('de-DE')} – ${date.end.toLocaleDateString('de-DE')}` },
   { label: 'Ort', value: location.name },
   { label: 'Alter', value: `${age.min}–${age.max} Jahre` },
-  { label: 'Zielgruppe', value: 'Jungs, die Abenteuer wollen' },
+  { label: 'Teilnahmebeitrag', value: camp.data.price || '189 €' },
   { label: 'Format', value: 'Zeltlager · Lagerfeuer · Geländespiele' },
 ]
 ---
