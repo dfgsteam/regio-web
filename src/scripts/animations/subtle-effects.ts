@@ -16,16 +16,16 @@ export function initSubtleEffects(): void {
       const rawRotate = el.dataset.rotate || el.style.transform || '-2deg'
       const targetRotate = parseFloat(rawRotate.replace(/[^0-9.-]/g, '')) || (index % 2 === 0 ? -2.5 : 2.5)
 
-      // Reset inline transform to avoid GSAP style collision
+      // Reset inline transform to avoid style conflict
       el.style.transform = ''
 
       gsap.fromTo(
         el,
         {
-          scale: 1.5,
+          scale: 1.28,
           opacity: 0.2,
-          rotate: targetRotate + (index % 2 === 0 ? -14 : 14),
-          y: -24,
+          rotate: targetRotate + (index % 2 === 0 ? -12 : 12),
+          y: -28,
         },
         {
           scale: 1,
@@ -35,7 +35,7 @@ export function initSubtleEffects(): void {
           ease: 'power2.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 92%',
+            start: 'top 95%',
             end: 'top 65%',
             scrub: 0.5,
           },
@@ -91,21 +91,21 @@ export function initSubtleEffects(): void {
       )
     })
 
-    // 4. Image Reveal Unclipping and Parallax
+    // 4. Clean Subtle Image Reveal Unclipping
     const revealImages = document.querySelectorAll<HTMLElement>('.reveal-image, figure.reveal img')
     revealImages.forEach((img) => {
       gsap.fromTo(
         img,
-        { scale: 1.1, filter: 'contrast(1.15) brightness(0.8)' },
+        { scale: 1.06, filter: 'contrast(1.08) brightness(0.9)' },
         {
           scale: 1,
           filter: 'contrast(1) brightness(1)',
+          duration: 0.8,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: img,
-            start: 'top 92%',
-            end: 'top 55%',
-            scrub: 0.6,
+            start: 'top 88%',
+            toggleActions: 'play reverse play reverse',
           },
         }
       )

@@ -16,38 +16,28 @@ gsap.registerPlugin(ScrollTrigger)
       cards.forEach((card, index) => {
         if (index === 0) return
         const prev = cards[index - 1]
-
         gsap.fromTo(
           card,
-          { y: 70, opacity: 0.25, scale: 0.96 },
+          { y: 60, opacity: 0, scale: 0.98 },
           {
             y: 0,
             opacity: 1,
             scale: 1,
+            duration: 0.6,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: card,
-              start: 'top 92%',
-              end: 'top 55%',
-              scrub: 0.6,
+              start: 'top 85%',
+              toggleActions: 'play reverse play reverse',
+              onEnter: () => {
+                if (prev) prev.style.transform = 'translateY(-12px) scale(0.985)'
+              },
+              onLeaveBack: () => {
+                if (prev) prev.style.transform = 'translateY(0px) scale(1)'
+              },
             },
           },
         )
-
-        if (prev) {
-          gsap.to(prev, {
-            y: -18,
-            scale: 0.98,
-            opacity: 0.8,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              end: 'top 50%',
-              scrub: 0.6,
-            },
-          })
-        }
       })
     })
   })
