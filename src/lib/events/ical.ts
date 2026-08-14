@@ -121,10 +121,11 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   let contactRole = 'Lager- & Eventleitung'
   let contactEmail = 'kontakt@smj-wegweiser.de'
 
-  if (normalizedTitle.includes('actionwochenende')) {
+  if (normalizedTitle.includes('actionwochenende') || normalizedTitle.includes('actionwoche')) {
     category = 'weekend'
     ageMin = 9
     ageMax = 15
+    price = '35 € (inkl. Vollverpflegung, Übernachtung & Material)'
     location = rawLocation || 'Klause 2.0, Heiligenstadt'
     address = 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt'
     contactName = 'Jonathan & Vinzenz'
@@ -147,6 +148,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
     category = 'special'
     ageMin = 15
     ageMax = 25
+    price = '35 € (inkl. Vollverpflegung & Programm)'
     contactName = 'Jonathan Hunold'
     contactRole = '2. Diözesanleiter'
     contactEmail = 'jonathan.hunold@smj-wegweiser.de'

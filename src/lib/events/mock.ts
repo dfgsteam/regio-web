@@ -11,6 +11,7 @@ const mockEvents: Event[] = [
     address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
     ageMin: 9,
     ageMax: 15,
+    price: '35 € (inkl. Vollverpflegung, Übernachtung & Material)',
     teaser: 'Raus aus dem Alltag, rein ins Erlebnis: Ein winterliches Wochenende voller Action, Spaß und echter Gemeinschaft.',
     description:
       'Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft in der Klause 2.0 in Heiligenstadt!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart ins neue Jahr.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht’s noch mehr Spaß!',
@@ -46,6 +47,7 @@ const mockEvents: Event[] = [
     address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
     ageMin: 9,
     ageMax: 15,
+    price: '35 € (inkl. Vollverpflegung, Übernachtung & Material)',
     teaser: 'Frühling, Natur & Teamgeist: Das zweite große Actionwochenende des Jahres.',
     description:
       'Draußen im Wald die ersten warmen Tage nutzen: Geländespiele, Kochen über offenem Feuer und Vorbereitung auf das große Sommerzeltlager!\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht’s mehr Spaß!',
@@ -81,6 +83,7 @@ const mockEvents: Event[] = [
     address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
     ageMin: 9,
     ageMax: 15,
+    price: '35 € (inkl. Vollverpflegung, Übernachtung & Material)',
     teaser: 'Der Jahresabschluss: Kaminabende, Nachtgeländespiel und Gemeinschaft in der Klause 2.0.',
     description:
       'Das dritte Actionwochenende schließt das Jahr ab: Ein starkes Wochenende in der Klause 2.0 mit Nachtmissionen im Wald, gemütlichen Abenden am Kamin und tollem Essen.',
@@ -116,6 +119,7 @@ const mockEvents: Event[] = [
     address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
     ageMin: 15,
     ageMax: 25,
+    price: '35 € (inkl. Vollverpflegung & Programm)',
     teaser: 'Das Wochenende für alle ab 15 Jahren, die aus dem Zeltlager-Alter raus sind und Verantwortung übernehmen.',
     description:
       'Das Sterntreffen bringt alle Jugendlichen und jungen Erwachsenen zusammen, die der SMJ Regio Wegweiser verbunden sind: Ehemalige Zeltlager-Teilnehmer, Gruppenleiter und Interessierte. Ein Wochenende für tiefgehende Werkstattrunden, Austausch auf Augenhöhe, Visionen für die Region, Kaminabende und gelebten Glauben.',
