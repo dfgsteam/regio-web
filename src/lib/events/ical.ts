@@ -140,7 +140,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
       '100% handyfreie Zeit – echte Gemeinschaft',
     ]
     packingList = [
-      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
+      'Persohnliche Sachen, Hausschuhe & Kulturbeutel',
       'Krankenkassenkarte & Impfausweis',
       'Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)',
       'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
@@ -237,20 +237,27 @@ function decodeIcsText(str: string): string {
 }
 
 /**
- * Strips raw HTML and removes redundant "Anmeldung unter: https://..." links
+ * Strips raw HTML and removes redundant "Anmeldung unter: https://..." links and "Anmelden unter"
  * because the UI already has a dedicated primary registration button.
  */
 function sanitizeEventDescription(raw: string): string {
   if (!raw) return ''
   return raw
-    // Remove "Anmeldung/Anmelden unter: https://..." patterns
-    .replace(/anmeld(ung|en)\s+(unter|hier)?[:\s]+https?:\/\/[^\s"'<>]+/gi, '')
+    // Replace non-breaking spaces and HTML entities
+    .replace(/&nbsp;|\u00a0/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    // Remove "Anmeldung/Anmelden unter/hier/auf/per" with or without URL
+    .replace(/anmeld(ung|en)\s+(unter|hier|auf|per)?[:\s]*https?:\/\/[^\s"'<>]+/gi, '')
+    .replace(/anmeld(ung|en)\s+(unter|hier|auf|per)[:\s]*/gi, '')
+    .replace(/anmeld(ung|en)[:\s]*/gi, '')
     .replace(/hier\s+gibt'?s\s+infos\s+oder\s+gleich\s+jetzt\s+anmelden!?/gi, '')
     .replace(/jetzt\s+(gleich\s+)?anmelden!?/gi, '')
-    // Remove standalone URLs
+    // Remove any remaining standalone URLs
     .replace(/https?:\/\/[^\s"'<>]+/gi, '')
     // Remove HTML tags
     .replace(/<[^>]*>?/gm, ' ')
+    // Clean remaining trailing colons or punctuation leftovers
+    .replace(/[:\-–—\s]+$/g, '')
     // Normalize spaces and line breaks
     .replace(/[ \t]+/g, ' ')
     .replace(/\n\s*\n+/g, '\n\n')
