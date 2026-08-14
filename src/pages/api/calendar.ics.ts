@@ -12,6 +12,7 @@ function formatIcsDate(date: Date): string {
 
 export const GET: APIRoute = async () => {
   const events = await eventProvider.getEvents()
+  const siteUrl = (process.env.SITE_URL || (import.meta.env.SITE_URL as string) || 'https://regio.hnld.de').replace(/\/$/, '')
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -35,8 +36,8 @@ export const GET: APIRoute = async () => {
     const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('zeltlager')
     const eventYear = event.start.getFullYear()
     const eventUrl = isCamp
-      ? `https://smj-wegweiser.de/abenteuer/zeltlager-${eventYear}/`
-      : `https://smj-wegweiser.de/abenteuer/${event.slug}/`
+      ? `${siteUrl}/abenteuer/zeltlager-${eventYear}/`
+      : `${siteUrl}/abenteuer/${event.slug}/`
 
     const rawDesc = (event.teaser || event.description || '').replace(/\n/g, '\\n')
     const description = rawDesc

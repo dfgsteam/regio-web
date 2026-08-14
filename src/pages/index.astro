@@ -18,7 +18,7 @@ const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'SMJ Regio Wegweiser',
-  url: 'https://smj-wegweiser.de',
+  url: Astro.site?.toString() || 'https://regio.hnld.de',
   description:
     'Jugendverband der Schönstatt-Mannesjugend in der Region Wegweiser. Zeltlager, Wochenenden und Gemeinschaft für Jungs von 9 bis 14 Jahren.',
 }

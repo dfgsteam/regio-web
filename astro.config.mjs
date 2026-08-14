@@ -4,8 +4,10 @@ import node from '@astrojs/node'
 import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
 
+const siteUrl = process.env.SITE_URL || 'https://regio.hnld.de'
+
 export default defineConfig({
-  site: 'https://smj-wegweiser.de',
+  site: siteUrl,
   adapter: node({ mode: 'standalone' }),
   integrations: [mdx(), sitemap()],
   redirects: {
