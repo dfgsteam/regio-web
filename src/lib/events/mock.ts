@@ -92,11 +92,11 @@ const mockEvents: Event[] = [
     },
   },
 
-  // 2026 Events
+  // 2026 Events (All with explicit -2026 in slug)
   {
-    id: 'actionwochenende-1',
+    id: 'actionwochenende-1-2026',
     title: 'Actionwochenende 1',
-    slug: 'actionwochenende-1',
+    slug: 'actionwochenende-1-2026',
     start: new Date('2026-01-30T16:00:00'),
     end: new Date('2026-02-01T15:00:00'),
     location: 'Klause 2.0, Heiligenstadt',
@@ -148,9 +148,9 @@ const mockEvents: Event[] = [
     },
   },
   {
-    id: 'actionwochenende-2',
+    id: 'actionwochenende-2-2026',
     title: 'Actionwochenende 2',
-    slug: 'actionwochenende-2',
+    slug: 'actionwochenende-2-2026',
     start: new Date('2026-05-08T16:00:00'),
     end: new Date('2026-05-10T13:00:00'),
     location: 'Klause 2.0, Heiligenstadt',
@@ -186,7 +186,7 @@ const mockEvents: Event[] = [
   {
     id: 'zeltlager-2026',
     title: 'Zeltlager 2026 – Wegweiser des Schattens',
-    slug: 'zeltlager',
+    slug: 'zeltlager-2026',
     start: new Date('2026-07-08T14:00:00'),
     end: new Date('2026-07-17T13:00:00'),
     location: 'Zeltplatz Wiesental, Thalwenden',
@@ -220,9 +220,9 @@ const mockEvents: Event[] = [
     },
   },
   {
-    id: 'sterntreffen',
-    title: 'Sterntreffen',
-    slug: 'sterntreffen',
+    id: 'sterntreffen-2026',
+    title: 'Sterntreffen 2026',
+    slug: 'sterntreffen-2026',
     start: new Date('2026-08-28T18:00:00'),
     end: new Date('2026-08-30T14:00:00'),
     location: 'Klause 2.0, Heiligenstadt',
@@ -257,9 +257,9 @@ const mockEvents: Event[] = [
     },
   },
   {
-    id: 'actionwochenende-3',
+    id: 'actionwochenende-3-2026',
     title: 'Actionwochenende 3',
-    slug: 'actionwochenende-3',
+    slug: 'actionwochenende-3-2026',
     start: new Date('2026-11-20T16:00:00'),
     end: new Date('2026-11-22T15:00:00'),
     location: 'Klause 2.0, Heiligenstadt',

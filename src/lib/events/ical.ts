@@ -186,11 +186,10 @@ function transformVEvent(raw: Record<string, string>): Event | null {
     .replace(/ä/g, 'ae')
     .replace(/ö/g, 'oe')
     .replace(/ü/g, 'ue')
-    .replace(/ß/g, 'ss')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-  const slug = `${cleanTitle}-${year}`
+  const slug = cleanTitle.endsWith(String(year)) ? cleanTitle : `${cleanTitle}-${year}`
   const id = raw['UID'] || slug
 
   // Build authentic description

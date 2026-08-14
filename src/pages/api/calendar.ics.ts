@@ -35,9 +35,13 @@ export const GET: APIRoute = async () => {
     // Determine proper URL for Zeltlager vs other events
     const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('zeltlager')
     const eventYear = event.start.getFullYear()
+    const slugWithYear = event.slug.endsWith(String(eventYear))
+      ? event.slug
+      : `${event.slug}-${eventYear}`
+
     const eventUrl = isCamp
       ? `${siteUrl}/abenteuer/zeltlager-${eventYear}/`
-      : `${siteUrl}/abenteuer/${event.slug}/`
+      : `${siteUrl}/abenteuer/${slugWithYear}/`
 
     const rawDesc = (event.teaser || event.description || '').replace(/\n/g, '\\n')
     const description = rawDesc
