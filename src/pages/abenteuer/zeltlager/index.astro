@@ -1,83 +1,47 @@
 ---
-import ContentLayout from '../../../layouts/ContentLayout.astro'
+import { render } from 'astro:content'
+import { getCurrentCamp, getAllCamps } from '../../../lib/camps'
+import CampLayout from '../../../layouts/CampLayout.astro'
 import Container from '../../../components/common/Container.astro'
-import Eyebrow from '../../../components/common/Eyebrow.astro'
-import Button from '../../../components/common/Button.astro'
-import { getAllCamps, getCurrentCamp } from '../../../lib/camps'
 
-const [currentCamp, camps] = await Promise.all([getCurrentCamp(), getAllCamps()])
+const currentCamp = await getCurrentCamp()
+
+if (!currentCamp) {
+  return Astro.redirect('/abenteuer/')
+}
+
+const { Content } = await render(currentCamp)
+const year = currentCamp.data.year
+const otherCamps = (await getAllCamps()).filter((c) => c.data.year !== year)
+const prev = otherCamps.filter((c) => c.data.year < year).sort((a, b) => b.data.year - a.data.year)[0]
+const next = otherCamps.filter((c) => c.data.year > year).sort((a, b) => a.data.year - b.data.year)[0]
 ---
 
-<ContentLayout
-  title="Zeltlager – SMJ Regio Wegweiser"
-  description="Das Zeltlager der SMJ Regio Wegweiser: jedes Jahr ein neues Motto, jedes Jahr zehn Tage, die anders sind als alles davor."
->
-  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
-    <Container>
-      <Eyebrow label="Abenteuer · Zeltlager" muted />
-      <h1 class="display display-xl mt-6 text-forest-950">
-        Das große<br />
-        <span class="text-orange">Ding.</span>
-      </h1>
-    </Container>
-  </section>
+<CampLayout camp={currentCamp.data}>
+  <Content />
 
-  {currentCamp ? (
-    <section class="bg-forest-950 pb-20 pt-8">
-      <Container>
-        <div class="grid items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <p class="eyebrow mb-4">Zeltlager {currentCamp.data.year}</p>
-            <h2 class="display display-lg text-paper">{currentCamp.data.motto}</h2>
-            <p class="mt-6 max-w-xl leading-relaxed text-paper/75">{currentCamp.data.story}</p>
-            <div class="mt-10">
-              <Button href={`/abenteuer/zeltlager/${currentCamp.data.year}/`} variant="primary" size="lg">
-                Zum Zeltlager {currentCamp.data.year}
-              </Button>
-            </div>
-          </div>
-          <img
-            src={currentCamp.data.theme.assets.hero}
-            alt={`Zeltlager ${currentCamp.data.year} – ${currentCamp.data.motto}`}
-            class="aspect-[3/4] w-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      </Container>
-    </section>
-  ) : (
-    <section class="bg-forest-950 py-24">
-      <Container>
-        <p class="font-mono text-sm uppercase tracking-[0.18em] text-muted">
-          Das nächste Zeltlager wird gerade vorbereitet. Schau bald wieder vorbei.
-        </p>
+  {(prev || next || otherCamps.length > 0) && (
+    <section class="camp-bg border-t camp-border py-12">
+      <Container class="flex flex-wrap items-center justify-between gap-6">
+        {prev ? (
+          <a
+            href={`/abenteuer/zeltlager/${prev.data.year}/`}
+            class="group border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent"
+          >
+            ← Zeltlager {prev.data.year} · {prev.data.motto}
+          </a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a
+            href={`/abenteuer/zeltlager/${next.data.year}/`}
+            class="group border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent"
+          >
+            Zeltlager {next.data.year} · {next.data.motto} →
+          </a>
+        )}
       </Container>
     </section>
   )}
-
-  {camps.length > 1 && (
-    <section class="bg-forest-900 py-20">
-      <Container>
-        <Eyebrow label="Vergangene Lager" />
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {camps
-            .filter((camp) => camp.data.year !== currentCamp?.data.year)
-            .map((camp) => (
-              <a
-                href={`/abenteuer/zeltlager/${camp.data.year}/`}
-                class="group border border-paper/15 bg-forest-950 p-6 transition-colors hover:border-orange"
-              >
-                <p class="mono-label">Zeltlager {camp.data.year}</p>
-                <h3 class="display display-sm mt-3 text-paper transition-colors group-hover:text-orange">
-                  {camp.data.motto}
-                </h3>
-                <p class="mt-3 text-sm text-paper/60">
-                  {camp.data.date.start.toLocaleDateString('de-DE')} – {camp.data.date.end.toLocaleDateString('de-DE')} · {camp.data.location.name}
-                </p>
-              </a>
-            ))}
-        </div>
-      </Container>
-    </section>
-  )}
-</ContentLayout>
+</CampLayout>
