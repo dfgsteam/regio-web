@@ -1,0 +1,58 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+---
+
+<section class="camp-bg border-t camp-border py-20">
+  <Container>
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:items-center">
+      <div>
+        <Eyebrow label="Lagerplatz & Anfahrt" />
+        <h2 class="display display-md mt-4 camp-fg">
+          Das Wiesental<br />
+          <span class="camp-accent">bei Thalwenden.</span>
+        </h2>
+
+        <p class="mt-6 text-sm leading-relaxed camp-fg/80">
+          Unser traditioneller Zeltlagerplatz liegt idyllisch und abgelegen zwischen bewaldeten Hängen und Sandsteinfelsen im Wiesental bei Thalwenden (Gemeinde Uder im Eichsfeld).
+        </p>
+
+        <div class="mt-8 space-y-4 border-l-2 border-orange pl-5">
+          <div>
+            <p class="mono-label text-xs">Genaue Adresse für Anfahrt & Navi</p>
+            <p class="mt-1 font-display text-lg camp-fg">
+              Birkenfelder Str.<br />
+              37318 Uder (Ortsteil Thalwenden)
+            </p>
+          </div>
+          <div>
+            <p class="mono-label text-xs">Koordinaten</p>
+            <p class="mt-1 font-mono text-sm camp-fg/80">
+              N 51° 21' 34.2" · E 10° 02' 22.3"
+            </p>
+          </div>
+        </div>
+
+        <p class="mt-6 font-mono text-xs text-paper/60">
+          * Ausgeschilderte Zufahrt ab Ortseingang Thalwenden. Parkmöglichkeiten für Eltern bei Anreise und Abreise sind vor Ort eingerichtet.
+        </p>
+      </div>
+
+      <div class="relative overflow-hidden border-2 border-paper/20 bg-forest-900 shadow-2xl">
+        <div class="aspect-[4/3] w-full min-h-[350px]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            title="Lagerplatz Wiesental bei Thalwenden auf Google Maps"
+            class="h-full w-full grayscale contrast-125 hover:grayscale-0 transition-all duration-500"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
