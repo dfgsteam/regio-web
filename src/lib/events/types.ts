@@ -38,11 +38,16 @@ export interface EventProvider {
 
 export function getEventTemplateType(title: string, category?: string): EventTemplateType {
   const normalized = title.trim().toLowerCase()
-  if (normalized.startsWith('actionwochenende') || normalized.includes('actionwochenende') || category === 'weekend') {
-    return 'actionwochenende'
-  }
   if (normalized.startsWith('sterntreffen') || normalized.includes('sterntreffen')) {
     return 'sterntreffen'
+  }
+  if (
+    normalized.startsWith('actionwochenende') ||
+    normalized.includes('actionwochenende') ||
+    normalized.includes('actionwoche') ||
+    category === 'weekend'
+  ) {
+    return 'actionwochenende'
   }
   return 'blanko'
 }

@@ -122,6 +122,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   let contactName = 'SMJ Regio Wegweiser'
   let contactRole = 'Lager- & Eventleitung'
   let contactEmail = 'kontakt@smj-wegweiser.de'
+  let contactPhone: string | undefined
 
   if (normalizedTitle.includes('actionwochenende') || normalizedTitle.includes('actionwoche')) {
     category = 'weekend'
@@ -147,25 +148,28 @@ function transformVEvent(raw: Record<string, string>): Event | null {
       'Taschenlampe oder Kopflampe',
     ]
   } else if (normalizedTitle.includes('sterntreffen')) {
-    category = 'special'
-    ageMin = 15
-    ageMax = 25
-    price = '35 € (inkl. Vollverpflegung & Programm)'
+    category = 'weekend'
+    ageMin = 9
+    ageMax = 15
+    price = '30 € (inkl. Verpflegung, Unterkunft und Betreuung)'
+    location = rawLocation || 'Klause 2.0, Heiligenstadt'
+    address = 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt'
     contactName = 'Jonathan Hunold'
-    contactRole = '2. Diözesanleiter'
-    contactEmail = 'jonathan.hunold@smj-wegweiser.de'
+    contactRole = 'Zeltlagerleitung'
+    contactEmail = 'zeltlager@smj-wegweiser.de'
+    contactPhone = '0179 6353443'
     highlights = [
-      'Zukunftswerkstatt & Regionalkonferenz',
-      'Leitungs- & Gruppenleiter-Impulse',
-      'Lange Kaminabende & ehrlicher Austausch',
-      'Gottesdienst & Gemeinschaft',
+      'Großes Wiedersehen der Zeltgemeinschaft',
+      'Lager-Rückblick, Zeltlagerfotos & wilde Geschichten',
+      'Geländespiele & Mutproben rund um die Klause 2.0',
+      '100% handyfreie Zeit – echte Gemeinschaft',
     ]
     packingList = [
-      'Schlafsack & Hausschuhe',
-      'Kleidung für drinnen und draußen',
-      'Notizbuch / Schreibzeug',
-      'Musikinstrumente (falls vorhanden)',
-      'Krankenkassenkarte',
+      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
+      'Krankenkassenkarte & Impfausweis',
+      'Kleidung für Abenteuer & feste Schuhe (für draußen)',
+      'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
+      'Taschenlampe oder Kopflampe',
     ]
   } else if (normalizedTitle.includes('zeltlager')) {
     category = 'camp'
@@ -192,10 +196,10 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   // Build authentic description
   let description = cleanDesc
   if (!description || description.length < 15) {
-    if (category === 'weekend') {
+    if (normalizedTitle.includes('sterntreffen')) {
+      description = `Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wiedersehen der Zeltgemeinschaft in der Klause 2.0 in Heiligenstadt.\n\nGemeinsam lassen wir die Erlebnisse des Zeltlagers wieder aufleben, schauen die Zeltlagerfotos an, kochen zusammen und verbringen gemütliche Abende am Kamin und Lagerfeuer.`
+    } else if (category === 'weekend') {
       description = `Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!`
-    } else if (category === 'special') {
-      description = `Das Sterntreffen bringt alle Jugendlichen und jungen Erwachsenen ab 15 Jahren zusammen, die der SMJ Regio Wegweiser verbunden sind: Ehemalige Zeltlager-Teilnehmer, Gruppenleiter und Interessierte. Ein Wochenende für tiefgehende Werkstattrunden, Austausch auf Augenhöhe, Visionen für die Region, Kaminabende und gelebten Glauben.`
     } else {
       description = `Herzliche Einladung zu ${summary} der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.`
     }
@@ -224,6 +228,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
       name: contactName,
       role: contactRole,
       email: contactEmail,
+      phone: contactPhone,
     },
   }
 }

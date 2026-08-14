@@ -44,7 +44,7 @@ const eyebrowLabel =
   templateType === 'actionwochenende'
     ? 'Actionwochenende · SMJ Regio Wegweiser'
     : templateType === 'sterntreffen'
-      ? 'Sterntreffen · Für Jugendliche ab 15 Jahren'
+      ? 'Sterntreffen · Zeltlager-Nachtreffen'
       : 'Veranstaltung · SMJ Regio Wegweiser'
 
 const eventStructuredData = {
@@ -174,8 +174,8 @@ const eventStructuredData = {
           </div>
         )}
 
-        <!-- Parent & Safety Info for Actionwochenende -->
-        {templateType === 'actionwochenende' && (
+        <!-- Parent & Safety Info for Actionwochenende & Sterntreffen -->
+        {(templateType === 'actionwochenende' || templateType === 'sterntreffen') && (
           <div class="border-l-2 border-orange bg-forest-900/70 p-6 sm:p-8">
             <p class="eyebrow mb-2">Wichtig für Eltern & Teilnehmer</p>
             <h3 class="display text-2xl text-paper mb-4">Echtes Miteinander & Sicherheit</h3>
@@ -291,10 +291,18 @@ const eventStructuredData = {
               {event.contact.role && (
                 <p class="font-mono text-xs text-orange">{event.contact.role}</p>
               )}
+              {event.contact.phone && (
+                <a
+                  href={`tel:${event.contact.phone.replace(/\s+/g, '')}`}
+                  class="mt-2 block font-mono text-xs text-paper/80 hover:text-orange underline"
+                >
+                  Tel.: {event.contact.phone}
+                </a>
+              )}
               {event.contact.email && (
                 <a
                   href={`mailto:${event.contact.email}`}
-                  class="mt-2 inline-block font-mono text-xs text-paper/80 hover:text-orange underline"
+                  class="mt-1 inline-block font-mono text-xs text-paper/80 hover:text-orange underline"
                 >
                   {event.contact.email}
                 </a>
