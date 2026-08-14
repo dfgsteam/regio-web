@@ -13,13 +13,13 @@ const latest = posts
   <Container>
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div>
-        <Eyebrow label="Journal & Berichte" />
+        <Eyebrow label="Aktuelles & Berichte" />
         <h2 class="display display-lg mt-6 text-paper">
           Aktuelles &<br />
           <span class="text-orange">Vereinsberichte.</span>
         </h2>
       </div>
-      <a href="/journal/" class="mb-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+      <a href="/aktuelles/" class="mb-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
         Alle Beiträge →
       </a>
     </div>
@@ -42,7 +42,7 @@ const latest = posts
                   {post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })} · {post.data.author}
                 </p>
                 <h3 class="display display-sm mt-3 text-paper">
-                  <a href={`/journal/${post.id}/`} class="transition-colors hover:text-orange">
+                  <a href={`/aktuelles/${post.id}/`} class="transition-colors hover:text-orange">
                     {post.data.title}
                   </a>
                 </h3>

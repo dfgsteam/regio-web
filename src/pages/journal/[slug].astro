@@ -1,59 +1,12 @@
 ---
-import { getCollection, render } from 'astro:content'
-import type { CollectionEntry } from 'astro:content'
-import PostLayout from '../../layouts/PostLayout.astro'
-import Container from '../../components/common/Container.astro'
-import Eyebrow from '../../components/common/Eyebrow.astro'
+import { getCollection } from 'astro:content'
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft)
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: { post },
   }))
 }
 
-interface Props {
-  post: CollectionEntry<'posts'>
-}
-
-const { post } = Astro.props
-const { Content } = await render(post)
-const { data } = post
+return Astro.redirect(`/aktuelles/${Astro.params.slug}/`, 301)
 ---
-
-<PostLayout
-  title={`${data.title} – SMJ Regio Wegweiser`}
-  description={data.description}
-  image={data.image.src}
-  publishedAt={data.publishedAt}
-  author={data.author}
->
-  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
-    <Container>
-      <Eyebrow label="Journal" muted />
-      <h1 class="display display-xl mt-6 max-w-5xl text-forest-950">{data.title}</h1>
-      <p class="mono-label mt-6">
-        {data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })} · {data.author}
-      </p>
-      {data.tags.length > 0 && (
-        <p class="mono-label mt-3 text-orange">{data.tags.join(' · ')}</p>
-      )}
-    </Container>
-  </section>
-
-  <section class="bg-forest-950 py-16">
-    <Container class="max-w-4xl">
-      <figure class="mb-14">
-        <img src={data.image.src} alt={data.image.alt} class="aspect-[16/10] w-full object-cover" />
-      </figure>
-      <article class="prose-rough">
-        <Content />
-      </article>
-
-      <a href="/journal/" class="mt-16 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
-        ← Zurück zum Journal
-      </a>
-    </Container>
-  </section>
-</PostLayout>
