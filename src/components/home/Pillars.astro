@@ -51,7 +51,7 @@ const pillars = [
           <article class="reveal grid gap-6 sm:grid-cols-2">
             <div>
               <span class="font-mono text-sm text-orange">{pillar.number}</span>
-              <h3 class="display display-md mt-2 text-paper">{pillar.title}</h3>
+              <h3 class="display text-3xl sm:text-4xl mt-2 text-paper">{pillar.title}</h3>
               <p class="mt-4 max-w-sm text-paper/80">{pillar.line}</p>
             </div>
             <ImageFrame src={pillar.image} alt={pillar.alt} ratio="4:5" />
@@ -68,32 +68,43 @@ const pillars = [
 <section id="pillars-desktop" class="relative hidden bg-forest-900 lg:block">
   <div class="pillars-sticky flex h-svh items-center overflow-hidden">
     <Container class="grid w-full grid-cols-[1fr_1.1fr] items-center gap-16">
-      <div class="pillars-stack">
+      <div class="pillars-stack relative h-[65vh] min-h-[420px]">
         {
-          pillars.map((pillar) => (
-            <article class="pillar-item absolute inset-0 flex flex-col justify-center">
-              <span class="font-mono text-base text-orange">{pillar.number}</span>
-              <h3 class="display display-lg mt-4 text-paper">{pillar.title}</h3>
+          pillars.map((pillar, index) => (
+            <article
+              class="pillar-item absolute inset-0 flex flex-col justify-center"
+              style={index === 0 ? '' : 'opacity: 0; pointer-events: none; transform: translateY(40px);'}
+            >
+              <Eyebrow label="Kapitel 04 · Die fünf Säulen" />
+              <span class="font-mono text-base text-orange mt-6">{pillar.number}</span>
+              <h3 class="display text-4xl sm:text-5xl xl:text-6xl mt-3 text-paper whitespace-nowrap">{pillar.title}</h3>
               <p class="mt-6 max-w-md text-lg leading-relaxed text-paper/80">{pillar.line}</p>
+              <div class="mt-8">
+                <a
+                  href="/grundsaetze/"
+                  class="inline-flex items-center gap-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange"
+                >
+                  Wofür wir stehen →
+                </a>
+              </div>
             </article>
           ))
         }
       </div>
 
-      <div class="pillars-image relative h-[70vh]">
+      <div class="pillars-image relative h-[65vh] min-h-[420px]">
         {
-          pillars.map((pillar) => (
-            <div class="pillar-image absolute inset-0">
+          pillars.map((pillar, index) => (
+            <div
+              class="pillar-image absolute inset-0"
+              style={index === 0 ? '' : 'opacity: 0; pointer-events: none;'}
+            >
               <ImageFrame src={pillar.image} alt={pillar.alt} ratio="4:5" class="h-full w-full" />
             </div>
           ))
         }
       </div>
     </Container>
-  </div>
-
-  <div class="hidden">
-    <a href="/grundsaetze/">Wofür wir stehen</a>
   </div>
 </section>
 

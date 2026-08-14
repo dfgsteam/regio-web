@@ -10,24 +10,29 @@
     font-family: var(--font-display);
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 0.92;
+    line-height: 1.15;
     letter-spacing: 0.01em;
+    overflow-wrap: break-word;
   }
 
   .display-xl {
-    font-size: clamp(4.5rem, 16vw, 13rem);
+    font-size: clamp(2.8rem, 8vw, 6.8rem);
+    line-height: 1.15;
   }
 
   .display-lg {
-    font-size: clamp(3rem, 9vw, 7rem);
+    font-size: clamp(2.2rem, 5.5vw, 4.4rem);
+    line-height: 1.14;
   }
 
   .display-md {
-    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+    line-height: 1.15;
   }
 
   .display-sm {
-    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+    font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+    line-height: 1.2;
   }
 
   .eyebrow {

@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css'
+
 interface Props {
   title: string
   description: string
@@ -45,7 +47,7 @@ const ogImage = new URL(image, Astro.site)
     <meta name="theme-color" content="#111713" />
 
     {structuredData && (
-      <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     )}
 
     <script is:inline>
