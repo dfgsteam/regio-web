@@ -4,6 +4,7 @@ export interface EventContact {
   name: string
   email?: string
   phone?: string
+  role?: string
 }
 
 export interface Event {
@@ -13,10 +14,15 @@ export interface Event {
   start: Date
   end: Date
   location?: string
+  address?: string
   ageMin?: number
   ageMax?: number
+  price?: string
   teaser?: string
   description?: string
+  highlights?: string[]
+  packingList?: string[]
+  image?: string
   registrationUrl?: string
   registrationDeadline?: Date
   category: EventCategory

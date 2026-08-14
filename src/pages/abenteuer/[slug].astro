@@ -1,116 +1,260 @@
 ---
-import { getCollection, render } from 'astro:content'
-import type { CollectionEntry } from 'astro:content'
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
-import ImageFrame from '../../components/common/ImageFrame.astro'
-import { formatAgeRange } from '../../lib/events'
+import { eventProvider, formatDateRange, formatAgeRange } from '../../lib/events'
+import type { Event } from '../../lib/events'
 
 export async function getStaticPaths() {
-  const specials = await getCollection('specialEvents')
-  return specials
-    .filter((special) => special.data.active)
-    .map((special) => ({
-      params: { slug: special.data.slug },
-      props: { special },
-    }))
+  const events = await eventProvider.getEvents()
+  return events.map((event) => ({
+    params: { slug: event.slug },
+    props: { event },
+  }))
 }
 
 interface Props {
-  special: CollectionEntry<'specialEvents'>
+  event: Event
 }
 
-const { special } = Astro.props
-const { Content } = await render(special)
-const { data } = special
-
-const age = formatAgeRange(data.age.min, data.age.max)
-const relatedCamps = data.relatedCamp
-  ? await getCollection('camps', ({ data: campData }) => campData.year === Number(data.relatedCamp))
-  : []
+const { event } = Astro.props
+const age = formatAgeRange(event.ageMin, event.ageMax)
+const formattedDate = formatDateRange(event.start, event.end)
 
 const eventStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Event',
-  name: data.title,
-  description: data.teaser,
-  startDate: data.date.start.toISOString(),
-  endDate: data.date.end.toISOString(),
+  name: event.title,
+  description: event.teaser ?? event.description,
+  startDate: event.start.toISOString(),
+  endDate: event.end.toISOString(),
   eventStatus: 'https://schema.org/EventScheduled',
-  location: { '@type': 'Place', name: data.location.name },
+  location: {
+    '@type': 'Place',
+    name: event.location,
+    address: event.address ?? event.location,
+  },
+  offers: event.price
+    ? {
+        '@type': 'Offer',
+        price: event.price.replace(/[^0-9]/g, ''),
+        priceCurrency: 'EUR',
+        availability: 'https://schema.org/InStock',
+        url: event.registrationUrl,
+      }
+    : undefined,
 }
 ---
 
 <ContentLayout
-  title={`${data.title} – SMJ Regio Wegweiser`}
-  description={data.teaser}
-  image={data.image.src}
+  title={`${event.title} – SMJ Regio Wegweiser`}
+  description={event.teaser ?? `${event.title} der SMJ Regio Wegweiser vom ${formattedDate}.`}
+  image={event.image ?? '/placeholders/story.svg'}
   structuredData={eventStructuredData}
 >
-  <section class="relative flex min-h-[70svh] items-end overflow-hidden bg-forest-950 pb-16 pt-40">
-    <div class="absolute inset-0">
-      <img src={data.image.src} alt={data.image.alt} class="h-full w-full object-cover opacity-50" />
-      <div class="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-transparent" />
-    </div>
+  <!-- Header / Hero Section -->
+  <section class="texture-topo relative overflow-hidden bg-forest-950 pb-16 pt-36 sm:pt-44 border-b border-paper/10">
+    <div class="texture-grain absolute inset-0 opacity-50" aria-hidden="true" />
+
     <Container class="relative">
-      <Eyebrow label="Besonderes Abenteuer" />
-      <h1 class="display display-xl mt-5 text-paper">{data.title}</h1>
-      <p class="mono-label mt-5">
-        {data.date.start.toLocaleDateString('de-DE')} – {data.date.end.toLocaleDateString('de-DE')} · {data.location.name}
-        {age ? ` · ${age}` : ''}
-      </p>
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <Eyebrow label={event.category === 'weekend' ? 'Actionwochenende' : 'Veranstaltung'} />
+        <span class="border border-orange/40 bg-orange/10 px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-orange">
+          100% Analog
+        </span>
+      </div>
+
+      <h1 class="display display-xl mt-4 text-paper max-w-4xl">{event.title}</h1>
+      
+      {event.teaser && (
+        <p class="mt-6 max-w-2xl text-lg sm:text-xl leading-relaxed text-paper/85 font-medium">
+          {event.teaser}
+        </p>
+      )}
+
+      <div class="mt-10 flex flex-wrap gap-4 font-mono text-xs uppercase tracking-[0.16em] text-paper">
+        <div class="border border-paper/20 bg-forest-900 px-4 py-2">
+          📅 {formattedDate}
+        </div>
+        {event.location && (
+          <div class="border border-paper/20 bg-forest-900 px-4 py-2">
+            📍 {event.location}
+          </div>
+        )}
+        {age && (
+          <div class="border border-paper/20 bg-forest-900 px-4 py-2">
+            🎯 {age}
+          </div>
+        )}
+        {event.price && (
+          <div class="border border-orange/40 bg-forest-900 px-4 py-2 text-orange font-bold">
+            💶 {event.price.split('(')[0]?.trim()}
+          </div>
+        )}
+      </div>
     </Container>
   </section>
 
-  <section class="bg-forest-950 py-16">
-    <Container class="grid gap-14 lg:grid-cols-[1.5fr_1fr]">
-      <div class="prose-rough">
-        <Content />
+  <!-- Main Content & Details Grid -->
+  <section class="bg-forest-950 py-16 sm:py-24">
+    <Container class="grid gap-14 lg:grid-cols-[1.5fr_1fr] items-start">
+      <!-- Left Column: Story, Highlights & Info -->
+      <div class="space-y-14">
+        <!-- Description -->
+        <div>
+          <h2 class="display display-sm text-paper mb-6">Was geht ab?</h2>
+          <p class="text-base sm:text-lg leading-relaxed text-paper/80 whitespace-pre-line">
+            {event.description}
+          </p>
+        </div>
+
+        <!-- Highlights -->
+        {event.highlights && event.highlights.length > 0 && (
+          <div>
+            <h2 class="display display-sm text-paper mb-6">Die Highlights</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+              {event.highlights.map((highlight, index) => (
+                <div class="border-2 border-paper/15 bg-forest-900 p-5 transition-colors hover:border-orange">
+                  <span class="font-mono text-xs text-orange font-bold block mb-2">0{index + 1}</span>
+                  <p class="font-display text-lg uppercase text-paper">{highlight}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Packing List -->
+        {event.packingList && event.packingList.length > 0 && (
+          <div class="border-2 border-paper/15 bg-forest-900 p-7 sm:p-9">
+            <div class="flex items-center justify-between gap-4 mb-6">
+              <h2 class="display display-sm text-paper">Was muss mit? (Packliste)</h2>
+              <span class="mono-label text-xs text-orange">Checkliste</span>
+            </div>
+            <ul class="grid gap-3 sm:grid-cols-2">
+              {event.packingList.map((item) => (
+                <li class="flex items-start gap-3 text-sm text-paper/85 font-mono">
+                  <span class="text-orange select-none mt-0.5">✔</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <!-- Parent & Safety Info -->
+        <div class="border-l-2 border-orange bg-forest-900/70 p-6 sm:p-8">
+          <p class="eyebrow mb-2">Wichtig für Eltern</p>
+          <h3 class="display text-2xl text-paper mb-4">Aufsicht, Sicherheit & Erreichbarkeit</h3>
+          <p class="text-sm leading-relaxed text-paper/80 mb-4">
+            Die Veranstaltung wird von geschulten und erfahrenen Gruppenleitern der SMJ Regio Wegweiser verantwortungsvoll geleitet. 
+            Während des Wochenendes gilt unser <strong>100% analoges Prinzip (handyfreie Zeit)</strong>, damit die Jungs ohne Ablenkung voll in die Gemeinschaft eintauchen.
+          </p>
+          <p class="font-mono text-xs text-orange">
+            📞 Im Notfall ist die Leitung rund um die Uhr erreichbar.
+          </p>
+        </div>
       </div>
 
-      <aside class="h-fit border border-paper/15 bg-forest-900 p-7 lg:sticky lg:top-28">
-        <h2 class="display display-sm text-paper">Anmeldung</h2>
-        <dl class="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 font-mono text-[0.7rem] uppercase tracking-[0.14em]">
-          <dt class="text-muted">Wann</dt>
-          <dd class="text-paper/90">{data.date.start.toLocaleDateString('de-DE')} – {data.date.end.toLocaleDateString('de-DE')}</dd>
-          <dt class="text-muted">Wo</dt>
-          <dd class="text-paper/90">{data.location.name}</dd>
-          <dt class="text-muted">Alter</dt>
-          <dd class="text-paper/90">{age}</dd>
-        </dl>
+      <!-- Right Column: Sticky Action & Factsheet Box -->
+      <aside class="sticky top-28 space-y-6">
+        <div class="border-2 border-orange bg-forest-900 p-7 sm:p-8 shadow-2xl">
+          <p class="eyebrow mb-2">Anmeldung & Fakten</p>
+          <h3 class="display display-sm text-paper">Dabei sein</h3>
 
-        {data.registration?.url ? (
-          <div class="mt-8">
-            <Button href={data.registration.url} variant="primary" class="w-full justify-center">
-              Jetzt anmelden
-            </Button>
-            {data.registration.deadline && (
-              <p class="mono-label mt-4">Anmeldeschluss: {data.registration.deadline.toLocaleDateString('de-DE')}</p>
+          <dl class="mt-6 space-y-4 font-mono text-xs uppercase tracking-[0.14em] border-y border-paper/15 py-6">
+            <div>
+              <dt class="text-muted text-[0.68rem]">Zeitraum</dt>
+              <dd class="text-paper text-sm mt-1 font-bold">{formattedDate}</dd>
+            </div>
+            <div>
+              <dt class="text-muted text-[0.68rem]">Ort & Adresse</dt>
+              <dd class="text-paper mt-1">{event.location}</dd>
+              {event.address && (
+                <dd class="text-paper/60 text-[0.7rem] normal-case mt-0.5">{event.address}</dd>
+              )}
+            </div>
+            {age && (
+              <div>
+                <dt class="text-muted text-[0.68rem]">Zielgruppe</dt>
+                <dd class="text-paper mt-1">{age}</dd>
+              </div>
             )}
-          </div>
-        ) : (
-          <p class="mono-label mt-8">Die Anmeldung öffnet bald.</p>
-        )}
+            {event.price && (
+              <div>
+                <dt class="text-muted text-[0.68rem]">Teilnahmebeitrag</dt>
+                <dd class="text-orange text-sm font-bold mt-1">{event.price}</dd>
+              </div>
+            )}
+          </dl>
 
-        {relatedCamps.length > 0 && (
-          <div class="mt-10 border-t border-paper/15 pt-6">
-            <p class="mono-label mb-4">Das passende Zeltlager</p>
-            {relatedCamps.map((camp) => (
-              <a href={`/abenteuer/zeltlager/${camp.data.year}/`} class="group flex items-center gap-4">
-                <ImageFrame src={camp.data.theme.assets.hero} alt={camp.data.motto} ratio="4:3" class="w-20 shrink-0" />
-                <span>
-                  <span class="block font-display text-lg uppercase text-paper transition-colors group-hover:text-orange">
-                    {camp.data.motto}
-                  </span>
-                  <span class="mono-label">Zeltlager {camp.data.year}</span>
-                </span>
-              </a>
-            ))}
+          {event.registrationUrl ? (
+            <div class="mt-8 space-y-3">
+              <Button href={event.registrationUrl} variant="primary" size="lg" class="w-full justify-center text-center">
+                Jetzt online anmelden →
+              </Button>
+              {event.registrationDeadline && (
+                <p class="mono-label text-center text-[0.65rem] text-paper/60">
+                  Meldeschluss: {event.registrationDeadline.toLocaleDateString('de-DE')}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div class="mt-8 border border-paper/20 bg-forest-950 p-4 text-center">
+              <p class="mono-label text-xs text-orange">Die Anmeldung öffnet bald.</p>
+            </div>
+          )}
+
+          {event.contact && (
+            <div class="mt-8 border-t border-paper/15 pt-6">
+              <p class="mono-label mb-2 text-muted text-[0.68rem]">Fragen zur Aktion?</p>
+              <p class="font-display text-lg text-paper uppercase">{event.contact.name}</p>
+              {event.contact.role && (
+                <p class="font-mono text-xs text-orange">{event.contact.role}</p>
+              )}
+              {event.contact.email && (
+                <a
+                  href={`mailto:${event.contact.email}`}
+                  class="mt-2 inline-block font-mono text-xs text-paper/80 hover:text-orange underline"
+                >
+                  {event.contact.email}
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div class="border border-paper/15 bg-forest-900/60 p-6 flex items-center justify-between gap-4">
+          <div>
+            <p class="font-display text-sm text-paper uppercase">Termin nicht verpassen</p>
+            <p class="font-mono text-[0.68rem] text-muted">Abonniere alle Events direkt</p>
           </div>
-        )}
+          <a
+            href="/api/calendar.ics"
+            class="border border-paper/20 px-3 py-2 font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
+          >
+            📅 iCal
+          </a>
+        </div>
       </aside>
+    </Container>
+  </section>
+
+  <!-- Back Navigation -->
+  <section class="border-t border-paper/10 bg-forest-900 py-12">
+    <Container class="flex flex-wrap items-center justify-between gap-6">
+      <a
+        href="/abenteuer/"
+        class="inline-flex items-center gap-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange"
+      >
+        ← Alle Abenteuer ansehen
+      </a>
+      <a
+        href="/abenteuer/zeltlager/"
+        class="inline-flex items-center gap-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange transition-colors hover:underline"
+      >
+        Zum großen Sommerzeltlager →
+      </a>
     </Container>
   </section>
 </ContentLayout>

@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { event, href, featured = false } = Astro.props
+const targetUrl = href ?? `/abenteuer/${event.slug}/`
 const age = formatAgeRange(event.ageMin, event.ageMax)
 ---
 
@@ -27,7 +28,7 @@ const age = formatAgeRange(event.ageMin, event.ageMax)
   <p class="mono-label">{event.category.toUpperCase()}</p>
 
   <h3 class="display text-2xl sm:text-[1.75rem] leading-[1.08] mt-3 text-paper break-words">
-    <a href={href ?? event.registrationUrl ?? '/abenteuer/'} class="after:absolute after:inset-0">
+    <a href={targetUrl} class="after:absolute after:inset-0">
       {event.title}
     </a>
   </h3>
@@ -52,7 +53,7 @@ const age = formatAgeRange(event.ageMin, event.ageMax)
   </dl>
 
   <span class="mt-auto pt-6 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
-    {event.registrationUrl ? 'Zur Anmeldung' : href ? 'Mehr erfahren' : 'Details'}
+    Mehr Infos & Anmeldung
     <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
       <path d="M5 12h14M13 6l6 6-6 6" />
     </svg>
