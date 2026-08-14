@@ -14,32 +14,7 @@ export function initTimelineAnimation() {
     const cards = gsap.utils.toArray<HTMLElement>('.timeline-event-card')
     const track = section.querySelector<HTMLElement>('.timeline-progress-line')
 
-    // Staggered reveal of event cards with subtle tilt and glow
-    if (cards.length > 0) {
-      gsap.fromTo(
-        cards,
-        {
-          opacity: 0,
-          y: 40,
-          scale: 0.98,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 80%',
-            once: true,
-          },
-        }
-      )
-    }
-
-    // Scroll progress track line filling down
+    // Scroll progress track line filling down and retracting on scroll up
     if (track) {
       gsap.fromTo(
         track,
@@ -49,13 +24,37 @@ export function initTimelineAnimation() {
           ease: 'none',
           scrollTrigger: {
             trigger: section,
-            start: 'top 70%',
-            end: 'bottom 85%',
-            scrub: 0.5,
+            start: 'top 80%',
+            end: 'bottom 80%',
+            scrub: 0.4,
           },
         }
       )
     }
+
+    // Scrub each card dynamically linked to scroll position (build up on scroll down, dismantle on scroll up)
+    cards.forEach((card) => {
+      gsap.fromTo(
+        card,
+        {
+          opacity: 0.15,
+          y: 45,
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            end: 'top 55%',
+            scrub: 0.6,
+          },
+        }
+      )
+    })
   }, section)
 
   return () => ctx.revert()

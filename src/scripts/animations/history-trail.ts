@@ -23,9 +23,9 @@ export function initHistoryTrailAnimation() {
           ease: 'none',
           scrollTrigger: {
             trigger: section,
-            start: 'top 75%',
-            end: 'bottom 85%',
-            scrub: 0.5,
+            start: 'top 80%',
+            end: 'bottom 80%',
+            scrub: 0.4,
           },
         }
       )
@@ -36,22 +36,71 @@ export function initHistoryTrailAnimation() {
       const title = article.querySelector<HTMLElement>('.history-title')
       const text = article.querySelector<HTMLElement>('.history-text')
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: article,
-          start: 'top 80%',
-          once: true,
-        },
-      })
-
       if (marker) {
-        tl.fromTo(marker, { opacity: 0, scale: 0.5, rotation: -45 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: 'back.out(1.8)' })
+        gsap.fromTo(
+          marker,
+          {
+            opacity: 0.3,
+            scale: 0.7,
+            rotation: -90,
+            borderColor: 'rgba(241, 235, 221, 0.1)',
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            rotation: 0,
+            borderColor: '#FF5A1F',
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top 88%',
+              end: 'top 55%',
+              scrub: 0.5,
+            },
+          }
+        )
       }
+
       if (title) {
-        tl.fromTo(title, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+        gsap.fromTo(
+          title,
+          {
+            opacity: 0.2,
+            x: -30,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top 88%',
+              end: 'top 55%',
+              scrub: 0.5,
+            },
+          }
+        )
       }
+
       if (text) {
-        tl.fromTo(text, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
+        gsap.fromTo(
+          text,
+          {
+            opacity: 0.2,
+            y: 25,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top 88%',
+              end: 'top 55%',
+              scrub: 0.5,
+            },
+          }
+        )
       }
     })
   }, section)

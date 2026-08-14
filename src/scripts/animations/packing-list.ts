@@ -8,53 +8,77 @@ export function initPackingListAnimation() {
   if (isReduced) return () => {}
 
   const ctx = gsap.context(() => {
-    // 1. Packing list checkmark stagger pop
-    const packingContainer = document.getElementById('packing-list-container')
-    if (packingContainer) {
-      const items = packingContainer.querySelectorAll<HTMLElement>('.packing-item')
-      if (items.length > 0) {
-        gsap.fromTo(
-          items,
-          { opacity: 0, x: -15, scale: 0.95 },
-          {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            duration: 0.45,
-            stagger: 0.08,
-            ease: 'back.out(1.5)',
-            scrollTrigger: {
-              trigger: packingContainer,
-              start: 'top 85%',
-              once: true,
-            },
-          }
-        )
-      }
-    }
-
-    // 2. Highlights stagger reveal
+    // 1. Highlights scrub assembly / disassembly
     const highlightsContainer = document.getElementById('highlights-container')
     if (highlightsContainer) {
       const cards = highlightsContainer.querySelectorAll<HTMLElement>('.highlight-card')
-      if (cards.length > 0) {
+      cards.forEach((card) => {
         gsap.fromTo(
-          cards,
-          { opacity: 0, y: 25 },
+          card,
+          {
+            opacity: 0.2,
+            y: 35,
+            scale: 0.96,
+          },
           {
             opacity: 1,
             y: 0,
-            duration: 0.5,
-            stagger: 0.1,
+            scale: 1,
             ease: 'power2.out',
             scrollTrigger: {
-              trigger: highlightsContainer,
-              start: 'top 85%',
-              once: true,
+              trigger: card,
+              start: 'top 92%',
+              end: 'top 65%',
+              scrub: 0.5,
             },
           }
         )
-      }
+      })
+    }
+
+    // 2. Packing list checkmark scrub assembly / disassembly
+    const packingContainer = document.getElementById('packing-list-container')
+    if (packingContainer) {
+      const items = packingContainer.querySelectorAll<HTMLElement>('.packing-item')
+      items.forEach((item) => {
+        const checkIcon = item.querySelector<HTMLElement>('svg')
+        gsap.fromTo(
+          item,
+          {
+            opacity: 0.2,
+            x: -20,
+          },
+          {
+            opacity: 1,
+            x: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 92%',
+              end: 'top 70%',
+              scrub: 0.4,
+            },
+          }
+        )
+
+        if (checkIcon) {
+          gsap.fromTo(
+            checkIcon,
+            { scale: 0.4, opacity: 0.2 },
+            {
+              scale: 1,
+              opacity: 1,
+              ease: 'back.out(2)',
+              scrollTrigger: {
+                trigger: item,
+                start: 'top 90%',
+                end: 'top 65%',
+                scrub: 0.4,
+              },
+            }
+          )
+        }
+      })
     }
   })
 

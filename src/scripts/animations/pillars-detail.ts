@@ -20,40 +20,104 @@ export function initPillarsDetailAnimation() {
       const cards = article.querySelectorAll<HTMLElement>('.pillar-card')
       const watermark = article.querySelector<HTMLElement>('.pillar-watermark')
 
-      // Parallax watermark behind each pillar
+      // Parallax watermark scrub
       if (watermark) {
-        gsap.to(watermark, {
-          y: -40,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: article,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        })
+        gsap.fromTo(
+          watermark,
+          { y: 50, opacity: 0.01 },
+          {
+            y: -50,
+            opacity: 0.05,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.8,
+            },
+          }
+        )
       }
 
-      // Staggered reveal of title & content
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: article,
-          start: 'top 80%',
-          once: true,
-        },
-      })
-
+      // Scrub number & title smoothly with scroll
       if (number) {
-        tl.fromTo(number, { opacity: 0, scale: 0.8, x: -20 }, { opacity: 1, scale: 1, x: 0, duration: 0.5, ease: 'back.out(1.7)' })
+        gsap.fromTo(
+          number,
+          { opacity: 0.2, scale: 0.6, x: -30 },
+          {
+            opacity: 1,
+            scale: 1,
+            x: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top 90%',
+              end: 'top 60%',
+              scrub: 0.5,
+            },
+          }
+        )
       }
+
       if (title) {
-        tl.fromTo(title, { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3')
+        gsap.fromTo(
+          title,
+          { opacity: 0.2, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top 88%',
+              end: 'top 58%',
+              scrub: 0.5,
+            },
+          }
+        )
       }
+
       if (message) {
-        tl.fromTo(message, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+        gsap.fromTo(
+          message,
+          { opacity: 0.2, y: 25 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: article,
+              start: 'top 86%',
+              end: 'top 56%',
+              scrub: 0.5,
+            },
+          }
+        )
       }
+
       if (cards.length > 0) {
-        tl.fromTo(cards, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' }, '-=0.2')
+        cards.forEach((card, idx) => {
+          gsap.fromTo(
+            card,
+            {
+              opacity: 0.15,
+              y: 40 + idx * 10,
+              scale: 0.96,
+            },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: article,
+                start: 'top 82%',
+                end: 'top 50%',
+                scrub: 0.6,
+              },
+            }
+          )
+        })
       }
     })
   }, container)

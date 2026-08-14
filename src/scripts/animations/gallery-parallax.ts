@@ -13,32 +13,30 @@ export function initGalleryParallax() {
 
     const cards = gsap.utils.toArray<HTMLElement>('.gallery-card')
 
-    // Stagger reveal on entry
-    gsap.fromTo(
-      cards,
-      {
-        opacity: 0,
-        y: 45,
-        scale: 0.96,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: container,
-          start: 'top 85%',
-          once: true,
-        },
-      }
-    )
-
-    // Smooth subtle multi-speed parallax on cards
     cards.forEach((card, index) => {
-      // Alternating speeds per column index
+      // 1. Dynamic scrub entry & dismantle on scroll
+      gsap.fromTo(
+        card,
+        {
+          opacity: 0.2,
+          y: 45,
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 92%',
+            end: 'top 60%',
+            scrub: 0.6,
+          },
+        }
+      )
+
+      // 2. Smooth subtle multi-speed parallax on cards
       const speed = index % 3 === 0 ? -25 : index % 3 === 1 ? 30 : -15
       gsap.to(card, {
         y: speed,

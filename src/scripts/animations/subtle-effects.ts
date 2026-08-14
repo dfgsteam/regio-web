@@ -7,7 +7,7 @@ export function initSubtleEffects(): void {
   const mm = gsap.matchMedia()
 
   mm.add('(prefers-reduced-motion: no-preference)', () => {
-    // 1. Robust Physical Stamp In Effect for Field Notes, Stickers & Stamps
+    // 1. Dynamic Physical Stamp In & Out Effect for Field Notes, Stickers & Stamps
     const stampElements = document.querySelectorAll<HTMLElement>(
       '.stamp-element, .field-note, .sticker, [data-stamp], #expect .sticker, figure.field-note'
     )
@@ -22,23 +22,22 @@ export function initSubtleEffects(): void {
       gsap.fromTo(
         el,
         {
-          scale: 1.45,
-          opacity: 0,
-          rotate: targetRotate + (index % 2 === 0 ? -12 : 12),
-          y: -22,
+          scale: 1.5,
+          opacity: 0.2,
+          rotate: targetRotate + (index % 2 === 0 ? -14 : 14),
+          y: -24,
         },
         {
           scale: 1,
           opacity: 1,
           rotate: targetRotate,
           y: 0,
-          duration: 0.55,
-          delay: (index % 4) * 0.09,
-          ease: 'back.out(2.4)',
+          ease: 'power2.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 90%',
-            toggleActions: 'play none none none',
+            start: 'top 92%',
+            end: 'top 65%',
+            scrub: 0.5,
           },
         }
       )
@@ -51,9 +50,9 @@ export function initSubtleEffects(): void {
         gsap.fromTo(
           word,
           {
-            color: 'rgba(241, 235, 221, 0.4)',
+            color: 'rgba(241, 235, 221, 0.35)',
             x: -12,
-            opacity: 0.5,
+            opacity: 0.4,
           },
           {
             color: '#F1EBDD',
@@ -62,7 +61,7 @@ export function initSubtleEffects(): void {
             ease: 'power2.out',
             scrollTrigger: {
               trigger: word,
-              start: 'top 82%',
+              start: 'top 85%',
               end: 'top 45%',
               scrub: 0.6,
             },
@@ -92,21 +91,21 @@ export function initSubtleEffects(): void {
       )
     })
 
-    // 4. Subtle Image Reveal Unclipping
+    // 4. Image Reveal Unclipping and Parallax
     const revealImages = document.querySelectorAll<HTMLElement>('.reveal-image, figure.reveal img')
     revealImages.forEach((img) => {
       gsap.fromTo(
         img,
-        { scale: 1.08, filter: 'contrast(1.1) brightness(0.85)' },
+        { scale: 1.1, filter: 'contrast(1.15) brightness(0.8)' },
         {
           scale: 1,
           filter: 'contrast(1) brightness(1)',
-          duration: 1.2,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: img,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
+            start: 'top 92%',
+            end: 'top 55%',
+            scrub: 0.6,
           },
         }
       )
