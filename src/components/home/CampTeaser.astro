@@ -19,14 +19,15 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
 
 <section
   id="camp-teaser"
-  class="camp-theme relative overflow-hidden py-24 sm:py-36"
+  class="camp-theme relative overflow-hidden py-24 sm:py-36 border-t border-paper/10"
   style={`--camp-bg: ${theme.colors.background}; --camp-fg: ${theme.colors.foreground}; --camp-accent: ${theme.colors.accent};`}
 >
   <div class="texture-topo absolute inset-0 opacity-60" aria-hidden="true" />
 
   <Container class="relative">
     <div class="flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:gap-16">
-      <div class="lg:flex-1">
+      <!-- Left Column: Info & Facts -->
+      <div class="camp-info-col lg:flex-1">
         <Eyebrow label={`Zeltlager ${year}`} />
         <h2 class="display display-lg mt-6 camp-fg">
           Das große<br />
@@ -61,17 +62,44 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
         </div>
       </div>
 
-      <div class="w-full lg:w-[46%]">
-        <div class="camp-poster relative overflow-hidden border-2 camp-border shadow-2xl">
-          <img
-            src={theme.assets.hero}
-            alt={`Zeltlager ${year} – ${motto}`}
-            loading="lazy"
-            class="aspect-[3/4] w-full object-cover"
-          />
-          <span class="absolute bottom-4 left-4 bg-[color:var(--camp-bg)]/85 px-3 py-1.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.24em] camp-fg">
-            Zeltlager {year}
-          </span>
+      <!-- Right Column: 3D Unfolding Camp Poster & Map -->
+      <div class="w-full lg:w-[48%] [perspective:1200px]">
+        <div class="unfold-wrapper relative border-2 camp-border bg-forest-950 shadow-2xl overflow-hidden [transform-style:preserve-3d]">
+          <!-- Top Fold Panel -->
+          <div class="fold-panel-top relative h-[33.33%] w-full overflow-hidden border-b border-paper/10 [backface-visibility:hidden]">
+            <img
+              src={theme.assets.hero}
+              alt={`Zeltlager ${year} – ${motto}`}
+              loading="lazy"
+              class="h-[300%] w-full object-cover object-top"
+            />
+            <div class="crease-shadow absolute inset-0 bg-gradient-to-b from-black/40 to-transparent pointer-events-none transition-opacity" />
+          </div>
+
+          <!-- Middle Panel -->
+          <div class="fold-panel-middle relative h-[33.33%] w-full overflow-hidden [backface-visibility:hidden]">
+            <img
+              src={theme.assets.hero}
+              alt={`Zeltlager ${year} – ${motto}`}
+              loading="lazy"
+              class="h-[300%] w-full object-cover object-center -mt-[100%]"
+            />
+          </div>
+
+          <!-- Bottom Fold Panel -->
+          <div class="fold-panel-bottom relative h-[33.34%] w-full overflow-hidden border-t border-paper/10 [backface-visibility:hidden]">
+            <img
+              src={theme.assets.hero}
+              alt={`Zeltlager ${year} – ${motto}`}
+              loading="lazy"
+              class="h-[300%] w-full object-cover object-bottom -mt-[200%]"
+            />
+            <div class="crease-shadow absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity" />
+            
+            <span class="absolute bottom-4 left-4 bg-[color:var(--camp-bg)]/90 border border-paper/20 px-3.5 py-1.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.24em] camp-fg">
+              Zeltlager {year}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -79,26 +107,5 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
 </section>
 
 <script>
-  import { gsap } from 'gsap'
-  import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-  gsap.registerPlugin(ScrollTrigger)
-
-  const poster = document.querySelector<HTMLElement>('.camp-poster')
-  if (poster) {
-    gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.fromTo(
-        poster,
-        { y: 120, rotate: -4, scale: 0.94, opacity: 0.4 },
-        {
-          y: 0,
-          rotate: 0,
-          scale: 1,
-          opacity: 1,
-          ease: 'power2.out',
-          scrollTrigger: { trigger: poster, start: 'top 85%', end: 'top 35%', scrub: 0.8 },
-        },
-      )
-    })
-  }
+  import '../../scripts/animations/camp-unfold'
 </script>

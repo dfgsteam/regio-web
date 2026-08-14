@@ -58,5 +58,8 @@ const ogImage = new URL(image, Astro.site)
   </head>
   <body class:list={['texture-grain']}>
     <slot />
+    <script>
+      import '../scripts/animations/subtle-effects'
+    </script>
   </body>
 </html>
