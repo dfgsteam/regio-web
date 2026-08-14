@@ -52,10 +52,27 @@ export function getEventTemplateType(title: string, category?: string): EventTem
   return 'blanko'
 }
 
+/**
+ * Normalizes an event title into a clean URL slug according to the workflow rules:
+ * 1. Zeltlager: Regardless of what comes after the word Zeltlager -> zeltlager-{year}
+ * 2. Sterntreffen: Regardless of what comes after -> sterntreffen-{year}
+ * 3. All other calendar events: Take full calendar name (with Roman numerals/numbers or no numbers) + -{year}
+ */
 export function normalizeEventSlug(title: string, year: number): string {
-  // Normalize Roman numerals (e.g. Actionwochenende II -> actionwochenende-2)
-  const normalized = title
-    .toLowerCase()
+  const normalizedTitle = title.trim().toLowerCase()
+
+  // Zeltlager rule: regardless of extra text in the title -> zeltlager-{year}
+  if (normalizedTitle.includes('zeltlager')) {
+    return `zeltlager-${year}`
+  }
+
+  // Sterntreffen rule: regardless of extra text in the title -> sterntreffen-{year}
+  if (normalizedTitle.includes('sterntreffen')) {
+    return `sterntreffen-${year}`
+  }
+
+  // All other calendar events: take calendar name, normalize characters/Roman numerals, append -{year}
+  let cleaned = normalizedTitle
     .replace(/\bviii\b/g, '8')
     .replace(/\bvii\b/g, '7')
     .replace(/\bvi\b/g, '6')
@@ -72,7 +89,7 @@ export function normalizeEventSlug(title: string, year: number): string {
     .replace(/^-+|-+$/g, '')
 
   const yearStr = String(year)
-  return normalized.endsWith(yearStr) ? normalized : `${normalized}-${yearStr}`
+  return cleaned.endsWith(yearStr) ? cleaned : `${cleaned}-${yearStr}`
 }
 
 export function getSlugVariants(slug: string): string[] {
