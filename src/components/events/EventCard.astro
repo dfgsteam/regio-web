@@ -9,23 +9,27 @@ interface Props {
 }
 
 const { event, href, featured = false } = Astro.props
-const targetUrl = href ?? `/abenteuer/${event.slug}/`
+const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('zeltlager')
+const isFeatured = featured || isCamp
+const targetUrl = href ?? (isCamp ? '/abenteuer/zeltlager/' : `/abenteuer/${event.slug}/`)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 ---
 
 <article
   class:list={[
     'group relative flex flex-col border-2 border-paper/15 bg-forest-900 p-6 transition-colors hover:border-orange sm:p-8',
-    featured && 'border-orange',
+    isFeatured && 'border-orange bg-forest-900/90 shadow-xl',
   ]}
 >
-  {featured && (
-    <span class="absolute -top-3 right-6 bg-orange px-3 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-[0.2em] text-forest-950">
-      Highlight
+  {isFeatured && (
+    <span class="absolute -top-3 right-6 bg-orange px-3 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-[0.2em] text-forest-950 shadow-md">
+      {isCamp ? 'Jahreshighlight' : 'Highlight'}
     </span>
   )}
 
-  <p class="mono-label">{event.category.toUpperCase()}</p>
+  <p class="mono-label">
+    {isCamp ? 'HAUPTABENTEUER · ZELTLAGER' : event.category.toUpperCase()}
+  </p>
 
   <h3 class="display text-2xl sm:text-[1.75rem] leading-[1.08] mt-3 text-paper break-words">
     <a href={targetUrl} class="after:absolute after:inset-0">
@@ -53,9 +57,6 @@ const age = formatAgeRange(event.ageMin, event.ageMax)
   </dl>
 
   <span class="mt-auto pt-6 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
-    Mehr Infos & Anmeldung
-    <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-      <path d="M5 12h14M13 6l6 6-6 6" />
-    </svg>
+    {isCamp ? 'Zum Zeltlager-Erlebnis →' : 'Mehr Infos & Anmeldung →'}
   </span>
 </article>
