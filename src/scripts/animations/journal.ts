@@ -13,32 +13,24 @@ gsap.registerPlugin(ScrollTrigger)
   mm.add('(prefers-reduced-motion: no-preference)', () => {
     scopedContext(section, () => {
       const cards = gsap.utils.toArray<HTMLElement>('.journal-card')
-      cards.forEach((card, index) => {
-        if (index === 0) return
-        const prev = cards[index - 1]
-        gsap.fromTo(
-          card,
-          { y: 60, opacity: 0, scale: 0.98 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.6,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play reverse play reverse',
-              onEnter: () => {
-                if (prev) prev.style.transform = 'translateY(-12px) scale(0.985)'
-              },
-              onLeaveBack: () => {
-                if (prev) prev.style.transform = 'translateY(0px) scale(1)'
-              },
-            },
+      if (cards.length === 0) return
+
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          stagger: 0.15,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 80%',
+            once: true,
           },
-        )
-      })
+        }
+      )
     })
   })
 })()
