@@ -21,6 +21,7 @@ const upcoming = allEvents
 const past = allEvents
   .filter((event) => event.end < now)
   .sort((a, b) => b.start.getTime() - a.start.getTime())
+  .slice(0, 3)
 
 const activeSpecials = specialEvents
   .filter((event) => event.data.active)
