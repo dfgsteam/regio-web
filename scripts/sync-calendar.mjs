@@ -118,13 +118,27 @@ function parseIcsDate(rawDate, isDateOnly = false) {
   return new Date(y, m, d, h, min, s)
 }
 
-function transformVEvent(raw, defaults = {}, overrides = {}) {
-  const summary = decodeIcsText(raw['SUMMARY'] || '').trim()
-  if (!summary) return null
+function normalizeRomanNumeralsInTitle(title) {
+  return title
+    .replace(/\bVIII\b/g, '8')
+    .replace(/\bVII\b/g, '7')
+    .replace(/\bVI\b/g, '6')
+    .replace(/\bIV\b/g, '4')
+    .replace(/\bV\b/g, '5')
+    .replace(/\bIII\b/g, '3')
+    .replace(/\bII\b/g, '2')
+    .replace(/\bI\b/g, '1')
+}
 
-  if (summary.toUpperCase().includes('ABGESAGT') || summary.includes('[Abgesagt]')) {
+function transformVEvent(raw, defaults = {}, overrides = {}) {
+  const rawSummary = decodeIcsText(raw['SUMMARY'] || '').trim()
+  if (!rawSummary) return null
+
+  if (rawSummary.toUpperCase().includes('ABGESAGT') || rawSummary.includes('[Abgesagt]')) {
     return null
   }
+
+  const summary = normalizeRomanNumeralsInTitle(rawSummary)
 
   const start = parseIcsDate(raw['DTSTART'], raw['DTSTART_IS_DATE'] === 'true')
   if (!start) return null

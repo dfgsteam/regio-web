@@ -141,35 +141,39 @@ export function getSlugVariants(eventOrSlug: string, title?: string, year?: numb
     }
   }
 
-  // 3. Bidirectional mapping between Arabic numbers and Roman numerals
+  // 3. Normalize any potential Roman numeral chunks to Arabic numbers only
   const allCurrent = Array.from(variants)
   for (const s of allCurrent) {
-    if (s.includes('-1-')) variants.add(s.replace('-1-', '-i-'))
-    if (s.includes('-2-')) variants.add(s.replace('-2-', '-ii-'))
-    if (s.includes('-3-')) variants.add(s.replace('-3-', '-iii-'))
-    if (s.includes('-4-')) variants.add(s.replace('-4-', '-iv-'))
-    if (s.includes('-5-')) variants.add(s.replace('-5-', '-v-'))
+    let arabic = s
+      .replace(/-viii-/g, '-8-')
+      .replace(/-vii-/g, '-7-')
+      .replace(/-vi-/g, '-6-')
+      .replace(/-iv-/g, '-4-')
+      .replace(/-v-/g, '-5-')
+      .replace(/-iii-/g, '-3-')
+      .replace(/-ii-/g, '-2-')
+      .replace(/-i-/g, '-1-')
+      .replace(/-viii$/g, '-8')
+      .replace(/-vii$/g, '-7')
+      .replace(/-vi$/g, '-6')
+      .replace(/-iv$/g, '-4')
+      .replace(/-v$/g, '-5')
+      .replace(/-iii$/g, '-3')
+      .replace(/-ii$/g, '-2')
+      .replace(/-i$/g, '-1')
 
-    if (s.endsWith('-1')) variants.add(s.replace(/-1$/, '-i'))
-    if (s.endsWith('-2')) variants.add(s.replace(/-2$/, '-ii'))
-    if (s.endsWith('-3')) variants.add(s.replace(/-3$/, '-iii'))
-    if (s.endsWith('-4')) variants.add(s.replace(/-4$/, '-iv'))
-    if (s.endsWith('-5')) variants.add(s.replace(/-5$/, '-v'))
-
-    if (s.includes('-i-')) variants.add(s.replace('-i-', '-1-'))
-    if (s.includes('-ii-')) variants.add(s.replace('-ii-', '-2-'))
-    if (s.includes('-iii-')) variants.add(s.replace('-iii-', '-3-'))
-    if (s.includes('-iv-')) variants.add(s.replace('-iv-', '-4-'))
-    if (s.includes('-v-')) variants.add(s.replace('-v-', '-5-'))
-
-    if (s.endsWith('-i')) variants.add(s.replace(/-i$/, '-1'))
-    if (s.endsWith('-ii')) variants.add(s.replace(/-ii$/, '-2'))
-    if (s.endsWith('-iii')) variants.add(s.replace(/-iii$/, '-3'))
-    if (s.endsWith('-iv')) variants.add(s.replace(/-iv$/, '-4'))
-    if (s.endsWith('-v')) variants.add(s.replace(/-v$/, '-5'))
+    variants.add(arabic)
   }
 
-  return Array.from(variants).filter((v) => v.length > 0)
+  // Filter out any lingering Roman numeral slugs so only clean Arabic slugs are output
+  return Array.from(variants).filter((v) => {
+    if (!v) return false
+    // Skip slugs that have roman numeral components like -i-, -ii-, -iii-, -iv-, -v-
+    if (/-(i|ii|iii|iv|v|vi|vii|viii)(-\d{4})?$/.test(v) || /-(i|ii|iii|iv|v|vi|vii|viii)-/.test(v)) {
+      return false
+    }
+    return true
+  })
 }
 
 export function formatDateRange(start: Date, end: Date, locale = 'de-DE'): string {
