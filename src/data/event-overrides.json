@@ -1,0 +1,10 @@
+{
+  "_comment": "Hier kannst du gezielt Eigenschaften einzelner Events überschreiben (z. B. Preis, Ansprechpartner, Packliste, Meldeschluss, Teaser). Schlüssel ist der Event-Slug oder die Google-Kalender-UID.",
+  "familientag-2026": {
+    "price": "Kostenlos",
+    "contact": {
+      "name": "SMJ & BDKJ Team",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  }
+}

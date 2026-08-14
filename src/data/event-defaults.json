@@ -1,0 +1,87 @@
+{
+  "weekend": {
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "35 € (inkl. Vollverpflegung, Übernachtung & Material)",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "contact": {
+      "name": "Jonathan & Vinzenz",
+      "role": "Diözesanleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    },
+    "highlights": [
+      "Spannende Aktionen & Geländespiele im Wald",
+      "Gemeinsames Kochen & Küchencrew",
+      "Gemütliche Abende am Kamin & Lagerfeuer",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ]
+  },
+  "sterntreffen": {
+    "ageMin": 9,
+    "ageMax": 15,
+    "price": "30 € (inkl. Verpflegung, Unterkunft und Betreuung)",
+    "location": "Klause 2.0, Heiligenstadt",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "contact": {
+      "name": "Jonathan Hunold",
+      "role": "Zeltlagerleitung",
+      "email": "zeltlager@smj-wegweiser.de",
+      "phone": "0179 6353443"
+    },
+    "highlights": [
+      "Großes Wiedersehen der Zeltgemeinschaft",
+      "Lager-Rückblick, Zeltlagerfotos & wilde Geschichten",
+      "Geländespiele & Mutproben rund um die Klause 2.0",
+      "100% handyfreie Zeit – echte Gemeinschaft"
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Krankenkassenkarte & Impfausweis",
+      "Kleidung für Abenteuer & feste Schuhe (für draußen)",
+      "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
+      "Taschenlampe oder Kopflampe"
+    ]
+  },
+  "camp": {
+    "ageMin": 9,
+    "ageMax": 14,
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "contact": {
+      "name": "Vinzenz Hupe & Kilian Schlosser",
+      "role": "Lagerleitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    },
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ]
+  },
+  "general": {
+    "location": "Region Wegweiser",
+    "address": "Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt",
+    "contact": {
+      "name": "SMJ Regio Wegweiser",
+      "role": "Organisationsteam",
+      "email": "kontakt@smj-wegweiser.de"
+    }
+  }
+}

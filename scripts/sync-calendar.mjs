@@ -3,8 +3,8 @@
 /**
  * Calendar Sync Script for SMJ Regio Wegweiser
  * Fetches the Google Calendar / CiviCRM .ics feed, parses all VEVENT entries,
- * normalizes titles, slugs, locations, and descriptions, and writes
- * a clean src/data/events.json file for static build.
+ * normalizes titles, slugs, locations, and descriptions, merges category defaults
+ * and individual overrides, and writes a clean src/data/events.json file for static build.
  */
 
 import fs from 'node:fs'
@@ -20,7 +20,20 @@ const CALENDAR_URL =
   process.env.GOOGLE_CALENDAR_ICS_URL ||
   'https://calendar.google.com/calendar/ical/smj-wegweiser.de_n1ki1l9dhltoli9ddplreovu44%40group.calendar.google.com/public/basic.ics'
 
+const DEFAULTS_FILE = path.join(rootDir, 'src', 'data', 'event-defaults.json')
+const OVERRIDES_FILE = path.join(rootDir, 'src', 'data', 'event-overrides.json')
 const OUTPUT_FILE = path.join(rootDir, 'src', 'data', 'events.json')
+
+function loadJsonSafe(filePath, fallback = {}) {
+  try {
+    if (fs.existsSync(filePath)) {
+      return JSON.parse(fs.readFileSync(filePath, 'utf-8'))
+    }
+  } catch (err) {
+    console.warn(`[sync-calendar] Warning: Could not parse ${filePath}: ${err.message}`)
+  }
+  return fallback
+}
 
 function normalizeEventSlug(title, year) {
   const normalizedTitle = title.trim().toLowerCase()
@@ -103,7 +116,7 @@ function parseIcsDate(rawDate, isDateOnly = false) {
   return new Date(y, m, d, h, min, s)
 }
 
-function transformVEvent(raw) {
+function transformVEvent(raw, defaults = {}, overrides = {}) {
   const summary = decodeIcsText(raw['SUMMARY'] || '').trim()
   if (!summary) return null
 
@@ -123,93 +136,39 @@ function transformVEvent(raw) {
   const registrationUrl = regUrlMatch ? regUrlMatch[0].replace(/&amp;/g, '&') : undefined
   const cleanDesc = sanitizeEventDescription(rawDesc)
 
+  // 1. Determine base category
   const normalizedTitle = summary.toLowerCase()
+  let categoryKey = 'general'
   let category = 'general'
-  let ageMin = undefined
-  let ageMax = undefined
-  let price = undefined
-  let highlights = undefined
-  let packingList = undefined
-  let location = rawLocation || 'Region Wegweiser'
-  let address = rawLocation
-  let contactName = 'SMJ Regio Wegweiser'
-  let contactRole = 'Lager- & Eventleitung'
-  let contactEmail = 'kontakt@smj-wegweiser.de'
-  let contactPhone = undefined
 
   if (normalizedTitle.includes('actionwochenende') || normalizedTitle.includes('actionwoche')) {
+    categoryKey = 'weekend'
     category = 'weekend'
-    ageMin = 9
-    ageMax = 15
-    price = '35 € (inkl. Vollverpflegung, Übernachtung & Material)'
-    location = rawLocation || 'Klause 2.0, Heiligenstadt'
-    address = 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt'
-    contactName = 'Jonathan & Vinzenz'
-    contactRole = 'Diözesanleitung'
-    contactEmail = 'vinzenz.hupe@smj-wegweiser.de'
-    highlights = [
-      'Spannende Aktionen & Geländespiele im Wald',
-      'Gemeinsames Kochen & Küchencrew',
-      'Gemütliche Abende am Kamin & Lagerfeuer',
-      '100% handyfreie Zeit – echte Gemeinschaft',
-    ]
-    packingList = [
-      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
-      'Krankenkassenkarte & Impfausweis',
-      'Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)',
-      'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
-      'Taschenlampe oder Kopflampe',
-    ]
   } else if (normalizedTitle.includes('sterntreffen')) {
+    categoryKey = 'sterntreffen'
     category = 'weekend'
-    ageMin = 9
-    ageMax = 15
-    price = '30 € (inkl. Verpflegung, Unterkunft und Betreuung)'
-    location = rawLocation || 'Klause 2.0, Heiligenstadt'
-    address = 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt'
-    contactName = 'Jonathan Hunold'
-    contactRole = 'Zeltlagerleitung'
-    contactEmail = 'zeltlager@smj-wegweiser.de'
-    contactPhone = '0179 6353443'
-    highlights = [
-      'Großes Wiedersehen der Zeltgemeinschaft',
-      'Lager-Rückblick, Zeltlagerfotos & wilde Geschichten',
-      'Geländespiele & Mutproben rund um die Klause 2.0',
-      '100% handyfreie Zeit – echte Gemeinschaft',
-    ]
-    packingList = [
-      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
-      'Krankenkassenkarte & Impfausweis',
-      'Kleidung für Abenteuer & feste Schuhe (für draußen)',
-      'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
-      'Taschenlampe oder Kopflampe',
-    ]
   } else if (normalizedTitle.includes('zeltlager')) {
+    categoryKey = 'camp'
     category = 'camp'
-    ageMin = 9
-    ageMax = 14
-    location = 'Zeltplatz Wiesental, Thalwenden'
-    address = 'Birkenfelder Str., 37318 Uder-Thalwenden'
-    highlights = [
-      'Zeltdorf im malerischen Wiesental',
-      'Nachtwache, Bundesfeuer & Fackelläufe',
-      'Großes Lagerspiel nach Motto-Storyline',
-      '100% handyfreie Natur- und Gemeinschaftserfahrung',
-    ]
-    packingList = [
-      'Warmer Schlafsack & dicke Isomatte / Luftbett',
-      'Wanderstiefel, feste Schuhe & Gummistiefel',
-      'Regenfeste Kleidung, warme Jacke & Badesachen',
-      'Essgeschirr, Becher & Besteck im Stoffbeutel',
-      'Taschenlampe / Kopflampe mit Ersatzbatterien',
-      'Krankenkassenkarte & Impfausweis',
-    ]
   }
+
+  // 2. Load category defaults
+  const catDef = defaults[categoryKey] || defaults['general'] || {}
+
+  let ageMin = catDef.ageMin
+  let ageMax = catDef.ageMax
+  let price = catDef.price
+  let highlights = catDef.highlights ? [...catDef.highlights] : undefined
+  let packingList = catDef.packingList ? [...catDef.packingList] : undefined
+  let location = rawLocation || catDef.location || 'Region Wegweiser'
+  let address = rawLocation || catDef.address || ''
+  let contact = { ...(catDef.contact || {}) }
 
   const year = start.getFullYear()
   const slug = normalizeEventSlug(summary, year)
   const id = raw['UID'] || slug
 
+  // 3. Fallback descriptions
   let description = cleanDesc
   if (!description || description.length < 15) {
     if (normalizedTitle.includes('sterntreffen')) {
@@ -226,7 +185,7 @@ function transformVEvent(raw) {
       ? description.slice(0, 160) + (description.length > 160 ? '...' : '')
       : undefined
 
-  return {
+  const event = {
     id,
     title: summary,
     slug,
@@ -243,16 +202,50 @@ function transformVEvent(raw) {
     packingList,
     registrationUrl,
     category,
-    contact: {
-      name: contactName,
-      role: contactRole,
-      email: contactEmail,
-      phone: contactPhone,
-    },
+    contact,
   }
+
+  // 4. Apply custom individual overrides (matched by exact slug, short slug, base name, or id)
+  let eventOverride = overrides[slug] || overrides[id] || null
+
+  if (!eventOverride) {
+    const overrideKey = Object.keys(overrides).find((key) => {
+      if (key.startsWith('_')) return false
+      const cleanKey = key.toLowerCase().trim()
+      const cleanSlug = slug.toLowerCase().trim()
+      const cleanId = (id || '').toLowerCase().trim()
+
+      if (cleanSlug === cleanKey || cleanId === cleanKey) return true
+
+      const keyWithoutYear = cleanKey.replace(/-(\d{4})$/, '')
+      const slugWithoutYear = cleanSlug.replace(/-(\d{4})$/, '')
+      const keyYear = cleanKey.match(/-(\d{4})$/)?.[1]
+      const slugYear = cleanSlug.match(/-(\d{4})$/)?.[1]
+
+      if (keyYear && slugYear && keyYear !== slugYear) return false
+      return slugWithoutYear.startsWith(keyWithoutYear) || keyWithoutYear.startsWith(slugWithoutYear)
+    })
+
+    if (overrideKey) {
+      eventOverride = overrides[overrideKey]
+    }
+  }
+
+  if (eventOverride && typeof eventOverride === 'object') {
+    for (const [key, val] of Object.entries(eventOverride)) {
+      if (key === '_comment') continue
+      if (key === 'contact' && typeof val === 'object' && val !== null) {
+        event.contact = { ...event.contact, ...val }
+      } else if (val !== undefined) {
+        event[key] = val
+      }
+    }
+  }
+
+  return event
 }
 
-export function parseIcs(icsText) {
+export function parseIcs(icsText, defaults = {}, overrides = {}) {
   const unfolded = icsText.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '')
   const lines = unfolded.split(/\r?\n/)
 
@@ -269,7 +262,7 @@ export function parseIcs(icsText) {
 
     if (line === 'END:VEVENT') {
       inEvent = false
-      const event = transformVEvent(current)
+      const event = transformVEvent(current, defaults, overrides)
       if (event) events.push(event)
       continue
     }
@@ -288,7 +281,7 @@ export function parseIcs(icsText) {
     }
   }
 
-  // Disambiguate any duplicate slugs (e.g. two generic events in the same year)
+  // Disambiguate duplicate slugs
   const slugCounts = new Map()
   for (const ev of events) {
     const count = (slugCounts.get(ev.slug) || 0) + 1
@@ -301,7 +294,6 @@ export function parseIcs(icsText) {
       const currentIdx = (seenSlugs.get(ev.slug) || 0) + 1
       seenSlugs.set(ev.slug, currentIdx)
       if (currentIdx > 1) {
-        // e.g. actionwochenende-2022-2
         const yearMatch = ev.slug.match(/-(\d{4})$/)
         if (yearMatch) {
           const base = ev.slug.replace(/-(\d{4})$/, '')
@@ -313,7 +305,6 @@ export function parseIcs(icsText) {
     }
   }
 
-  // Sort chronologically (newest / upcoming first for readability)
   events.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
 
   return events
@@ -321,6 +312,9 @@ export function parseIcs(icsText) {
 
 async function main() {
   console.log(`[sync-calendar] Fetching calendar from: ${CALENDAR_URL}`)
+
+  const defaults = loadJsonSafe(DEFAULTS_FILE)
+  const overrides = loadJsonSafe(OVERRIDES_FILE)
 
   try {
     const controller = new AbortController()
@@ -333,7 +327,7 @@ async function main() {
     }
 
     const icsText = await res.text()
-    const events = parseIcs(icsText)
+    const events = parseIcs(icsText, defaults, overrides)
 
     if (events.length === 0) {
       console.warn('[sync-calendar] Warning: No events found in parsed feed.')
