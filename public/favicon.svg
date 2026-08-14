@@ -1,5 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#111713"/>
-  <rect x="6" y="6" width="52" height="52" fill="none" stroke="#FF5A1F" stroke-width="3"/>
-  <text x="32" y="42" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" fill="#F1EBDD" text-anchor="middle" letter-spacing="1">SMJ</text>
+  <rect width="64" height="64" rx="10" fill="#111713"/>
+  <!-- SMJ Cross Ring (Subtle Paper Off-White) -->
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#F1EBDD" stroke-width="4.5" stroke-dasharray="19 14" stroke-dashoffset="7" opacity="0.35"/>
+  <!-- Cross Arms -->
+  <rect x="29.5" y="6" width="5" height="52" fill="#F1EBDD" opacity="0.45"/>
+  <rect x="6" y="29.5" width="52" height="5" fill="#F1EBDD" opacity="0.45"/>
+  <!-- Shrine Pinnacle & Center Post (Orange) -->
+  <rect x="30" y="10" width="4" height="44" fill="#FF5A1F"/>
+  <path d="M 32 4 L 26 14 L 29 14 L 29 20 L 35 20 L 35 14 L 38 14 Z" fill="#FF5A1F" stroke="#111713" stroke-width="1"/>
+  <!-- Wegweiser Arrow Sign -->
+  <polygon points="4,29.5 9,25 55,25 60,29.5 55,34 9,34" fill="#FF5A1F" stroke="#111713" stroke-width="1.2"/>
+  <text x="32" y="31.2" fill="#111713" font-family="Arial Black, Impact, sans-serif" font-size="5.5" font-weight="900" text-anchor="middle" letter-spacing="0.5">WEGWEISER</text>
 </svg>

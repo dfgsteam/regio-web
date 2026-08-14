@@ -1,0 +1,103 @@
+---
+interface Props {
+  variant?: 'emblem' | 'badge' | 'full'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  class?: string
+}
+
+const { variant = 'emblem', size = 'md', class: className } = Astro.props
+
+const sizeClasses = {
+  sm: 'h-8 w-8',
+  md: 'h-10 w-10',
+  lg: 'h-16 w-16',
+  xl: 'h-24 w-24',
+}[size]
+---
+
+{variant === 'badge' ? (
+  <div class:list={['relative inline-flex items-center justify-center', className]}>
+    <svg
+      viewBox="0 0 240 240"
+      class="h-full w-full max-w-full drop-shadow-md"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="SMJ Regio Wegweiser Logo Badge"
+    >
+      <circle cx="120" cy="120" r="114" stroke="#FF5A1F" stroke-width="3" stroke-dasharray="8 4" opacity="0.8" />
+      <circle cx="120" cy="120" r="106" stroke="#F1EBDD" stroke-width="1.5" opacity="0.3" />
+      <circle cx="120" cy="120" r="98" fill="#111713" stroke="#F1EBDD" stroke-width="2" opacity="0.95" />
+
+      <path id="badge-text-path" d="M 30,120 A 90,90 0 1,1 210,120 A 90,90 0 1,1 30,120" fill="none" />
+      <text fill="#F1EBDD" font-family="'Space Mono', monospace" font-size="9" font-weight="700" letter-spacing="3.5">
+        <textPath href="#badge-text-path" startOffset="50%" text-anchor="middle">
+          SMJ REGIO WEGWEISER · EICHSFELD ·
+        </textPath>
+      </text>
+
+      <g transform="translate(45, 45) scale(0.62)">
+        <path d="M 68 28 A 54 54 0 0 1 112 72" stroke="#F1EBDD" stroke-width="14" stroke-linecap="square" opacity="0.85" />
+        <path d="M 112 108 A 54 54 0 0 1 68 152" stroke="#F1EBDD" stroke-width="14" stroke-linecap="square" opacity="0.85" />
+        <path d="M 32 152 A 54 54 0 0 1 -12 108" stroke="#F1EBDD" stroke-width="14" stroke-linecap="square" opacity="0.85" />
+        <path d="M -12 72 A 54 54 0 0 1 32 28" stroke="#F1EBDD" stroke-width="14" stroke-linecap="square" opacity="0.85" />
+
+        <rect x="42" y="0" width="16" height="180" fill="#F1EBDD" opacity="0.9" />
+        <rect x="34" y="2" width="32" height="12" fill="#F1EBDD" opacity="0.9" />
+        <rect x="34" y="166" width="32" height="12" fill="#F1EBDD" opacity="0.9" />
+
+        <rect x="-40" y="82" width="180" height="16" fill="#F1EBDD" opacity="0.9" />
+        <rect x="-38" y="74" width="12" height="32" fill="#F1EBDD" opacity="0.9" />
+        <rect x="126" y="74" width="12" height="32" fill="#F1EBDD" opacity="0.9" />
+      </g>
+
+      <g transform="translate(120, 120)">
+        <rect x="-5" y="-55" width="10" height="100" fill="#FF5A1F" />
+        
+        <path d="M 0 -72 L -14 -46 L -7 -46 L -7 -25 L 7 -25 L 7 -46 L 14 -46 Z" fill="#FF5A1F" stroke="#111713" stroke-width="2" />
+        <path d="M -2.5 -42 A 2.5 2.5 0 0 1 2.5 -42 L 2.5 -33 L -2.5 -33 Z" fill="#111713" />
+
+        <polygon points="-58,-12 -42,-18 42,-18 58,-12 42,-6 -42,-6" fill="#FF5A1F" stroke="#111713" stroke-width="2" />
+        <text x="0" y="-9.5" fill="#111713" font-family="'Anton', sans-serif" font-size="8" font-weight="900" text-anchor="middle" letter-spacing="1">
+          WEGWEISER
+        </text>
+      </g>
+    </svg>
+  </div>
+) : (
+  <div class:list={['relative inline-flex items-center gap-3', className]}>
+    <svg
+      viewBox="0 0 160 160"
+      class:list={[sizeClasses, 'shrink-0']}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="SMJ Regio Wegweiser Emblem"
+    >
+      <circle cx="80" cy="80" r="54" stroke="#F1EBDD" stroke-width="12" stroke-dasharray="50 35" stroke-dashoffset="18" opacity="0.4" />
+      
+      <rect x="74" y="16" width="12" height="128" fill="#F1EBDD" opacity="0.5" />
+      <rect x="68" y="18" width="24" height="8" fill="#F1EBDD" opacity="0.5" />
+      <rect x="68" y="134" width="24" height="8" fill="#F1EBDD" opacity="0.5" />
+      
+      <rect x="16" y="74" width="128" height="12" fill="#F1EBDD" opacity="0.5" />
+      <rect x="18" y="68" width="8" height="24" fill="#F1EBDD" opacity="0.5" />
+      <rect x="134" y="68" width="8" height="24" fill="#F1EBDD" opacity="0.5" />
+
+      <rect x="76" y="28" width="8" height="106" fill="#FF5A1F" />
+
+      <path d="M 80 14 L 66 38 L 73 38 L 73 54 L 87 54 L 87 38 L 94 38 Z" fill="#FF5A1F" stroke="#111713" stroke-width="2" />
+      <path d="M 77 40 A 3 3 0 0 1 83 40 L 83 48 L 77 48 Z" fill="#111713" />
+
+      <polygon points="12,74 24,64 136,64 148,74 136,84 24,84" fill="#FF5A1F" stroke="#111713" stroke-width="2.5" />
+      <text x="80" y="78" fill="#111713" font-family="'Anton', sans-serif" font-size="13" font-weight="900" text-anchor="middle" letter-spacing="1.5">
+        WEGWEISER
+      </text>
+    </svg>
+
+    {variant === 'full' && (
+      <span class="flex flex-col leading-tight">
+        <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.28em] text-orange">SMJ Regio</span>
+        <span class="font-display text-lg uppercase tracking-wider text-paper">Wegweiser</span>
+      </span>
+    )}
+  </div>
+)}

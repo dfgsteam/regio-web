@@ -1,5 +1,6 @@
 ---
 import MobileNav from './MobileNav.astro'
+import Logo from '../common/Logo.astro'
 
 const links = [
   { label: 'Start', href: '/' },
@@ -15,15 +16,9 @@ const links = [
   id="site-header"
   class="fixed inset-x-0 top-0 z-40 transition-colors duration-300"
 >
-  <div class="flex items-center justify-between px-5 py-4 sm:px-8">
-    <a href="/" class="group flex items-center gap-3" aria-label="SMJ Regio Wegweiser – Start">
-      <span class="grid h-10 w-10 place-items-center border-2 border-orange font-display text-lg leading-none text-paper transition-colors group-hover:bg-orange group-hover:text-forest-950">
-        SMJ
-      </span>
-      <span class="hidden flex-col leading-tight sm:flex">
-        <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.3em] text-orange">Regio</span>
-        <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.3em] text-paper">Wegweiser</span>
-      </span>
+  <div class="flex items-center justify-between px-5 py-3 sm:px-8">
+    <a href="/" class="group flex items-center gap-3 transition-transform duration-300 group-hover:scale-105" aria-label="SMJ Regio Wegweiser – Start">
+      <Logo variant="full" size="md" />
     </a>
 
     <nav class="hidden items-center gap-7 lg:flex" aria-label="Hauptnavigation">
