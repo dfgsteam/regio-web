@@ -28,7 +28,8 @@ const analogPillars = [
   <div class="texture-topo absolute inset-0 opacity-40" aria-hidden="true" />
 
   <Container class="relative">
-    <div class="grid items-start gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+    <div class="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+      <!-- Left Column: Header & Quote -->
       <div>
         <Eyebrow label="100% Analog · Handyfreie Zone" />
         <h2 class="display display-lg mt-6 text-paper">
@@ -40,7 +41,7 @@ const analogPillars = [
           Kein Display. Kein Akku-Stress. Kein Scrollen. Bei der SMJ Regio Wegweiser schalten wir das Smartphone bewusst ab, um das einzuschalten, was wirklich zählt: <strong class="text-paper">echte Natur, echte Herausforderungen und echte Gemeinschaft.</strong>
         </p>
 
-        <div class="mt-10 border-l-2 border-orange bg-forest-900/60 p-6">
+        <div class="mt-10 border-l-2 border-orange bg-forest-900/80 p-6 shadow-xl">
           <p class="font-display text-xl uppercase leading-snug text-paper">
             „Nach zwei Tagen vermisst niemand mehr sein Smartphone. Nach zehn Tagen will keiner zurück an den Bildschirm.“
           </p>
@@ -48,21 +49,41 @@ const analogPillars = [
         </div>
       </div>
 
-      <div class="space-y-6">
-        {
-          analogPillars.map((item, index) => (
-            <div class="border-2 border-paper/15 bg-forest-900 p-6 sm:p-8 transition-colors hover:border-orange">
-              <div class="flex items-center gap-3">
-                <span class="grid h-9 w-9 place-items-center border border-orange bg-forest-950 font-mono text-sm text-orange">
-                  0{index + 1}
-                </span>
-                <h3 class="display text-2xl text-paper">{item.title}</h3>
+      <!-- Right Column: 3D Physical Card Stack Deck -->
+      <div class="relative min-h-[440px] flex items-center justify-center">
+        <div class="card-stack-deck relative w-full space-y-6 lg:space-y-0">
+          {
+            analogPillars.map((item, index) => (
+              <div
+                class:list={[
+                  'card-stack-item border-2 border-paper/20 bg-forest-900 p-7 sm:p-8 transition-colors hover:border-orange',
+                  index > 0 ? 'lg:absolute lg:inset-0' : 'relative',
+                ]}
+                style={`z-index: ${index + 1};`}
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center border-2 border-orange bg-forest-950 font-mono text-sm font-bold text-orange">
+                      0{index + 1}
+                    </span>
+                    <h3 class="display text-2xl text-paper">{item.title}</h3>
+                  </div>
+                  <span class="font-mono text-xs text-orange/60">PFEILER 0{index + 1}</span>
+                </div>
+                <p class="mt-5 text-sm leading-relaxed text-paper/80">{item.description}</p>
+                <div class="mt-6 flex items-center justify-between border-t border-paper/10 pt-4">
+                  <span class="mono-label text-[0.68rem] text-paper/50">SMJ REGIO WEGWEISER</span>
+                  <span class="mono-label text-[0.68rem] text-orange font-bold">100% ANALOG</span>
+                </div>
               </div>
-              <p class="mt-4 text-sm leading-relaxed text-paper/75">{item.description}</p>
-            </div>
-          ))
-        }
+            ))
+          }
+        </div>
       </div>
     </div>
   </Container>
 </section>
+
+<script>
+  import '../../scripts/animations/card-stack'
+</script>
