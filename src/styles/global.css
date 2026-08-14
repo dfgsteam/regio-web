@@ -2,6 +2,7 @@
 @import '@fontsource/anton';
 @import '@fontsource-variable/inter';
 @import '@fontsource/space-mono';
+@import '@fontsource/caveat';
 @import './typography.css';
 @import './textures.css';
 
@@ -18,6 +19,7 @@
   --font-display: 'Anton', 'Impact', sans-serif;
   --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-mono: 'Space Mono', 'Courier New', monospace;
+  --font-hand: 'Caveat', 'Comic Sans MS', cursive;
 
   --breakpoint-xs: 26rem;
 }

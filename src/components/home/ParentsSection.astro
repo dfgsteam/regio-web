@@ -27,13 +27,21 @@ const questions = [
 ]
 ---
 
-<section id="parents" class="texture-paper relative bg-paper py-24 text-forest-950 sm:py-32">
+<section id="parents" class="texture-paper torn-edge-top torn-edge-bottom relative bg-paper py-24 text-forest-950 sm:py-32">
   <Container>
-    <Eyebrow label="Für Eltern" muted />
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <Eyebrow label="Für Eltern" muted />
+      <span class="stamp-distressed -rotate-1 border-forest-950/40 text-forest-950 bg-paper">Sicherheit & Vertrauen</span>
+    </div>
+
     <h2 class="display display-lg mt-6 text-forest-950">
       Und was sagen<br />
       <span class="text-orange">deine Eltern</span> dazu?
     </h2>
+
+    <p class="hand-note-dark mt-4 text-2xl sm:text-3xl">
+      // Keine versteckten Kosten. Volle Transparenz & 24/7 Ansprechpartner.
+    </p>
 
     <div class="mt-14 grid gap-6 md:grid-cols-2">
       {

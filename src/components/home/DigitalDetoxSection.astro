@@ -32,17 +32,25 @@ const analogPillars = [
     <div class="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
       <!-- Left Column: Header & Quote -->
       <div>
-        <Eyebrow label="100% Analog · Handyfreie Zone" />
+        <div class="flex flex-wrap items-center gap-3">
+          <Eyebrow label="100% Analog · Handyfreie Zone" />
+          <span class="stamp-distressed -rotate-2">Offline Zone · 0% Screen Time</span>
+        </div>
+
         <h2 class="display display-lg mt-6 text-paper">
           Stecker raus.<br />
           <span class="text-orange">Echtes Leben an.</span>
         </h2>
 
-        <p class="mt-8 text-base leading-relaxed text-paper/80 sm:text-lg">
+        <p class="hand-note mt-4 text-2xl sm:text-3xl text-orange">
+          // Dein Smartphone wird dich nicht vermissen. Versprochen.
+        </p>
+
+        <p class="mt-6 text-base leading-relaxed text-paper/80 sm:text-lg">
           Kein Display. Kein Akku-Stress. Kein Scrollen. Bei der SMJ Regio Wegweiser schalten wir das Smartphone bewusst ab, um das einzuschalten, was wirklich zählt: <strong class="text-paper">echte Natur, echte Herausforderungen und echte Gemeinschaft.</strong>
         </p>
 
-        <div class="mt-10 border-l-2 border-orange bg-forest-900/80 p-6 shadow-xl">
+        <div class="mt-10 border-l-2 border-orange bg-forest-900/80 p-6 shadow-xl relative">
           <p class="font-display text-xl uppercase leading-snug text-paper">
             „Nach zwei Tagen vermisst niemand mehr sein Smartphone. Nach zehn Tagen will keiner zurück an den Bildschirm.“
           </p>

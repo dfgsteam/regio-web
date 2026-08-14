@@ -8,9 +8,12 @@ import Sticker from '../common/Sticker.astro'
 const terms = ['Gemeinschaft', 'Feuer', '100% Analog', 'Wettkampf', 'Natur', 'Handyfrei', 'Glaube', 'Verantwortung']
 ---
 
-<section id="expect" class="texture-paper relative bg-paper text-forest-950">
+<section id="expect" class="texture-paper torn-edge-top torn-edge-bottom relative bg-paper text-forest-950">
   <Container class="py-24 sm:py-36">
-    <Eyebrow label="Was erwartet dich?" muted />
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <Eyebrow label="Was erwartet dich?" muted />
+      <span class="stamp-distressed -rotate-1 border-forest-950/40 text-forest-950 bg-paper/90">Echtes Abenteuer</span>
+    </div>
 
     <div class="mt-10 grid items-start gap-14 lg:grid-cols-[1.2fr_1fr]">
       <div>
@@ -23,7 +26,11 @@ const terms = ['Gemeinschaft', 'Feuer', '100% Analog', 'Wettkampf', 'Natur', 'Ha
           <span class="block">im Kopf.</span>
         </h2>
 
-        <div class="mt-10 flex flex-wrap gap-2.5">
+        <p class="hand-note-dark mt-6 text-2xl sm:text-3xl">
+          // 100% echt. Keine Simulation. Keine Ausreden.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-2.5">
           {
             terms.map((term, index) => (
               <Sticker label={term} rotate={index % 2 === 0 ? '-2deg' : '1.5deg'} tone="paper" />
@@ -39,8 +46,8 @@ const terms = ['Gemeinschaft', 'Feuer', '100% Analog', 'Wettkampf', 'Natur', 'Ha
           ratio="4:5"
           class="reveal w-full max-w-sm"
         />
-        <FieldNote meta="FIELD NOTE 03" rotate="-3deg" class="absolute -bottom-8 -left-4 z-10 sm:-left-12">
-          Das Feuer hat den Regen überlebt.
+        <FieldNote meta="FIELD NOTE 03 · 22:37 UHR" rotate="-3deg" class="absolute -bottom-8 -left-4 z-10 sm:-left-12">
+          Das Feuer hat den Regen überlebt. Und wir auch.
         </FieldNote>
       </div>
     </div>

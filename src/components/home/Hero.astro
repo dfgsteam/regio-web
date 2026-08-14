@@ -14,14 +14,24 @@ import Coordinates from '../common/Coordinates.astro'
   </div>
 
   <div class="hero-topo texture-topo absolute inset-0 opacity-0" aria-hidden="true" />
+  <div class="texture-vignette pointer-events-none absolute inset-0 z-1" aria-hidden="true" />
 
   <div class="hero-content relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
-    <p class="hero-eyebrow eyebrow mb-6">SMJ Regio Wegweiser</p>
+    <div class="hero-eyebrow mb-5 flex flex-wrap items-center justify-center gap-3">
+      <span class="eyebrow">SMJ Regio Wegweiser</span>
+      <span class="stamp-distressed -rotate-2">Expedition · 2026</span>
+    </div>
+
     <h1 class="display display-xl text-paper">
       <span class="hero-line-1 block">Raus.</span>
       <span class="hero-line-2 block text-orange">Ins Abenteuer.</span>
     </h1>
-    <p class="hero-sub mt-8 max-w-md font-mono text-[0.7rem] uppercase leading-relaxed tracking-[0.28em] text-paper/80">
+
+    <p class="hand-note mt-3 text-2xl sm:text-3xl text-orange">
+      // Raus aus der Komfortzone. Rein in den Wald.
+    </p>
+
+    <p class="hero-sub mt-6 max-w-md font-mono text-[0.7rem] uppercase leading-relaxed tracking-[0.28em] text-paper/80">
       Zeltlager. Lagerfeuer. Wettkämpfe. Freunde.<br />
       Zehn Tage, die anders sind als alles davor.
     </p>

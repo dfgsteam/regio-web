@@ -74,16 +74,23 @@ const frames = [
     <div class="reel-viewport relative overflow-hidden">
       <div class="reel-track flex w-max items-stretch gap-10 px-[8vw]">
         {
-          frames.map((frame) => (
+          frames.map((frame, index) => (
             <figure class="reel-frame relative w-[52vw] shrink-0 max-w-[860px]">
-              <div class="overflow-hidden border border-paper/15 bg-forest-900">
+              <div class="relative overflow-hidden border-2 border-paper/20 bg-forest-900 shadow-2xl">
+                <!-- Rough Corner Tape -->
+                <div class="texture-tape absolute -top-3 left-6 z-10 h-6 w-24 -rotate-3" aria-hidden="true" />
+                <div class="texture-tape absolute -bottom-3 right-6 z-10 h-6 w-24 rotate-2" aria-hidden="true" />
+                
                 <img src={frame.src} alt={frame.alt} loading="lazy" class="aspect-[5/3] w-full object-cover" />
+                
+                <span class="stamp-distressed absolute bottom-4 left-4 z-10 -rotate-1 bg-forest-950/90 text-[0.62rem]">
+                  Expedition 0{index + 1}
+                </span>
               </div>
               <figcaption class="mt-4 flex items-baseline justify-between">
                 <span class="font-display text-4xl uppercase text-paper">{frame.label}</span>
                 <span class="mono-label text-xs text-orange">{frame.note}</span>
               </figcaption>
-              <span class="absolute -bottom-3 left-1/2 h-3 w-10 -translate-x-1/2 bg-orange" aria-hidden="true" />
             </figure>
           ))
         }
