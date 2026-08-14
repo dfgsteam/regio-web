@@ -30,8 +30,20 @@ export const GET: APIRoute = async () => {
     const dtstart = formatIcsDate(event.start)
     const dtend = formatIcsDate(event.end)
     const summary = event.title.replace(/\n/g, ' ')
-    const description = (event.teaser || event.description || '').replace(/\n/g, '\\n')
-    const location = (event.location || 'Wiesenthal bei Thalwenden').replace(/\n/g, ' ')
+    
+    // Determine proper URL for Zeltlager vs other events
+    const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('zeltlager')
+    const eventYear = event.start.getFullYear()
+    const eventUrl = isCamp
+      ? `https://smj-wegweiser.de/abenteuer/zeltlager-${eventYear}/`
+      : `https://smj-wegweiser.de/abenteuer/${event.slug}/`
+
+    const rawDesc = (event.teaser || event.description || '').replace(/\n/g, '\\n')
+    const description = rawDesc
+      ? `${rawDesc}\\n\\nAlle Infos, Packliste & Anmeldung: ${eventUrl}`
+      : `Alle Infos, Packliste & Anmeldung: ${eventUrl}`
+
+    const location = (event.location || 'Region Wegweiser').replace(/\n/g, ' ')
 
     lines.push(
       'BEGIN:VEVENT',
@@ -40,6 +52,7 @@ export const GET: APIRoute = async () => {
       `DTSTART:${dtstart}`,
       `DTEND:${dtend}`,
       `SUMMARY:${summary}`,
+      `URL:${eventUrl}`,
       `DESCRIPTION:${description}`,
       `LOCATION:${location}`,
       'STATUS:CONFIRMED',
