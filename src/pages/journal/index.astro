@@ -26,32 +26,55 @@ const sorted = posts.sort((a, b) => b.data.publishedAt.getTime() - a.data.publis
   </section>
 
   <section class="bg-forest-950 py-20">
-    <Container class="space-y-14">
+    <Container class="divide-y divide-paper/15">
       {sorted.map((post) => (
-        <article class="grid gap-8 border-t border-paper/15 pt-10 lg:grid-cols-[1fr_1.4fr]">
-          <div>
-            <p class="mono-label">
-              {post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })} · {post.data.author}
-            </p>
-            {post.data.tags.length > 0 && (
-              <p class="mono-label mt-3 text-orange">{post.data.tags.join(' · ')}</p>
-            )}
-          </div>
-          <div class="grid gap-8 sm:grid-cols-[220px_1fr]">
+        <article class="group grid gap-8 py-12 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] lg:gap-12 items-center">
+          <a href={`/journal/${post.id}/`} class="relative block overflow-hidden border border-paper/20 bg-forest-900 aspect-[16/10] sm:aspect-[4/3] shrink-0">
             <img
               src={post.data.image.src}
               alt={post.data.image.alt}
               loading="lazy"
-              class="aspect-[4/3] w-full object-cover"
+              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div>
-              <h2 class="display display-md text-paper">
-                <a href={`/journal/${post.id}/`} class="transition-colors hover:text-orange">
-                  {post.data.title}
-                </a>
-              </h2>
-              <p class="mt-4 max-w-xl leading-relaxed text-paper/75">{post.data.description}</p>
-              <a href={`/journal/${post.id}/`} class="mt-5 inline-block border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+            {post.data.tags.length > 0 && (
+              <span class="absolute bottom-2 left-2 bg-forest-950/90 px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider text-orange border border-paper/10">
+                {post.data.tags[0]}
+              </span>
+            )}
+          </a>
+
+          <div class="flex flex-col justify-center">
+            <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs text-paper/60 mb-3">
+              <time datetime={post.data.publishedAt.toISOString()}>
+                {post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+              </time>
+              <span>·</span>
+              <span class="text-paper/80">{post.data.author}</span>
+              {post.data.tags.length > 1 && (
+                <>
+                  <span>·</span>
+                  <span class="text-orange uppercase tracking-wider font-semibold">
+                    {post.data.tags.slice(1).join(' · ')}
+                  </span>
+                </>
+              )}
+            </div>
+
+            <h2 class="display display-md text-paper group-hover:text-orange transition-colors">
+              <a href={`/journal/${post.id}/`}>
+                {post.data.title}
+              </a>
+            </h2>
+
+            <p class="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-paper/75">
+              {post.data.description}
+            </p>
+
+            <div class="mt-6">
+              <a
+                href={`/journal/${post.id}/`}
+                class="inline-flex items-center gap-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-all hover:text-orange hover:gap-3"
+              >
                 Weiterlesen →
               </a>
             </div>
