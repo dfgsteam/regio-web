@@ -44,7 +44,7 @@ const pillars = [
 
 <section id="pillars" class="relative bg-forest-900 py-24 lg:hidden">
   <Container>
-    <Eyebrow label="Kapitel 04 · Die fünf Säulen" />
+    <Eyebrow label="Die fünf Säulen" />
     <div class="mt-12 flex flex-col gap-14">
       {
         pillars.map((pillar) => (
@@ -75,7 +75,7 @@ const pillars = [
               class="pillar-item absolute inset-0 flex flex-col justify-center"
               style={index === 0 ? '' : 'opacity: 0; pointer-events: none; transform: translateY(40px);'}
             >
-              <Eyebrow label="Kapitel 04 · Die fünf Säulen" />
+              <Eyebrow label="Die fünf Säulen" />
               <span class="font-mono text-base text-orange mt-6">{pillar.number}</span>
               <h3 class="display text-4xl sm:text-5xl xl:text-6xl mt-3 text-paper whitespace-nowrap">{pillar.title}</h3>
               <p class="mt-6 max-w-md text-lg leading-relaxed text-paper/80">{pillar.line}</p>
