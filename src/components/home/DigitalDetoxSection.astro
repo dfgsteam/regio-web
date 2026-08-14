@@ -1,0 +1,68 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+
+const analogPillars = [
+  {
+    icon: '⚡',
+    title: 'Taschenmesser statt Touchscreen',
+    description:
+      'Schnitzen, Holztürme bauen, Feuer ohne Streichhölzer entfachen: Bei uns machst du Dinge mit deinen eigenen Händen, die kein Algorithmus ersetzen kann.',
+  },
+  {
+    icon: '🌲',
+    title: 'Echte Kumpels statt Follower',
+    description:
+      'Zusammen im Zelt aufwachen, sich beim Geländespiel im Dickicht den Rücken freihalten und am Lagerfeuer Geschichten lauschen – Auge in Auge, ohne Filter.',
+  },
+  {
+    icon: '🔥',
+    title: 'Kopf frei statt Dauer-Push',
+    description:
+      'Kein TikTok, keine Schulgruppen, kein Vergleichsdruck. Zehn Tage echter Ausstieg. Für Eltern: Im Notfall ist die Lagerleitung rund um die Uhr direkt erreichbar.',
+  },
+]
+---
+
+<section id="analog" class="relative overflow-hidden bg-forest-950 py-24 sm:py-36 border-t border-paper/10">
+  <div class="texture-topo absolute inset-0 opacity-40" aria-hidden="true" />
+
+  <Container class="relative">
+    <div class="grid items-start gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+      <div>
+        <Eyebrow label="100% Analog · Handyfreie Zone" />
+        <h2 class="display display-lg mt-6 text-paper">
+          Stecker raus.<br />
+          <span class="text-orange">Echtes Leben an.</span>
+        </h2>
+
+        <p class="mt-8 text-base leading-relaxed text-paper/80 sm:text-lg">
+          Kein Display. Kein Akku-Stress. Kein Scrollen. Bei der SMJ Regio Wegweiser schalten wir das Smartphone bewusst ab, um das einzuschalten, was wirklich zählt: <strong class="text-paper">echte Natur, echte Herausforderungen und echte Gemeinschaft.</strong>
+        </p>
+
+        <div class="mt-10 border-l-2 border-orange bg-forest-900/60 p-6">
+          <p class="font-display text-xl uppercase leading-snug text-paper">
+            „Nach zwei Tagen vermisst niemand mehr sein Smartphone. Nach zehn Tagen will keiner zurück an den Bildschirm.“
+          </p>
+          <p class="mono-label mt-3 text-xs text-orange">Erfahrung aus über 40 Jahren Zeltlager</p>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        {
+          analogPillars.map((item, index) => (
+            <div class="border-2 border-paper/15 bg-forest-900 p-6 sm:p-8 transition-colors hover:border-orange">
+              <div class="flex items-center gap-3">
+                <span class="grid h-9 w-9 place-items-center border border-orange bg-forest-950 font-mono text-sm text-orange">
+                  0{index + 1}
+                </span>
+                <h3 class="display text-2xl text-paper">{item.title}</h3>
+              </div>
+              <p class="mt-4 text-sm leading-relaxed text-paper/75">{item.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</section>
