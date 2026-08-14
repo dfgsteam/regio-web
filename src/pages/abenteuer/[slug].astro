@@ -89,15 +89,13 @@ const eventStructuredData = {
         )}
       </div>
 
-      <h1 class="display display-xl mt-4 text-paper max-w-4xl">{event.title}</h1>
-      
-      {event.teaser && (
-        <p class="mt-6 max-w-2xl text-lg sm:text-xl leading-relaxed text-paper/85 font-medium">
-          {event.teaser}
-        </p>
-      )}
+      <!-- Main Title: Fit in one line on desktop/tablets -->
+      <h1 class="display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mt-4 text-paper max-w-5xl tracking-tight leading-[0.92]">
+        {event.title}
+      </h1>
 
-      <div class="mt-10 flex flex-wrap gap-4 font-mono text-xs uppercase tracking-[0.16em] text-paper">
+      <!-- Meta Badges -->
+      <div class="mt-8 flex flex-wrap gap-4 font-mono text-xs uppercase tracking-[0.16em] text-paper">
         <div class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2">
           <Calendar class="h-4 w-4 text-orange" />
           <span>{formattedDate}</span>
@@ -127,7 +125,7 @@ const eventStructuredData = {
   <!-- Main Content & Details Grid -->
   <section class="bg-forest-950 py-16 sm:py-24">
     <Container class="grid gap-14 lg:grid-cols-[1.5fr_1fr] items-start">
-      <!-- Left Column: Story, Highlights & Info -->
+      <!-- Left Column: Story, Highlights, Info & Google Maps -->
       <div class="space-y-14">
         {event.description && (
           <div>
@@ -188,6 +186,44 @@ const eventStructuredData = {
               <Phone class="h-4 w-4 text-orange shrink-0" />
               <span>Für Eltern: Im Notfall ist die Leitung rund um die Uhr telefonisch erreichbar.</span>
             </p>
+          </div>
+        )}
+
+        <!-- Location & Google Maps Section (Left side at the end) -->
+        {(event.location || event.address) && (
+          <div class="border-2 border-paper/15 bg-forest-900 p-7 sm:p-9">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div>
+                <p class="eyebrow mb-1">Anfahrt & Standort</p>
+                <h2 class="display display-sm text-paper">{event.location}</h2>
+                {event.address && (
+                  <p class="font-mono text-xs text-paper/70 mt-1">{event.address}</p>
+                )}
+              </div>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address || event.location || '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 border border-paper/20 bg-forest-950 px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
+              >
+                <MapPin class="h-3.5 w-3.5 text-orange" />
+                <span>In Google Maps öffnen ↗</span>
+              </a>
+            </div>
+
+            <div class="relative overflow-hidden border border-paper/20 bg-forest-950 aspect-[16/9] sm:aspect-[21/9]">
+              <iframe
+                src={
+                  (event.address?.toLowerCase().includes('thalwenden') || event.location?.toLowerCase().includes('wiesental'))
+                    ? 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde'
+                    : `https://maps.google.com/maps?q=${encodeURIComponent(event.address || event.location || 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt')}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+                }
+                class="absolute inset-0 h-full w-full border-0 grayscale invert contrast-125 opacity-85 hover:grayscale-0 hover:invert-0 hover:opacity-100 transition-all duration-300"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title={`Karte von ${event.location}`}
+              />
+            </div>
           </div>
         )}
       </div>
