@@ -69,15 +69,22 @@ const chapters = [
     </Container>
   </section>
 
-  <section class="bg-forest-900 py-20">
+  <section id="history-chapters-section" class="relative bg-forest-900 py-20 overflow-hidden">
+    <!-- Topographic trail line on desktop -->
+    <div class="pointer-events-none absolute left-8 top-32 bottom-24 hidden w-0.5 bg-paper/10 sm:left-12 lg:block">
+      <div class="history-trail-progress h-full w-full origin-top bg-gradient-to-b from-orange via-ember to-orange"></div>
+    </div>
+
     <Container>
       <Eyebrow label="Kapitel für Kapitel" />
       <div class="mt-12 space-y-14">
         {chapters.map((chapter, index) => (
-          <article class="grid gap-6 border-t border-paper/15 pt-8 lg:grid-cols-[80px_1fr_1.2fr]">
-            <span class="font-mono text-sm text-orange">{String(index + 1).padStart(2, '0')}</span>
-            <h2 class="display display-md text-paper">{chapter.title}</h2>
-            <p class="max-w-xl leading-relaxed text-paper/75">{chapter.body}</p>
+          <article class="history-chapter-article grid gap-6 border-t border-paper/15 pt-8 lg:grid-cols-[80px_1fr_1.2fr]">
+            <span class="history-marker inline-flex h-10 w-10 items-center justify-center border border-orange/40 bg-forest-950 font-mono text-sm font-bold text-orange">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <h2 class="history-title display display-md text-paper">{chapter.title}</h2>
+            <p class="history-text max-w-xl leading-relaxed text-paper/75">{chapter.body}</p>
           </article>
         ))}
       </div>
@@ -238,3 +245,7 @@ const chapters = [
     </Container>
   </section>
 </ContentLayout>
+
+<script>
+  import '../../scripts/animations/history-trail'
+</script>

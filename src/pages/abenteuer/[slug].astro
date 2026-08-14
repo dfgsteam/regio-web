@@ -192,11 +192,11 @@ const eventStructuredData = {
 
         <!-- Highlights (rendered if present) -->
         {event.highlights && event.highlights.length > 0 && (
-          <div>
+          <div id="highlights-container">
             <h2 class="display display-sm text-paper mb-6">Die Highlights</h2>
             <div class="grid gap-4 sm:grid-cols-2">
               {event.highlights.map((highlight, index) => (
-                <div class="border-2 border-paper/15 bg-forest-900 p-5 transition-colors hover:border-orange">
+                <div class="highlight-card border-2 border-paper/15 bg-forest-900 p-5 transition-all hover:border-orange">
                   <span class="font-mono text-xs text-orange font-bold block mb-2">0{index + 1}</span>
                   <p class="font-display text-lg uppercase text-paper">{highlight}</p>
                 </div>
@@ -207,14 +207,14 @@ const eventStructuredData = {
 
         <!-- Packing List (rendered if present) -->
         {event.packingList && event.packingList.length > 0 && (
-          <div class="border-2 border-paper/15 bg-forest-900 p-7 sm:p-9">
+          <div id="packing-list-container" class="border-2 border-paper/15 bg-forest-900 p-7 sm:p-9">
             <div class="flex items-center justify-between gap-4 mb-6">
               <h2 class="display display-sm text-paper">Was muss mit? (Packliste)</h2>
               <span class="mono-label text-xs text-orange">Checkliste</span>
             </div>
             <ul class="grid gap-3 sm:grid-cols-2">
               {event.packingList.map((item) => (
-                <li class="flex items-start gap-3 text-sm text-paper/85 font-mono">
+                <li class="packing-item flex items-start gap-3 text-sm text-paper/85 font-mono">
                   <Check class="h-4 w-4 text-orange shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
@@ -412,3 +412,7 @@ const eventStructuredData = {
     </Container>
   </section>
 </ContentLayout>
+
+<script>
+  import '../../scripts/animations/packing-list'
+</script>

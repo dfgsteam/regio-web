@@ -93,7 +93,12 @@ const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.d
     </section>
   )}
 
-  <section class="bg-forest-950 py-16">
+  <section id="upcoming-events-section" class="relative bg-forest-950 py-16 overflow-hidden">
+    <!-- Subtle vertical track line -->
+    <div class="pointer-events-none absolute left-6 top-24 bottom-24 hidden w-0.5 bg-paper/10 sm:left-10 lg:block">
+      <div class="timeline-progress-line h-full w-full origin-top bg-gradient-to-b from-orange via-ember to-orange"></div>
+    </div>
+
     <Container>
       <div class="flex flex-wrap items-end justify-between gap-6">
         <div>
@@ -112,7 +117,9 @@ const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.d
       {upcoming.length > 0 ? (
         <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {upcoming.map((event) => (
-            <EventCard event={event} />
+            <div class="timeline-event-card">
+              <EventCard event={event} />
+            </div>
           ))}
         </div>
       ) : (
@@ -136,3 +143,7 @@ const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.d
     </section>
   )}
 </ContentLayout>
+
+<script>
+  import '../../scripts/animations/timeline'
+</script>

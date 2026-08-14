@@ -56,10 +56,10 @@ import { instagramPosts } from '../../lib/instagram/feed'
         </span>
       </div>
 
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div id="gallery-grid-container" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {
           instagramPosts.map((post) => (
-            <article class="group flex flex-col justify-between border-2 border-paper/15 bg-forest-900 overflow-hidden transition-all duration-300 hover:border-orange">
+            <article class="gallery-card group flex flex-col justify-between border-2 border-paper/15 bg-forest-900 overflow-hidden transition-all duration-300 hover:border-orange">
               <!-- Post Header -->
               <div class="flex items-center justify-between p-4 border-b border-paper/10 bg-forest-950/60">
                 <div class="flex items-center gap-2.5">
@@ -184,3 +184,7 @@ import { instagramPosts } from '../../lib/instagram/feed'
     </Container>
   </section>
 </ContentLayout>
+
+<script>
+  import '../../scripts/animations/gallery-parallax'
+</script>

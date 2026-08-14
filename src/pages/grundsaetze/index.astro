@@ -65,25 +65,30 @@ const pillars = [
     </Container>
   </section>
 
-  <section class="bg-forest-950 py-20">
-    <Container class="space-y-20">
+  <section id="pillars-detail-container" class="relative bg-forest-950 py-20 overflow-hidden">
+    <Container class="space-y-28">
       {pillars.map((pillar, index) => (
-        <article class="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+        <article class="pillar-detail-article relative grid gap-10 lg:grid-cols-[1fr_1.2fr] border-t border-paper/10 pt-16 first:border-0 first:pt-0">
+          <!-- Background watermark text -->
+          <span class="pillar-watermark pointer-events-none absolute -top-8 right-0 font-display text-8xl font-black text-paper/[0.03] select-none sm:text-9xl">
+            {pillar.title}
+          </span>
+
           <div>
-            <span class="font-mono text-base text-orange">{String(index + 1).padStart(2, '0')}</span>
-            <h2 class="display text-4xl sm:text-5xl lg:text-6xl mt-3 text-paper whitespace-nowrap">{pillar.title}</h2>
-            <p class="mt-6 max-w-md font-display text-2xl uppercase leading-snug text-paper/90">
+            <span class="pillar-number inline-block font-mono text-lg font-bold text-orange">{String(index + 1).padStart(2, '0')}</span>
+            <h2 class="pillar-title display text-4xl sm:text-5xl lg:text-6xl mt-3 text-paper whitespace-nowrap">{pillar.title}</h2>
+            <p class="pillar-message mt-6 max-w-md font-display text-2xl uppercase leading-snug text-paper/90">
               {pillar.message}
             </p>
           </div>
-          <div class="grid gap-10 sm:grid-cols-2">
-            <div>
+          <div class="grid gap-8 sm:grid-cols-2">
+            <div class="pillar-card border border-paper/10 bg-forest-900/50 p-6">
               <p class="eyebrow mb-4">Was das heißt</p>
-              <p class="leading-relaxed text-paper/75">{pillar.explanation}</p>
+              <p class="text-sm sm:text-base leading-relaxed text-paper/75">{pillar.explanation}</p>
             </div>
-            <div>
+            <div class="pillar-card border border-paper/10 bg-forest-900/50 p-6">
               <p class="eyebrow mb-4">Aus dem Alltag</p>
-              <p class="leading-relaxed text-paper/75">{pillar.example}</p>
+              <p class="text-sm sm:text-base leading-relaxed text-paper/75">{pillar.example}</p>
             </div>
           </div>
         </article>
@@ -109,3 +114,7 @@ const pillars = [
     </Container>
   </section>
 </ContentLayout>
+
+<script>
+  import '../../scripts/animations/pillars-detail'
+</script>
