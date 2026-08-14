@@ -4,6 +4,7 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import EventCard from '../../components/events/EventCard.astro'
 import Button from '../../components/common/Button.astro'
+import { Calendar } from '@lucide/astro'
 import { getCollection } from 'astro:content'
 import { getCurrentCamp } from '../../lib/camps'
 import { eventProvider, formatAgeRange } from '../../lib/events'
@@ -103,7 +104,8 @@ const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.d
           href="/api/calendar.ics"
           class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
         >
-          <span>📅 Kalender abonnieren (iCal)</span>
+          <Calendar class="h-4 w-4 text-orange" />
+          <span>Kalender abonnieren (iCal)</span>
         </a>
       </div>
 

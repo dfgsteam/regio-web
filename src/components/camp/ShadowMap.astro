@@ -1,5 +1,6 @@
 ---
 import Container from '../common/Container.astro'
+import { Flame, Compass } from '@lucide/astro'
 
 const waypoints = [
   { name: 'Basislager Wiesenthal', coords: 'N 51° 22\' 44"', x: 130, y: 310, note: 'Zeltdorf & Feuerstelle' },
@@ -18,7 +19,8 @@ const waypoints = [
         <h2 class="display display-md camp-fg">Die geheime Karte des Wiesenthals.</h2>
       </div>
       <div class="inline-flex items-center gap-2 border border-orange/40 bg-forest-950 px-4 py-2 font-mono text-xs text-orange">
-        <span>🔦 Fackelkegel aktiv (Scrollen oder Maus bewegen)</span>
+        <Flame class="h-4 w-4 text-orange" />
+        <span>Fackelkegel aktiv (Scrollen oder Maus bewegen)</span>
       </div>
     </div>
 
@@ -132,8 +134,9 @@ const waypoints = [
       </svg>
 
       <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-paper/10 pt-4">
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.24em] camp-fg/70">
-          🔦 Tipp: Bewege die Maus oder deinen Finger über die Karte, um geheime Pfade zu beleuchten.
+        <p class="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.24em] camp-fg/70">
+          <Compass class="h-3.5 w-3.5 text-orange" />
+          <span>Tipp: Bewege die Maus oder deinen Finger über die Karte, um geheime Pfade zu beleuchten.</span>
         </p>
         <span class="mono-label text-[0.68rem] text-orange">Nachtwache · 08.–17. Juli 2026</span>
       </div>

@@ -186,7 +186,7 @@ const socialLinks = [
         const data = await res.json()
         if (res.ok && data.ok) {
           statusEl.className = 'font-mono text-[0.68rem] text-orange'
-          statusEl.textContent = '✓ Eingetragen! Du erhältst in Kürze Updates.'
+          statusEl.textContent = 'Eingetragen! Du erhältst in Kürze Updates.'
           form.reset()
         } else {
           statusEl.className = 'font-mono text-[0.68rem] text-red-400'

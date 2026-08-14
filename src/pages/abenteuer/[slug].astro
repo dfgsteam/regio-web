@@ -4,6 +4,14 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
 import {
+  Calendar,
+  MapPin,
+  Target,
+  Banknote,
+  Check,
+  Phone,
+} from '@lucide/astro'
+import {
   eventProvider,
   formatDateRange,
   formatAgeRange,
@@ -90,22 +98,26 @@ const eventStructuredData = {
       )}
 
       <div class="mt-10 flex flex-wrap gap-4 font-mono text-xs uppercase tracking-[0.16em] text-paper">
-        <div class="border border-paper/20 bg-forest-900 px-4 py-2">
-          📅 {formattedDate}
+        <div class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2">
+          <Calendar class="h-4 w-4 text-orange" />
+          <span>{formattedDate}</span>
         </div>
         {event.location && (
-          <div class="border border-paper/20 bg-forest-900 px-4 py-2">
-            📍 {event.location}
+          <div class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2">
+            <MapPin class="h-4 w-4 text-orange" />
+            <span>{event.location}</span>
           </div>
         )}
         {age && (
-          <div class="border border-paper/20 bg-forest-900 px-4 py-2">
-            🎯 {age}
+          <div class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2">
+            <Target class="h-4 w-4 text-orange" />
+            <span>{age}</span>
           </div>
         )}
         {event.price && (
-          <div class="border border-orange/40 bg-forest-900 px-4 py-2 text-orange font-bold">
-            💶 {event.price.split('(')[0]?.trim()}
+          <div class="inline-flex items-center gap-2 border border-orange/40 bg-forest-900 px-4 py-2 text-orange font-bold">
+            <Banknote class="h-4 w-4 text-orange" />
+            <span>{event.price.split('(')[0]?.trim()}</span>
           </div>
         )}
       </div>
@@ -153,7 +165,7 @@ const eventStructuredData = {
             <ul class="grid gap-3 sm:grid-cols-2">
               {event.packingList.map((item) => (
                 <li class="flex items-start gap-3 text-sm text-paper/85 font-mono">
-                  <span class="text-orange select-none mt-0.5">✔</span>
+                  <Check class="h-4 w-4 text-orange shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -172,8 +184,9 @@ const eventStructuredData = {
             <p class="text-sm leading-relaxed text-paper/75 mb-4">
               Die Aktion wird von geschulten und erfahrenen Gruppenleitern der SMJ Regio Wegweiser verantwortungsvoll geleitet.
             </p>
-            <p class="font-mono text-xs text-orange">
-              📞 Für Eltern: Im Notfall ist die Leitung rund um die Uhr telefonisch erreichbar.
+            <p class="inline-flex items-center gap-2 font-mono text-xs text-orange">
+              <Phone class="h-4 w-4 text-orange shrink-0" />
+              <span>Für Eltern: Im Notfall ist die Leitung rund um die Uhr telefonisch erreichbar.</span>
             </p>
           </div>
         )}
@@ -258,9 +271,10 @@ const eventStructuredData = {
           </div>
           <a
             href="/api/calendar.ics"
-            class="border border-paper/20 px-3 py-2 font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
+            class="inline-flex items-center gap-2 border border-paper/20 px-3 py-2 font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
           >
-            📅 iCal
+            <Calendar class="h-3.5 w-3.5 text-orange" />
+            <span>iCal</span>
           </a>
         </div>
       </aside>

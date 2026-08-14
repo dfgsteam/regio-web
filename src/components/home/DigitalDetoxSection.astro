@@ -1,22 +1,23 @@
 ---
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
+import { Zap, TreePine, Flame } from '@lucide/astro'
 
 const analogPillars = [
   {
-    icon: '⚡',
+    icon: Zap,
     title: 'Taschenmesser statt Touchscreen',
     description:
       'Schnitzen, Holztürme bauen, Feuer ohne Streichhölzer entfachen: Bei uns machst du Dinge mit deinen eigenen Händen, die kein Algorithmus ersetzen kann.',
   },
   {
-    icon: '🌲',
+    icon: TreePine,
     title: 'Echte Kumpels statt Follower',
     description:
       'Zusammen im Zelt aufwachen, sich beim Geländespiel im Dickicht den Rücken freihalten und am Lagerfeuer Geschichten lauschen – Auge in Auge, ohne Filter.',
   },
   {
-    icon: '🔥',
+    icon: Flame,
     title: 'Kopf frei statt Dauer-Push',
     description:
       'Kein TikTok, keine Schulgruppen, kein Vergleichsdruck. Zehn Tage echter Ausstieg. Für Eltern: Im Notfall ist die Lagerleitung rund um die Uhr direkt erreichbar.',
@@ -53,30 +54,33 @@ const analogPillars = [
       <div class="relative min-h-[440px] flex items-center justify-center">
         <div class="card-stack-deck relative w-full space-y-6 lg:space-y-0">
           {
-            analogPillars.map((item, index) => (
-              <div
-                class:list={[
-                  'card-stack-item border-2 border-paper/20 bg-forest-900 p-7 sm:p-8 transition-colors hover:border-orange',
-                  index > 0 ? 'lg:absolute lg:inset-0' : 'relative',
-                ]}
-                style={`z-index: ${index + 1};`}
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <span class="grid h-10 w-10 place-items-center border-2 border-orange bg-forest-950 font-mono text-sm font-bold text-orange">
-                      0{index + 1}
-                    </span>
-                    <h3 class="display text-2xl text-paper">{item.title}</h3>
+            analogPillars.map((item, index) => {
+              const Icon = item.icon
+              return (
+                <div
+                  class:list={[
+                    'card-stack-item border-2 border-paper/20 bg-forest-900 p-7 sm:p-8 transition-colors hover:border-orange',
+                    index > 0 ? 'lg:absolute lg:inset-0' : 'relative',
+                  ]}
+                  style={`z-index: ${index + 1};`}
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <span class="grid h-10 w-10 place-items-center border-2 border-orange bg-forest-950 text-orange">
+                        <Icon class="h-5 w-5" />
+                      </span>
+                      <h3 class="display text-2xl text-paper">{item.title}</h3>
+                    </div>
+                    <span class="font-mono text-xs text-orange/60">PFEILER 0{index + 1}</span>
                   </div>
-                  <span class="font-mono text-xs text-orange/60">PFEILER 0{index + 1}</span>
+                  <p class="mt-5 text-sm leading-relaxed text-paper/80">{item.description}</p>
+                  <div class="mt-6 flex items-center justify-between border-t border-paper/10 pt-4">
+                    <span class="mono-label text-[0.68rem] text-paper/50">SMJ REGIO WEGWEISER</span>
+                    <span class="mono-label text-[0.68rem] text-orange font-bold">100% ANALOG</span>
+                  </div>
                 </div>
-                <p class="mt-5 text-sm leading-relaxed text-paper/80">{item.description}</p>
-                <div class="mt-6 flex items-center justify-between border-t border-paper/10 pt-4">
-                  <span class="mono-label text-[0.68rem] text-paper/50">SMJ REGIO WEGWEISER</span>
-                  <span class="mono-label text-[0.68rem] text-orange font-bold">100% ANALOG</span>
-                </div>
-              </div>
-            ))
+              )
+            })
           }
         </div>
       </div>
