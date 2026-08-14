@@ -122,7 +122,7 @@ const socialLinks = [
         Immer wissen, wann Anmeldungen öffnen und was in der Region passiert. Kein Spam.
       </p>
 
-      <form id="footer-newsletter-form" class="mt-4 space-y-3" novalidate>
+      <form id="footer-newsletter-form" action="/api/newsletter.php" method="POST" class="mt-4 space-y-3" novalidate>
         <div class="relative">
           <input
             type="email"
@@ -178,7 +178,7 @@ const socialLinks = [
       statusEl.classList.remove('hidden')
 
       try {
-        const res = await fetch('/api/newsletter', {
+        const res = await fetch('/api/newsletter.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, website }),

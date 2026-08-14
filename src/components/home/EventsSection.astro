@@ -12,7 +12,7 @@ type DisplayItem = { event: Event; href?: string; featured: boolean }
 
 const [allEvents, specialEvents] = await Promise.all([
   eventProvider.getEvents(),
-  getCollection('specialEvents'),
+  getCollection('specialEvents').catch(() => []),
 ])
 
 const now = new Date()

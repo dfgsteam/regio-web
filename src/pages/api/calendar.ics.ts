@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import { eventProvider } from '../../lib/events'
 
-export const prerender = false
+export const prerender = true
 
 function formatIcsDate(date: Date): string {
   return date

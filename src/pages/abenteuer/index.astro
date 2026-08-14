@@ -11,7 +11,7 @@ import { eventProvider, formatAgeRange } from '../../lib/events'
 
 const [allEvents, specialEvents, currentCamp] = await Promise.all([
   eventProvider.getEvents(),
-  getCollection('specialEvents'),
+  getCollection('specialEvents').catch(() => []),
   getCurrentCamp(),
 ])
 

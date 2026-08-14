@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [calendar_update, rebuild]
+  schedule:
+    - cron: '0 6 * * *'
 
 permissions:
   contents: write
