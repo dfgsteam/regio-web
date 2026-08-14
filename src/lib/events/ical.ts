@@ -1,4 +1,5 @@
 import type { Event, EventProvider, EventCategory } from './types'
+import { normalizeEventSlug } from './types'
 import { MockEventProvider } from './mock'
 
 export const GOOGLE_CALENDAR_ICS_URL =
@@ -179,17 +180,9 @@ function transformVEvent(raw: Record<string, string>): Event | null {
     address = 'Birkenfelder Str., 37318 Uder-Thalwenden'
   }
 
-  // Create clean, unique slug
+  // Create clean, unique slug with Roman numeral normalization
   const year = start.getFullYear()
-  const cleanTitle = summary
-    .toLowerCase()
-    .replace(/ä/g, 'ae')
-    .replace(/ö/g, 'oe')
-    .replace(/ü/g, 'ue')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-
-  const slug = cleanTitle.endsWith(String(year)) ? cleanTitle : `${cleanTitle}-${year}`
+  const slug = normalizeEventSlug(summary, year)
   const id = raw['UID'] || slug
 
   // Build authentic description

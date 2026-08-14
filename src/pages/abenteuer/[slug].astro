@@ -16,18 +16,32 @@ import {
   formatDateRange,
   formatAgeRange,
   getEventTemplateType,
+  getSlugVariants,
 } from '../../lib/events'
 import type { Event } from '../../lib/events'
 
 export async function getStaticPaths() {
   const events = await eventProvider.getEvents()
   // Filter out Zeltlager events as they have dedicated campaign routes under /abenteuer/zeltlager-[year]/
-  return events
-    .filter((event) => event.category !== 'camp' && event.slug !== 'zeltlager')
-    .map((event) => ({
-      params: { slug: event.slug },
-      props: { event },
-    }))
+  const nonCampEvents = events.filter((event) => event.category !== 'camp' && event.slug !== 'zeltlager')
+
+  const paths: { params: { slug: string }; props: { event: Event } }[] = []
+  const seenSlugs = new Set<string>()
+
+  for (const event of nonCampEvents) {
+    const variants = getSlugVariants(event.slug)
+    for (const slug of variants) {
+      if (!seenSlugs.has(slug)) {
+        seenSlugs.add(slug)
+        paths.push({
+          params: { slug },
+          props: { event },
+        })
+      }
+    }
+  }
+
+  return paths
 }
 
 interface Props {

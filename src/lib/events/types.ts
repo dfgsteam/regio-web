@@ -52,6 +52,49 @@ export function getEventTemplateType(title: string, category?: string): EventTem
   return 'blanko'
 }
 
+export function normalizeEventSlug(title: string, year: number): string {
+  // Normalize Roman numerals (e.g. Actionwochenende II -> actionwochenende-2)
+  const normalized = title
+    .toLowerCase()
+    .replace(/\bviii\b/g, '8')
+    .replace(/\bvii\b/g, '7')
+    .replace(/\bvi\b/g, '6')
+    .replace(/\biv\b/g, '4')
+    .replace(/\bv\b/g, '5')
+    .replace(/\biii\b/g, '3')
+    .replace(/\bii\b/g, '2')
+    .replace(/\bi\b/g, '1')
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  const yearStr = String(year)
+  return normalized.endsWith(yearStr) ? normalized : `${normalized}-${yearStr}`
+}
+
+export function getSlugVariants(slug: string): string[] {
+  const variants = new Set<string>([slug])
+
+  // Bidirectional mapping between Arabic numbers and Roman numerals
+  // e.g. actionwochenende-2-2026 <-> actionwochenende-ii-2026
+  if (slug.includes('-1-')) variants.add(slug.replace('-1-', '-i-'))
+  if (slug.includes('-2-')) variants.add(slug.replace('-2-', '-ii-'))
+  if (slug.includes('-3-')) variants.add(slug.replace('-3-', '-iii-'))
+  if (slug.includes('-4-')) variants.add(slug.replace('-4-', '-iv-'))
+  if (slug.includes('-5-')) variants.add(slug.replace('-5-', '-v-'))
+
+  if (slug.includes('-i-')) variants.add(slug.replace('-i-', '-1-'))
+  if (slug.includes('-ii-')) variants.add(slug.replace('-ii-', '-2-'))
+  if (slug.includes('-iii-')) variants.add(slug.replace('-iii-', '-3-'))
+  if (slug.includes('-iv-')) variants.add(slug.replace('-iv-', '-4-'))
+  if (slug.includes('-v-')) variants.add(slug.replace('-v-', '-5-'))
+
+  return Array.from(variants)
+}
+
 export function formatDateRange(start: Date, end: Date, locale = 'de-DE'): string {
   const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()
   if (sameMonth) {
