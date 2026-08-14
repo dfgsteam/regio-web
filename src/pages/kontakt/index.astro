@@ -1,0 +1,200 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import Coordinates from '../../components/common/Coordinates.astro'
+---
+
+<ContentLayout
+  title="Kontakt – SMJ Regio Wegweiser"
+  description="Du hast Fragen? Melde dich. Die zentrale Anlaufstelle der SMJ Regio Wegweiser für Teilnehmer, Eltern und Interessierte."
+>
+  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+    <Container>
+      <Eyebrow label="Kontakt" muted />
+      <h1 class="display display-xl mt-6 text-forest-950">
+        Du hast Fragen?<br />
+        <span class="text-orange">Melde dich.</span>
+      </h1>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 py-20">
+    <Container class="grid gap-16 lg:grid-cols-[1.3fr_1fr]">
+      <div>
+        <h2 class="display display-md text-paper">Nachricht schreiben</h2>
+        <p class="mono-label mt-4">Antwort in der Regel innerhalb weniger Tage.</p>
+
+        <form id="contact-form" class="mt-10 grid gap-6" novalidate>
+          <div class="grid gap-6 sm:grid-cols-2">
+            <label class="block">
+              <span class="mono-label">Name</span>
+              <input
+                type="text"
+                name="name"
+                required
+                minlength="2"
+                maxlength="120"
+                autocomplete="name"
+                class="mt-2 w-full border-2 border-paper/20 bg-forest-900 px-4 py-3 font-mono text-sm text-paper placeholder:text-muted focus:border-orange focus:outline-none"
+                placeholder="Dein Name"
+              />
+              <span class="form-error mono-label mt-1 hidden text-orange"></span>
+            </label>
+            <label class="block">
+              <span class="mono-label">E-Mail</span>
+              <input
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                class="mt-2 w-full border-2 border-paper/20 bg-forest-900 px-4 py-3 font-mono text-sm text-paper placeholder:text-muted focus:border-orange focus:outline-none"
+                placeholder="name@beispiel.de"
+              />
+              <span class="form-error mono-label mt-1 hidden text-orange"></span>
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="mono-label">Nachricht</span>
+            <textarea
+              name="message"
+              required
+              minlength="10"
+              maxlength="4000"
+              rows="7"
+              class="mt-2 w-full resize-y border-2 border-paper/20 bg-forest-900 px-4 py-3 font-mono text-sm text-paper placeholder:text-muted focus:border-orange focus:outline-none"
+              placeholder="Worum geht's?"
+            ></textarea>
+            <span class="form-error mono-label mt-1 hidden text-orange"></span>
+          </label>
+
+          <div class="hidden" aria-hidden="true">
+            <label>
+              Website (bitte leer lassen)
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6">
+            <button
+              type="submit"
+              class="inline-flex items-center gap-2.5 bg-orange px-8 py-4 font-mono text-sm font-bold uppercase tracking-[0.18em] text-forest-950 transition-colors hover:bg-paper disabled:opacity-50"
+            >
+              Senden
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </button>
+            <p id="form-status" class="mono-label" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+
+      <aside class="h-fit border border-paper/15 bg-forest-900 p-8 lg:sticky lg:top-28">
+        <h2 class="display display-sm text-paper">Direkter Draht</h2>
+        <ul class="mt-6 space-y-4 text-sm text-paper/80">
+          <li>
+            <p class="mono-label mb-1">Zentrale Anlaufstelle</p>
+            <a href="mailto:kontakt@smj-wegweiser.de" class="text-orange underline underline-offset-4 hover:text-paper">
+              kontakt@smj-wegweiser.de
+            </a>
+          </li>
+          <li>
+            <p class="mono-label mb-1">Fallback</p>
+            <a href="mailto:kontakt@smj-wegweiser.de" class="underline underline-offset-4 hover:text-orange">
+              Direkt per Mail
+            </a>
+          </li>
+        </ul>
+        <div class="mt-8 border-t border-paper/15 pt-6">
+          <Coordinates value="N 51° 22' 44" />
+          <Coordinates value="E 10° 08' 17" class="mt-2" />
+        </div>
+      </aside>
+    </Container>
+  </section>
+</ContentLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#contact-form')
+  const status = document.querySelector<HTMLElement>('#form-status')
+  if (form && status) {
+    const setFieldError = (input: HTMLInputElement | HTMLTextAreaElement, message: string) => {
+      const error = input.closest('label')?.querySelector<HTMLElement>('.form-error')
+      if (!error) return
+      error.textContent = message
+      error.classList.remove('hidden')
+      input.setAttribute('aria-invalid', 'true')
+      input.classList.add('border-orange')
+    }
+
+    const clearFieldErrors = () => {
+      form.querySelectorAll<HTMLElement>('.form-error').forEach((el) => {
+        el.classList.add('hidden')
+        el.textContent = ''
+      })
+      form.querySelectorAll('[aria-invalid]').forEach((el) => {
+        el.removeAttribute('aria-invalid')
+        el.classList.remove('border-orange')
+      })
+    }
+
+    const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]')
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      clearFieldErrors()
+      status.textContent = ''
+
+      const formData = new FormData(form)
+      const name = String(formData.get('name') ?? '')
+      const email = String(formData.get('email') ?? '')
+      const message = String(formData.get('message') ?? '')
+
+      if (name.length < 2) {
+        setFieldError(form.querySelector('input[name="name"]')!, 'Bitte gib deinen Namen an.')
+        return
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        setFieldError(form.querySelector('input[name="email"]')!, 'Bitte gib eine gültige E-Mail-Adresse an.')
+        return
+      }
+      if (message.length < 10) {
+        setFieldError(form.querySelector('textarea[name="message"]')!, 'Deine Nachricht ist noch etwas kurz.')
+        return
+      }
+
+      if (submitButton) submitButton.disabled = true
+      status.textContent = 'Wird gesendet …'
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            email,
+            message,
+            website: String(formData.get('website') ?? ''),
+          }),
+        })
+
+        const result = (await response.json()) as { ok: boolean; detail?: string; field?: string }
+        if (response.ok && result.ok) {
+          status.textContent = 'Nachricht gesendet. Wir melden uns!'
+          form.reset()
+        } else if (result.field) {
+          const input = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${result.field}"]`)
+          if (input) setFieldError(input, result.detail ?? 'Bitte prüfen.')
+        } else {
+          status.textContent = result.detail ?? 'Etwas ist schiefgelaufen. Bitte später erneut versuchen.'
+        }
+      } catch {
+        status.textContent = 'Keine Verbindung. Bitte schreibe uns direkt per Mail.'
+      } finally {
+        if (submitButton) submitButton.disabled = false
+      }
+    })
+  }
+</script>

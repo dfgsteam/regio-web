@@ -1,0 +1,113 @@
+---
+import Container from '../common/Container.astro'
+import Coordinates from '../common/Coordinates.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+
+const frames = [
+  {
+    src: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Lagerfeuer',
+    label: 'Feuer',
+    note: 'TAG 2 · 21:40 UHR',
+  },
+  {
+    src: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Geländespiel',
+    label: 'Geländespiel',
+    note: 'TAG 4 · 14:05 UHR',
+  },
+  {
+    src: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Kochen',
+    label: 'Kochen',
+    note: 'TAG 5 · 18:22 UHR',
+  },
+  {
+    src: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Gemeinschaft',
+    label: 'Gemeinschaft',
+    note: 'TAG 7 · 22:10 UHR',
+  },
+  {
+    src: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Gebet am Abend',
+    label: 'Gebet',
+    note: 'TAG 8 · 21:00 UHR',
+  },
+  {
+    src: '/placeholders/reel.svg',
+    alt: 'Platzhalterbild – Zelt im Morgenlicht',
+    label: 'Zelt',
+    note: 'TAG 9 · 06:14 UHR',
+  },
+]
+---
+
+<section id="expedition-reel" class="relative overflow-hidden bg-forest-950 py-24 lg:py-0">
+  <div class="lg:hidden">
+    <Container class="pb-4">
+      <Eyebrow label="Kapitel 03 · Die Expedition" />
+    </Container>
+    <div class="flex flex-col gap-10 px-5 pt-8 sm:px-8">
+      {
+        frames.map((frame) => (
+          <figure class="reveal">
+            <div class="overflow-hidden">
+              <img src={frame.src} alt={frame.alt} loading="lazy" class="aspect-[5/3] w-full object-cover" />
+            </div>
+            <figcaption class="mt-3 flex items-baseline justify-between">
+              <span class="font-display text-2xl uppercase text-paper">{frame.label}</span>
+              <span class="mono-label">{frame.note}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="reel-desktop hidden lg:block">
+    <Container class="pb-8 pt-20">
+      <div class="flex items-end justify-between">
+        <Eyebrow label="Kapitel 03 · Die Expedition" />
+        <Coordinates value="FILM 16 MM · 6 EINSTELLUNGEN" />
+      </div>
+    </Container>
+
+    <div class="reel-viewport relative overflow-hidden">
+      <div class="reel-track flex w-max items-stretch gap-10 px-[8vw]">
+        {
+          frames.map((frame) => (
+            <figure class="reel-frame relative w-[52vw] shrink-0 max-w-[860px]">
+              <div class="overflow-hidden border border-paper/15 bg-forest-900">
+                <img src={frame.src} alt={frame.alt} loading="lazy" class="aspect-[5/3] w-full object-cover" />
+              </div>
+              <figcaption class="mt-4 flex items-baseline justify-between">
+                <span class="font-display text-4xl uppercase text-paper">{frame.label}</span>
+                <span class="mono-label">{frame.note}</span>
+              </figcaption>
+              <span class="absolute -bottom-3 left-1/2 h-3 w-10 -translate-x-1/2 bg-orange" aria-hidden="true" />
+            </figure>
+          ))
+        }
+
+        <figure class="reel-end flex w-[70vw] shrink-0 items-center justify-center">
+          <div class="text-center">
+            <p class="eyebrow mb-6">Am Ende der Strecke</p>
+            <p class="display display-lg text-paper">
+              Und du<br />
+              <span class="text-orange">mittendrin.</span>
+            </p>
+          </div>
+        </figure>
+      </div>
+    </div>
+
+    <div class="reel-progress h-1 w-full bg-paper/10">
+      <div class="h-full w-full origin-left scale-x-0 bg-orange"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/animations/expedition-reel'
+</script>

@@ -1,0 +1,22 @@
+# Node
+node_modules/
+dist/
+.astro/
+
+# Env
+.env
+.env.production
+.env.local
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp

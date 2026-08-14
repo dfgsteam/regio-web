@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="900" viewBox="0 0 2400 900">
+  <rect width="2400" height="900" fill="#182019"/>
+  <g fill="none" stroke="#2E3B2C" stroke-width="2" opacity="0.85">
+<ellipse cx="1584" cy="378" rx="93" ry="60" transform="rotate(-8 1584 378)"/>
+<ellipse cx="1584" cy="378" rx="186" ry="120" transform="rotate(-8 1584 378)"/>
+<ellipse cx="1584" cy="378" rx="279" ry="180" transform="rotate(-8 1584 378)"/>
+<ellipse cx="1584" cy="378" rx="372" ry="240" transform="rotate(-8 1584 378)"/>
+<ellipse cx="1584" cy="378" rx="465" ry="300" transform="rotate(-8 1584 378)"/>
+<ellipse cx="1584" cy="378" rx="558" ry="360" transform="rotate(-8 1584 378)"/>
+<ellipse cx="1584" cy="378" rx="651" ry="420" transform="rotate(-8 1584 378)"/>
+  </g>
+  <g fill="none" stroke="#3A4A37" stroke-width="1.4" opacity="0.7">
+<ellipse cx="576" cy="612" rx="93" ry="60" transform="rotate(-8 576 612)"/>
+<ellipse cx="576" cy="612" rx="186" ry="120" transform="rotate(-8 576 612)"/>
+<ellipse cx="576" cy="612" rx="279" ry="180" transform="rotate(-8 576 612)"/>
+<ellipse cx="576" cy="612" rx="372" ry="240" transform="rotate(-8 576 612)"/>
+<ellipse cx="576" cy="612" rx="465" ry="300" transform="rotate(-8 576 612)"/>
+<ellipse cx="576" cy="612" rx="558" ry="360" transform="rotate(-8 576 612)"/>
+<ellipse cx="576" cy="612" rx="651" ry="420" transform="rotate(-8 576 612)"/>
+  </g>
+  <path d="M22 48H74M48 22V74" stroke="#FF5A1F" stroke-width="2"/>
+<circle cx="48" cy="48" r="2.5" fill="#FF5A1F"/>
+  <path d="M2326 852H2378M2352 826V878" stroke="#FF5A1F" stroke-width="2"/>
+<circle cx="2352" cy="852" r="2.5" fill="#FF5A1F"/>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#FF5A1F" font-size="41" letter-spacing="4">
+    <text x="144" y="450">PANORAMA SLOT</text>
+    <text x="144" y="525" opacity="0.55">8:3 — 2400×900</text>
+  </g>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#8D9389" font-size="26" letter-spacing="3">
+    <text x="144" y="600">BILD FOLGT.</text>
+    <text x="144" y="641">WIRD DURCH ECHTES FOTO ERSETZT.</text>
+  </g>
+</svg>

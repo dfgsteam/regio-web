@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://smj-wegweiser.de/sitemap-index.xml

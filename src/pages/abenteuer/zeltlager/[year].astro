@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
+import CampLayout from '../../../layouts/CampLayout.astro'
+import Container from '../../../components/common/Container.astro'
+
+export async function getStaticPaths() {
+  const camps = await getCollection('camps')
+  return camps.map((camp) => ({
+    params: { year: String(camp.data.year) },
+    props: { camp },
+  }))
+}
+
+interface Props {
+  camp: CollectionEntry<'camps'>
+}
+
+const { camp } = Astro.props
+const { Content } = await render(camp)
+
+const year = camp.data.year
+const otherCamps = (await getCollection('camps')).filter((c) => c.data.year !== year)
+const prev = otherCamps.filter((c) => c.data.year < year).sort((a, b) => b.data.year - a.data.year)[0]
+const next = otherCamps.filter((c) => c.data.year > year).sort((a, b) => a.data.year - b.data.year)[0]
+---
+
+<CampLayout camp={camp.data}>
+  <Content />
+
+  {(prev || next) && (
+    <section class="camp-bg border-t camp-border py-12">
+      <Container class="flex flex-wrap items-center justify-between gap-6">
+        {prev ? (
+          <a
+            href={`/abenteuer/zeltlager/${prev.data.year}/`}
+            class="group border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent"
+          >
+            ← Zeltlager {prev.data.year} · {prev.data.motto}
+          </a>
+        ) : (
+          <span />
+        )}
+        {next ? (
+          <a
+            href={`/abenteuer/zeltlager/${next.data.year}/`}
+            class="group border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent"
+          >
+            Zeltlager {next.data.year} · {next.data.motto} →
+          </a>
+        ) : (
+          <a href="/abenteuer/zeltlager/" class="border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent">
+            Alle Lager →
+          </a>
+        )}
+      </Container>
+    </section>
+  )}
+</CampLayout>

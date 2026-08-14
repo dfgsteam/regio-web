@@ -1,0 +1,52 @@
+---
+import { ArrowRight, ArrowUpRight } from '@lucide/astro'
+
+interface Props {
+  href?: string
+  variant?: 'primary' | 'ghost' | 'paper' | 'camp'
+  size?: 'md' | 'lg'
+  icon?: 'arrow' | 'external' | 'none'
+  type?: 'submit' | 'button'
+  class?: string
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon = 'arrow',
+  type = 'button',
+  class: className,
+} = Astro.props
+
+const variants = {
+  primary:
+    'bg-orange text-forest-950 hover:bg-paper border-2 border-orange',
+  ghost:
+    'bg-transparent text-paper hover:text-forest-950 hover:bg-paper border-2 border-paper/40 hover:border-paper',
+  paper:
+    'bg-forest-950 text-paper hover:bg-orange hover:text-forest-950 border-2 border-forest-950',
+  camp: 'bg-[color:var(--camp-accent)] text-[color:var(--camp-bg)] border-2 border-[color:var(--camp-accent)] hover:opacity-85',
+}
+
+const sizes = {
+  md: 'px-6 py-3 text-xs',
+  lg: 'px-8 py-4 text-sm',
+}
+
+const classes = ['inline-flex items-center gap-2.5 font-mono font-bold uppercase tracking-[0.18em] transition-colors', variants[variant], sizes[size], className]
+
+const Icon = icon === 'external' ? ArrowUpRight : icon === 'arrow' ? ArrowRight : null
+---
+
+{href ? (
+  <a href={href} class={classes.join(' ')}>
+    <slot />
+    {Icon && <Icon class="shrink-0" size={16} stroke-width={2.5} />}
+  </a>
+) : (
+  <button type={type} class={classes.join(' ')}>
+    <slot />
+    {Icon && <Icon class="shrink-0" size={16} stroke-width={2.5} />}
+  </button>
+)}

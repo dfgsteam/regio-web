@@ -1,0 +1,26 @@
+---
+import { resolveCampForUrl } from '../../lib/camps'
+import FieldNote from '../common/FieldNote.astro'
+
+const camp = await resolveCampForUrl(Astro.url.pathname)
+if (!camp) return null
+
+const { motto, story } = camp.data
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <div class="mx-auto grid w-full max-w-6xl items-start gap-12 px-5 sm:px-8 lg:grid-cols-[1.2fr_1fr]">
+    <div>
+      <p class="eyebrow mb-4">Die Geschichte</p>
+      <h2 class="display display-lg camp-fg">{motto}</h2>
+      {story && (
+        <div class="prose-rough mt-8 max-w-2xl" style="color: color-mix(in oklab, var(--camp-fg) 85%, transparent)">
+          <p>{story}</p>
+        </div>
+      )}
+    </div>
+    <FieldNote meta="FIELD NOTE 01" rotate="2deg" class="justify-self-start lg:mt-10">
+      Zehn Tage, die anders sind als alles davor.
+    </FieldNote>
+  </div>
+</section>

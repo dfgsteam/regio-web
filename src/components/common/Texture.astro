@@ -1,0 +1,20 @@
+---
+interface Props {
+  kind?: 'grain' | 'topo' | 'grid' | 'tape' | 'vignette'
+  class?: string
+}
+
+const { kind = 'grain', class: className } = Astro.props
+
+const kinds = {
+  grain: 'texture-grain',
+  topo: 'texture-topo',
+  grid: 'texture-grid',
+  tape: 'texture-tape',
+  vignette: 'texture-vignette',
+}
+---
+
+<div class:list={[kinds[kind], className]} aria-hidden="true">
+  <slot />
+</div>

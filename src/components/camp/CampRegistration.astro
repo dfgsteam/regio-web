@@ -1,0 +1,39 @@
+---
+import { resolveCampForUrl } from '../../lib/camps'
+import Container from '../common/Container.astro'
+import Button from '../common/Button.astro'
+
+const camp = await resolveCampForUrl(Astro.url.pathname)
+if (!camp) return null
+
+const { registration, year, title } = camp.data
+---
+
+<section class="camp-bg py-20 sm:py-28">
+  <Container class="text-center">
+    <p class="eyebrow mb-5">Anmeldung Zeltlager {year}</p>
+    <h2 class="display display-lg camp-fg">
+      {registration.enabled ? 'Du bist dabei?' : 'Anmeldung geschlossen'}
+    </h2>
+
+    {registration.enabled ? (
+      <>
+        <p class="mx-auto mt-6 max-w-xl leading-relaxed camp-fg/75">
+          {title} wartet auf dich. Sicher dir deinen Platz – die Plätze sind begrenzt und waren die letzten Jahre schnell voll.
+        </p>
+        {registration.deadline && (
+          <p class="mono-label mt-6">Anmeldeschluss: {registration.deadline.toLocaleDateString('de-DE')}</p>
+        )}
+        <div class="mt-10">
+          <Button href={registration.url} variant="camp" size="lg">
+            Jetzt anmelden
+          </Button>
+        </div>
+      </>
+    ) : (
+      <p class="mx-auto mt-6 max-w-xl leading-relaxed camp-fg/75">
+        Die Anmeldung für {title} ist vorbei. Das nächste Abenteuer kommt bestimmt – halt dich auf der Startseite auf dem Laufenden.
+      </p>
+    )}
+  </Container>
+</section>

@@ -1,0 +1,111 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import ImageFrame from '../../components/common/ImageFrame.astro'
+
+const pillars = [
+  {
+    title: 'Zusammenhalt',
+    message: 'Du musst hier nicht irgendwer sein. Du musst nur dabei sein.',
+    explanation:
+      'Bei uns gibt es keine Rangliste und keinen, der außen vor bleibt. Wer beim Lager dabei ist, gehört dazu – vom ersten Tag an.',
+    example:
+      'Im Zeltlager sind die Gruppen bunt gemischt: Die Kleinen klettern mit den Großen, die Erfahrenen zeigen den Neuen, wie man ein Zelt aufbaut. Beim Geländespiel zählt nur das Team.',
+  },
+  {
+    title: 'Verantwortung',
+    message: 'Wer etwas trägt, wächst daran. Auch mit 12.',
+    explanation:
+      'Verantwortung ist bei uns kein Wort für Erwachsene. Sie beginnt beim Feuerholzholen und endet bei der eigenen Gruppe. Wer trägt, gehört dazu.',
+    example:
+      'Jeder Tag im Lager hat Aufgaben: Wasser holen, Feuer machen, Material pflegen. Ältere leiten jüngere an – und lernen dabei selbst am meisten.',
+  },
+  {
+    title: 'Wachsen',
+    message: 'Jedes Lager ein Stück weiter. An Herausforderungen, die man sich selbst gewählt hat.',
+    explanation:
+      'Wir wachsen nicht an Vorgaben, sondern an echten Herausforderungen. Und die schönste Erkenntnis: Meist kann man mehr, als man sich zutraut.',
+    example:
+      'Im Winterlager führt der erste Schnee zu neuen Aufgaben: Wer baut den besten Unterschlupf? Wer kocht bei Minusgraden? Am Ende sind alle ein Stück größer – buchstäblich und im übertragenen Sinn.',
+  },
+  {
+    title: 'Mannsein',
+    message: 'Stark heißt nicht laut. Ehrlich, mutig, verlässlich – das ist die Richtung.',
+    explanation:
+      'Jungs dürfen bei uns Jungs sein: laut, verrückt, ehrgeizig. Aber Mannsein heißt für uns: für andere da sein, Wort halten und hinstehen – auch wenn es unbequem ist.',
+    example:
+      'Die Ältesten tragen nachts das jüngere Lager mit. Wer beim Zeltaufbau schlapp macht, bekommt eine Hand – und lernt, selbst welche zu geben.',
+  },
+  {
+    title: 'Glaube',
+    message: 'Abenteuer ist mehr als Action. Stille, Fragen, und Gott mitten drin.',
+    explanation:
+      'Der Glaube ist bei uns kein Extra auf dem Stundenplan. Er gehört zum Lager wie das Feuer: morgens kurz, abends ehrlich, unterwegs ganz natürlich.',
+    example:
+      'Der Abend am Feuer endet oft mit einer kurzen Andacht. Keiner muss etwas sagen. Aber jeder darf – und die Stille dazwischen trägt mehr als viele Worte.',
+  },
+]
+---
+
+<ContentLayout
+  title="Grundsätze – SMJ Regio Wegweiser"
+  description="Zusammenhalt, Verantwortung, Wachsen, Mannsein, Glaube: die fünf Säulen der SMJ Regio Wegweiser – kurz, ehrlich und mit Beispielen aus dem Alltag."
+>
+  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+    <Container>
+      <Eyebrow label="Grundsätze" muted />
+      <h1 class="display display-xl mt-6 text-forest-950">
+        Wofür wir<br />
+        <span class="text-orange">stehen.</span>
+      </h1>
+      <p class="mt-8 max-w-xl leading-relaxed text-forest-950/75">
+        Fünf Säulen. Kein Papier, keine Worthülsen. Jede Säule hat eine Kernbotschaft, eine kurze Erklärung – und ein Beispiel aus unserem Alltag.
+      </p>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 py-20">
+    <Container class="space-y-20">
+      {pillars.map((pillar, index) => (
+        <article class="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <span class="font-mono text-base text-orange">{String(index + 1).padStart(2, '0')}</span>
+            <h2 class="display display-lg mt-3 text-paper">{pillar.title}</h2>
+            <p class="mt-6 max-w-md font-display text-2xl uppercase leading-snug text-paper/90">
+              {pillar.message}
+            </p>
+          </div>
+          <div class="grid gap-10 sm:grid-cols-2">
+            <div>
+              <p class="eyebrow mb-4">Was das heißt</p>
+              <p class="leading-relaxed text-paper/75">{pillar.explanation}</p>
+            </div>
+            <div>
+              <p class="eyebrow mb-4">Aus dem Alltag</p>
+              <p class="leading-relaxed text-paper/75">{pillar.example}</p>
+            </div>
+          </div>
+        </article>
+      ))}
+    </Container>
+  </section>
+
+  <section class="bg-forest-900 py-20">
+    <Container class="grid items-center gap-12 lg:grid-cols-2">
+      <ImageFrame src="/placeholders/story.svg" alt="Platzhalterbild – Abend am Lagerfeuer" ratio="4:5" class="max-w-md" />
+      <div>
+        <Eyebrow label="Und in der Praxis" />
+        <p class="mt-6 font-display text-3xl uppercase leading-tight text-paper sm:text-4xl">
+          Die Säulen stehen nicht auf einem Plakat.
+        </p>
+        <p class="mt-6 max-w-xl leading-relaxed text-paper/75">
+          Sie stehen in den Abenden am Feuer, in den Streitigkeiten, die wir klären, und in den Aufgaben, die wir uns zutrauen. Wer wissen will, wie das wirklich aussieht, muss einfach mitkommen.
+        </p>
+        <a href="/abenteuer/" class="mt-8 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+          Zum nächsten Abenteuer →
+        </a>
+      </div>
+    </Container>
+  </section>
+</ContentLayout>

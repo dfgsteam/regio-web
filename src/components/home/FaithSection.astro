@@ -1,0 +1,83 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+import ImageFrame from '../common/ImageFrame.astro'
+
+const words = ['Gemeinschaft.', 'Stille.', 'Gebet.', 'Fragen.', 'Glaube, der zum Leben gehört.']
+---
+
+<section id="faith" class="relative overflow-hidden bg-forest-950 py-24 sm:py-32">
+  <Container class="grid items-center gap-14 lg:grid-cols-2">
+    <div class="relative order-2 lg:order-1">
+      <ImageFrame
+        src="/placeholders/story.svg"
+        alt="Platzhalterbild – ruhiger Abend: Lagerfeuer und Nacht"
+        ratio="4:5"
+        class="faith-night w-full max-w-md"
+      />
+      <ImageFrame
+        src="/placeholders/wide.svg"
+        alt="Platzhalterbild – Tag im Wald"
+        ratio="16:10"
+        class="faith-day absolute -bottom-10 -right-4 hidden w-2/3 sm:block"
+      />
+    </div>
+
+    <div class="order-1 lg:order-2">
+      <Eyebrow label="Kapitel 08 · Glaube" />
+      <h2 class="display display-lg mt-6 text-paper">
+        Abenteuer ist mehr<br />
+        <span class="text-orange">als Action.</span>
+      </h2>
+      <ul class="mt-10 space-y-3">
+        {
+          words.map((word, index) => (
+            <li class="faith-word font-display text-2xl uppercase text-paper/85 sm:text-3xl">
+              <span class="mr-4 font-mono text-xs text-orange">0{index + 1}</span>
+              {word}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-10 max-w-md leading-relaxed text-paper/70">
+        Am wilden Tag wie am stillen Abend: Bei uns gehört der Glaube zum Lagerleben dazu – ohne Druck, mit Raum für echte Fragen.
+      </p>
+      <a href="/ueber-uns/" class="mt-8 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+        Mehr über uns →
+      </a>
+    </div>
+  </Container>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  const section = document.querySelector<HTMLElement>('#faith')
+  if (section) {
+    gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.fromTo(
+        '.faith-word',
+        { opacity: 0, x: 24 },
+        {
+          opacity: 1,
+          x: 0,
+          stagger: 0.12,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: section, start: 'top 70%' },
+        },
+      )
+      gsap.fromTo(
+        '.faith-night',
+        { yPercent: 6 },
+        {
+          yPercent: -6,
+          ease: 'none',
+          scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: 0.5 },
+        },
+      )
+    })
+  }
+</script>

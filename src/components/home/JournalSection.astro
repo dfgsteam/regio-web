@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content'
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+
+const posts = await getCollection('posts', ({ data }) => !data.draft)
+const latest = posts
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 3)
+---
+
+<section id="journal" class="relative bg-forest-900 py-24 sm:py-32">
+  <Container>
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <Eyebrow label="Kapitel 09 · Journal" />
+        <h2 class="display display-lg mt-6 text-paper">
+          Zuletzt im<br />
+          <span class="text-orange">Feldnotizbuch.</span>
+        </h2>
+      </div>
+      <a href="/journal/" class="mb-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+        Alle Beiträge →
+      </a>
+    </div>
+
+    <div class="journal-stack relative mt-14">
+      {
+        latest.map((post, index) => (
+          <article class="journal-card relative border border-paper/15 bg-forest-950 p-7 sm:p-10">
+            <div class="flex flex-col gap-8 sm:flex-row sm:items-center">
+              <div class="shrink-0 sm:w-56">
+                <img
+                  src={post.data.image.src}
+                  alt={post.data.image.alt}
+                  loading="lazy"
+                  class="aspect-[4/3] w-full object-cover"
+                />
+              </div>
+              <div>
+                <p class="mono-label">
+                  {post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })} · {post.data.author}
+                </p>
+                <h3 class="display display-sm mt-3 text-paper">
+                  <a href={`/journal/${post.id}/`} class="transition-colors hover:text-orange">
+                    {post.data.title}
+                  </a>
+                </h3>
+                <p class="mt-3 max-w-xl text-sm leading-relaxed text-paper/70">{post.data.description}</p>
+                {index === 0 && (
+                  <span class="mt-5 inline-block bg-orange px-3 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-[0.2em] text-forest-950">
+                    Neuester Beitrag
+                  </span>
+                )}
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<script>
+  import '../../scripts/animations/journal'
+</script>

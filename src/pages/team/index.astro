@@ -1,0 +1,74 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import Button from '../../components/common/Button.astro'
+import ImageFrame from '../../components/common/ImageFrame.astro'
+
+const leads = [
+  {
+    role: 'Regio-Leitung',
+    name: 'Regio-Wegweiser Team',
+    description:
+      'Die Ansprechpartner für alles Organisatorische: Lager, Termine, Anmeldungen. Ein offenes Ohr für Jungs und Eltern gleichermaßen.',
+    email: 'kontakt@smj-wegweiser.de',
+  },
+]
+---
+
+<ContentLayout
+  title="Team – SMJ Regio Wegweiser"
+  description="Die, die das hier möglich machen: junge Leiter, erfahrene Begleiter und das Prinzip Jugend leitet Jugend."
+>
+  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+    <Container>
+      <Eyebrow label="Team" muted />
+      <h1 class="display display-xl mt-6 text-forest-950">
+        Die, die das hier<br />
+        <span class="text-orange">möglich machen.</span>
+      </h1>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 py-20">
+    <Container>
+      <ImageFrame src="/placeholders/group.svg" alt="Platzhalterbild – das gesamte Team der Regio Wegweiser" ratio="16:10" />
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 pb-20">
+    <Container class="grid gap-6 md:grid-cols-2">
+      {leads.map((lead) => (
+        <article class="border border-paper/15 bg-forest-900 p-8">
+          <p class="eyebrow mb-3">{lead.role}</p>
+          <h2 class="display display-sm text-paper">{lead.name}</h2>
+          <p class="mt-4 text-sm leading-relaxed text-paper/75">{lead.description}</p>
+          <a href={`mailto:${lead.email}`} class="mono-label mt-6 inline-block text-orange">
+            {lead.email}
+          </a>
+        </article>
+      ))}
+
+      <article class="border border-paper/15 bg-forest-900 p-8">
+        <p class="eyebrow mb-3">Jugend leitet Jugend</p>
+        <h2 class="display display-sm text-paper">Kein Steriler Dienstplan</h2>
+        <p class="mt-4 text-sm leading-relaxed text-paper/75">
+          Unsere Leiter sind zum großen Teil selbst in der SMJ groß geworden. Sie übernehmen Verantwortung in einem Team, das sie kennt und trägt – begleitet von erfahrenen Erwachsenen, die im Hintergrund bereitstehen.
+        </p>
+      </article>
+
+      <article class="border border-paper/15 bg-forest-900 p-8">
+        <p class="eyebrow mb-3">Deine Anlaufstelle</p>
+        <h2 class="display display-sm text-paper">Eine Adresse für alles</h2>
+        <p class="mt-4 text-sm leading-relaxed text-paper/75">
+          Für Anmeldungen, Fragen und Ideen gibt es eine zentrale Anlaufstelle. Bei einzelnen Veranstaltungen nennen wir zusätzlich den passenden Ansprechpartner.
+        </p>
+        <div class="mt-6">
+          <Button href="/kontakt/" variant="ghost">
+            Kontakt aufnehmen
+          </Button>
+        </div>
+      </article>
+    </Container>
+  </section>
+</ContentLayout>

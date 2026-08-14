@@ -1,0 +1,104 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+import Button from '../common/Button.astro'
+import { getCurrentCamp } from '../../lib/camps'
+
+interface Props {
+  camp?: CollectionEntry<'camps'>
+}
+
+const { camp: propCamp } = Astro.props
+const camp = propCamp ?? (await getCurrentCamp())
+if (!camp) return null
+
+const { year, motto, date, age, location, theme, registration } = camp.data
+const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000) + 1
+---
+
+<section
+  id="camp-teaser"
+  class="camp-theme relative overflow-hidden py-24 sm:py-36"
+  style={`--camp-bg: ${theme.colors.background}; --camp-fg: ${theme.colors.foreground}; --camp-accent: ${theme.colors.accent};`}
+>
+  <div class="texture-topo absolute inset-0 opacity-60" aria-hidden="true" />
+
+  <Container class="relative">
+    <div class="flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:gap-16">
+      <div class="lg:flex-1">
+        <Eyebrow label={`Kapitel 06 · Zeltlager ${year}`} />
+        <h2 class="display display-lg mt-6 camp-fg">
+          Das große<br />
+          <span class="camp-accent">Ding.</span>
+        </h2>
+
+        <p class="mt-8 font-mono text-sm uppercase tracking-[0.28em] camp-fg/75">
+          {days} Tage. Kein Alltag.
+        </p>
+        <p class="camp-accent mt-3 font-display text-4xl uppercase sm:text-5xl">
+          {motto}
+        </p>
+
+        <dl class="mt-10 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 font-mono text-[0.7rem] uppercase tracking-[0.14em] camp-fg">
+          <dt class="opacity-60">Datum</dt>
+          <dd>{date.start.toLocaleDateString('de-DE')} – {date.end.toLocaleDateString('de-DE')}</dd>
+          <dt class="opacity-60">Ort</dt>
+          <dd>{location.name}</dd>
+          <dt class="opacity-60">Alter</dt>
+          <dd>{age.min}–{age.max} Jahre</dd>
+        </dl>
+
+        <div class="mt-12 flex flex-wrap gap-4">
+          <Button href={`/abenteuer/zeltlager/${year}/`} variant="camp" size="lg">
+            Zum Zeltlager
+          </Button>
+          {registration.enabled && registration.url && (
+            <Button href={registration.url} variant="ghost" size="lg">
+              Anmeldung
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div class="w-full lg:w-[46%]">
+        <div class="camp-poster relative overflow-hidden border-2 camp-border shadow-2xl">
+          <img
+            src={theme.assets.hero}
+            alt={`Zeltlager ${year} – ${motto}`}
+            loading="lazy"
+            class="aspect-[3/4] w-full object-cover"
+          />
+          <span class="absolute bottom-4 left-4 bg-[color:var(--camp-bg)]/85 px-3 py-1.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.24em] camp-fg">
+            Zeltlager {year}
+          </span>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  const poster = document.querySelector<HTMLElement>('.camp-poster')
+  if (poster) {
+    gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.fromTo(
+        poster,
+        { y: 120, rotate: -4, scale: 0.94, opacity: 0.4 },
+        {
+          y: 0,
+          rotate: 0,
+          scale: 1,
+          opacity: 1,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: poster, start: 'top 85%', end: 'top 35%', scrub: 0.8 },
+        },
+      )
+    })
+  }
+</script>

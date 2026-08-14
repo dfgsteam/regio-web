@@ -1,0 +1,123 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import EventCard from '../../components/events/EventCard.astro'
+import Button from '../../components/common/Button.astro'
+import { getCollection } from 'astro:content'
+import { getCurrentCamp } from '../../lib/camps'
+import { eventProvider, formatAgeRange } from '../../lib/events'
+
+const [allEvents, specialEvents, currentCamp] = await Promise.all([
+  eventProvider.getEvents(),
+  getCollection('specialEvents'),
+  getCurrentCamp(),
+])
+
+const now = new Date()
+const upcoming = allEvents
+  .filter((event) => event.end >= now)
+  .sort((a, b) => a.start.getTime() - b.start.getTime())
+const past = allEvents
+  .filter((event) => event.end < now)
+  .sort((a, b) => b.start.getTime() - a.start.getTime())
+
+const activeSpecials = specialEvents
+  .filter((event) => event.data.active)
+  .sort((a, b) => a.data.date.start.getTime() - b.data.date.start.getTime())
+
+const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.data.age.max) : null
+---
+
+<ContentLayout
+  title="Abenteuer – SMJ Regio Wegweiser"
+  description="Zeltlager, Actionwochenenden und besondere Abenteuer der SMJ Regio Wegweiser. Termine, Orte und Anmeldung auf einen Blick."
+>
+  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+    <Container>
+      <Eyebrow label="Abenteuer" muted />
+      <h1 class="display display-xl mt-6 text-forest-950">
+        Dein nächstes<br />
+        <span class="text-orange">Abenteuer.</span>
+      </h1>
+    </Container>
+  </section>
+
+  {currentCamp && (
+    <section class="bg-forest-900 py-16">
+      <Container>
+        <div class="flex flex-wrap items-center justify-between gap-6 border-2 border-orange p-8">
+          <div>
+            <p class="eyebrow mb-3">Zeltlager {currentCamp.data.year} · Das große Ding</p>
+            <h2 class="display display-md text-paper">{currentCamp.data.motto}</h2>
+            <p class="mono-label mt-3">
+              {currentCamp.data.date.start.toLocaleDateString('de-DE')} – {currentCamp.data.date.end.toLocaleDateString('de-DE')} · {currentCamp.data.location.name}
+              {age ? ` · ${age}` : ''}
+            </p>
+          </div>
+          <Button href={`/abenteuer/zeltlager/${currentCamp.data.year}/`} variant="primary" size="lg">
+            Zum Zeltlager
+          </Button>
+        </div>
+      </Container>
+    </section>
+  )}
+
+  {activeSpecials.length > 0 && (
+    <section class="bg-forest-950 py-16">
+      <Container>
+        <Eyebrow label="Besondere Abenteuer" />
+        <div class="mt-8 grid gap-6 md:grid-cols-2">
+          {activeSpecials.map((special) => (
+            <EventCard
+              event={{
+                id: special.id,
+                title: special.data.title,
+                slug: special.data.slug,
+                start: special.data.date.start,
+                end: special.data.date.end,
+                location: special.data.location.name,
+                ageMin: special.data.age.min,
+                ageMax: special.data.age.max,
+                teaser: special.data.teaser,
+                category: 'special',
+              }}
+              href={`/abenteuer/${special.data.slug}/`}
+              featured={special.data.featured}
+            />
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <section class="bg-forest-950 py-16">
+    <Container>
+      <Eyebrow label="Termine" />
+      {upcoming.length > 0 ? (
+        <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {upcoming.map((event) => (
+            <EventCard event={event} />
+          ))}
+        </div>
+      ) : (
+        <p class="mt-8 font-mono text-sm uppercase tracking-[0.18em] text-muted">
+          Gerade keine Abenteuer in Planung. Schau bald wieder vorbei.
+        </p>
+      )}
+    </Container>
+  </section>
+
+  {past.length > 0 && (
+    <section class="bg-forest-900 pb-24 pt-16">
+      <Container>
+        <Eyebrow label="Zurückliegend" />
+        <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {past.map((event) => (
+            <EventCard event={event} />
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
+</ContentLayout>

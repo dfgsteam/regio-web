@@ -1,0 +1,129 @@
+@layer components {
+  /* ---------------------------------------------------------------
+     Typography layers
+     Display: Anton — massive condensed statements
+     Body: Inter — readable content
+     Utility: Space Mono — expedition / documentation
+  --------------------------------------------------------------- */
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+  }
+
+  .display-xl {
+    font-size: clamp(4.5rem, 16vw, 13rem);
+  }
+
+  .display-lg {
+    font-size: clamp(3rem, 9vw, 7rem);
+  }
+
+  .display-md {
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+  }
+
+  .display-sm {
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-orange);
+  }
+
+  .eyebrow-muted {
+    color: var(--color-muted);
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Prose for MDX content: rough, readable, not corporate */
+  .prose-rough {
+    color: color-mix(in oklab, var(--color-paper) 88%, var(--color-muted));
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .prose-rough p {
+    margin-block: 1.2em;
+  }
+
+  .prose-rough h2 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1;
+    margin-block: 2.2em 0.6em;
+    color: var(--color-paper);
+  }
+
+  .prose-rough h3 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.35rem;
+    margin-block: 1.8em 0.5em;
+    color: var(--color-paper);
+  }
+
+  .prose-rough a {
+    color: var(--color-orange);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .prose-rough strong {
+    color: var(--color-paper);
+  }
+
+  .prose-rough ul {
+    list-style: none;
+    margin-block: 1.2em;
+  }
+
+  .prose-rough ul > li {
+    padding-left: 1.6em;
+    position: relative;
+    margin-block: 0.5em;
+  }
+
+  .prose-rough ul > li::before {
+    content: '✳';
+    position: absolute;
+    left: 0;
+    color: var(--color-orange);
+    font-size: 0.8em;
+  }
+
+  .prose-rough blockquote {
+    border-left: 3px solid var(--color-orange);
+    padding-left: 1.25em;
+    margin-block: 1.6em;
+    font-style: italic;
+    color: var(--color-paper);
+  }
+
+  .prose-rough code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: color-mix(in oklab, var(--color-paper) 8%, transparent);
+    padding: 0.15em 0.4em;
+  }
+
+  .prose-rough img {
+    border-radius: 4px;
+    margin-block: 1.6em;
+  }
+}

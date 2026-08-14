@@ -1,0 +1,37 @@
+---
+import { resolveCampForUrl, campDays } from '../../lib/camps'
+
+const camp = await resolveCampForUrl(Astro.url.pathname)
+if (!camp) return null
+
+const { date, age, location } = camp.data
+const days = campDays(camp)
+
+const facts = [
+  { label: 'Dauer', value: `${days} Tage` },
+  { label: 'Datum', value: `${date.start.toLocaleDateString('de-DE')} – ${date.end.toLocaleDateString('de-DE')}` },
+  { label: 'Ort', value: location.name },
+  { label: 'Alter', value: `${age.min}–${age.max} Jahre` },
+  { label: 'Zielgruppe', value: 'Jungs, die Abenteuer wollen' },
+  { label: 'Format', value: 'Zeltlager · Lagerfeuer · Geländespiele' },
+]
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 sm:px-8 md:grid-cols-2">
+    <div>
+      <p class="eyebrow mb-4">Die Fakten</p>
+      <h2 class="display display-md camp-fg">Was du wissen musst.</h2>
+    </div>
+    <dl class="grid content-start gap-x-10 gap-y-5 sm:grid-cols-2">
+      {
+        facts.map((fact) => (
+          <div class="border-b camp-border pb-3">
+            <dt class="mono-label">{fact.label}</dt>
+            <dd class="mt-1 font-display text-xl uppercase camp-fg">{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

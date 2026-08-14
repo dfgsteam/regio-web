@@ -1,0 +1,60 @@
+---
+interface Props {
+  title: string
+  description: string
+  image?: string
+  noIndex?: boolean
+  structuredData?: object
+}
+
+const {
+  title,
+  description,
+  image = '/placeholders/hero.svg',
+  noIndex = false,
+  structuredData,
+} = Astro.props
+
+const canonical = new URL(Astro.url.pathname, Astro.site)
+const ogImage = new URL(image, Astro.site)
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="de_DE" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#111713" />
+
+    {structuredData && (
+      <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    )}
+
+    <script is:inline>
+      // Prevent the transparent header flicker before hydration of its
+      // scroll state: mark "at top" immediately on first paint.
+      document.documentElement.classList.add('is-at-top')
+    </script>
+  </head>
+  <body class:list={['texture-grain']}>
+    <slot />
+  </body>
+</html>

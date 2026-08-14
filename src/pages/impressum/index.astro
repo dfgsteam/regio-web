@@ -1,0 +1,43 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+---
+
+<ContentLayout
+  title="Impressum – SMJ Regio Wegweiser"
+  description="Impressum der SMJ Regio Wegweiser."
+>
+  <section class="texture-paper relative bg-paper pb-20 pt-40 text-forest-950">
+    <Container>
+      <Eyebrow label="Impressum" muted />
+      <h1 class="display display-xl mt-6 text-forest-950">Impressum</h1>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 py-16">
+    <Container class="max-w-3xl">
+      <div class="prose-rough">
+        <h2>Angaben gemäß § 5 DDG</h2>
+        <p>
+          SMJ Regio Wegweiser<br />
+          Schönstatt-Mannesjugend<br />
+          Vertreten durch die Regio-Leitung
+        </p>
+
+        <h2>Kontakt</h2>
+        <p>
+          E-Mail: kontakt@smj-wegweiser.de
+        </p>
+
+        <h2>Verantwortlich für den Inhalt</h2>
+        <p>Die Regio-Leitung der SMJ Regio Wegweiser.</p>
+
+        <h2>Haftungshinweis</h2>
+        <p>
+          Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
+        </p>
+      </div>
+    </Container>
+  </section>
+</ContentLayout>

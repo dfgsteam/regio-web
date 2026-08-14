@@ -1,0 +1,102 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+import ImageFrame from '../common/ImageFrame.astro'
+
+const pillars = [
+  {
+    number: '01',
+    title: 'Zusammenhalt',
+    line: 'Du musst hier nicht irgendwer sein. Du musst nur dabei sein.',
+    image: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Gemeinschaft am Lagerfeuer',
+  },
+  {
+    number: '02',
+    title: 'Verantwortung',
+    line: 'Wer etwas trägt, wächst daran. Auch mit 12.',
+    image: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Junge Leiter übernehmen Verantwortung',
+  },
+  {
+    number: '03',
+    title: 'Wachsen',
+    line: 'Jedes Lager ein Stück weiter. An Herausforderungen, die man sich selbst gewählt hat.',
+    image: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Klettern im Wald',
+  },
+  {
+    number: '04',
+    title: 'Mannsein',
+    line: 'Stark heißt nicht laut. Ehrlich, mutig, verlässlich – das ist die Richtung.',
+    image: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Gruppe im Gespräch',
+  },
+  {
+    number: '05',
+    title: 'Glaube',
+    line: 'Abenteuer ist mehr als Action. Stille, Fragen, und Gott mitten drin.',
+    image: '/placeholders/story.svg',
+    alt: 'Platzhalterbild – Kapelle im Wald',
+  },
+]
+---
+
+<section id="pillars" class="relative bg-forest-900 py-24 lg:hidden">
+  <Container>
+    <Eyebrow label="Kapitel 04 · Die fünf Säulen" />
+    <div class="mt-12 flex flex-col gap-14">
+      {
+        pillars.map((pillar) => (
+          <article class="reveal grid gap-6 sm:grid-cols-2">
+            <div>
+              <span class="font-mono text-sm text-orange">{pillar.number}</span>
+              <h3 class="display display-md mt-2 text-paper">{pillar.title}</h3>
+              <p class="mt-4 max-w-sm text-paper/80">{pillar.line}</p>
+            </div>
+            <ImageFrame src={pillar.image} alt={pillar.alt} ratio="4:5" />
+          </article>
+        ))
+      }
+    </div>
+    <a href="/grundsaetze/" class="mt-16 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+      Wofür wir stehen →
+    </a>
+  </Container>
+</section>
+
+<section id="pillars-desktop" class="relative hidden bg-forest-900 lg:block">
+  <div class="pillars-sticky flex h-svh items-center overflow-hidden">
+    <Container class="grid w-full grid-cols-[1fr_1.1fr] items-center gap-16">
+      <div class="pillars-stack">
+        {
+          pillars.map((pillar) => (
+            <article class="pillar-item absolute inset-0 flex flex-col justify-center">
+              <span class="font-mono text-base text-orange">{pillar.number}</span>
+              <h3 class="display display-lg mt-4 text-paper">{pillar.title}</h3>
+              <p class="mt-6 max-w-md text-lg leading-relaxed text-paper/80">{pillar.line}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="pillars-image relative h-[70vh]">
+        {
+          pillars.map((pillar) => (
+            <div class="pillar-image absolute inset-0">
+              <ImageFrame src={pillar.image} alt={pillar.alt} ratio="4:5" class="h-full w-full" />
+            </div>
+          ))
+        }
+      </div>
+    </Container>
+  </div>
+
+  <div class="hidden">
+    <a href="/grundsaetze/">Wofür wir stehen</a>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/animations/pillars'
+</script>

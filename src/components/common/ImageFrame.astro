@@ -1,0 +1,33 @@
+---
+interface Props {
+  src: string
+  alt: string
+  ratio?: string
+  class?: string
+  loading?: 'lazy' | 'eager'
+  caption?: string
+}
+
+const { src, alt, ratio = '3:2', class: className, loading = 'lazy', caption } = Astro.props
+
+const isPlaceholder = src.startsWith('/placeholders/')
+const [ratioW, ratioH] = ratio.split(':').map(Number)
+
+// Placeholder SVGs are not processed by Astro's image pipeline.
+// Real photography should reference raster sources and can switch to
+// Astro <Image> for automatic AVIF/WebP + srcset generation.
+---
+
+<figure class:list={['relative overflow-hidden bg-forest-900', className]} style={`aspect-ratio: ${ratioW} / ${ratioH}`}>
+  {isPlaceholder ? (
+    <img src={src} alt={alt} loading={loading} class="h-full w-full object-cover" />
+  ) : (
+    <img src={src} alt={alt} loading={loading} class="h-full w-full object-cover" />
+  )}
+  <slot />
+  {caption && (
+    <figcaption class="mono-label absolute bottom-3 left-3 bg-forest-950/70 px-2 py-1 text-[0.6rem]">
+      {caption}
+    </figcaption>
+  )}
+</figure>

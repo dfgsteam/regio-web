@@ -1,0 +1,33 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import JournalGallery from '../../components/journal/JournalGallery.astro'
+import { galleryYears } from '../../lib/journal/gallery'
+---
+
+<ContentLayout
+  title="Galerie – SMJ Regio Wegweiser"
+  description="Das Field Journal der Regio Wegweiser: große Bilder, Feldnotizen und die besten Momente aus Lager und Wochenenden."
+>
+  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+    <Container>
+      <Eyebrow label="Galerie" muted />
+      <h1 class="display display-xl mt-6 text-forest-950">
+        Field<br />
+        <span class="text-orange">Journal.</span>
+      </h1>
+      <p class="mt-8 max-w-xl leading-relaxed text-forest-950/75">
+        Keine Bildergalerie im Raster. Sondern ein Journal: große Bilder, schief aufgeklebt, mit Notizen am Rand – Jahr für Jahr.
+      </p>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 pb-24">
+    <Container>
+      {galleryYears.map((year) => (
+        <JournalGallery year={year} />
+      ))}
+    </Container>
+  </section>
+</ContentLayout>

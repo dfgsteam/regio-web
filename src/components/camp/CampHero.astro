@@ -1,0 +1,42 @@
+---
+import { resolveCampForUrl } from '../../lib/camps'
+import Coordinates from '../common/Coordinates.astro'
+
+const camp = await resolveCampForUrl(Astro.url.pathname)
+if (!camp) return null
+
+const { year, title, motto, theme, location } = camp.data
+const dateLabel = `${camp.data.date.start.toLocaleDateString('de-DE')} – ${camp.data.date.end.toLocaleDateString('de-DE')}`
+---
+
+<section class="relative flex min-h-svh items-center overflow-hidden camp-bg">
+  <div class="absolute inset-0">
+    <img src={theme.assets.hero} alt={`${title} – ${motto}`} class="h-full w-full object-cover opacity-60" fetchpriority="high" />
+    <div class="absolute inset-0" style={`background: linear-gradient(to top, var(--camp-bg) 15%, transparent 60%)`} aria-hidden="true" />
+  </div>
+
+  <div class="relative z-10 mx-auto w-full max-w-6xl px-5 pt-28 pb-20 sm:px-8">
+    <p class="eyebrow mb-5">Zeltlager {year}</p>
+    <h1 class="display text-[clamp(3.2rem,11vw,9rem)] leading-none camp-fg">
+      {motto}
+    </h1>
+    <p class="mt-4 font-display text-2xl uppercase tracking-wide camp-accent sm:text-3xl">{title}</p>
+
+    <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-3 font-mono text-[0.7rem] uppercase tracking-[0.2em]">
+      <div class="flex items-center gap-3">
+        <dt class="opacity-60">Wann</dt>
+        <dd class="camp-fg">{dateLabel}</dd>
+      </div>
+      <div class="flex items-center gap-3">
+        <dt class="opacity-60">Wo</dt>
+        <dd class="camp-fg">{location.name}</dd>
+      </div>
+    </dl>
+
+    {location.coordinates && (
+      <div class="mt-8">
+        <Coordinates value={location.coordinates} />
+      </div>
+    )}
+  </div>
+</section>

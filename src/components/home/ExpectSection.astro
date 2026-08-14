@@ -1,0 +1,48 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+import FieldNote from '../common/FieldNote.astro'
+import ImageFrame from '../common/ImageFrame.astro'
+import Sticker from '../common/Sticker.astro'
+
+const terms = ['Gemeinschaft', 'Feuer', 'Wettkampf', 'Natur', 'Glaube', 'Verantwortung']
+---
+
+<section id="expect" class="texture-paper relative bg-paper text-forest-950">
+  <Container class="py-24 sm:py-36">
+    <Eyebrow label="Kapitel 02 · Was erwartet dich?" muted />
+
+    <div class="mt-10 grid items-start gap-14 lg:grid-cols-[1.2fr_1fr]">
+      <div>
+        <h2 class="display display-lg text-forest-950">
+          <span class="block">Dreck an</span>
+          <span class="block text-orange">den Schuhen.</span>
+          <span class="block">Rauch in</span>
+          <span class="block text-orange">den Klamotten.</span>
+          <span class="block">Geschichten</span>
+          <span class="block">im Kopf.</span>
+        </h2>
+
+        <div class="mt-10 flex flex-wrap gap-2.5">
+          {
+            terms.map((term, index) => (
+              <Sticker label={term} rotate={index % 2 === 0 ? '-2deg' : '1.5deg'} tone="paper" />
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="relative">
+        <ImageFrame
+          src="/placeholders/story.svg"
+          alt="Platzhalterbild – Story-Motiv: Abend am Lagerfeuer"
+          ratio="4:5"
+          class="reveal w-full max-w-sm"
+        />
+        <FieldNote meta="FIELD NOTE 03" rotate="-3deg" class="absolute -bottom-8 -left-4 z-10 sm:-left-12">
+          Das Feuer hat den Regen überlebt.
+        </FieldNote>
+      </div>
+    </div>
+  </Container>
+</section>

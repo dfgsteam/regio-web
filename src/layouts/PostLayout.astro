@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import Header from '../components/navigation/Header.astro'
+import Footer from '../components/navigation/Footer.astro'
+
+interface Props {
+  title: string
+  description: string
+  image?: string
+  noIndex?: boolean
+  publishedAt?: Date
+  author?: string
+}
+
+const { title, description, image, noIndex, publishedAt, author } = Astro.props
+
+const articleStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  image,
+  datePublished: publishedAt?.toISOString(),
+  author: { '@type': 'Organization', name: author ?? 'SMJ Regio Wegweiser' },
+  publisher: { '@type': 'Organization', name: 'SMJ Regio Wegweiser' },
+}
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={image}
+  noIndex={noIndex}
+  structuredData={articleStructuredData}
+>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</BaseLayout>

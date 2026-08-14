@@ -1,0 +1,19 @@
+---
+interface Props {
+  id?: string
+  tone?: 'dark' | 'paper' | 'sand'
+  class?: string
+}
+
+const { id, tone = 'dark', class: className } = Astro.props
+
+const tones = {
+  dark: 'bg-forest-950 text-paper',
+  paper: 'texture-paper bg-paper text-forest-950',
+  sand: 'bg-[color:var(--color-forest-800)] text-paper',
+}
+---
+
+<section id={id} class:list={['relative', tones[tone], className]}>
+  <slot />
+</section>

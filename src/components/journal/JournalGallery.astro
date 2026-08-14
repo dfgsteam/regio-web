@@ -1,0 +1,60 @@
+---
+import type { GalleryYear } from '../../lib/journal/gallery'
+import FieldNote from '../common/FieldNote.astro'
+
+interface Props {
+  year: GalleryYear
+}
+
+const { year } = Astro.props
+---
+
+<section class="journal-year border-t border-paper/15 py-20">
+  <p class="mono-label mb-8">Jahrgang</p>
+  <h2 class="display display-lg text-paper">
+    <span class="text-orange">{year.year}</span>
+  </h2>
+
+  <div class="mt-14 space-y-24">
+    {
+      year.events.map((event) => (
+        <article>
+          <h3 class="eyebrow mb-10">{event.name}</h3>
+
+          <div class="grid gap-8 sm:grid-cols-2">
+            {event.images.map((image, index) => (
+              <figure
+                class:list={[
+                  'relative',
+                  index % 2 === 0 ? 'sm:mt-0' : 'sm:mt-14',
+                  image.ratio === '4:5' ? 'sm:col-span-1' : 'sm:col-span-2',
+                  image.ratio !== '4:5' && index % 2 === 0 ? '' : '',
+                ]}
+              >
+                <div class="overflow-hidden border border-paper/15 bg-forest-900">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    loading="lazy"
+                    class:list={[
+                      'w-full object-cover transition-transform duration-700 hover:scale-[1.03]',
+                      image.ratio === '4:5' ? 'aspect-[4/5]' : 'aspect-[16/10]',
+                    ]}
+                  />
+                </div>
+                <figcaption class="mt-3 flex items-baseline justify-between gap-4">
+                  <span class="mono-label">{image.meta}</span>
+                </figcaption>
+                {image.note && (
+                  <FieldNote meta={image.meta ?? ''} rotate={index % 2 === 0 ? '-2deg' : '2deg'} class="mt-6 max-w-sm">
+                    {image.note}
+                  </FieldNote>
+                )}
+              </figure>
+            ))}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>

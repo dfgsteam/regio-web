@@ -1,0 +1,23 @@
+---
+interface Props {
+  label: string
+  tone?: 'dark' | 'paper' | 'camp'
+  rotate?: string
+  class?: string
+}
+
+const { label, tone = 'dark', rotate = '-2deg', class: className } = Astro.props
+
+const tones = {
+  dark: 'bg-orange text-forest-950 border-forest-950/20',
+  paper: 'bg-forest-950 text-paper border-paper/20',
+  camp: 'bg-[color:var(--camp-accent)] text-[color:var(--camp-bg)]',
+}
+---
+
+<span
+  class:list={['inline-block border px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.22em] shadow-sm', tones[tone], className]}
+  style={`transform: rotate(${rotate})`}
+>
+  {label}
+</span>

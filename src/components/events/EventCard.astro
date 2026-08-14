@@ -1,0 +1,60 @@
+---
+import { formatAgeRange, formatDateRange } from '../../lib/events'
+import type { Event } from '../../lib/events'
+
+interface Props {
+  event: Event
+  href?: string
+  featured?: boolean
+}
+
+const { event, href, featured = false } = Astro.props
+const age = formatAgeRange(event.ageMin, event.ageMax)
+---
+
+<article
+  class:list={[
+    'group relative flex flex-col border-2 border-paper/15 bg-forest-900 p-6 transition-colors hover:border-orange sm:p-8',
+    featured && 'border-orange',
+  ]}
+>
+  {featured && (
+    <span class="absolute -top-3 right-6 bg-orange px-3 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-[0.2em] text-forest-950">
+      Highlight
+    </span>
+  )}
+
+  <p class="mono-label">{event.category.toUpperCase()}</p>
+
+  <h3 class="display display-sm mt-3 text-paper">
+    <a href={href ?? event.registrationUrl ?? '/abenteuer/'} class="after:absolute after:inset-0">
+      {event.title}
+    </a>
+  </h3>
+
+  {event.teaser && <p class="mt-3 text-sm leading-relaxed text-paper/70">{event.teaser}</p>}
+
+  <dl class="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 font-mono text-[0.7rem] uppercase tracking-[0.14em]">
+    <dt class="text-muted">Wann</dt>
+    <dd class="text-paper/90">{formatDateRange(event.start, event.end)}</dd>
+    {event.location && (
+      <>
+        <dt class="text-muted">Wo</dt>
+        <dd class="text-paper/90">{event.location}</dd>
+      </>
+    )}
+    {age && (
+      <>
+        <dt class="text-muted">Alter</dt>
+        <dd class="text-paper/90">{age}</dd>
+      </>
+    )}
+  </dl>
+
+  <span class="mt-6 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
+    {event.registrationUrl ? 'Zur Anmeldung' : href ? 'Mehr erfahren' : 'Details'}
+    <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  </span>
+</article>

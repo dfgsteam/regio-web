@@ -1,0 +1,33 @@
+---
+import { resolveCampForUrl } from '../../lib/camps'
+
+const camp = await resolveCampForUrl(Astro.url.pathname)
+if (!camp) return null
+
+const { images } = camp.data
+if (images.length === 0) return null
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <div class="mx-auto w-full max-w-6xl px-5 sm:px-8">
+    <p class="eyebrow mb-4">Bilder vom Lager</p>
+    <h2 class="display display-md camp-fg mb-12">Momentaufnahmen.</h2>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      {
+        images.map((image, index) => (
+          <figure class={index % 2 === 1 ? 'md:translate-y-10' : ''}>
+            <div class="overflow-hidden border camp-border bg-forest-950">
+              <img
+                src={image.src}
+                alt={image.alt}
+                loading="lazy"
+                class="aspect-[4/5] w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+            </div>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

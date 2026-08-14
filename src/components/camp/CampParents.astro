@@ -1,0 +1,45 @@
+---
+import Container from '../common/Container.astro'
+
+const questions = [
+  {
+    title: 'Wer passt auf?',
+    answer:
+      'Geschulte Leiter, die selbst in der SMJ groß geworden sind. Jugend leitet Jugend – mit erfahrenen Erwachsenen im Hintergrund.',
+  },
+  {
+    title: 'Was kostet es?',
+    answer:
+      'Der Beitrag deckt Anreise, Verpflegung und Material. Bei finanziellen Hürden gibt es immer eine Lösung – einfach ansprechen.',
+  },
+  {
+    title: 'Was muss mit?',
+    answer:
+      'Schlafsack, Isomatte, wetterfeste Kleidung, Zahnbürste. Die vollständige Packliste gibt es mit der Anmeldebestätigung.',
+  },
+  {
+    title: 'Wie ist der Kontakt?',
+    answer:
+      'Am Lager selbst gibt es eine Notfallnummer für Eltern. Vor dem Lager beantwortet das Regio-Team alle Fragen gerne direkt.',
+  },
+]
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <Container>
+    <p class="eyebrow mb-4">Für Eltern</p>
+    <h2 class="display display-md camp-fg">Und was sagen deine Eltern dazu?</h2>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      {
+        questions.map((question, index) => (
+          <article class="border camp-border p-7">
+            <p class="mono-label">Frage {String(index + 1).padStart(2, '0')}</p>
+            <h3 class="display display-sm mt-3 camp-fg">{question.title}</h3>
+            <p class="mt-4 text-sm leading-relaxed camp-fg/75">{question.answer}</p>
+          </article>
+        ))
+      }
+    </div>
+  </Container>
+</section>

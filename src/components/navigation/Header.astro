@@ -1,0 +1,98 @@
+---
+import MobileNav from './MobileNav.astro'
+
+const links = [
+  { label: 'Start', href: '/' },
+  { label: 'Abenteuer', href: '/abenteuer/' },
+  { label: 'Über uns', href: '/ueber-uns/' },
+  { label: 'Grundsätze', href: '/grundsaetze/' },
+  { label: 'Team', href: '/team/' },
+  { label: 'Journal', href: '/journal/' },
+]
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-40 transition-colors duration-300"
+>
+  <div class="flex items-center justify-between px-5 py-4 sm:px-8">
+    <a href="/" class="group flex items-center gap-3" aria-label="SMJ Regio Wegweiser – Start">
+      <span class="grid h-10 w-10 place-items-center border-2 border-orange font-display text-lg leading-none text-paper transition-colors group-hover:bg-orange group-hover:text-forest-950">
+        SMJ
+      </span>
+      <span class="hidden flex-col leading-tight sm:flex">
+        <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.3em] text-orange">Regio</span>
+        <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.3em] text-paper">Wegweiser</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Hauptnavigation">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'font-mono text-[0.68rem] font-bold uppercase tracking-[0.22em] text-paper/85 transition-colors hover:text-orange',
+              Astro.url.pathname === link.href && 'text-orange',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <a
+        href="/abenteuer/"
+        class="hidden items-center gap-2 border-2 border-orange bg-orange px-4 py-2.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-forest-950 transition-colors hover:bg-paper hover:border-paper lg:inline-flex"
+      >
+        Nächstes Abenteuer
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </a>
+
+      <button
+        id="menu-open"
+        class="flex items-center gap-2 border-2 border-paper/40 px-4 py-2.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:border-orange hover:text-orange lg:hidden"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+      >
+        Menü
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<MobileNav links={links} />
+
+<script>
+  import '../../scripts/animations/navigation'
+</script>
+
+<style>
+  #site-header {
+    background: linear-gradient(to bottom, rgba(17, 23, 19, 0.72), transparent);
+    border-bottom: 1px solid transparent;
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  html:not(.is-at-top) #site-header,
+  #site-header.is-compact {
+    background: rgba(17, 23, 19, 0.92);
+    border-bottom-color: rgba(241, 235, 221, 0.12);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #site-header {
+      transition: none;
+    }
+  }
+</style>

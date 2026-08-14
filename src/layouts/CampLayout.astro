@@ -1,0 +1,46 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import Header from '../components/navigation/Header.astro'
+import Footer from '../components/navigation/Footer.astro'
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+  camp: CollectionEntry<'camps'>['data']
+}
+
+const { camp } = Astro.props
+
+const eventStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: camp.title,
+  description: camp.motto,
+  startDate: camp.date.start.toISOString(),
+  endDate: camp.date.end.toISOString(),
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: {
+    '@type': 'Place',
+    name: camp.location.name,
+  },
+  offers: camp.registration.enabled ? { '@type': 'Offer', url: camp.registration.url } : undefined,
+}
+---
+
+<BaseLayout
+  title={`${camp.title} – ${camp.motto}`}
+  description={`${camp.motto}: ${camp.date.start.toLocaleDateString('de-DE')} – ${camp.date.end.toLocaleDateString('de-DE')} in ${camp.location.name}. Für ${camp.age.min}–${camp.age.max} Jahre.`}
+  image={camp.theme.assets.hero}
+  structuredData={eventStructuredData}
+>
+  <Header />
+  <div
+    class="camp-theme"
+    style={`--camp-bg: ${camp.theme.colors.background}; --camp-fg: ${camp.theme.colors.foreground}; --camp-accent: ${camp.theme.colors.accent};`}
+  >
+    <main>
+      <slot />
+    </main>
+  </div>
+  <Footer />
+</BaseLayout>

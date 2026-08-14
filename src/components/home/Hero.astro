@@ -1,0 +1,45 @@
+---
+import Coordinates from '../common/Coordinates.astro'
+---
+
+<section id="hero" class="relative h-svh min-h-[560px] overflow-hidden bg-forest-950">
+  <div class="hero-bg absolute inset-0 overflow-hidden">
+    <img
+      src="/placeholders/hero.svg"
+      alt="Platzhalterbild – Hero-Motiv: Gruppe unterwegs im Gelände"
+      class="h-full w-full object-cover"
+      fetchpriority="high"
+    />
+    <div class="absolute inset-0 bg-forest-950/30" aria-hidden="true" />
+  </div>
+
+  <div class="hero-topo texture-topo absolute inset-0 opacity-0" aria-hidden="true" />
+
+  <div class="hero-content relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+    <p class="hero-eyebrow eyebrow mb-6">SMJ Regio Wegweiser</p>
+    <h1 class="display display-xl text-paper">
+      <span class="hero-line-1 block">Raus.</span>
+      <span class="hero-line-2 block text-orange">Ins Abenteuer.</span>
+    </h1>
+    <p class="hero-sub mt-8 max-w-md font-mono text-[0.7rem] uppercase leading-relaxed tracking-[0.28em] text-paper/80">
+      Zeltlager. Lagerfeuer. Wettkämpfe. Freunde.<br />
+      Zehn Tage, die anders sind als alles davor.
+    </p>
+  </div>
+
+  <div class="hero-scrollhint absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-center" aria-hidden="true">
+    <span class="font-mono text-[0.65rem] uppercase tracking-[0.3em] text-paper/70">Los geht's</span>
+    <span class="mt-2 block font-display text-xl text-orange">↓</span>
+  </div>
+
+  <div class="absolute bottom-8 left-5 z-10 hidden sm:block">
+    <Coordinates value="N 51° 22' 44" />
+  </div>
+  <div class="absolute bottom-8 right-5 z-10 hidden sm:block">
+    <Coordinates value="E 10° 08' 17" />
+  </div>
+</section>
+
+<script>
+  import '../../scripts/animations/hero'
+</script>

@@ -1,0 +1,61 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+import Button from '../common/Button.astro'
+
+const questions = [
+  {
+    title: 'Wer passt auf?',
+    answer:
+      'Unsere Leiter sind geschult, verantwortlich und selbst in der SMJ groß geworden. Jugend leitet Jugend – mit Rückhalt durch erfahrene Erwachsene.',
+  },
+  {
+    title: 'Was kostet es?',
+    answer:
+      'Zeltlager und Wochenenden kosten einen Beitrag, der alles abdeckt – Anreise, Verpflegung, Material. Wer sich die Teilnahme nicht leisten kann, findet mit uns einen Weg.',
+  },
+  {
+    title: 'Was muss mit?',
+    answer:
+      'Schlafsack, Isomatte, wetterfeste Klamotten und Zahnbürste. Die Packliste gibt es vor jeder Veranstaltung – und Fragen beantworten wir gerne direkt.',
+  },
+  {
+    title: 'Wofür steht die SMJ?',
+    answer:
+      'Gemeinschaft, Verantwortung, Wachsen, Mannsein, Glaube. Wir sind ein katholischer Jugendverband – und bei uns ist jeder willkommen, der mitmachen will.',
+  },
+]
+---
+
+<section id="parents" class="texture-paper relative bg-paper py-24 text-forest-950 sm:py-32">
+  <Container>
+    <Eyebrow label="Kapitel 07 · Für Eltern" muted />
+    <h2 class="display display-lg mt-6 text-forest-950">
+      Und was sagen<br />
+      <span class="text-orange">deine Eltern</span> dazu?
+    </h2>
+
+    <div class="mt-14 grid gap-6 md:grid-cols-2">
+      {
+        questions.map((question, index) => (
+          <article class="border-2 border-forest-950/15 bg-paper p-7 sm:p-9">
+            <p class="font-mono text-[0.65rem] uppercase tracking-[0.24em] text-muted">
+              Frage {String(index + 1).padStart(2, '0')}
+            </p>
+            <h3 class="display display-sm mt-3 text-forest-950">{question.title}</h3>
+            <p class="mt-4 text-sm leading-relaxed text-forest-950/75">{question.answer}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="mt-12 flex flex-wrap items-center gap-6">
+      <Button href="/team/" variant="paper" size="lg">
+        Das Team kennenlernen
+      </Button>
+      <a href="/ueber-uns/" class="border-b-2 border-forest-950 pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-forest-950 transition-colors hover:text-orange hover:border-orange">
+        Wofür wir stehen →
+      </a>
+    </div>
+  </Container>
+</section>

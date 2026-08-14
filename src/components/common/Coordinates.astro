@@ -1,0 +1,12 @@
+---
+interface Props {
+  value: string
+  class?: string
+}
+
+const { value, class: className } = Astro.props
+---
+
+<span class:list={['mono-label whitespace-nowrap', className]} aria-label={`Koordinaten ${value}`}>
+  {value}
+</span>

@@ -1,0 +1,13 @@
+---
+interface Props {
+  label: string
+  muted?: boolean
+  class?: string
+}
+
+const { label, muted = false, class: className } = Astro.props
+---
+
+<span class:list={['eyebrow', muted && 'eyebrow-muted', className]}>
+  {label}
+</span>

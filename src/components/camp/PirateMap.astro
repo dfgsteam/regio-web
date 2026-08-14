@@ -1,0 +1,77 @@
+---
+import Container from '../common/Container.astro'
+
+const zones = [
+  { name: 'Kapernbucht', x: 120, y: 240 },
+  { name: 'Schädelfelsen', x: 320, y: 110 },
+  { name: 'Rum-Quelle', x: 520, y: 260 },
+  { name: 'Krähennest', x: 660, y: 150 },
+]
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <Container>
+    <p class="eyebrow mb-4">Die Insel</p>
+    <h2 class="display display-md camp-fg mb-10">Wo geht's hin?</h2>
+
+    <div class="relative overflow-hidden border camp-border bg-forest-950/60 p-6 sm:p-10">
+      <svg viewBox="0 0 900 420" class="h-auto w-full" role="img" aria-label="Karte der Pirateninsel mit Schatzversteck">
+        <!-- Wasser -->
+        <g fill="none" stroke="var(--camp-fg)" stroke-opacity="0.1" stroke-width="1.5">
+          <path d="M0 60 Q 60 50 120 60 T 240 60 T 360 60 T 480 60 T 600 60 T 720 60 T 840 60 T 900 60" />
+          <path d="M0 120 Q 60 110 120 120 T 240 120 T 360 120 T 480 120 T 600 120 T 720 120 T 840 120 T 900 120" />
+          <path d="M0 320 Q 60 310 120 320 T 240 320 T 360 320 T 480 320 T 600 320 T 720 320 T 840 320 T 900 320" />
+        </g>
+
+        <!-- Insel -->
+        <path
+          d="M180 260 C 200 150, 320 80, 470 90 C 620 100, 700 170, 720 250 C 730 330, 660 380, 540 380 C 420 380, 220 370, 180 260 Z"
+          fill="var(--camp-bg)"
+          stroke="var(--camp-accent)"
+          stroke-width="3"
+        />
+
+        <!-- Wege -->
+        <path d="M320 110 L 420 200 L 560 150" fill="none" stroke="var(--camp-fg)" stroke-opacity="0.4" stroke-width="2" stroke-dasharray="6 6" />
+
+        <!-- X markiert die Stelle -->
+        <g stroke="var(--camp-accent)" stroke-width="6" stroke-linecap="round">
+          <line x1="540" y1="255" x2="580" y2="295" />
+          <line x1="580" y1="255" x2="540" y2="295" />
+        </g>
+
+        <!-- Zonen -->
+        {
+          zones.map((zone) => (
+            <g>
+              <circle cx={zone.x} cy={zone.y} r="6" fill="none" stroke="var(--camp-fg)" stroke-width="2" />
+              <text x={zone.x + 14} y={zone.y + 4} font-family="'Space Mono', monospace" font-size="14" fill="var(--camp-fg)" letter-spacing="3">
+                {zone.name}
+              </text>
+            </g>
+          ))
+        }
+
+        <!-- Kompassrose -->
+        <g transform="translate(790, 80)">
+          <circle r="34" fill="none" stroke="var(--camp-accent)" stroke-width="2" />
+          <path d="M0 -26 L 8 0 L 0 26 L -8 0 Z" fill="var(--camp-accent)" />
+          <path d="M-26 0 L 0 -8 L 26 0 L 0 8 Z" fill="var(--camp-fg)" opacity="0.6" />
+          <text y="-42" text-anchor="middle" font-family="'Space Mono', monospace" font-size="14" fill="var(--camp-fg)" letter-spacing="3">N</text>
+        </g>
+
+        <!-- Legende -->
+        <g font-family="'Space Mono', monospace" font-size="12" fill="var(--camp-fg)" opacity="0.7">
+          <circle cx="60" cy="380" r="5" fill="none" stroke="var(--camp-accent)" stroke-width="2" />
+          <text x="74" y="384">Kartierter Bereich</text>
+          <line x1="60" y1="360" x2="80" y2="360" stroke="var(--camp-accent)" stroke-width="3" />
+          <text x="90" y="364">X = Schatz</text>
+        </g>
+      </svg>
+
+      <p class="mt-4 text-center font-mono text-[0.65rem] uppercase tracking-[0.3em] camp-fg/60">
+        Feldnote: Die Karte stimmt nur zur Hälfte. So macht es mehr Spaß.
+      </p>
+    </div>
+  </Container>
+</section>

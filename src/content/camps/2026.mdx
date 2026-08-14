@@ -1,0 +1,65 @@
+---
+year: 2026
+title: Zeltlager 2026
+motto: Piraten
+active: false
+date:
+  start: 2026-07-10
+  end: 2026-07-19
+age:
+  min: 9
+  max: 14
+location:
+  name: Wiesenthal bei Thalwenden
+theme:
+  id: pirate
+  colors:
+    background: '#0E1A24'
+    foreground: '#F1EBDD'
+    accent: '#C97B3D'
+  assets:
+    hero: /placeholders/camp-hero.svg
+registration:
+  enabled: false
+images:
+  - src: /placeholders/reel.svg
+    alt: Platzhalterbild – Piratenschiff-Konstruktion
+    ratio: 5:3
+  - src: /placeholders/story.svg
+    alt: Platzhalterbild – Flagge hissen
+    ratio: 4:5
+story: >-
+  Zehn Tage auf einer Insel, die es nicht gibt. Die Flotte aus selbst
+  gebauten Flößen musste halten. Die Flagge wurde erobert und zurückerobert.
+  Und am letzten Abend gab es einen Schatz – der, wie sich herausstellte,
+  die ganze Zeit die Gruppe selbst war. Manchmal dauert es zehn Tage, bis
+  man das versteht.
+faq:
+  - question: War das Lager nur für "Piraten-Fans"?
+    answer: Nein. Das Thema ist Einstieg, nicht Bedingung. Wer kein Piratenlied kennt, lernt es in den ersten Stunden – und sei es einstimmig falsch.
+---
+
+import CampHero from '../../components/camp/CampHero.astro'
+import CampFacts from '../../components/camp/CampFacts.astro'
+import CampStory from '../../components/camp/CampStory.astro'
+import CampGallery from '../../components/camp/CampGallery.astro'
+import CampParents from '../../components/camp/CampParents.astro'
+import CampFaq from '../../components/camp/CampFaq.astro'
+import CampRegistration from '../../components/camp/CampRegistration.astro'
+import PirateMap from '../../components/camp/PirateMap.astro'
+
+<CampHero />
+
+<CampFacts />
+
+<PirateMap />
+
+<CampStory />
+
+<CampGallery />
+
+<CampParents />
+
+<CampFaq />
+
+<CampRegistration />

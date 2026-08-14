@@ -1,0 +1,31 @@
+---
+import { resolveCampForUrl } from '../../lib/camps'
+import Container from '../common/Container.astro'
+
+const camp = await resolveCampForUrl(Astro.url.pathname)
+if (!camp) return null
+
+const { faq } = camp.data
+if (faq.length === 0) return null
+---
+
+<section class="camp-bg py-16 sm:py-24">
+  <Container class="max-w-4xl">
+    <p class="eyebrow mb-4">Fragen</p>
+    <h2 class="display display-md camp-fg mb-12">Häufige Fragen.</h2>
+
+    <div class="divide-y camp-border">
+      {
+        faq.map((item) => (
+          <details class="group py-6">
+            <summary class="flex cursor-pointer items-baseline justify-between gap-6 font-display text-xl uppercase camp-fg transition-colors hover:camp-accent">
+              {item.question}
+              <span class="shrink-0 font-mono text-sm camp-accent transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <p class="mt-4 max-w-2xl leading-relaxed camp-fg/75">{item.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </Container>
+</section>

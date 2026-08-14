@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/home/Hero.astro'
+import ExpectSection from '../components/home/ExpectSection.astro'
+import ExpeditionReel from '../components/home/ExpeditionReel.astro'
+import Pillars from '../components/home/Pillars.astro'
+import EventsSection from '../components/home/EventsSection.astro'
+import CampTeaser from '../components/home/CampTeaser.astro'
+import ParentsSection from '../components/home/ParentsSection.astro'
+import FaithSection from '../components/home/FaithSection.astro'
+import JournalSection from '../components/home/JournalSection.astro'
+import FinalCta from '../components/home/FinalCta.astro'
+import Header from '../components/navigation/Header.astro'
+import Footer from '../components/navigation/Footer.astro'
+
+const organizationStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'SMJ Regio Wegweiser',
+  url: 'https://smj-wegweiser.de',
+  description:
+    'Jugendverband der Schönstatt-Mannesjugend in der Region Wegweiser. Zeltlager, Wochenenden und Gemeinschaft für Jungs von 9 bis 14 Jahren.',
+}
+---
+
+<BaseLayout
+  title="SMJ Regio Wegweiser – Raus. Ins Abenteuer."
+  description="Zeltlager. Lagerfeuer. Wettkämpfe. Freunde. Zehn Tage, die anders sind als alles davor. Die SMJ Regio Wegweiser – Abenteuer und Gemeinschaft für Jungs von 9 bis 14."
+  structuredData={organizationStructuredData}
+>
+  <Header />
+  <main>
+    <Hero />
+    <ExpectSection />
+    <ExpeditionReel />
+    <Pillars />
+    <EventsSection />
+    <CampTeaser />
+    <ParentsSection />
+    <FaithSection />
+    <JournalSection />
+    <FinalCta />
+  </main>
+  <Footer />
+</BaseLayout>

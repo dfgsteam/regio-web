@@ -1,0 +1,111 @@
+---
+interface Link {
+  label: string
+  href: string
+}
+
+interface Props {
+  links: Link[]
+}
+
+const { links } = Astro.props
+const numbered = links.map((link, index) => ({ ...link, number: `0${index + 1}` }))
+---
+
+<div
+  id="mobile-nav"
+  class="texture-topo fixed inset-0 z-50 hidden bg-forest-950"
+  aria-hidden="true"
+>
+  <div class="flex h-full flex-col px-6 pb-8 pt-5">
+    <div class="flex items-center justify-between">
+      <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.3em] text-orange">
+        Regio Wegweiser
+      </span>
+      <button
+        id="menu-close"
+        class="flex items-center gap-2 border-2 border-paper/40 px-4 py-2.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:border-orange hover:text-orange"
+        aria-expanded="false"
+      >
+        Schließen
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </div>
+
+    <nav class="mt-16 flex flex-col gap-2" aria-label="Mobile Navigation">
+      {
+        numbered.map((link) => (
+          <a
+            href={link.href}
+            class="nav-item group flex items-baseline gap-5 py-3"
+          >
+            <span class="font-mono text-xs text-orange">{link.number}</span>
+            <span class="font-display text-4xl uppercase text-paper transition-colors group-hover:text-orange sm:text-5xl">
+              {link.label}
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="mt-auto flex items-end justify-between">
+      <p class="font-mono text-[0.6rem] uppercase tracking-[0.25em] text-muted">
+        N 51° 22' 44"<br />
+        E 10° 08' 17"
+      </p>
+      <a href="/kontakt/" class="nav-item border-b border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
+        Kontakt →
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('#mobile-nav')
+  const openButton = document.querySelector<HTMLButtonElement>('#menu-open')
+  const closeButton = document.querySelector<HTMLButtonElement>('#menu-close')
+  const header = document.querySelector<HTMLElement>('#site-header')
+
+  if (nav && openButton && closeButton) {
+    const items = nav.querySelectorAll<HTMLElement>('.nav-item')
+
+    const open = () => {
+      nav.classList.remove('hidden')
+      nav.setAttribute('aria-hidden', 'false')
+      openButton.setAttribute('aria-expanded', 'true')
+      closeButton.setAttribute('aria-expanded', 'true')
+      header?.classList.add('menu-open')
+      document.documentElement.style.overflow = 'hidden'
+      closeButton.focus()
+
+      items.forEach((item, index) => {
+        item.animate(
+          [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 350, delay: 60 * index, fill: 'forwards', easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+        )
+      })
+    }
+
+    const close = () => {
+      nav.classList.add('hidden')
+      nav.setAttribute('aria-hidden', 'true')
+      openButton.setAttribute('aria-expanded', 'false')
+      closeButton.setAttribute('aria-expanded', 'false')
+      header?.classList.remove('menu-open')
+      document.documentElement.style.overflow = ''
+      openButton.focus()
+    }
+
+    openButton.addEventListener('click', open)
+    closeButton.addEventListener('click', close)
+    nav.addEventListener('click', (event) => {
+      const target = (event.target as HTMLElement).closest('a')
+      if (target) close()
+    })
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') close()
+    })
+  }
+</script>

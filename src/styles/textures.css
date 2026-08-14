@@ -1,0 +1,58 @@
+@layer components {
+  /* ---------------------------------------------------------------
+     Textures — paper, film grain, topographic lines, map fragments
+     All pure CSS / inline SVG, no external assets required.
+  --------------------------------------------------------------- */
+
+  .texture-grain {
+    position: relative;
+  }
+
+  .texture-grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  }
+
+  .texture-paper {
+    background-color: var(--color-paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 30% 20%, rgba(17, 23, 19, 0.04), transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(17, 23, 19, 0.07), transparent 55%);
+  }
+
+  .texture-topo {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cg fill='none' stroke='%23f1ebdd' stroke-opacity='0.07'%3E%3Cellipse cx='160' cy='160' rx='30' ry='22'/%3E%3Cellipse cx='160' cy='160' rx='60' ry='46'/%3E%3Cellipse cx='160' cy='160' rx='92' ry='72'/%3E%3Cellipse cx='160' cy='160' rx='126' ry='100'/%3E%3Cellipse cx='160' cy='160' rx='162' ry='132'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .texture-topo-dark {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cg fill='none' stroke='%23111713' stroke-opacity='0.12'%3E%3Cellipse cx='160' cy='160' rx='30' ry='22'/%3E%3Cellipse cx='160' cy='160' rx='60' ry='46'/%3E%3Cellipse cx='160' cy='160' rx='92' ry='72'/%3E%3Cellipse cx='160' cy='160' rx='126' ry='100'/%3E%3Cellipse cx='160' cy='160' rx='162' ry='132'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .texture-grid {
+    background-image:
+      linear-gradient(to right, rgba(241, 235, 221, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(241, 235, 221, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  .texture-tape {
+    background:
+      linear-gradient(
+        105deg,
+        rgba(241, 235, 221, 0.16),
+        rgba(241, 235, 221, 0.05) 45%,
+        rgba(241, 235, 221, 0.18) 55%,
+        rgba(241, 235, 221, 0.06)
+      );
+  }
+
+  .texture-vignette {
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(7, 10, 8, 0.5) 100%);
+  }
+}

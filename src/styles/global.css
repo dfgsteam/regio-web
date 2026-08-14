@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+@import '@fontsource/anton';
+@import '@fontsource-variable/inter';
+@import '@fontsource/space-mono';
+@import './typography.css';
+@import './textures.css';
+
+@theme {
+  --color-forest-950: #111713;
+  --color-forest-900: #182019;
+  --color-forest-800: #22301f;
+  --color-paper: #f1ebdd;
+  --color-sand: #c9ba99;
+  --color-orange: #ff5a1f;
+  --color-ember: #d73b17;
+  --color-muted: #8d9389;
+
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+
+  --breakpoint-xs: 26rem;
+}
+
+@layer components {
+  /* ---------------------------------------------------------------
+     Camp theme API — yearly themes drive these variables.
+     Set on .camp-theme by CampLayout from frontmatter colors.
+  --------------------------------------------------------------- */
+
+  .camp-theme {
+    --camp-bg: var(--color-forest-900);
+    --camp-fg: var(--color-paper);
+    --camp-accent: var(--color-orange);
+    background: var(--camp-bg);
+    color: var(--camp-fg);
+  }
+
+  .camp-theme .eyebrow {
+    color: var(--camp-accent);
+  }
+
+  .camp-accent {
+    color: var(--camp-accent);
+  }
+
+  .camp-bg {
+    background: var(--camp-bg);
+  }
+
+  .camp-fg {
+    color: var(--camp-fg);
+  }
+
+  .camp-border {
+    border-color: color-mix(in oklab, var(--camp-fg) 20%, transparent);
+  }
+}
+
+@layer base {
+  * {
+    border-color: color-mix(in oklab, var(--color-paper) 14%, transparent);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--color-forest-950);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background: var(--color-forest-950);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'cv05';
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-orange);
+    color: var(--color-forest-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  img {
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

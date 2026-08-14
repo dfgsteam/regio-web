@@ -1,0 +1,44 @@
+---
+interface Props {
+  text: string
+  speed?: 'slow' | 'normal' | 'fast'
+  reverse?: boolean
+  separator?: string
+  tone?: 'dark' | 'paper'
+}
+
+const { text, speed = 'normal', reverse = false, separator = '✳', tone = 'dark' } = Astro.props
+
+const speeds = { slow: '40s', normal: '26s', fast: '16s' }
+
+const item = `<span class="mx-6 inline-block">${text}</span><span class="mx-6 inline-block text-orange" aria-hidden="true">${separator}</span>`
+const doubled = item.repeat(2)
+---
+
+<div
+  class:list={['overflow-hidden py-4', tone === 'paper' ? 'bg-paper text-forest-950' : 'bg-forest-900 text-paper']}
+  aria-hidden="true"
+>
+  <div
+    class="whitespace-nowrap font-display text-2xl uppercase sm:text-3xl"
+    style={`animation: marquee ${speeds[speed]} linear infinite; ${reverse ? 'animation-direction: reverse;' : ''}`}
+    set:html={doubled}
+  />
+</div>
+
+<style>
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    div[style*='marquee'] {
+      animation: none !important;
+    }
+  }
+</style>

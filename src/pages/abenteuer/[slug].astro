@@ -1,0 +1,116 @@
+---
+import { getCollection, render } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import Button from '../../components/common/Button.astro'
+import ImageFrame from '../../components/common/ImageFrame.astro'
+import { formatAgeRange } from '../../lib/events'
+
+export async function getStaticPaths() {
+  const specials = await getCollection('specialEvents')
+  return specials
+    .filter((special) => special.data.active)
+    .map((special) => ({
+      params: { slug: special.data.slug },
+      props: { special },
+    }))
+}
+
+interface Props {
+  special: CollectionEntry<'specialEvents'>
+}
+
+const { special } = Astro.props
+const { Content } = await render(special)
+const { data } = special
+
+const age = formatAgeRange(data.age.min, data.age.max)
+const relatedCamps = data.relatedCamp
+  ? await getCollection('camps', ({ data: campData }) => campData.year === Number(data.relatedCamp))
+  : []
+
+const eventStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: data.title,
+  description: data.teaser,
+  startDate: data.date.start.toISOString(),
+  endDate: data.date.end.toISOString(),
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@type': 'Place', name: data.location.name },
+}
+---
+
+<ContentLayout
+  title={`${data.title} – SMJ Regio Wegweiser`}
+  description={data.teaser}
+  image={data.image.src}
+  structuredData={eventStructuredData}
+>
+  <section class="relative flex min-h-[70svh] items-end overflow-hidden bg-forest-950 pb-16 pt-40">
+    <div class="absolute inset-0">
+      <img src={data.image.src} alt={data.image.alt} class="h-full w-full object-cover opacity-50" />
+      <div class="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-transparent" />
+    </div>
+    <Container class="relative">
+      <Eyebrow label="Besonderes Abenteuer" />
+      <h1 class="display display-xl mt-5 text-paper">{data.title}</h1>
+      <p class="mono-label mt-5">
+        {data.date.start.toLocaleDateString('de-DE')} – {data.date.end.toLocaleDateString('de-DE')} · {data.location.name}
+        {age ? ` · ${age}` : ''}
+      </p>
+    </Container>
+  </section>
+
+  <section class="bg-forest-950 py-16">
+    <Container class="grid gap-14 lg:grid-cols-[1.5fr_1fr]">
+      <div class="prose-rough">
+        <Content />
+      </div>
+
+      <aside class="h-fit border border-paper/15 bg-forest-900 p-7 lg:sticky lg:top-28">
+        <h2 class="display display-sm text-paper">Anmeldung</h2>
+        <dl class="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 font-mono text-[0.7rem] uppercase tracking-[0.14em]">
+          <dt class="text-muted">Wann</dt>
+          <dd class="text-paper/90">{data.date.start.toLocaleDateString('de-DE')} – {data.date.end.toLocaleDateString('de-DE')}</dd>
+          <dt class="text-muted">Wo</dt>
+          <dd class="text-paper/90">{data.location.name}</dd>
+          <dt class="text-muted">Alter</dt>
+          <dd class="text-paper/90">{age}</dd>
+        </dl>
+
+        {data.registration?.url ? (
+          <div class="mt-8">
+            <Button href={data.registration.url} variant="primary" class="w-full justify-center">
+              Jetzt anmelden
+            </Button>
+            {data.registration.deadline && (
+              <p class="mono-label mt-4">Anmeldeschluss: {data.registration.deadline.toLocaleDateString('de-DE')}</p>
+            )}
+          </div>
+        ) : (
+          <p class="mono-label mt-8">Die Anmeldung öffnet bald.</p>
+        )}
+
+        {relatedCamps.length > 0 && (
+          <div class="mt-10 border-t border-paper/15 pt-6">
+            <p class="mono-label mb-4">Das passende Zeltlager</p>
+            {relatedCamps.map((camp) => (
+              <a href={`/abenteuer/zeltlager/${camp.data.year}/`} class="group flex items-center gap-4">
+                <ImageFrame src={camp.data.theme.assets.hero} alt={camp.data.motto} ratio="4:3" class="w-20 shrink-0" />
+                <span>
+                  <span class="block font-display text-lg uppercase text-paper transition-colors group-hover:text-orange">
+                    {camp.data.motto}
+                  </span>
+                  <span class="mono-label">Zeltlager {camp.data.year}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
+      </aside>
+    </Container>
+  </section>
+</ContentLayout>
