@@ -99,7 +99,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   const parsedEnd = parseIcsDate(raw['DTEND'], raw['DTEND_IS_DATE'] === 'true')
   const end = parsedEnd ?? start
 
-  const location = decodeIcsText(raw['LOCATION'] || '').trim()
+  const rawLocation = decodeIcsText(raw['LOCATION'] || '').trim()
   const rawDesc = decodeIcsText(raw['DESCRIPTION'] || '').trim()
   const cleanDesc = stripHtml(rawDesc)
 
@@ -115,31 +115,41 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   let price: string | undefined
   let highlights: string[] | undefined
   let packingList: string[] | undefined
+  let location = rawLocation || 'Region Wegweiser'
+  let address = rawLocation
+  let contactName = 'SMJ Regio Wegweiser'
+  let contactRole = 'Lager- & Eventleitung'
+  let contactEmail = 'kontakt@smj-wegweiser.de'
 
   if (normalizedTitle.includes('actionwochenende')) {
     category = 'weekend'
     ageMin = 9
-    ageMax = 14
-    price = '35 € (inkl. Vollverpflegung, Übernachtung & Material)'
+    ageMax = 15
+    location = rawLocation || 'Klause 2.0, Heiligenstadt'
+    address = 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt'
+    contactName = 'Jonathan & Vinzenz'
+    contactRole = 'Diözesanleitung'
+    contactEmail = 'vinzenz.hupe@smj-wegweiser.de'
     highlights = [
-      'Nachtgeländespiel im Wald mit Fackeln',
-      'Gemeinsames Kochen & Burger am Lagerfeuer',
-      'Bau- und Schnitz-Challenge in Teams',
-      '100% handyfreie Zeit – echtes Abenteuer',
+      'Spannende Aktionen & Geländespiele im Wald',
+      'Gemeinsames Kochen & Küchencrew',
+      'Gemütliche Abende am Kamin & Lagerfeuer',
+      '100% handyfreie Zeit – echte Gemeinschaft',
     ]
     packingList = [
-      'Schlafsack & Spannbettlaken / Isomatte',
-      'Wetterfeste Kleidung & feste Schuhe (für draußen im Wald)',
-      'Hausschuhe & Wechselkleidung',
-      'Taschenlampe oder Kopflampe',
-      'Kulturbeutel & Handtuch',
+      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
       'Krankenkassenkarte & Impfausweis',
+      'Wetterfeste Abenteuerkleidung & feste Schuhe (für draußen)',
+      'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
+      'Taschenlampe oder Kopflampe',
     ]
   } else if (normalizedTitle.includes('sterntreffen')) {
     category = 'special'
     ageMin = 15
     ageMax = 25
-    price = '40 € (inkl. Vollverpflegung & Programm)'
+    contactName = 'Jonathan Hunold'
+    contactRole = '2. Diözesanleiter'
+    contactEmail = 'jonathan.hunold@smj-wegweiser.de'
     highlights = [
       'Zukunftswerkstatt & Regionalkonferenz',
       'Leitungs- & Gruppenleiter-Impulse',
@@ -157,6 +167,8 @@ function transformVEvent(raw: Record<string, string>): Event | null {
     category = 'camp'
     ageMin = 9
     ageMax = 14
+    location = 'Zeltplatz Wiesental, Thalwenden'
+    address = 'Birkenfelder Str., 37318 Uder-Thalwenden'
   }
 
   // Create clean, unique slug
@@ -173,31 +185,37 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   const slug = `${cleanTitle}-${year}`
   const id = raw['UID'] || slug
 
+  // Build authentic description
+  let description = cleanDesc
+  if (!description || description.length < 20) {
+    if (category === 'weekend') {
+      description = `Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht's noch mehr Spaß!`
+    } else {
+      description = `Herzliche Einladung zu ${summary} der SMJ Regio Wegweiser!`
+    }
+  }
+
   return {
     id,
     title: summary,
     slug,
     start,
     end,
-    location: location || 'Region Wegweiser',
-    address: location.includes('Pater-Kentenich-Weg')
-      ? 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt'
-      : location.includes('Wiesental')
-        ? 'Birkenfelder Str., 37318 Uder-Thalwenden'
-        : location,
+    location,
+    address,
     ageMin,
     ageMax,
     price,
     teaser: cleanDesc.length > 0 ? cleanDesc.slice(0, 160) + (cleanDesc.length > 160 ? '...' : '') : undefined,
-    description: cleanDesc.length > 0 ? cleanDesc : `Herzliche Einladung zu ${summary} der SMJ Regio Wegweiser!`,
+    description,
     highlights,
     packingList,
     registrationUrl,
     category,
     contact: {
-      name: 'SMJ Regio Wegweiser',
-      role: 'Lager- & Eventleitung',
-      email: 'kontakt@smj-wegweiser.de',
+      name: contactName,
+      role: contactRole,
+      email: contactEmail,
     },
   }
 }
