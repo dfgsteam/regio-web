@@ -4,14 +4,40 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
 import ImageFrame from '../../components/common/ImageFrame.astro'
+import { Mail } from '@lucide/astro'
 
-const leads = [
+const teamMembers = [
   {
-    role: 'Regio-Leitung',
-    name: 'Regio-Wegweiser Team',
+    role: 'Regiosprecher',
+    name: 'Kilian Schlosser',
+    email: 'kilian.schlosser@smj-wegweiser.de',
+    image: '/placeholders/portrait.svg',
     description:
-      'Die Ansprechpartner für alles Organisatorische: Lager, Termine, Anmeldungen. Ein offenes Ohr für Jungs und Eltern gleichermaßen.',
-    email: 'kontakt@smj-wegweiser.de',
+      'Koordination der Region Wegweiser, Vernetzung und Gesamtverantwortung für die Aktionen vor Ort.',
+  },
+  {
+    role: '1. Diözesanleiter',
+    name: 'Vinzenz Hupe',
+    email: 'vinzenz.hupe@smj-wegweiser.de',
+    image: '/placeholders/portrait.svg',
+    description:
+      'Vertretung auf Diözesanebene, Aus- und Weiterbildung der Gruppenleiter sowie Jahresplanung.',
+  },
+  {
+    role: '2. Diözesanleiter',
+    name: 'Jonathan Hunold',
+    email: 'jonathan.hunold@smj-wegweiser.de',
+    image: '/placeholders/portrait.svg',
+    description:
+      'Unterstützung der Leitung, Organisation von Wochenenden und Begleitung neuer Gruppenleiter.',
+  },
+  {
+    role: 'Finanzen & Kasse',
+    name: 'Julian Hupe',
+    email: 'julian.hupe@smj-wegweiser.de',
+    image: '/placeholders/portrait.svg',
+    description:
+      'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
   },
 ]
 ---
@@ -32,24 +58,73 @@ const leads = [
 
   <section class="bg-forest-950 py-20">
     <Container>
-      <ImageFrame src="/placeholders/group.svg" alt="Platzhalterbild – das gesamte Team der Regio Wegweiser" ratio="16:10" />
+      <ImageFrame
+        src="/placeholders/group.svg"
+        alt="Platzhalterbild – das gesamte Team der Regio Wegweiser"
+        ratio="16:10"
+      />
     </Container>
   </section>
 
-  <section class="bg-forest-950 pb-20">
-    <Container class="grid gap-6 md:grid-cols-2">
-      {leads.map((lead) => (
-        <article class="border border-paper/15 bg-forest-900 p-8">
-          <p class="eyebrow mb-3">{lead.role}</p>
-          <h2 class="display display-sm text-paper">{lead.name}</h2>
-          <p class="mt-4 text-sm leading-relaxed text-paper/75">{lead.description}</p>
-          <a href={`mailto:${lead.email}`} class="mono-label mt-6 inline-block text-orange">
-            {lead.email}
-          </a>
-        </article>
-      ))}
+  <section class="bg-forest-950 pb-20 pt-4">
+    <Container>
+      <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <Eyebrow label="Leitung & Ansprechpartner" />
+          <h2 class="display text-3xl sm:text-4xl lg:text-5xl mt-3 text-paper">
+            Deine Ansprechpartner.
+          </h2>
+        </div>
+        <p class="max-w-md text-sm leading-relaxed text-paper/70">
+          Du hast konkrete Fragen zu einem Bereich? Schreib uns gerne direkt an – wir antworten verlässlich.
+        </p>
+      </div>
 
-      <article class="border border-paper/15 bg-forest-900 p-8">
+      <div class="grid gap-6 md:grid-cols-2">
+        {
+          teamMembers.map((member) => (
+            <article class="group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900 p-6 transition-colors hover:border-orange sm:p-8">
+              <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
+                <div class="relative shrink-0 overflow-hidden border border-paper/20 bg-forest-950 w-28 h-36 sm:w-32 sm:h-40">
+                  <img
+                    src={member.image}
+                    alt={`Porträt von ${member.name} (${member.role})`}
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <span class="absolute bottom-1.5 left-1.5 bg-forest-950/90 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-wider text-orange border border-paper/10">
+                    {member.role.split(' ')[0]}
+                  </span>
+                </div>
+
+                <div class="flex-1">
+                  <p class="eyebrow mb-1 text-xs">{member.role}</p>
+                  <h3 class="display text-2xl sm:text-3xl text-paper transition-colors group-hover:text-orange">
+                    {member.name}
+                  </h3>
+                  <p class="mt-3 text-sm leading-relaxed text-paper/75">{member.description}</p>
+                </div>
+              </div>
+
+              <div class="mt-6 border-t border-paper/10 pt-4">
+                <a
+                  href={`mailto:${member.email}`}
+                  class="inline-flex items-center gap-2.5 font-mono text-xs font-bold uppercase tracking-[0.12em] text-orange transition-colors hover:text-paper"
+                >
+                  <Mail class="h-4 w-4 shrink-0" />
+                  {member.email}
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-forest-900 py-20">
+    <Container class="grid gap-6 md:grid-cols-2">
+      <article class="border border-paper/15 bg-forest-950 p-8">
         <p class="eyebrow mb-3">Jugend leitet Jugend</p>
         <h2 class="display display-sm text-paper">Kein Steriler Dienstplan</h2>
         <p class="mt-4 text-sm leading-relaxed text-paper/75">
@@ -57,14 +132,14 @@ const leads = [
         </p>
       </article>
 
-      <article class="border border-paper/15 bg-forest-900 p-8">
+      <article class="border border-paper/15 bg-forest-950 p-8">
         <p class="eyebrow mb-3">Deine Anlaufstelle</p>
         <h2 class="display display-sm text-paper">Eine Adresse für alles</h2>
         <p class="mt-4 text-sm leading-relaxed text-paper/75">
-          Für Anmeldungen, Fragen und Ideen gibt es eine zentrale Anlaufstelle. Bei einzelnen Veranstaltungen nennen wir zusätzlich den passenden Ansprechpartner.
+          Für allgemeine Fragen, Anmeldungen und Ideen gibt es unsere zentrale Anlaufstelle. Schreib uns jederzeit – wir leiten deine Anfrage an die passende Person weiter.
         </p>
         <div class="mt-6">
-          <Button href="/kontakt/" variant="ghost">
+          <Button href="/kontakt/" variant="primary">
             Kontakt aufnehmen
           </Button>
         </div>
@@ -72,3 +147,4 @@ const leads = [
     </Container>
   </section>
 </ContentLayout>
+
