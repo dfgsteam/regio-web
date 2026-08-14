@@ -285,7 +285,7 @@ const eventStructuredData = {
         <div class="border-2 border-orange bg-forest-900 p-7 sm:p-8 shadow-2xl">
           <p class="eyebrow mb-2">Fakten & Details</p>
           <h3 class="display display-sm text-paper">
-            {isPast ? 'Historie & Details' : event.registrationUrl ? 'Dabei sein' : 'Übersicht'}
+            {isPast ? 'Historie & Details' : event.registrationUrl ? 'Dabei sein' : 'Einfach vorbeikommen'}
           </h3>
 
           <dl class="mt-6 space-y-4 font-mono text-xs uppercase tracking-[0.14em] border-y border-paper/15 py-6">
@@ -338,8 +338,15 @@ const eventStructuredData = {
               )}
             </div>
           ) : (
-            <div class="mt-8 border border-paper/20 bg-forest-950 p-4 text-center">
-              <p class="mono-label text-xs text-paper/70">Keine separate Voranmeldung erforderlich.</p>
+            <div class="mt-8 border-2 border-dashed border-orange/40 bg-forest-950 p-5 text-center space-y-2">
+              <div class="inline-flex items-center gap-2 text-orange font-bold font-mono text-xs uppercase tracking-wider">
+                <Check class="h-4 w-4 text-orange" />
+                <span>Ohne Voranmeldung</span>
+              </div>
+              <p class="font-display text-lg text-paper uppercase">Einfach vorbeikommen!</p>
+              <p class="text-xs text-paper/75 leading-relaxed">
+                Für diese Veranstaltung ist keine Anmeldung erforderlich. Du kannst einfach direkt vorbeikommen und mitmachen!
+              </p>
             </div>
           )}
 

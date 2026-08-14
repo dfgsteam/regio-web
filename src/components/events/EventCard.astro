@@ -63,6 +63,6 @@ const age = formatAgeRange(event.ageMin, event.ageMax)
   </dl>
 
   <span class="mt-auto pt-6 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
-    {isCamp ? 'Zum Zeltlager-Erlebnis →' : 'Mehr Infos & Anmeldung →'}
+    {isCamp ? 'Zum Zeltlager-Erlebnis →' : isPast ? 'Rückblick ansehen →' : (event.registrationUrl ? 'Mehr Infos & Anmeldung →' : 'Ohne Anmeldung · Details →')}
   </span>
 </article>
