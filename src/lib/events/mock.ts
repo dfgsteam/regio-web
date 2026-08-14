@@ -1,6 +1,98 @@
 import type { Event, EventProvider } from './types'
 
 const mockEvents: Event[] = [
+  // 2025 Past Events (Historical Archive)
+  {
+    id: 'actionwochenende-1-2025',
+    title: 'Actionwochenende 1 2025',
+    slug: 'actionwochenende-1-2025',
+    start: new Date('2025-01-31T16:00:00'),
+    end: new Date('2025-02-02T15:00:00'),
+    location: 'Klause 2.0, Heiligenstadt',
+    address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
+    ageMin: 9,
+    ageMax: 15,
+    price: '35 € (inkl. Vollverpflegung, Übernachtung & Material)',
+    teaser: 'Winterabenteuer, Nachtmissionen und echtes Lagerfeuer zum Jahresauftakt 2025 in der Klause 2.0.',
+    description:
+      'Zum Start ins Jahr 2025 trafen sich die Jungs in der Klause 2.0 in Heiligenstadt: Spannende Nachtgeländespiele im Schnee, Kochen am offenen Kamin und drei Tage 100% handyfreie Gemeinschaft.',
+    highlights: [
+      'Nachtgeländespiel im Wald mit Fackeln',
+      'Gemeinsames Burger-Grillen am Kamin',
+      'Team-Challenges & Schnitzwettbewerb',
+      '100% handyfreie Zeit',
+    ],
+    packingList: [
+      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
+      'Krankenkassenkarte & Impfausweis',
+      'Warme Winterkleidung & feste Schuhe',
+      'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
+      'Taschenlampe oder Kopflampe',
+    ],
+    image: '/placeholders/story.svg',
+    category: 'weekend',
+    contact: {
+      name: 'Jonathan & Vinzenz',
+      role: 'Diözesanleitung',
+      email: 'vinzenz.hupe@smj-wegweiser.de',
+    },
+  },
+  {
+    id: 'sterntreffen-2025',
+    title: 'Sterntreffen 2025',
+    slug: 'sterntreffen-2025',
+    start: new Date('2025-08-15T18:00:00'),
+    end: new Date('2025-08-17T14:00:00'),
+    location: 'Klause 2.0, Heiligenstadt',
+    address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
+    ageMin: 9,
+    ageMax: 15,
+    price: '30 € (inkl. Verpflegung, Unterkunft und Betreuung)',
+    teaser: 'Das große Zeltlager-Nachtreffen nach dem Sommerlager 2025: Wiedersehen, Fotoshow und wilde Geschichten.',
+    description:
+      'Drei Tage voller Mutproben, Kameradschaft und wilder Geschichten: Das offizielle Wiedersehen für alle Teilnehmer des Sommerzeltlagers 2025 in der Klause 2.0.',
+    highlights: [
+      'Großes Wiedersehen der Zeltgemeinschaft',
+      'Zeltlager-Fotoshow & Erinnerungsabend',
+      'Geländespiel rund um die Klause 2.0',
+      'Gemütliche Kaminabende',
+    ],
+    packingList: [
+      'Persönliche Sachen, Hausschuhe & Kulturbeutel',
+      'Krankenkassenkarte & Impfausweis',
+      'Kleidung für Abenteuer & feste Schuhe',
+      'Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)',
+      'Taschenlampe oder Kopflampe',
+    ],
+    image: '/placeholders/story.svg',
+    category: 'weekend',
+    contact: {
+      name: 'Jonathan Hunold',
+      role: 'Zeltlagerleitung',
+      email: 'zeltlager@smj-wegweiser.de',
+      phone: '0179 6353443',
+    },
+  },
+  {
+    id: 'regiokonferenz-2025',
+    title: 'Regiokonferenz 2025',
+    slug: 'regiokonferenz-2025',
+    start: new Date('2025-11-15T10:00:00'),
+    end: new Date('2025-11-15T17:00:00'),
+    location: 'Klause 2.0, Heiligenstadt',
+    address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
+    teaser: 'Jahresrückblick, Planung für 2026 und Neuwahlen der Diözesanleitung der Region Wegweiser.',
+    description:
+      'Die jährliche Regionalkonferenz aller Gruppenleiter, Mitarbeiter und Freunde der SMJ Regio Wegweiser mit Ausblick auf die Aktionen und das Sommerzeltlager 2026.',
+    category: 'general',
+    contact: {
+      name: 'Kilian Schlosser',
+      role: 'Regiosprecher',
+      email: 'kilian.schlosser@smj-wegweiser.de',
+    },
+  },
+
+  // 2026 Events
   {
     id: 'actionwochenende-1',
     title: 'Actionwochenende 1',

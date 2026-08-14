@@ -21,7 +21,7 @@ import type { Event } from '../../lib/events'
 
 export async function getStaticPaths() {
   const events = await eventProvider.getEvents()
-  // Filter out Zeltlager events as they have dedicated campaign routes under /abenteuer/zeltlager/
+  // Filter out Zeltlager events as they have dedicated campaign routes under /abenteuer/zeltlager-[year]/
   return events
     .filter((event) => event.category !== 'camp' && event.slug !== 'zeltlager')
     .map((event) => ({
@@ -38,10 +38,16 @@ const { event } = Astro.props
 const templateType = getEventTemplateType(event.title, event.category)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 const formattedDate = formatDateRange(event.start, event.end)
+const isPast = event.end < new Date()
 
 // Determine template eyebrow and badges
-const eyebrowLabel =
-  templateType === 'actionwochenende'
+const eyebrowLabel = isPast
+  ? templateType === 'actionwochenende'
+    ? 'Actionwochenende · Rückblick & Historie'
+    : templateType === 'sterntreffen'
+      ? 'Sterntreffen · Rückblick & Historie'
+      : 'Veranstaltung · Rückblick & Historie'
+  : templateType === 'actionwochenende'
     ? 'Actionwochenende · SMJ Regio Wegweiser'
     : templateType === 'sterntreffen'
       ? 'Sterntreffen · Zeltlager-Nachtreffen'
@@ -54,13 +60,13 @@ const eventStructuredData = {
   description: event.teaser ?? event.description,
   startDate: event.start.toISOString(),
   endDate: event.end.toISOString(),
-  eventStatus: 'https://schema.org/EventScheduled',
+  eventStatus: isPast ? 'https://schema.org/EventMovedOnline' : 'https://schema.org/EventScheduled',
   location: {
     '@type': 'Place',
     name: event.location,
     address: event.address ?? event.location,
   },
-  offers: event.price
+  offers: event.price && !isPast
     ? {
         '@type': 'Offer',
         price: event.price.replace(/[^0-9]/g, ''),
@@ -85,11 +91,15 @@ const eventStructuredData = {
     <Container class="relative">
       <div class="flex flex-wrap items-center gap-3 mb-4">
         <Eyebrow label={eyebrowLabel} />
-        {templateType === 'actionwochenende' && (
+        {isPast ? (
+          <span class="border border-paper/30 bg-forest-900 px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-paper/70">
+            Historie · Abgeschlossen
+          </span>
+        ) : templateType === 'actionwochenende' ? (
           <span class="border border-orange/40 bg-orange/10 px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-orange">
             100% Analog
           </span>
-        )}
+        ) : null}
       </div>
 
       <!-- Main Title: Fit in one line on desktop/tablets -->
@@ -133,7 +143,7 @@ const eventStructuredData = {
         {event.description && (
           <div>
             <h2 class="display display-sm text-paper mb-6">
-              {templateType === 'blanko' ? 'Über die Veranstaltung' : 'Was geht ab?'}
+              {templateType === 'blanko' ? 'Über die Veranstaltung' : isPast ? 'Rückblick & Programm' : 'Was geht ab?'}
             </h2>
             <p class="text-base sm:text-lg leading-relaxed text-paper/80 whitespace-pre-line">
               {event.description}
@@ -236,7 +246,7 @@ const eventStructuredData = {
         <div class="border-2 border-orange bg-forest-900 p-7 sm:p-8 shadow-2xl">
           <p class="eyebrow mb-2">Fakten & Details</p>
           <h3 class="display display-sm text-paper">
-            {event.registrationUrl ? 'Dabei sein' : 'Übersicht'}
+            {isPast ? 'Historie & Details' : event.registrationUrl ? 'Dabei sein' : 'Übersicht'}
           </h3>
 
           <dl class="mt-6 space-y-4 font-mono text-xs uppercase tracking-[0.14em] border-y border-paper/15 py-6">
@@ -267,7 +277,17 @@ const eventStructuredData = {
             )}
           </dl>
 
-          {event.registrationUrl ? (
+          {isPast ? (
+            <div class="mt-8 space-y-3">
+              <div class="border border-paper/20 bg-forest-950 p-4 text-center">
+                <p class="mono-label text-xs text-orange">Veranstaltung abgeschlossen</p>
+                <p class="mt-2 text-xs text-paper/70">Dieses Event liegt in der Vergangenheit.</p>
+              </div>
+              <Button href="/abenteuer/" variant="ghost" class="w-full justify-center text-center">
+                Kommende Termine ansehen →
+              </Button>
+            </div>
+          ) : event.registrationUrl ? (
             <div class="mt-8 space-y-3">
               <Button href={event.registrationUrl} variant="primary" size="lg" class="w-full justify-center text-center">
                 Jetzt online anmelden →
