@@ -10,10 +10,10 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   redirects: {
     '/zeltlager': '/abenteuer/zeltlager/',
-    '/zeltlager-2026': '/abenteuer/zeltlager/2026/',
-    '/zeltlager-2027': '/abenteuer/zeltlager/2027/',
-    '/abenteuer/zeltlager-2026': '/abenteuer/zeltlager/2026/',
-    '/abenteuer/zeltlager-2027': '/abenteuer/zeltlager/2027/',
+    '/zeltlager-2026': '/abenteuer/zeltlager-2026/',
+    '/zeltlager-2027': '/abenteuer/zeltlager-2027/',
+    '/abenteuer/zeltlager/2026': '/abenteuer/zeltlager-2026/',
+    '/abenteuer/zeltlager/2027': '/abenteuer/zeltlager-2027/',
   },
   vite: {
     plugins: [tailwindcss()],

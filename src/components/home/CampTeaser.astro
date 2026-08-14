@@ -51,7 +51,7 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
         </dl>
 
         <div class="mt-12 flex flex-wrap gap-4">
-          <Button href={`/abenteuer/zeltlager/${year}/`} variant="camp" size="lg">
+          <Button href="/abenteuer/zeltlager/" variant="camp" size="lg">
             Zum Zeltlager
           </Button>
           {registration.enabled && registration.url && (

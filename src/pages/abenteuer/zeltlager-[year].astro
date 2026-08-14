@@ -1,8 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content'
 import type { CollectionEntry } from 'astro:content'
-import CampLayout from '../../../layouts/CampLayout.astro'
-import Container from '../../../components/common/Container.astro'
+import CampLayout from '../../layouts/CampLayout.astro'
+import Container from '../../components/common/Container.astro'
 
 export async function getStaticPaths() {
   const camps = await getCollection('camps')
@@ -33,7 +33,7 @@ const next = otherCamps.filter((c) => c.data.year > year).sort((a, b) => a.data.
       <Container class="flex flex-wrap items-center justify-between gap-6">
         {prev ? (
           <a
-            href={`/abenteuer/zeltlager/${prev.data.year}/`}
+            href={`/abenteuer/zeltlager-${prev.data.year}/`}
             class="group border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent"
           >
             ← Zeltlager {prev.data.year} · {prev.data.motto}
@@ -43,14 +43,14 @@ const next = otherCamps.filter((c) => c.data.year > year).sort((a, b) => a.data.
         )}
         {next ? (
           <a
-            href={`/abenteuer/zeltlager/${next.data.year}/`}
+            href={`/abenteuer/zeltlager-${next.data.year}/`}
             class="group border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent"
           >
             Zeltlager {next.data.year} · {next.data.motto} →
           </a>
         ) : (
           <a href="/abenteuer/zeltlager/" class="border-b camp-border pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] camp-fg/70 transition-colors hover:camp-accent">
-            Alle Lager →
+            Zum aktuellen Zeltlager →
           </a>
         )}
       </Container>

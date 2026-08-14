@@ -119,7 +119,7 @@ const mockEvents: Event[] = [
       'Krankenkassenkarte & Impfausweis',
     ],
     image: '/placeholders/camp-hero.svg',
-    registrationUrl: '/abenteuer/zeltlager/2026/',
+    registrationUrl: '/abenteuer/zeltlager-2026/',
     category: 'camp',
     contact: {
       name: 'Vinzenz Hupe & Kilian Schlosser',
