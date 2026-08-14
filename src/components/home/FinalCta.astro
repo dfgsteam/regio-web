@@ -3,9 +3,33 @@ import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
 import Button from '../common/Button.astro'
 import Coordinates from '../common/Coordinates.astro'
+
+const socialChannels = [
+  {
+    name: 'Instagram',
+    handle: '@regio.wegweiser',
+    href: 'https://www.instagram.com/regio.wegweiser/',
+    description: 'Fotos, Storys & Live-Eindrücke direkt aus dem Zeltlager und von Wochenenden.',
+    svg: `<svg viewBox="0 0 24 24" class="h-5 w-5 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`,
+  },
+  {
+    name: 'Facebook',
+    handle: 'SMJ Regio Wegweiser',
+    href: 'https://www.facebook.com/regiowegweiser',
+    description: 'Termine, Ankündigungen und Infos für Eltern, Freunde und Unterstützer.',
+    svg: `<svg viewBox="0 0 24 24" class="h-5 w-5 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`,
+  },
+  {
+    name: 'YouTube',
+    handle: 'SMJ Wegweiser Kanal',
+    href: 'https://www.youtube.com/channel/UC1BbR9tT5hsZzEzPXbJ7pFw',
+    description: 'Lagerfilme, Rückblicke und Dokumentationen unserer vergangenen Abenteuer.',
+    svg: `<svg viewBox="0 0 24 24" class="h-5 w-5 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><polygon points="10 15 15 12 10 9 10 15" fill="currentColor"/></svg>`,
+  },
+]
 ---
 
-<section id="final-cta" class="texture-vignette relative overflow-hidden bg-forest-950 py-32 sm:py-44">
+<section id="final-cta" class="texture-vignette relative overflow-hidden bg-forest-950 py-28 sm:py-36">
   <div class="absolute inset-0 opacity-40" aria-hidden="true">
     <img src="/placeholders/wide.svg" alt="" loading="lazy" class="h-full w-full object-cover" />
     <div class="absolute inset-0 bg-forest-950/60" />
@@ -18,13 +42,56 @@ import Coordinates from '../common/Coordinates.astro'
       <span class="text-orange">bist du dabei.</span>
     </h2>
 
-    <div class="mt-12 flex flex-wrap items-center justify-center gap-4">
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
       <Button href="/abenteuer/" variant="primary" size="lg">
         Nächstes Abenteuer ansehen
       </Button>
       <Button href="/kontakt/" variant="ghost" size="lg">
         Fragen? Schreib uns.
       </Button>
+    </div>
+
+    <!-- Social Media Strip on Homepage -->
+    <div class="mt-20 border-t border-paper/10 pt-16 text-left">
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow mb-2">Social Media · Community</p>
+          <h3 class="display text-2xl sm:text-3xl text-paper">
+            Folge den <span class="text-orange">Wegweisern.</span>
+          </h3>
+        </div>
+        <p class="max-w-md text-xs leading-relaxed text-paper/70">
+          Aktuelle Bilder, Storys und Videos von unterwegs – folge unseren offiziellen Kanälen:
+        </p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          socialChannels.map((channel) => (
+            <a
+              href={channel.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex flex-col justify-between border-2 border-paper/15 bg-forest-900/90 p-6 transition-all hover:border-orange hover:bg-forest-900"
+            >
+              <div>
+                <div class="flex items-center justify-between text-orange">
+                  <Fragment set:html={channel.svg} />
+                  <span class="font-mono text-xs text-paper/50 transition-colors group-hover:text-orange">↗</span>
+                </div>
+                <h4 class="display text-xl text-paper mt-4 transition-colors group-hover:text-orange">
+                  {channel.name}
+                </h4>
+                <p class="font-mono text-xs text-orange/90 mt-0.5">{channel.handle}</p>
+                <p class="mt-3 text-xs leading-relaxed text-paper/75">{channel.description}</p>
+              </div>
+              <span class="mono-label mt-6 text-[0.65rem] text-paper/60 transition-colors group-hover:text-paper">
+                Zum Profil →
+              </span>
+            </a>
+          ))
+        }
+      </div>
     </div>
 
     <div class="mt-16 flex justify-center">

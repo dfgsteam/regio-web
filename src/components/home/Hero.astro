@@ -32,11 +32,38 @@ import Coordinates from '../common/Coordinates.astro'
     <span class="mt-2 block font-display text-xl text-orange">↓</span>
   </div>
 
-  <div class="absolute bottom-8 left-5 z-10 hidden sm:block">
-    <Coordinates value="N 51° 22' 44" />
+  <div class="absolute bottom-8 left-6 z-10 hidden sm:block">
+    <Coordinates value="N 51° 22' 44 · E 10° 08' 17" />
   </div>
-  <div class="absolute bottom-8 right-5 z-10 hidden sm:block">
-    <Coordinates value="E 10° 08' 17" />
+
+  <div class="absolute bottom-8 right-6 z-10 hidden sm:flex items-center gap-3">
+    <span class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-paper/50">Folge uns:</span>
+    <a
+      href="https://www.instagram.com/regio.wegweiser/"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-paper/75 transition-colors hover:text-orange"
+    >
+      Instagram
+    </a>
+    <span class="text-paper/30">·</span>
+    <a
+      href="https://www.facebook.com/regiowegweiser"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-paper/75 transition-colors hover:text-orange"
+    >
+      Facebook
+    </a>
+    <span class="text-paper/30">·</span>
+    <a
+      href="https://www.youtube.com/channel/UC1BbR9tT5hsZzEzPXbJ7pFw"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-paper/75 transition-colors hover:text-orange"
+    >
+      YouTube
+    </a>
   </div>
 </section>
 
