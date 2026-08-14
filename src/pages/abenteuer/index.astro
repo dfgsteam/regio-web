@@ -93,7 +93,19 @@ const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.d
 
   <section class="bg-forest-950 py-16">
     <Container>
-      <Eyebrow label="Termine" />
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <Eyebrow label="Termine" />
+          <h2 class="display text-3xl sm:text-4xl text-paper mt-2">Kommende Aktionen</h2>
+        </div>
+        <a
+          href="/api/calendar.ics"
+          class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
+        >
+          <span>📅 Kalender abonnieren (iCal)</span>
+        </a>
+      </div>
+
       {upcoming.length > 0 ? (
         <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {upcoming.map((event) => (

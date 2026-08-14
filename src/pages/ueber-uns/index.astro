@@ -84,8 +84,58 @@ const chapters = [
     </Container>
   </section>
 
+  <section class="bg-forest-950 py-20 border-t border-paper/10">
+    <Container>
+      <Eyebrow label="Verband & Bewegung" />
+      <h2 class="display display-md mt-3 text-paper">
+        Teil eines weltweiten <span class="text-orange">Netzwerks.</span>
+      </h2>
+      <p class="mt-4 max-w-2xl text-sm leading-relaxed text-paper/75">
+        Die Regio Wegweiser ist regional im Eichsfeld und der Diözese Erfurt verwurzelt – und gleichzeitig Teil der bundesweiten Schönstatt-Mannesjugend und der internationalen Schönstatt-Bewegung.
+      </p>
+
+      <div class="mt-10 grid gap-6 sm:grid-cols-2">
+        <a
+          href="https://www.smj-deutschland.de/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group border-2 border-paper/15 bg-forest-900 p-8 transition-colors hover:border-orange"
+        >
+          <p class="eyebrow mb-2 text-xs">Bundesebene</p>
+          <div class="flex items-center justify-between">
+            <h3 class="display text-2xl text-paper transition-colors group-hover:text-orange">
+              SMJ Deutschland
+            </h3>
+            <span class="font-mono text-xs text-paper/50 transition-colors group-hover:text-orange">↗</span>
+          </div>
+          <p class="mt-4 text-sm leading-relaxed text-paper/75">
+            Die bundesweite Schönstatt-Mannesjugend mit allen Diözesen, Aktionen, Leiterschulungen und Projekten.
+          </p>
+        </a>
+
+        <a
+          href="https://www.schoenstatt.de/de/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group border-2 border-paper/15 bg-forest-900 p-8 transition-colors hover:border-orange"
+        >
+          <p class="eyebrow mb-2 text-xs">Geistliche Bewegung</p>
+          <div class="flex items-center justify-between">
+            <h3 class="display text-2xl text-paper transition-colors group-hover:text-orange">
+              Schönstatt Deutschland
+            </h3>
+            <span class="font-mono text-xs text-paper/50 transition-colors group-hover:text-orange">↗</span>
+          </div>
+          <p class="mt-4 text-sm leading-relaxed text-paper/75">
+            Die weltweite katholische Erneuerungsbewegung, ihre Zentren, Heiligtümer, Gemeinschaften und Angebote.
+          </p>
+        </a>
+      </div>
+    </Container>
+  </section>
+
   {currentCamp && (
-    <section class="bg-forest-950 py-20">
+    <section class="bg-forest-900 py-20">
       <Container class="flex flex-wrap items-center justify-between gap-8">
         <div>
           <Eyebrow label="Der beste Beweis" />

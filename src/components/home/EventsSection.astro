@@ -60,9 +60,17 @@ const display: DisplayItem[] = [
           <span class="text-orange">Abenteuer.</span>
         </h2>
       </div>
-      <Button href="/abenteuer/" variant="ghost" class="mb-2">
-        Alle Abenteuer
-      </Button>
+      <div class="flex flex-wrap items-center gap-3 mb-2">
+        <a
+          href="/api/calendar.ics"
+          class="border border-paper/20 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
+        >
+          📅 Kalender abonnieren
+        </a>
+        <Button href="/abenteuer/" variant="ghost">
+          Alle Abenteuer
+        </Button>
+      </div>
     </div>
 
     {
