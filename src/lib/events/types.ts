@@ -1,4 +1,6 @@
-export type EventCategory = 'weekend' | 'camp' | 'special'
+export type EventCategory = 'weekend' | 'camp' | 'special' | 'general'
+
+export type EventTemplateType = 'actionwochenende' | 'sterntreffen' | 'blanko'
 
 export interface EventContact {
   name: string
@@ -32,6 +34,17 @@ export interface Event {
 export interface EventProvider {
   getEvents(): Promise<Event[]>
   getEvent(id: string): Promise<Event | null>
+}
+
+export function getEventTemplateType(title: string, category?: string): EventTemplateType {
+  const normalized = title.trim().toLowerCase()
+  if (normalized.startsWith('actionwochenende') || normalized.includes('actionwochenende') || category === 'weekend') {
+    return 'actionwochenende'
+  }
+  if (normalized.startsWith('sterntreffen') || normalized.includes('sterntreffen')) {
+    return 'sterntreffen'
+  }
+  return 'blanko'
 }
 
 export function formatDateRange(start: Date, end: Date, locale = 'de-DE'): string {

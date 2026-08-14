@@ -114,6 +114,24 @@ const mockEvents: Event[] = [
       email: 'jonathan.hunold@smj-wegweiser.de',
     },
   },
+  {
+    id: 'regiokonferenz-2027',
+    title: 'Regiokonferenz der Wegweiser',
+    slug: 'regiokonferenz-2027',
+    start: new Date('2027-11-13T10:00:00'),
+    end: new Date('2027-11-13T17:00:00'),
+    location: 'Wegweiserheim Heiligenstadt',
+    address: 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt',
+    teaser: 'Die jährliche Konferenz aller Gruppenleiter, Mitarbeiter und Freunde der Region Wegweiser.',
+    description:
+      'Rückblick auf das vergangene Zeltlagerjahr, Neuwahlen der Diözesanleitung, Ausblick auf kommende Aktionen und gemeinsamer Austausch bei Kaffee und Kuchen.',
+    category: 'general',
+    contact: {
+      name: 'Kilian Schlosser',
+      role: 'Regiosprecher',
+      email: 'kilian.schlosser@smj-wegweiser.de',
+    },
+  },
 ]
 
 export class MockEventProvider implements EventProvider {

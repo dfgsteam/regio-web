@@ -3,7 +3,12 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
-import { eventProvider, formatDateRange, formatAgeRange } from '../../lib/events'
+import {
+  eventProvider,
+  formatDateRange,
+  formatAgeRange,
+  getEventTemplateType,
+} from '../../lib/events'
 import type { Event } from '../../lib/events'
 
 export async function getStaticPaths() {
@@ -19,8 +24,17 @@ interface Props {
 }
 
 const { event } = Astro.props
+const templateType = getEventTemplateType(event.title, event.category)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 const formattedDate = formatDateRange(event.start, event.end)
+
+// Determine template eyebrow and badges
+const eyebrowLabel =
+  templateType === 'actionwochenende'
+    ? 'Actionwochenende · SMJ Regio Wegweiser'
+    : templateType === 'sterntreffen'
+      ? 'Sterntreffen · Für Jugendliche ab 15 Jahren'
+      : 'Veranstaltung · SMJ Regio Wegweiser'
 
 const eventStructuredData = {
   '@context': 'https://schema.org',
@@ -50,7 +64,7 @@ const eventStructuredData = {
 <ContentLayout
   title={`${event.title} – SMJ Regio Wegweiser`}
   description={event.teaser ?? `${event.title} der SMJ Regio Wegweiser vom ${formattedDate}.`}
-  image={event.image ?? '/placeholders/story.svg'}
+  image={event.image ?? '/placeholders/wide.svg'}
   structuredData={eventStructuredData}
 >
   <!-- Header / Hero Section -->
@@ -59,10 +73,12 @@ const eventStructuredData = {
 
     <Container class="relative">
       <div class="flex flex-wrap items-center gap-3 mb-4">
-        <Eyebrow label={event.category === 'weekend' ? 'Actionwochenende' : 'Veranstaltung'} />
-        <span class="border border-orange/40 bg-orange/10 px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-orange">
-          100% Analog
-        </span>
+        <Eyebrow label={eyebrowLabel} />
+        {templateType === 'actionwochenende' && (
+          <span class="border border-orange/40 bg-orange/10 px-3 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-orange">
+            100% Analog
+          </span>
+        )}
       </div>
 
       <h1 class="display display-xl mt-4 text-paper max-w-4xl">{event.title}</h1>
@@ -101,15 +117,18 @@ const eventStructuredData = {
     <Container class="grid gap-14 lg:grid-cols-[1.5fr_1fr] items-start">
       <!-- Left Column: Story, Highlights & Info -->
       <div class="space-y-14">
-        <!-- Description -->
-        <div>
-          <h2 class="display display-sm text-paper mb-6">Was geht ab?</h2>
-          <p class="text-base sm:text-lg leading-relaxed text-paper/80 whitespace-pre-line">
-            {event.description}
-          </p>
-        </div>
+        {event.description && (
+          <div>
+            <h2 class="display display-sm text-paper mb-6">
+              {templateType === 'blanko' ? 'Über die Veranstaltung' : 'Was geht ab?'}
+            </h2>
+            <p class="text-base sm:text-lg leading-relaxed text-paper/80 whitespace-pre-line">
+              {event.description}
+            </p>
+          </div>
+        )}
 
-        <!-- Highlights -->
+        <!-- Highlights (rendered if present) -->
         {event.highlights && event.highlights.length > 0 && (
           <div>
             <h2 class="display display-sm text-paper mb-6">Die Highlights</h2>
@@ -124,7 +143,7 @@ const eventStructuredData = {
           </div>
         )}
 
-        <!-- Packing List -->
+        <!-- Packing List (rendered if present) -->
         {event.packingList && event.packingList.length > 0 && (
           <div class="border-2 border-paper/15 bg-forest-900 p-7 sm:p-9">
             <div class="flex items-center justify-between gap-4 mb-6">
@@ -142,38 +161,44 @@ const eventStructuredData = {
           </div>
         )}
 
-        <!-- Parent & Safety Info -->
-        <div class="border-l-2 border-orange bg-forest-900/70 p-6 sm:p-8">
-          <p class="eyebrow mb-2">Wichtig für Eltern</p>
-          <h3 class="display text-2xl text-paper mb-4">Aufsicht, Sicherheit & Erreichbarkeit</h3>
-          <p class="text-sm leading-relaxed text-paper/80 mb-4">
-            Die Veranstaltung wird von geschulten und erfahrenen Gruppenleitern der SMJ Regio Wegweiser verantwortungsvoll geleitet. 
-            Während des Wochenendes gilt unser <strong>100% analoges Prinzip (handyfreie Zeit)</strong>, damit die Jungs ohne Ablenkung voll in die Gemeinschaft eintauchen.
-          </p>
-          <p class="font-mono text-xs text-orange">
-            📞 Im Notfall ist die Leitung rund um die Uhr erreichbar.
-          </p>
-        </div>
+        <!-- Parent & Safety Info for Actionwochenende -->
+        {templateType === 'actionwochenende' && (
+          <div class="border-l-2 border-orange bg-forest-900/70 p-6 sm:p-8">
+            <p class="eyebrow mb-2">Wichtig für Eltern</p>
+            <h3 class="display text-2xl text-paper mb-4">Aufsicht, Sicherheit & Erreichbarkeit</h3>
+            <p class="text-sm leading-relaxed text-paper/80 mb-4">
+              Die Veranstaltung wird von geschulten und erfahrenen Gruppenleitern der SMJ Regio Wegweiser verantwortungsvoll geleitet. 
+              Während des Wochenendes gilt unser <strong>100% analoges Prinzip (handyfreie Zeit)</strong>, damit die Jungs ohne Ablenkung voll in die Gemeinschaft eintauchen.
+            </p>
+            <p class="font-mono text-xs text-orange">
+              📞 Im Notfall ist die Leitung rund um die Uhr erreichbar.
+            </p>
+          </div>
+        )}
       </div>
 
       <!-- Right Column: Sticky Action & Factsheet Box -->
       <aside class="sticky top-28 space-y-6">
         <div class="border-2 border-orange bg-forest-900 p-7 sm:p-8 shadow-2xl">
-          <p class="eyebrow mb-2">Anmeldung & Fakten</p>
-          <h3 class="display display-sm text-paper">Dabei sein</h3>
+          <p class="eyebrow mb-2">Fakten & Details</p>
+          <h3 class="display display-sm text-paper">
+            {event.registrationUrl ? 'Dabei sein' : 'Übersicht'}
+          </h3>
 
           <dl class="mt-6 space-y-4 font-mono text-xs uppercase tracking-[0.14em] border-y border-paper/15 py-6">
             <div>
               <dt class="text-muted text-[0.68rem]">Zeitraum</dt>
               <dd class="text-paper text-sm mt-1 font-bold">{formattedDate}</dd>
             </div>
-            <div>
-              <dt class="text-muted text-[0.68rem]">Ort & Adresse</dt>
-              <dd class="text-paper mt-1">{event.location}</dd>
-              {event.address && (
-                <dd class="text-paper/60 text-[0.7rem] normal-case mt-0.5">{event.address}</dd>
-              )}
-            </div>
+            {event.location && (
+              <div>
+                <dt class="text-muted text-[0.68rem]">Ort</dt>
+                <dd class="text-paper mt-1">{event.location}</dd>
+                {event.address && (
+                  <dd class="text-paper/60 text-[0.7rem] normal-case mt-0.5">{event.address}</dd>
+                )}
+              </div>
+            )}
             {age && (
               <div>
                 <dt class="text-muted text-[0.68rem]">Zielgruppe</dt>
@@ -201,13 +226,13 @@ const eventStructuredData = {
             </div>
           ) : (
             <div class="mt-8 border border-paper/20 bg-forest-950 p-4 text-center">
-              <p class="mono-label text-xs text-orange">Die Anmeldung öffnet bald.</p>
+              <p class="mono-label text-xs text-paper/70">Keine separate Voranmeldung erforderlich.</p>
             </div>
           )}
 
           {event.contact && (
             <div class="mt-8 border-t border-paper/15 pt-6">
-              <p class="mono-label mb-2 text-muted text-[0.68rem]">Fragen zur Aktion?</p>
+              <p class="mono-label mb-2 text-muted text-[0.68rem]">Fragen zur Veranstaltung?</p>
               <p class="font-display text-lg text-paper uppercase">{event.contact.name}</p>
               {event.contact.role && (
                 <p class="font-mono text-xs text-orange">{event.contact.role}</p>
@@ -226,8 +251,8 @@ const eventStructuredData = {
 
         <div class="border border-paper/15 bg-forest-900/60 p-6 flex items-center justify-between gap-4">
           <div>
-            <p class="font-display text-sm text-paper uppercase">Termin nicht verpassen</p>
-            <p class="font-mono text-[0.68rem] text-muted">Abonniere alle Events direkt</p>
+            <p class="font-display text-sm text-paper uppercase">Termin exportieren</p>
+            <p class="font-mono text-[0.68rem] text-muted">Direkt in den Kalender laden</p>
           </div>
           <a
             href="/api/calendar.ics"
@@ -247,7 +272,7 @@ const eventStructuredData = {
         href="/abenteuer/"
         class="inline-flex items-center gap-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange"
       >
-        ← Alle Abenteuer ansehen
+        ← Alle Termine ansehen
       </a>
       <a
         href="/abenteuer/zeltlager/"
