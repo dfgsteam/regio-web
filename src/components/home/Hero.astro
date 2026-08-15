@@ -1,8 +1,9 @@
 ---
 import Coordinates from '../common/Coordinates.astro'
+import Logo from '../common/Logo.astro'
 ---
 
-<section id="hero" class="relative h-svh min-h-[560px] overflow-hidden bg-forest-950">
+<section id="hero" class="relative h-svh min-h-[620px] overflow-hidden bg-forest-950">
   <div class="hero-bg absolute inset-0 overflow-hidden">
     <img
       src="/placeholders/hero.svg"
@@ -10,16 +11,20 @@ import Coordinates from '../common/Coordinates.astro'
       class="h-full w-full object-cover"
       fetchpriority="high"
     />
-    <div class="absolute inset-0 bg-forest-950/30" aria-hidden="true" />
+    <div class="absolute inset-0 bg-forest-950/40" aria-hidden="true" />
   </div>
 
   <div class="hero-topo texture-topo absolute inset-0 opacity-0" aria-hidden="true" />
   <div class="texture-vignette pointer-events-none absolute inset-0 z-1" aria-hidden="true" />
 
   <div class="hero-content relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
-    <div class="hero-eyebrow mb-5 flex flex-wrap items-center justify-center gap-3">
-      <span class="eyebrow">SMJ Regio Wegweiser</span>
-      <span class="stamp-distressed -rotate-2">Expedition · 2026</span>
+    <!-- Hero Brand Emblem -->
+    <div class="hero-logo-wrap mb-5 flex flex-col items-center gap-3">
+      <Logo size="lg" tone="light" class="transition-transform duration-500 hover:scale-105" />
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <span class="eyebrow">SMJ Regio Wegweiser</span>
+        <span class="stamp-distressed -rotate-2">Expedition · 2026</span>
+      </div>
     </div>
 
     <h1 class="display display-xl text-paper">
