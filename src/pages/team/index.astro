@@ -34,15 +34,6 @@ const teamMembers = [
     description:
       'Unterstützung der Leitung, Organisation von Wochenenden und Begleitung neuer Gruppenleiter.',
   },
-  {
-    role: 'Finanzen & Kasse',
-    badge: 'Finanzen & Kasse',
-    name: 'Julian Hupe',
-    email: 'julian.hupe@smj-wegweiser.de',
-    image: '/placeholders/portrait.svg',
-    description:
-      'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
-  },
 ]
 ---
 
@@ -61,7 +52,7 @@ const teamMembers = [
   </section>
 
   <section class="bg-forest-950 py-20">
-    <Container>
+    <Container size="wide">
       <ImageFrame
         src="/placeholders/group.svg"
         alt="Platzhalterbild – das gesamte Team der Regio Wegweiser"
@@ -70,15 +61,15 @@ const teamMembers = [
     </Container>
   </section>
 
-  <section class="bg-forest-950 pb-32 pt-8 text-paper">
-    <div class="mx-auto w-full max-w-[1680px] px-5 sm:px-8 xl:px-12">
+  <section class="bg-forest-950 pb-28 pt-4 text-paper">
+    <Container size="wide">
       <div class="mb-14 flex flex-col justify-between gap-6 border-b border-paper/10 pb-8 md:flex-row md:items-end">
         <div>
           <div class="flex items-center gap-3">
             <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
             <p class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">Expeditions-Crew & Diözesanleitung</p>
           </div>
-          <h2 class="display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl mt-3 text-paper uppercase">
+          <h2 class="display text-4xl sm:text-5xl lg:text-6xl mt-3 text-paper uppercase">
             Die Köpfe hinter <span class="text-orange">dem Abenteuer.</span>
           </h2>
         </div>
@@ -88,16 +79,16 @@ const teamMembers = [
         </p>
       </div>
 
-      <!-- Hero Character Roster Grid - Full Width & Imposing -->
-      <div id="team-members-container" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-8">
+      <!-- Hero Character Roster Grid - Exactly 3 in a row -->
+      <div id="team-members-container" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {
           teamMembers.map((member, idx) => (
-            <article class="team-member-card group relative flex min-h-[640px] xl:min-h-[700px] flex-col justify-between overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 sm:p-7 xl:p-8 transition-all duration-500 hover:border-orange hover:shadow-[0_25px_60px_rgba(255,90,31,0.2)] hover:-translate-y-2.5">
+            <article class="team-member-card group relative flex min-h-[620px] flex-col justify-between overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 sm:p-8 transition-all duration-500 hover:border-orange hover:shadow-[0_25px_60px_rgba(255,90,31,0.2)] hover:-translate-y-2">
               <!-- Topo & Stage Background Textures -->
               <div class="texture-topo absolute inset-0 opacity-25 pointer-events-none" aria-hidden="true" />
               
               <!-- Giant Watermark Number in Background -->
-              <span class="pointer-events-none absolute -top-4 -left-2 select-none font-mono text-[9rem] xl:text-[10rem] font-black leading-none text-paper/[0.04] transition-colors duration-500 group-hover:text-orange/[0.08]" aria-hidden="true">
+              <span class="pointer-events-none absolute -top-4 -left-2 select-none font-mono text-[9rem] font-black leading-none text-paper/[0.04] transition-colors duration-500 group-hover:text-orange/[0.08]" aria-hidden="true">
                 {`0${idx + 1}`}
               </span>
 
@@ -132,10 +123,10 @@ const teamMembers = [
                 <p class="font-mono text-[0.7rem] font-bold uppercase tracking-[0.2em] text-orange">
                   {member.role}
                 </p>
-                <h3 class="display text-3xl sm:text-4xl xl:text-5xl text-paper tracking-wide uppercase mt-1 transition-colors duration-300 group-hover:text-orange">
+                <h3 class="display text-3xl sm:text-4xl text-paper tracking-wide uppercase mt-1 transition-colors duration-300 group-hover:text-orange">
                   {member.name}
                 </h3>
-                <p class="mt-3 text-xs sm:text-sm leading-relaxed text-paper/75 line-clamp-3">
+                <p class="mt-3 text-xs sm:text-sm leading-relaxed text-paper/75">
                   {member.description}
                 </p>
 
@@ -156,11 +147,11 @@ const teamMembers = [
           ))
         }
       </div>
-    </div>
+    </Container>
   </section>
 
   <section class="bg-forest-900 py-20">
-    <Container class="grid gap-6 md:grid-cols-2">
+    <Container size="wide" class="grid gap-6 md:grid-cols-2">
       <article class="border border-paper/15 bg-forest-950 p-8">
         <p class="eyebrow mb-3">Jugend leitet Jugend</p>
         <h2 class="display display-sm text-paper">Kein Steriler Dienstplan</h2>
@@ -170,10 +161,10 @@ const teamMembers = [
       </article>
 
       <article class="border border-paper/15 bg-forest-950 p-8">
-        <p class="eyebrow mb-3">Deine Anlaufstelle</p>
-        <h2 class="display display-sm text-paper">Eine Adresse für alles</h2>
+        <p class="eyebrow mb-3">Finanzen & Zentrale Anlaufstelle</p>
+        <h2 class="display display-sm text-paper">Transparenz & Kontakt</h2>
         <p class="mt-4 text-sm leading-relaxed text-paper/75">
-          Für allgemeine Fragen, Anmeldungen und Ideen gibt es unsere zentrale Anlaufstelle. Schreib uns jederzeit – wir leiten deine Anfrage an die passende Person weiter.
+          Für Lagerbeiträge, Zuschüsse, Materialkasse und allgemeine Fragen steht dir unsere Finanz- und Organisationsleitung zur Seite (<strong class="text-paper">Julian Hupe</strong> · <a href="mailto:julian.hupe@smj-wegweiser.de" class="text-orange hover:underline font-mono text-xs">julian.hupe@smj-wegweiser.de</a>).
         </p>
         <div class="mt-6">
           <Button href="/kontakt/" variant="primary">
