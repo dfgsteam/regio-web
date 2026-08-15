@@ -1,0 +1,46 @@
+<svg viewBox="0 0 420 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="HNLD Logo">
+  <defs>
+    <linearGradient id="hnld-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A3FF" />
+      <stop offset="45%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#8B5CF6" />
+    </linearGradient>
+    <clipPath id="hnld-rounded-box">
+      <rect x="0" y="0" width="100" height="100" rx="22" ry="22" />
+    </clipPath>
+  </defs>
+
+  <!-- Rounded Gradient Icon -->
+  <g clip-path="url(#hnld-rounded-box)">
+    <rect x="0" y="0" width="100" height="100" fill="url(#hnld-gradient)" />
+    
+    <!-- Ray 1: Leftmost / Largest Swoosh -->
+    <path
+      d="M -5 105 Q 12 40 88 12 Q 55 35 22 105 Z"
+      fill="#FFFFFF"
+    />
+    <!-- Ray 2: Center Swoosh -->
+    <path
+      d="M 32 105 Q 46 50 96 24 Q 68 55 48 105 Z"
+      fill="#FFFFFF"
+    />
+    <!-- Ray 3: Rightmost Swoosh -->
+    <path
+      d="M 62 105 Q 70 65 104 42 Q 86 72 74 105 Z"
+      fill="#FFFFFF"
+    />
+  </g>
+
+  <!-- Typography HNLD -->
+  <text
+    x="126"
+    y="78"
+    fill="currentColor"
+    font-family="system-ui, -apple-system, 'Inter', 'Segoe UI', Roboto, sans-serif"
+    font-weight="900"
+    font-size="82"
+    letter-spacing="2"
+  >
+    HNLD
+  </text>
+</svg>
