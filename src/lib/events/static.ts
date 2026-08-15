@@ -10,7 +10,9 @@ function parseJsonEvent(item: any): Event {
   }
 }
 
-const staticEvents: Event[] = (rawEvents as any[]).map(parseJsonEvent)
+const staticEvents: Event[] = (rawEvents as any[])
+  .filter((item) => !item.disabled && !item.hidden)
+  .map(parseJsonEvent)
 
 export class StaticJsonEventProvider implements EventProvider {
   async getEvents(): Promise<Event[]> {

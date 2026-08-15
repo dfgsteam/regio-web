@@ -6,19 +6,24 @@ Die neue, moderne Webpräsenz der **Schönstatt-Mannesjugend (SMJ) Regio Wegweis
 
 ## 🧭 Inhaltsverzeichnis
 
-- [Vision & Konzept](#-vision--konzept)
-- [Tech Stack](#-tech-stack)
-- [Projektstruktur](#-projektstruktur)
-- [Quickstart & Entwicklung](#-quickstart--entwicklung)
-- [Inhalte pflegen](#-inhalte-pflegen)
-  - [1. Neues Zeltlager / Kampagne anlegen](#1-neues-zeltlager--kampagne-anlegen)
-  - [2. Journal-Beiträge & News erstellen](#2-journal-beiträge--news-erstellen)
-  - [3. Termine & Events pflegen](#3-termine--events-pflegen)
-  - [4. Teammitglieder anpassen](#4-teammitglieder-anpassen)
-  - [5. Bilder & Assets verwalten](#5-bilder--assets-verwalten)
-- [Datenschutz & Rechtliches](#-datenschutz--rechtliches)
-- [CI/CD & Deployment](#-cicd--deployment)
-- [Umgebungsvariablen](#-umgebungsvariablen)
+- [SMJ Regio Wegweiser – Website](#smj-regio-wegweiser--website)
+  - [🧭 Inhaltsverzeichnis](#-inhaltsverzeichnis)
+  - [🌲 Vision \& Konzept](#-vision--konzept)
+  - [⚡ Tech Stack](#-tech-stack)
+  - [📁 Projektstruktur](#-projektstruktur)
+  - [🚀 Quickstart \& Entwicklung](#-quickstart--entwicklung)
+    - [Voraussetzungen](#voraussetzungen)
+    - [Installation \& Server starten](#installation--server-starten)
+    - [Verfügbare Skripte](#verfügbare-skripte)
+  - [📝 Inhalte pflegen](#-inhalte-pflegen)
+    - [1. Neues Zeltlager / Kampagne anlegen](#1-neues-zeltlager--kampagne-anlegen)
+    - [2. Journal-Beiträge \& News erstellen](#2-journal-beiträge--news-erstellen)
+    - [3. Termine \& Events pflegen](#3-termine--events-pflegen)
+    - [4. Teammitglieder anpassen](#4-teammitglieder-anpassen)
+    - [5. Bilder \& Assets verwalten](#5-bilder--assets-verwalten)
+  - [🔒 Datenschutz \& Rechtliches](#-datenschutz--rechtliches)
+  - [🚢 CI/CD \& Deployment](#-cicd--deployment)
+  - [🔑 Umgebungsvariablen](#-umgebungsvariablen)
 
 ---
 
@@ -158,10 +163,110 @@ draft: false
 Hier steht der Artikelinhalt im Markdown-Format...
 ```
 
-### 3. Termine & Events pflegen
-* **Event-Provider:** Die Termine werden über die Abstraktion in `src/lib/events/` bereitgestellt.
-* **CiviCRM / Kalender-Sync:** Der Adapter ist vorbereitet, um künftig Termine direkt aus CiviCRM oder einem ICS-Feed abzugleichen.
-* **iCal-Download:** Die Website generiert automatisch einen dynamischen Kalenderfeed unter `/calendar.ics`.
+### 3. Termine & Events verwalten
+
+Die Website verfügt über ein zweistufiges Event-System:
+1. **Automatischer Sync (`scripts/sync-calendar.mjs`):** Gleicht Google Calendar / CiviCRM (`.ics`) ab und schreibt saubere Daten nach `src/data/events.json`.
+2. **Sonderregeln & Overrides (`src/data/event-overrides.json` & `src/data/event-defaults.json`):** Ermöglicht das gezielte Überschreiben, Erweitern oder Ausblenden von Terminen ohne den Kalender zu manipulieren.
+
+---
+
+#### 🛠️ A. Sonderregeln (Overrides) für einzelne Events erstellen
+In [`src/data/event-overrides.json`](src/data/event-overrides.json) können beliebige Eigenschaften eines Events anhand seines Slugs (oder der Google-UID) überschrieben werden:
+
+```json
+{
+  "actionwochenende-1-2026": {
+    "price": "35 €",
+    "ageMin": 9,
+    "ageMax": 14,
+    "registrationUrl": "https://anmeldung.smj-wegweiser.de/action-1",
+    "highlights": [
+      "Großes Geländespiel im Wald",
+      "Klettern & Pfadfinder-Techniken",
+      "Lagerfeuer & Gitarrenrunde"
+    ],
+    "packingList": [
+      "Schlafsack & Isomatte",
+      "Feste Wanderschuhe & wetterfeste Kleidung",
+      "Hausschuhe & Kulturbeutel",
+      "Taschenlampe & Trinkflasche"
+    ],
+    "contact": {
+      "name": "Vinzenz Hupe & Team",
+      "role": "Wochenend-Leitung",
+      "email": "vinzenz.hupe@smj-wegweiser.de"
+    }
+  }
+}
+```
+
+*Globale Standardwerte pro Kategorie (z. B. Standard-Packlisten für alle `weekend`- oder `sterntreffen`-Events) liegen in [`src/data/event-defaults.json`](src/data/event-defaults.json).*
+
+---
+
+#### ➕ B. Events außerhalb eines Abgleichs manuell anlegen
+Wenn ein Termin unabhängig vom Google Kalender / CiviCRM direkt auf der Website erscheinen soll, kann er einfach als JSON-Objekt in [`src/data/events.json`](src/data/events.json) eingetragen werden:
+
+```json
+{
+  "id": "sonder-expedition-2026",
+  "title": "Sonder-Expedition Harz",
+  "slug": "sonder-expedition-2026",
+  "start": "2026-10-09T16:00:00.000Z",
+  "end": "2026-10-11T14:00:00.000Z",
+  "location": "Braunlage / Harz",
+  "address": "Wanderheim Harz, 38700 Braunlage",
+  "ageMin": 12,
+  "ageMax": 16,
+  "price": "45 €",
+  "teaser": "Drei Tage Trekking und Orientierung im Hochharz.",
+  "description": "Gemeinsam packen wir den Rucksack und ziehen drei Tage durch die Wildnis des Harzes...",
+  "category": "special",
+  "registrationUrl": "https://anmeldung.smj-wegweiser.de",
+  "contact": {
+    "name": "Kilian Schlosser",
+    "role": "Tourenleiter",
+    "email": "kilian.schlosser@smj-wegweiser.de"
+  }
+}
+```
+
+---
+
+#### 🚫 C. Events deaktivieren oder ausblenden
+Um einen Termin von der Website auszublenden (z. B. wenn er ausfällt oder noch nicht öffentlich sein soll), gibt es zwei einfache Wege:
+
+1. **Über Overrides:** In [`src/data/event-overrides.json`](src/data/event-overrides.json) `"disabled": true` setzen:
+   ```json
+   {
+     "altes-oder-abgesagtes-event-2026": {
+       "disabled": true
+     }
+   }
+   ```
+2. **Direkt in `events.json`:** Dem Event `"disabled": true` hinzufügen.
+3. **Bei Zeltlager-Jahren (`src/content/camps/*.mdx`):** Im Frontmatter `active: false` setzen.
+
+*Deaktivierte Events werden beim Build automatisch aus allen Übersichten, Teasern und Kalender-Feeds herausgefiltert.*
+
+---
+
+#### 🌐 D. Events online aufrufen (URLs & Routen)
+
+Jeder Termin erhält eine saubere, suchmaschinenfreundliche URL:
+
+| Event-Typ | URL-Schema | Beispiel |
+| :--- | :--- | :--- |
+| **Alle Events Übersicht** | `/abenteuer/` | `https://smj-wegweiser.de/abenteuer/` |
+| **Einzelnes Event** | `/abenteuer/[slug]/` | `https://smj-wegweiser.de/abenteuer/actionwochenende-1-2026/` |
+| **Aktuelles Zeltlager** | `/abenteuer/zeltlager/` | `https://smj-wegweiser.de/abenteuer/zeltlager/` |
+| **Zeltlager-Archiv** | `/abenteuer/zeltlager/[year]/` | `https://smj-wegweiser.de/abenteuer/zeltlager/2026/` |
+| **iCal Kalender-Abo** | `/calendar.ics` | `https://smj-wegweiser.de/calendar.ics` |
+
+*Hinweis: Alte WordPress-URLs (z. B. `/veranstaltungen/`, `/zeltlager/`, `/aktuelles/[slug]/`) werden serverseitig automatisch mit 301-Redirects auf die neuen URLs weitergeleitet.*
+
+---
 
 ### 4. Teammitglieder anpassen
 Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/index.astro) im Array `teamMembers` verwaltet:
@@ -195,7 +300,9 @@ Astro & TypeScript Check (0 Fehler)
    ↓
 Astro Build
    ↓
-Deploy auf 'prod'-Branch & FTP-Upload
+Deploy auf 'prod'-Branch
+   ↓
+FTP-Upload auf dem Webspace
 ```
 
 ---

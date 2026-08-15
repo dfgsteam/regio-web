@@ -248,6 +248,9 @@ function transformVEvent(raw, defaults = {}, overrides = {}) {
   }
 
   if (eventOverride && typeof eventOverride === 'object') {
+    if (eventOverride.disabled === true || eventOverride.hidden === true) {
+      return null
+    }
     for (const [key, val] of Object.entries(eventOverride)) {
       if (key === '_comment') continue
       if (key === 'contact' && typeof val === 'object' && val !== null) {
