@@ -3,7 +3,6 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
-import ImageFrame from '../../components/common/ImageFrame.astro'
 import { Mail } from '@lucide/astro'
 
 const teamMembers = [
@@ -60,13 +59,39 @@ const teamMembers = [
     </Container>
   </section>
 
-  <section class="bg-forest-950 py-20">
+  <section class="bg-forest-950 py-16">
     <Container size="wide">
-      <ImageFrame
-        src="/placeholders/group.svg"
-        alt="Platzhalterbild – das gesamte Team der Regio Wegweiser"
-        ratio="16:10"
-      />
+      <div class="relative overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 sm:p-10 lg:p-12 shadow-2xl">
+        <!-- Topo & Atmospheric Ambient Backlight -->
+        <div class="texture-topo absolute inset-0 opacity-20 pointer-events-none" aria-hidden="true" />
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-radial from-orange/20 via-orange/5 to-transparent blur-3xl opacity-60" aria-hidden="true" />
+        
+        <!-- Header badge -->
+        <div class="relative z-10 mb-8 flex flex-col justify-between gap-4 border-b border-paper/10 pb-6 sm:flex-row sm:items-end">
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
+              <span class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">// DIE REGIO WEGWEISER CREW</span>
+            </div>
+            <h2 class="display mt-2 text-3xl sm:text-4xl lg:text-5xl uppercase text-paper">
+              Gemeinsam für das <span class="text-orange">nächste Abenteuer.</span>
+            </h2>
+          </div>
+          <span class="stamp-distressed font-mono text-[0.65rem] uppercase tracking-[0.2em] border-orange/80 bg-forest-950 text-orange px-3 py-1 self-start sm:self-auto">
+            Leiterrunde 2026
+          </span>
+        </div>
+
+        <!-- Cutout Group Image Stage -->
+        <div class="relative z-10 flex w-full items-end justify-center pt-2">
+          <img
+            src="/team/team-group.png"
+            alt="Das gesamte Leitungsteam der SMJ Regio Wegweiser"
+            class="max-h-[520px] w-full max-w-5xl object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.85)]"
+            loading="lazy"
+          />
+        </div>
+      </div>
     </Container>
   </section>
 

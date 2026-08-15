@@ -2,7 +2,6 @@
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
-import ImageFrame from '../../components/common/ImageFrame.astro'
 import FieldNote from '../../components/common/FieldNote.astro'
 import Coordinates from '../../components/common/Coordinates.astro'
 import { getCurrentCamp } from '../../lib/camps'
@@ -50,7 +49,14 @@ const chapters = [
   <section class="bg-forest-950 py-20">
     <Container class="grid items-start gap-16 lg:grid-cols-[1fr_1.1fr]">
       <div class="relative">
-        <ImageFrame src="/placeholders/group.svg" alt="Platzhalterbild – Gruppe der Regio Wegweiser" ratio="16:10" />
+        <div class="overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-4 shadow-xl">
+          <img
+            src="/team/team-group.png"
+            alt="Die Leiterrunde der SMJ Regio Wegweiser"
+            class="h-auto w-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.7)]"
+            loading="lazy"
+          />
+        </div>
         <FieldNote meta="FIELD NOTE 01 · UNTERWEGS" rotate="-2deg" class="absolute -bottom-10 -right-2 hidden sm:block">
           Manche nennen es Gruppe. Wir nennen es zu Hause.
         </FieldNote>
