@@ -139,19 +139,18 @@ const teamMembers = [
                 </span>
               </div>
 
-              <!-- Cutout Hero Character Stage with Smooth Fade-Out Mask -->
-              <div class="absolute inset-0 flex items-end justify-center pointer-events-none overflow-hidden pb-24 pt-10">
+              <!-- Cutout Hero Character Stage -->
+              <div class="absolute inset-0 flex items-end justify-center pointer-events-none overflow-hidden pb-16 pt-10">
                 <img
                   src={member.image}
                   alt={`Porträt von ${member.name} (${member.role})`}
-                  class="relative z-10 h-[86%] w-auto max-w-[95%] object-contain object-bottom drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
-                  style="mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,0.1) 82%, rgba(0,0,0,0) 96%); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,0.1) 82%, rgba(0,0,0,0) 96%);"
+                  class="relative z-10 h-[88%] w-auto max-w-[95%] object-contain object-bottom transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
                   loading="lazy"
                 />
               </div>
 
-              <!-- Atmospheric Deep Bottom Gradient to Guarantee Crisp Text Contrast -->
-              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-forest-950 from-45% via-forest-950/95 via-80% to-transparent z-15" aria-hidden="true" />
+              <!-- Smooth Dark Layered Gradient Overlay (over image z-10, under text z-20) -->
+              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-forest-950 from-40% via-forest-950/90 via-75% to-transparent z-15" aria-hidden="true" />
 
               <!-- Bottom Overlaid Character Info -->
               <div class="relative z-20 mt-auto pt-24">
