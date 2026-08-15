@@ -70,15 +70,15 @@ const teamMembers = [
     </Container>
   </section>
 
-  <section class="bg-forest-950 pb-28 pt-8 text-paper">
-    <Container>
+  <section class="bg-forest-950 pb-32 pt-8 text-paper">
+    <div class="mx-auto w-full max-w-[1680px] px-5 sm:px-8 xl:px-12">
       <div class="mb-14 flex flex-col justify-between gap-6 border-b border-paper/10 pb-8 md:flex-row md:items-end">
         <div>
           <div class="flex items-center gap-3">
             <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
             <p class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">Expeditions-Crew & Diözesanleitung</p>
           </div>
-          <h2 class="display text-4xl sm:text-5xl lg:text-6xl mt-3 text-paper uppercase">
+          <h2 class="display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl mt-3 text-paper uppercase">
             Die Köpfe hinter <span class="text-orange">dem Abenteuer.</span>
           </h2>
         </div>
@@ -88,61 +88,61 @@ const teamMembers = [
         </p>
       </div>
 
-      <!-- Hero Character Roster Grid -->
-      <div id="team-members-container" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Hero Character Roster Grid - Full Width & Imposing -->
+      <div id="team-members-container" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-8">
         {
           teamMembers.map((member, idx) => (
-            <article class="team-member-card group relative flex min-h-[580px] flex-col justify-between overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 transition-all duration-500 hover:border-orange hover:shadow-[0_20px_50px_rgba(255,90,31,0.15)] hover:-translate-y-2">
+            <article class="team-member-card group relative flex min-h-[640px] xl:min-h-[700px] flex-col justify-between overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 sm:p-7 xl:p-8 transition-all duration-500 hover:border-orange hover:shadow-[0_25px_60px_rgba(255,90,31,0.2)] hover:-translate-y-2.5">
               <!-- Topo & Stage Background Textures -->
               <div class="texture-topo absolute inset-0 opacity-25 pointer-events-none" aria-hidden="true" />
               
               <!-- Giant Watermark Number in Background -->
-              <span class="pointer-events-none absolute -top-4 -left-2 select-none font-mono text-[8rem] font-black leading-none text-paper/[0.04] transition-colors duration-500 group-hover:text-orange/[0.08]" aria-hidden="true">
+              <span class="pointer-events-none absolute -top-4 -left-2 select-none font-mono text-[9rem] xl:text-[10rem] font-black leading-none text-paper/[0.04] transition-colors duration-500 group-hover:text-orange/[0.08]" aria-hidden="true">
                 {`0${idx + 1}`}
               </span>
 
               <!-- Warm Radial Spotlight behind Character -->
-              <div class="pointer-events-none absolute inset-x-0 top-16 h-72 rounded-full bg-radial from-orange/20 via-orange/5 to-transparent blur-3xl opacity-50 transition-all duration-700 group-hover:opacity-100 group-hover:scale-110" aria-hidden="true" />
+              <div class="pointer-events-none absolute inset-x-0 top-16 h-80 rounded-full bg-radial from-orange/20 via-orange/5 to-transparent blur-3xl opacity-50 transition-all duration-700 group-hover:opacity-100 group-hover:scale-110" aria-hidden="true" />
 
               <!-- Top Card Header / Badges -->
               <div class="relative z-20 flex items-start justify-between gap-2">
-                <span class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-orange">
+                <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
                   // {`CREW 0${idx + 1}`}
                 </span>
-                <span class="stamp-distressed text-[0.58rem] border-orange/80 bg-forest-950/90 text-orange px-2 py-0.5 font-mono font-bold uppercase tracking-[0.16em]">
+                <span class="stamp-distressed text-[0.62rem] border-orange/80 bg-forest-950/90 text-orange px-2.5 py-0.5 font-mono font-bold uppercase tracking-[0.16em]">
                   {member.badge}
                 </span>
               </div>
 
               <!-- Cutout Hero Character Stage -->
-              <div class="absolute inset-0 flex items-end justify-center pointer-events-none overflow-hidden pb-24 pt-12">
+              <div class="absolute inset-0 flex items-end justify-center pointer-events-none overflow-hidden pb-28 pt-10">
                 <img
                   src={member.image}
                   alt={`Porträt von ${member.name} (${member.role})`}
-                  class="relative z-10 h-[82%] w-auto max-w-[92%] object-contain object-bottom drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
+                  class="relative z-10 h-[86%] w-auto max-w-[95%] object-contain object-bottom drop-shadow-[0_25px_35px_rgba(0,0,0,0.85)] transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
                   loading="lazy"
                 />
               </div>
 
               <!-- Atmospheric Bottom Gradient to Ground Character & Contrast Text -->
-              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-forest-950 via-forest-950/90 to-transparent z-10" aria-hidden="true" />
+              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-forest-950 via-forest-950/90 to-transparent z-10" aria-hidden="true" />
 
               <!-- Bottom Overlaid Character Info -->
-              <div class="relative z-20 mt-auto pt-16">
-                <p class="font-mono text-[0.68rem] font-bold uppercase tracking-[0.2em] text-orange">
+              <div class="relative z-20 mt-auto pt-20">
+                <p class="font-mono text-[0.7rem] font-bold uppercase tracking-[0.2em] text-orange">
                   {member.role}
                 </p>
-                <h3 class="display text-3xl sm:text-4xl text-paper tracking-wide uppercase mt-1 transition-colors duration-300 group-hover:text-orange">
+                <h3 class="display text-3xl sm:text-4xl xl:text-5xl text-paper tracking-wide uppercase mt-1 transition-colors duration-300 group-hover:text-orange">
                   {member.name}
                 </h3>
-                <p class="mt-2.5 text-xs leading-relaxed text-paper/75 line-clamp-3">
+                <p class="mt-3 text-xs sm:text-sm leading-relaxed text-paper/75 line-clamp-3">
                   {member.description}
                 </p>
 
-                <div class="mt-5 border-t border-paper/15 pt-4">
+                <div class="mt-6 border-t border-paper/15 pt-4">
                   <a
                     href={`mailto:${member.email}`}
-                    class="group/btn inline-flex w-full items-center justify-between border border-paper/20 bg-forest-950/80 px-3.5 py-2 font-mono text-[0.7rem] font-bold uppercase tracking-[0.14em] text-paper transition-all duration-300 hover:border-orange hover:bg-orange hover:text-forest-950"
+                    class="group/btn inline-flex w-full items-center justify-between border border-paper/20 bg-forest-950/80 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all duration-300 hover:border-orange hover:bg-orange hover:text-forest-950"
                   >
                     <span class="inline-flex items-center gap-2">
                       <Mail class="h-3.5 w-3.5 text-orange transition-colors group-hover/btn:text-forest-950" />
@@ -156,7 +156,7 @@ const teamMembers = [
           ))
         }
       </div>
-    </Container>
+    </div>
   </section>
 
   <section class="bg-forest-900 py-20">
