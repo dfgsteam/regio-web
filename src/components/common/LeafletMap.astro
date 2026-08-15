@@ -15,10 +15,10 @@ interface Props {
 const {
   title,
   address,
-  coordinates = "51.3595° N, 10.0395° E",
+  coordinates: rawCoordinates,
   lat: rawLat,
   lng: rawLng,
-  zoom = 14,
+  zoom = 15,
   ratio = '4/3',
   class: className = '',
 } = Astro.props
@@ -28,9 +28,9 @@ let lat = rawLat ?? 51.35949
 let lng = rawLng ?? 10.03952
 
 const fullText = `${title} ${address || ''}`.toLowerCase()
-if (fullText.includes('heiligenstadt') || fullText.includes('pater-kentenich')) {
-  lat = 51.38042
-  lng = 10.13455
+if (fullText.includes('heiligenstadt') || fullText.includes('pater-kentenich') || fullText.includes('klause')) {
+  lat = 51.37894
+  lng = 10.13548
 } else if (fullText.includes('muenchen') || fullText.includes('münchen')) {
   lat = 48.13715
   lng = 11.57612
@@ -41,6 +41,8 @@ if (fullText.includes('heiligenstadt') || fullText.includes('pater-kentenich')) 
   lat = 51.35949
   lng = 10.03952
 }
+
+const coordinates = rawCoordinates || `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`
 
 const mapQuery = address || title
 const encodedQuery = encodeURIComponent(mapQuery)

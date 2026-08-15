@@ -35,28 +35,94 @@ const teamMembers = [
   },
   {
     role: 'Finanzen & Kasse',
-    badge: 'Finanzen & Kasse',
+    badge: 'Finanzen',
     name: 'Julian Hupe',
     email: 'julian.hupe@smj-wegweiser.de',
-    image: '/placeholders/portrait.svg',
+    image: '/team/avatar-silhouette.svg',
     description:
       'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
   },
-]
-
-const specialRoles = [
-  { name: 'Christian Watterott', role: 'Öffentlichkeitsbeauftragter', badge: 'Öffentlichkeitsarbeit' },
-  { name: 'Rainer Marius Gotter', role: 'Geistliche Begleitung', badge: 'Geistliche Begleitung' },
-]
-
-const groupLeaders = [
-  { name: 'Dominik Watterott', role: 'Gruppenleiter' },
-  { name: 'Hannes Imwalle', role: 'Gruppenleiter' },
-  { name: 'Immo Spiller', role: 'Gruppenleiter' },
-  { name: 'Lukas Thon', role: 'Gruppenleiter' },
-  { name: 'Magnus Hesse', role: 'Gruppenleiter' },
-  { name: 'Silas Hulha', role: 'Gruppenleiter' },
-  { name: 'Valentin Degenhardt', role: 'Gruppenleiter' },
+  {
+    role: 'Öffentlichkeitsbeauftragter',
+    badge: 'Öffentlichkeit',
+    name: 'Christian Watterott',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Pressearbeit, Website, Social Media und Außendarstellung der Regio Wegweiser.',
+  },
+  {
+    role: 'Geistliche Begleitung',
+    badge: 'Begleitung',
+    name: 'Rainer Marius Gotter',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Geistliche Impulse, Gottesdienste, Andachten und seelsorgliche Begleitung der Freizeiten.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Dominik Watterott',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, Lagerfeuer, Geländespiele und Betreuung der Teilnehmer.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Hannes Imwalle',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, Zeltlager-Aktionen und Begleitung bei Wochenenden.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Immo Spiller',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, Programmgestaltung und Zeltlager-Einsätze.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Lukas Thon',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, Geländespiele und Betreuung der Zeltgemeinschaften.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Magnus Hesse',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, Zeltlager, Wettkämpfe und handwerkliche Pionierbauten.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Silas Hulha',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, Outdoor-Aktionen und Zeltlager-Einsätze.',
+  },
+  {
+    role: 'Gruppenleiter',
+    badge: 'Gruppenleiter',
+    name: 'Valentin Degenhardt',
+    email: 'kontakt@smj-wegweiser.de',
+    image: '/team/avatar-silhouette.svg',
+    description:
+      'Gruppenleitung vor Ort, sportliche Turniere, Abendrunden und Lagerleben.',
+  },
 ]
 ---
 
@@ -116,7 +182,7 @@ const groupLeaders = [
         <div>
           <div class="flex items-center gap-3">
             <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
-            <p class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">Expeditions-Crew & Diözesanleitung</p>
+            <p class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">Expeditions-Crew & Leiterrunde</p>
           </div>
           <h2 class="display text-4xl sm:text-5xl lg:text-6xl mt-3 text-paper uppercase">
             Die Köpfe hinter <span class="text-orange">dem Abenteuer.</span>
@@ -138,7 +204,7 @@ const groupLeaders = [
               
               <!-- Giant Watermark Number in Background -->
               <span class="pointer-events-none absolute -top-4 -left-2 select-none font-mono text-[9rem] font-black leading-none text-paper/[0.04] transition-colors duration-500 group-hover:text-orange/[0.08]" aria-hidden="true">
-                {`0${idx + 1}`}
+                {String(idx + 1).padStart(2, '0')}
               </span>
 
               <!-- Warm Radial Spotlight behind Character -->
@@ -147,7 +213,7 @@ const groupLeaders = [
               <!-- Top Card Header / Badges -->
               <div class="relative z-20 flex items-start justify-between gap-2">
                 <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
-                  // {`CREW 0${idx + 1}`}
+                  // {`CREW ${String(idx + 1).padStart(2, '0')}`}
                 </span>
                 <span class="stamp-distressed text-[0.62rem] border-orange/80 bg-forest-950/90 text-orange px-2.5 py-0.5 font-mono font-bold uppercase tracking-[0.16em]">
                   {member.badge}
@@ -195,63 +261,6 @@ const groupLeaders = [
             </article>
           ))
         }
-      </div>
-    </Container>
-  </section>
-
-  <!-- Erweiterte Leiterrunde & Gruppenleiter vor Ort -->
-  <section class="bg-forest-950 py-16 border-t border-paper/10">
-    <Container size="wide">
-      <div class="flex flex-col justify-between gap-4 border-b border-paper/10 pb-6 md:flex-row md:items-end">
-        <div>
-          <div class="flex items-center gap-3">
-            <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
-            <span class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">// LEITERKREIS & BEGLEITUNG</span>
-          </div>
-          <h2 class="display text-3xl sm:text-4xl text-paper uppercase mt-2">
-            Öffentlichkeit, Begleitung <span class="text-orange">& Gruppenleiter.</span>
-          </h2>
-        </div>
-        <p class="max-w-sm font-mono text-xs text-paper/70">
-          // EINSATZ VOR ORT<br />
-          Erfahrene Gruppenleiter und Begleiter für unsere Freizeiten und Gruppen.
-        </p>
-      </div>
-
-      <!-- Öffentlichkeitsarbeit & Geistliche Begleitung -->
-      <div class="mt-10">
-        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
-          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
-          <span>Öffentlichkeitsarbeit & Geistliche Begleitung</span>
-        </h3>
-        <div class="grid gap-6 sm:grid-cols-2">
-          {specialRoles.map((leader) => (
-            <div class="border-2 border-paper/15 bg-gradient-to-b from-[#161f18] to-forest-950 p-6 transition-all duration-300 hover:border-orange hover:shadow-lg">
-              <span class="stamp-distressed font-mono text-[0.62rem] border-orange/80 bg-forest-950 text-orange px-2.5 py-0.5 uppercase tracking-wider inline-block mb-3">
-                {leader.badge}
-              </span>
-              <p class="display text-2xl text-paper uppercase">{leader.name}</p>
-              <p class="font-mono text-xs text-orange mt-1">{leader.role}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- Gruppenleiter vor Ort -->
-      <div class="mt-12">
-        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
-          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
-          <span>Gruppenleiter vor Ort</span>
-        </h3>
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {groupLeaders.map((leader) => (
-            <div class="border border-paper/15 bg-forest-900/50 p-5 transition-all duration-300 hover:border-orange hover:bg-forest-900">
-              <span class="mono-label text-[0.62rem] text-paper/60 block">// LEITUNG VOR ORT</span>
-              <p class="display text-xl text-paper uppercase mt-1">{leader.name}</p>
-              <span class="font-mono text-xs text-orange mt-1 block">{leader.role}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </Container>
   </section>
