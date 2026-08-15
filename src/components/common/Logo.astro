@@ -17,8 +17,8 @@ const sizeClasses = {
   sm: 'h-8 w-auto',
   md: 'h-10 w-auto',
   lg: 'h-14 w-auto',
-  xl: 'h-20 w-auto',
-  '2xl': 'h-24 sm:h-28 w-auto',
+  xl: 'h-18 w-auto',
+  '2xl': 'h-20 sm:h-24 md:h-28 w-auto',
   hero: 'h-20 sm:h-28 md:h-36 w-auto',
 }[size]
 
@@ -52,7 +52,7 @@ const logoSrc = isDark ? '/logo_wegweiser_dark.svg' : '/logo_wegweiser_white.svg
     </svg>
   </div>
 ) : (
-  <div class:list={['relative inline-flex items-center gap-3', className]}>
+  <div class:list={['relative inline-flex items-center gap-3 sm:gap-4', className]}>
     <img
       src={logoSrc}
       alt="SMJ Regio Wegweiser Logo"
@@ -63,8 +63,17 @@ const logoSrc = isDark ? '/logo_wegweiser_dark.svg' : '/logo_wegweiser_white.svg
 
     {variant === 'full' && (
       <span class="flex flex-col leading-tight">
-        <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.28em] text-orange">SMJ Regio</span>
-        <span class:list={['font-display text-lg uppercase tracking-wider', isDark ? 'text-forest-950' : 'text-paper']}>
+        <span class:list={[
+          'font-mono font-bold uppercase text-orange',
+          size === '2xl' || size === 'hero' ? 'text-[0.75rem] tracking-[0.3em]' : 'text-[0.6rem] tracking-[0.28em]'
+        ]}>
+          SMJ Regio
+        </span>
+        <span class:list={[
+          'font-display uppercase tracking-wider',
+          size === '2xl' || size === 'hero' ? 'text-2xl sm:text-3xl' : 'text-lg',
+          isDark ? 'text-forest-950' : 'text-paper'
+        ]}>
           Wegweiser
         </span>
       </span>
