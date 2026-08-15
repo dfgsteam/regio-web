@@ -3,7 +3,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Coordinates from '../../components/common/Coordinates.astro'
-import PrivacyMap from '../../components/common/PrivacyMap.astro'
+import LeafletMap from '../../components/common/LeafletMap.astro'
 ---
 
 <ContentLayout
@@ -209,11 +209,13 @@ import PrivacyMap from '../../components/common/PrivacyMap.astro'
           </div>
         </div>
 
-        <PrivacyMap
+        <LeafletMap
           title="Zeltlagerplatz Wiesental"
           address="Birkenfelder Str., 37318 Uder (Ortsteil Thalwenden)"
           coordinates="N 51° 22' 04.8'' · E 10° 06' 55.6''"
-          mapQuery="Wiesental Thalwenden"
+          lat={51.35949}
+          lng={10.03952}
+          zoom={14}
           ratio="4/3"
         />
       </div>

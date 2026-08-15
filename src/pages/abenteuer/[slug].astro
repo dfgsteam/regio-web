@@ -3,7 +3,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
-import PrivacyMap from '../../components/common/PrivacyMap.astro'
+import LeafletMap from '../../components/common/LeafletMap.astro'
 import {
   Calendar,
   MapPin,
@@ -266,18 +266,12 @@ const eventStructuredData = {
               <h2 class="display display-sm text-paper">{event.location}</h2>
             </div>
 
-            <PrivacyMap
+            <LeafletMap
               title={event.location || 'Veranstaltungsort'}
               address={event.address}
               coordinates={
                 (event.address?.toLowerCase().includes('thalwenden') || event.location?.toLowerCase().includes('wiesental'))
                   ? "N 51° 22' 04.8'' · E 10° 06' 55.6''"
-                  : undefined
-              }
-              mapQuery={event.address || event.location}
-              embedUrl={
-                (event.address?.toLowerCase().includes('thalwenden') || event.location?.toLowerCase().includes('wiesental'))
-                  ? 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde'
                   : undefined
               }
               ratio="21/9"

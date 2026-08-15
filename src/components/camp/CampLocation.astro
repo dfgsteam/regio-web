@@ -1,7 +1,7 @@
 ---
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
-import PrivacyMap from '../common/PrivacyMap.astro'
+import LeafletMap from '../common/LeafletMap.astro'
 ---
 
 <section class="camp-bg border-t camp-border py-20">
@@ -39,11 +39,13 @@ import PrivacyMap from '../common/PrivacyMap.astro'
         </p>
       </div>
 
-      <PrivacyMap
+      <LeafletMap
         title="Zeltlagerplatz Wiesental"
         address="Birkenfelder Str., 37318 Uder (Ortsteil Thalwenden)"
         coordinates="N 51° 22' 04.8'' · E 10° 06' 55.6''"
-        mapQuery="Wiesental Thalwenden"
+        lat={51.35949}
+        lng={10.03952}
+        zoom={14}
         ratio="4/3"
       />
     </div>
