@@ -43,6 +43,21 @@ const teamMembers = [
       'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
   },
 ]
+
+const specialRoles = [
+  { name: 'Christian Watterott', role: 'Öffentlichkeitsbeauftragter', badge: 'Öffentlichkeitsarbeit' },
+  { name: 'Rainer Marius Gotter', role: 'Geistliche Begleitung', badge: 'Geistliche Begleitung' },
+]
+
+const groupLeaders = [
+  { name: 'Dominik Watterott', role: 'Gruppenleiter' },
+  { name: 'Hannes Imwalle', role: 'Gruppenleiter' },
+  { name: 'Immo Spiller', role: 'Gruppenleiter' },
+  { name: 'Lukas Thon', role: 'Gruppenleiter' },
+  { name: 'Magnus Hesse', role: 'Gruppenleiter' },
+  { name: 'Silas Hulha', role: 'Gruppenleiter' },
+  { name: 'Valentin Degenhardt', role: 'Gruppenleiter' },
+]
 ---
 
 <ContentLayout
@@ -180,6 +195,63 @@ const teamMembers = [
             </article>
           ))
         }
+      </div>
+    </Container>
+  </section>
+
+  <!-- Erweiterte Leiterrunde & Gruppenleiter vor Ort -->
+  <section class="bg-forest-950 py-16 border-t border-paper/10">
+    <Container size="wide">
+      <div class="flex flex-col justify-between gap-4 border-b border-paper/10 pb-6 md:flex-row md:items-end">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">// LEITERKREIS & BEGLEITUNG</span>
+          </div>
+          <h2 class="display text-3xl sm:text-4xl text-paper uppercase mt-2">
+            Öffentlichkeit, Begleitung <span class="text-orange">& Gruppenleiter.</span>
+          </h2>
+        </div>
+        <p class="max-w-sm font-mono text-xs text-paper/70">
+          // EINSATZ VOR ORT<br />
+          Erfahrene Gruppenleiter und Begleiter für unsere Freizeiten und Gruppen.
+        </p>
+      </div>
+
+      <!-- Öffentlichkeitsarbeit & Geistliche Begleitung -->
+      <div class="mt-10">
+        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
+          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
+          <span>Öffentlichkeitsarbeit & Geistliche Begleitung</span>
+        </h3>
+        <div class="grid gap-6 sm:grid-cols-2">
+          {specialRoles.map((leader) => (
+            <div class="border-2 border-paper/15 bg-gradient-to-b from-[#161f18] to-forest-950 p-6 transition-all duration-300 hover:border-orange hover:shadow-lg">
+              <span class="stamp-distressed font-mono text-[0.62rem] border-orange/80 bg-forest-950 text-orange px-2.5 py-0.5 uppercase tracking-wider inline-block mb-3">
+                {leader.badge}
+              </span>
+              <p class="display text-2xl text-paper uppercase">{leader.name}</p>
+              <p class="font-mono text-xs text-orange mt-1">{leader.role}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Gruppenleiter vor Ort -->
+      <div class="mt-12">
+        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
+          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
+          <span>Gruppenleiter vor Ort</span>
+        </h3>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {groupLeaders.map((leader) => (
+            <div class="border border-paper/15 bg-forest-900/50 p-5 transition-all duration-300 hover:border-orange hover:bg-forest-900">
+              <span class="mono-label text-[0.62rem] text-paper/60 block">// LEITUNG VOR ORT</span>
+              <p class="display text-xl text-paper uppercase mt-1">{leader.name}</p>
+              <span class="font-mono text-xs text-orange mt-1 block">{leader.role}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </Container>
   </section>

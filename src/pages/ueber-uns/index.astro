@@ -30,6 +30,28 @@ const chapters = [
     body: 'Die SMJ gibt es seit Jahrzehnten. Aus kleinen Gruppen sind Zeltlager, Wochenenden und ein Netzwerk aus Freundschaften gewachsen. Unsere Geschichte ist kein Museum – sie ist das Fundament, auf dem jedes neue Lager steht.',
   },
 ]
+
+const diocesanLeaders = [
+  { name: 'Kilian Schlosser', role: 'Regiosprecher' },
+  { name: 'Vinzenz Hupe', role: 'Diözesanleitung' },
+  { name: 'Jonathan Hunold', role: 'Diözesanleitung' },
+  { name: 'Julian Hupe', role: 'Finanzen & Kasse' },
+]
+
+const specialRoles = [
+  { name: 'Christian Watterott', role: 'Öffentlichkeitsbeauftragter' },
+  { name: 'Rainer Marius Gotter', role: 'Geistliche Begleitung' },
+]
+
+const groupLeaders = [
+  { name: 'Dominik Watterott', role: 'Gruppenleiter' },
+  { name: 'Hannes Imwalle', role: 'Gruppenleiter' },
+  { name: 'Immo Spiller', role: 'Gruppenleiter' },
+  { name: 'Lukas Thon', role: 'Gruppenleiter' },
+  { name: 'Magnus Hesse', role: 'Gruppenleiter' },
+  { name: 'Silas Hulha', role: 'Gruppenleiter' },
+  { name: 'Valentin Degenhardt', role: 'Gruppenleiter' },
+]
 ---
 
 <ContentLayout
@@ -142,6 +164,85 @@ const chapters = [
           <p class="mt-4 text-sm leading-relaxed text-paper/75">
             Die weltweite katholische Erneuerungsbewegung, ihre Zentren, Heiligtümer, Gemeinschaften und Angebote.
           </p>
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Team & Leiterrunde Section -->
+  <section class="bg-forest-950 py-20 border-t border-paper/10">
+    <Container>
+      <div class="flex flex-col justify-between gap-6 border-b border-paper/10 pb-8 md:flex-row md:items-end">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse"></span>
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">// DIE KÖPFE VOR ORT</span>
+          </div>
+          <h2 class="display display-md mt-2 text-paper uppercase">
+            Unsere <span class="text-orange">Leiterrunde.</span>
+          </h2>
+        </div>
+        <p class="max-w-md font-mono text-xs leading-relaxed text-paper/70">
+          // JUGEND LEITET JUGEND<br />
+          Verantwortung, Ausbildung und Begleitung auf Augenhöhe.
+        </p>
+      </div>
+
+      <!-- Diözesanleitung & Kernteam -->
+      <div class="mt-12">
+        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
+          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
+          <span>Diözesanleitung & Koordination</span>
+        </h3>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {diocesanLeaders.map((leader) => (
+            <div class="border border-paper/15 bg-forest-900/60 p-5 transition-all duration-300 hover:border-orange hover:bg-forest-900">
+              <span class="mono-label text-[0.65rem] text-orange block">{leader.role}</span>
+              <p class="display text-xl text-paper uppercase mt-1">{leader.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Öffentlichkeitsarbeit & Geistliche Begleitung -->
+      <div class="mt-10">
+        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
+          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
+          <span>Öffentlichkeitsarbeit & Begleitung</span>
+        </h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {specialRoles.map((leader) => (
+            <div class="border border-paper/15 bg-forest-900/60 p-5 transition-all duration-300 hover:border-orange hover:bg-forest-900">
+              <span class="mono-label text-[0.65rem] text-orange block">{leader.role}</span>
+              <p class="display text-xl text-paper uppercase mt-1">{leader.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Gruppenleiter vor Ort -->
+      <div class="mt-10">
+        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange mb-6 flex items-center gap-2">
+          <span class="inline-block h-1.5 w-1.5 rounded-full bg-orange"></span>
+          <span>Gruppenleiter vor Ort</span>
+        </h3>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {groupLeaders.map((leader) => (
+            <div class="border border-paper/10 bg-forest-900/40 p-4 transition-all duration-300 hover:border-orange/60 hover:bg-forest-900/80">
+              <span class="mono-label text-[0.62rem] text-paper/60 block">{leader.role}</span>
+              <p class="font-display text-lg text-paper uppercase mt-0.5">{leader.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-12 text-center">
+        <a
+          href="/team/"
+          class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:bg-orange hover:text-forest-950"
+        >
+          <span>Mehr über unser Leitungsteam erfahren</span>
+          <span>→</span>
         </a>
       </div>
     </Container>
