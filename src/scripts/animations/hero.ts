@@ -23,6 +23,21 @@ gsap.registerPlugin(ScrollTrigger)
         },
       })
 
+      // Logo expansion & dynamic tilt
+      tl.fromTo(
+        '.hero-logo-img',
+        { scale: 1, rotationZ: 0, y: 0 },
+        { scale: 1.3, rotationZ: -4, y: -25, ease: 'power1.out', duration: 1 },
+        0.1,
+      )
+      // Logo backlight aura pulse
+      tl.fromTo(
+        '.hero-logo-glow',
+        { scale: 1, opacity: 0.25 },
+        { scale: 2.2, opacity: 0.7, ease: 'power1.out', duration: 0.8 },
+        0.1,
+      )
+
       tl.fromTo('.hero-line-1', { xPercent: 0 }, { xPercent: -18, ease: 'power2.inOut', duration: 1 }, 0.2)
       tl.fromTo('.hero-line-2', { xPercent: 0 }, { xPercent: 18, ease: 'power2.inOut', duration: 1 }, 0.2)
       tl.to('.hero-bg', { filter: 'saturate(0.45) brightness(0.72)', ease: 'none', duration: 1 }, 0.35)
@@ -40,6 +55,22 @@ gsap.registerPlugin(ScrollTrigger)
         { yPercent: -6 },
         {
           yPercent: 6,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        },
+      )
+
+      gsap.fromTo(
+        '.hero-logo-img',
+        { scale: 1, y: 0 },
+        {
+          scale: 1.15,
+          y: -15,
           ease: 'none',
           scrollTrigger: {
             trigger: section,

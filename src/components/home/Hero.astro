@@ -18,10 +18,20 @@ import Logo from '../common/Logo.astro'
   <div class="texture-vignette pointer-events-none absolute inset-0 z-1" aria-hidden="true" />
 
   <div class="hero-content relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
-    <!-- Hero Brand Emblem -->
-    <div class="hero-logo-wrap mb-5 flex flex-col items-center gap-3">
-      <Logo size="lg" tone="light" class="transition-transform duration-500 hover:scale-105" />
-      <div class="flex flex-wrap items-center justify-center gap-3">
+    <!-- Hero Brand Emblem & Majestic Logo -->
+    <div class="hero-logo-wrap mb-7 flex flex-col items-center">
+      <div class="hero-logo-container relative flex items-center justify-center">
+        <!-- Ambient Orange Backlight Glow -->
+        <div class="hero-logo-glow absolute -inset-6 rounded-full bg-orange/25 blur-3xl transition-all duration-700 pointer-events-none" aria-hidden="true" />
+        
+        <Logo
+          size="hero"
+          tone="light"
+          class="hero-logo-img relative z-10 drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)] transition-transform duration-500 hover:scale-105"
+        />
+      </div>
+
+      <div class="hero-eyebrow mt-6 flex flex-wrap items-center justify-center gap-3">
         <span class="eyebrow">SMJ Regio Wegweiser</span>
         <span class="stamp-distressed -rotate-2">Expedition · 2026</span>
       </div>
