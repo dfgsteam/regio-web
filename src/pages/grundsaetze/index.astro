@@ -3,6 +3,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import ImageFrame from '../../components/common/ImageFrame.astro'
+import Logo from '../../components/common/Logo.astro'
 
 const pillars = [
   {
@@ -53,15 +54,21 @@ const pillars = [
   description="Zusammenhalt, Verantwortung, Wachsen, Mannsein, Glaube: die fünf Säulen der SMJ Regio Wegweiser – kurz, ehrlich und mit Beispielen aus dem Alltag."
 >
   <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
-    <Container>
-      <Eyebrow label="Grundsätze" muted />
-      <h1 class="display display-xl mt-6 text-forest-950">
-        Wofür wir<br />
-        <span class="text-orange">stehen.</span>
-      </h1>
-      <p class="mt-8 max-w-xl leading-relaxed text-forest-950/75">
-        Fünf Säulen. Kein Papier, keine Worthülsen. Jede Säule hat eine Kernbotschaft, eine kurze Erklärung – und ein Beispiel aus unserem Alltag.
-      </p>
+    <Container class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+      <div>
+        <Eyebrow label="Grundsätze" muted />
+        <h1 class="display display-xl mt-6 text-forest-950">
+          Wofür wir<br />
+          <span class="text-orange">stehen.</span>
+        </h1>
+        <p class="mt-8 max-w-xl leading-relaxed text-forest-950/75">
+          Fünf Säulen. Kein Papier, keine Worthülsen. Jede Säule hat eine Kernbotschaft, eine kurze Erklärung – und ein Beispiel aus unserem Alltag.
+        </p>
+      </div>
+      <Logo
+        variant="badge"
+        class="h-28 w-28 sm:h-32 sm:w-32 rotate-[-6deg] shrink-0 drop-shadow-lg"
+      />
     </Container>
   </section>
 

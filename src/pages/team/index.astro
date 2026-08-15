@@ -4,6 +4,7 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
 import ImageFrame from '../../components/common/ImageFrame.astro'
+import Logo from '../../components/common/Logo.astro'
 import { Mail } from '@lucide/astro'
 
 const teamMembers = [
@@ -83,11 +84,13 @@ const teamMembers = [
       <div id="team-members-container" class="grid gap-6 md:grid-cols-2">
         {
           teamMembers.map((member) => (
-            <article class="team-member-card group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900 p-6 transition-colors hover:border-orange sm:p-8">
-              <!-- Field Pass Stamp Badge -->
-              <div class="team-stamp pointer-events-none absolute right-4 top-4 border-2 border-orange/60 bg-forest-950/80 px-2.5 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-[0.2em] text-orange shadow-md">
-                Field Pass · 2026
-              </div>
+            <article class="team-member-card group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900 p-6 transition-colors hover:border-orange sm:p-8 overflow-hidden">
+              <!-- Field Pass Official Logo Stamp -->
+              <Logo
+                variant="stamp"
+                size="sm"
+                class="team-stamp pointer-events-none absolute right-4 top-4 rotate-3 opacity-90 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105"
+              />
 
               <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
                 <div class="relative shrink-0 overflow-hidden border border-paper/20 bg-forest-950 w-28 h-36 sm:w-32 sm:h-40">

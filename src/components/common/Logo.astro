@@ -1,6 +1,6 @@
 ---
 interface Props {
-  variant?: 'icon' | 'full' | 'badge'
+  variant?: 'icon' | 'full' | 'badge' | 'stamp' | 'watermark'
   tone?: 'light' | 'white' | 'dark' | 'auto'
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'hero'
   class?: string
@@ -26,7 +26,37 @@ const isDark = tone === 'dark'
 const logoSrc = isDark ? '/logo_wegweiser_dark.svg' : '/logo_wegweiser_white.svg'
 ---
 
-{variant === 'badge' ? (
+{variant === 'stamp' ? (
+  <div class:list={['relative inline-flex items-center justify-center select-none', className]}>
+    <div
+      class:list={[
+        'relative flex flex-col items-center justify-center rounded border-2 border-dashed px-3 py-2 font-mono uppercase tracking-[0.2em] shadow-sm backdrop-blur-xs',
+        isDark
+          ? 'border-forest-950/70 bg-paper/40 text-forest-950'
+          : 'border-orange/70 bg-forest-950/60 text-orange',
+      ]}
+    >
+      <img
+        src={logoSrc}
+        alt=""
+        class:list={[sizeClasses, 'shrink-0 object-contain opacity-95']}
+        loading="lazy"
+        decoding="async"
+      />
+      <span class="mt-1.5 font-mono text-[0.55rem] font-bold tracking-[0.25em]">REGIO WEGWEISER</span>
+    </div>
+  </div>
+) : variant === 'watermark' ? (
+  <div class:list={['pointer-events-none select-none opacity-10', className]} aria-hidden="true">
+    <img
+      src={logoSrc}
+      alt=""
+      class="h-full w-full object-contain"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+) : variant === 'badge' ? (
   <div class:list={['relative inline-flex items-center justify-center', className]}>
     <svg
       viewBox="0 0 240 240"

@@ -5,6 +5,7 @@ import Eyebrow from '../../components/common/Eyebrow.astro'
 import ImageFrame from '../../components/common/ImageFrame.astro'
 import FieldNote from '../../components/common/FieldNote.astro'
 import Coordinates from '../../components/common/Coordinates.astro'
+import Logo from '../../components/common/Logo.astro'
 import { getCurrentCamp } from '../../lib/camps'
 
 const currentCamp = await getCurrentCamp()
@@ -38,12 +39,18 @@ const chapters = [
   description="Was ist die SMJ? Regio Wegweiser, Schönstatt, Jugend leitet Jugend: wer wir sind, woraus wir kommen und wie unsere Jugendarbeit funktioniert."
 >
   <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
-    <Container>
-      <Eyebrow label="Über uns" muted />
-      <h1 class="display display-xl mt-6 text-forest-950">
-        Wer wir sind.<br />
-        <span class="text-orange">Warum wir das machen.</span>
-      </h1>
+    <Container class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+      <div>
+        <Eyebrow label="Über uns" muted />
+        <h1 class="display display-xl mt-6 text-forest-950">
+          Wer wir sind.<br />
+          <span class="text-orange">Warum wir das machen.</span>
+        </h1>
+      </div>
+      <Logo
+        variant="badge"
+        class="h-28 w-28 sm:h-32 sm:w-32 rotate-6 shrink-0 drop-shadow-lg"
+      />
     </Container>
   </section>
 

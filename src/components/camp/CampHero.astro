@@ -1,6 +1,7 @@
 ---
 import { resolveCampForUrl } from '../../lib/camps'
 import Coordinates from '../common/Coordinates.astro'
+import Logo from '../common/Logo.astro'
 
 const camp = await resolveCampForUrl(Astro.url.pathname)
 if (!camp) return null
@@ -16,11 +17,19 @@ const dateLabel = `${camp.data.date.start.toLocaleDateString('de-DE')} – ${cam
   </div>
 
   <div class="relative z-10 mx-auto w-full max-w-6xl px-5 pt-32 pb-24 sm:px-8">
-    <p class="eyebrow mb-5">Zeltlager {year} · Das große Abenteuer</p>
-    <h1 class="display text-[clamp(3rem,9.5vw,7.8rem)] leading-[1.02] camp-fg">
-      {motto}
-    </h1>
-    <p class="mt-4 font-display text-2xl uppercase tracking-wide camp-accent sm:text-3xl">{title}</p>
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+      <div>
+        <p class="eyebrow mb-5">Zeltlager {year} · Das große Abenteuer</p>
+        <h1 class="display text-[clamp(3rem,9.5vw,7.8rem)] leading-[1.02] camp-fg">
+          {motto}
+        </h1>
+        <p class="mt-4 font-display text-2xl uppercase tracking-wide camp-accent sm:text-3xl">{title}</p>
+      </div>
+      <Logo
+        variant="badge"
+        class="h-24 w-24 sm:h-28 sm:w-28 rotate-6 shrink-0 drop-shadow-2xl self-start"
+      />
+    </div>
 
     <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-3 font-mono text-[0.7rem] uppercase tracking-[0.2em]">
       <div class="flex items-center gap-3">

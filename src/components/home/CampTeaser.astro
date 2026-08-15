@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content'
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
 import Button from '../common/Button.astro'
+import Logo from '../common/Logo.astro'
 import { getCurrentCamp } from '../../lib/camps'
 
 interface Props {
@@ -71,7 +72,13 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
       </div>
 
       <!-- Right Column: 3D Unfolding Camp Poster & Map -->
-      <div class="w-full lg:w-[48%] [perspective:1200px]">
+      <div class="relative w-full lg:w-[48%] [perspective:1200px]">
+        <!-- Camp Official Expedition Seal -->
+        <Logo
+          variant="badge"
+          class="absolute -top-6 -right-4 sm:-right-6 z-20 h-20 w-20 sm:h-24 sm:w-24 rotate-6 drop-shadow-2xl pointer-events-none"
+        />
+
         <div class="unfold-wrapper relative border-2 camp-border bg-forest-950 shadow-2xl overflow-hidden [transform-style:preserve-3d]">
           <!-- Top Fold Panel -->
           <div class="fold-panel-top relative h-[33.33%] w-full overflow-hidden border-b border-paper/10 [backface-visibility:hidden]">

@@ -1,6 +1,7 @@
 ---
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
+import Logo from '../common/Logo.astro'
 import { Zap, TreePine, Flame } from '@lucide/astro'
 
 const analogPillars = [
@@ -50,11 +51,12 @@ const analogPillars = [
           Kein Display. Kein Akku-Stress. Kein Scrollen. Bei der SMJ Regio Wegweiser schalten wir das Smartphone bewusst ab, um das einzuschalten, was wirklich zählt: <strong class="text-paper">echte Natur, echte Herausforderungen und echte Gemeinschaft.</strong>
         </p>
 
-        <div class="mt-10 border-l-2 border-orange bg-forest-900/80 p-6 shadow-xl relative">
-          <p class="font-display text-xl uppercase leading-snug text-paper">
+        <div class="mt-10 border-l-2 border-orange bg-forest-900/80 p-6 shadow-xl relative overflow-hidden">
+          <Logo variant="stamp" size="sm" class="absolute -right-2 -bottom-2 rotate-6 opacity-30 pointer-events-none" />
+          <p class="font-display text-xl uppercase leading-snug text-paper relative z-10">
             „Nach zwei Tagen vermisst niemand mehr sein Smartphone. Nach zehn Tagen will keiner zurück an den Bildschirm.“
           </p>
-          <p class="mono-label mt-3 text-xs text-orange">Erfahrung aus über 40 Jahren Zeltlager</p>
+          <p class="mono-label mt-3 text-xs text-orange relative z-10">Erfahrung aus über 40 Jahren Zeltlager</p>
         </div>
       </div>
 
