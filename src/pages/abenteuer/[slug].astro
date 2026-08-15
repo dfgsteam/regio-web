@@ -3,6 +3,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
+import PrivacyMap from '../../components/common/PrivacyMap.astro'
 import {
   Calendar,
   MapPin,
@@ -257,41 +258,30 @@ const eventStructuredData = {
           </div>
         )}
 
-        <!-- Location & Google Maps Section (Left side at the end) -->
+        <!-- Location & Privacy Map Section -->
         {(event.location || event.address) && (
-          <div class="border-2 border-paper/15 bg-forest-900 p-7 sm:p-9">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <div>
-                <p class="eyebrow mb-1">Anfahrt & Standort</p>
-                <h2 class="display display-sm text-paper">{event.location}</h2>
-                {event.address && (
-                  <p class="font-mono text-xs text-paper/70 mt-1">{event.address}</p>
-                )}
-              </div>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.address || event.location || '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 border border-paper/20 bg-forest-950 px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-orange hover:text-orange"
-              >
-                <MapPin class="h-3.5 w-3.5 text-orange" />
-                <span>In Google Maps öffnen ↗</span>
-              </a>
+          <div class="border-2 border-paper/15 bg-forest-900 p-6 sm:p-8">
+            <div class="mb-5">
+              <p class="eyebrow mb-1">Anfahrt & Standort</p>
+              <h2 class="display display-sm text-paper">{event.location}</h2>
             </div>
 
-            <div class="relative overflow-hidden border border-paper/20 bg-forest-950 aspect-[16/9] sm:aspect-[21/9]">
-              <iframe
-                src={
-                  (event.address?.toLowerCase().includes('thalwenden') || event.location?.toLowerCase().includes('wiesental'))
-                    ? 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde'
-                    : `https://maps.google.com/maps?q=${encodeURIComponent(event.address || event.location || 'Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt')}&t=&z=15&ie=UTF8&iwloc=&output=embed`
-                }
-                class="absolute inset-0 h-full w-full border-0 grayscale invert contrast-125 opacity-85 hover:grayscale-0 hover:invert-0 hover:opacity-100 transition-all duration-300"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title={`Karte von ${event.location}`}
-              />
-            </div>
+            <PrivacyMap
+              title={event.location || 'Veranstaltungsort'}
+              address={event.address}
+              coordinates={
+                (event.address?.toLowerCase().includes('thalwenden') || event.location?.toLowerCase().includes('wiesental'))
+                  ? "N 51° 22' 04.8'' · E 10° 06' 55.6''"
+                  : undefined
+              }
+              mapQuery={event.address || event.location}
+              embedUrl={
+                (event.address?.toLowerCase().includes('thalwenden') || event.location?.toLowerCase().includes('wiesental'))
+                  ? 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde'
+                  : undefined
+              }
+              ratio="21/9"
+            />
           </div>
         )}
       </div>

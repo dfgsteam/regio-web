@@ -1,6 +1,7 @@
 ---
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
+import PrivacyMap from '../common/PrivacyMap.astro'
 ---
 
 <section class="camp-bg border-t camp-border py-20">
@@ -38,21 +39,13 @@ import Eyebrow from '../common/Eyebrow.astro'
         </p>
       </div>
 
-      <div class="relative overflow-hidden border-2 border-paper/20 bg-forest-900 shadow-2xl">
-        <div class="aspect-[4/3] w-full min-h-[350px]">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde"
-            width="100%"
-            height="100%"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="Lagerplatz Wiesental bei Thalwenden auf Google Maps"
-            class="h-full w-full grayscale contrast-125 hover:grayscale-0 transition-all duration-500"
-          ></iframe>
-        </div>
-      </div>
+      <PrivacyMap
+        title="Zeltlagerplatz Wiesental"
+        address="Birkenfelder Str., 37318 Uder (Ortsteil Thalwenden)"
+        coordinates="N 51° 22' 04.8'' · E 10° 06' 55.6''"
+        mapQuery="Wiesental Thalwenden"
+        ratio="4/3"
+      />
     </div>
   </Container>
 </section>

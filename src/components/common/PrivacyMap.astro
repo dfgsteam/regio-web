@@ -1,0 +1,175 @@
+---
+import { MapPin, Navigation, Compass, ShieldCheck } from '@lucide/astro'
+
+interface Props {
+  title: string
+  address?: string
+  coordinates?: string
+  mapQuery?: string
+  embedUrl?: string
+  ratio?: '4/3' | '16/9' | '21/9'
+  class?: string
+}
+
+const {
+  title,
+  address,
+  coordinates = "51.3595° N, 10.0395° E",
+  mapQuery = address || title,
+  embedUrl,
+  ratio = '4/3',
+  class: className = '',
+} = Astro.props
+
+const encodedQuery = encodeURIComponent(mapQuery)
+const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`
+const appleMapsUrl = `https://maps.apple.com/?q=${encodedQuery}`
+const osmUrl = `https://www.openstreetmap.org/search?query=${encodedQuery}`
+
+// Default fallback embed URL for 2-click loading
+const resolvedEmbedUrl =
+  embedUrl ||
+  (mapQuery.toLowerCase().includes('thalwenden') || mapQuery.toLowerCase().includes('wiesental')
+    ? 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.2454756106645!2d10.039520446705568!3d51.35948962622321!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a4cf150cc882b7%3A0x4fa94a70581fdedf!2sWiesental!5e1!3m2!1sen!2sde!4v1786707983103!5m2!1sen!2sde'
+    : `https://maps.google.com/maps?q=${encodedQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`)
+
+const ratioClasses = {
+  '4/3': 'aspect-[4/3] min-h-[360px]',
+  '16/9': 'aspect-[16/9] min-h-[320px]',
+  '21/9': 'aspect-[16/9] sm:aspect-[21/9] min-h-[280px]',
+}[ratio]
+---
+
+<div class={`privacy-map-container relative overflow-hidden border-2 border-paper/20 bg-forest-950 shadow-2xl ${className}`}>
+  <!-- Static Privacy-Compliant Card (Default State) -->
+  <div class={`privacy-map-static relative flex flex-col justify-between p-6 sm:p-8 ${ratioClasses}`}>
+    <!-- Topographic & Grid Textures -->
+    <div class="texture-topo absolute inset-0 opacity-20 pointer-events-none" aria-hidden="true" />
+    <div class="pointer-events-none absolute inset-0 bg-radial from-orange/10 via-transparent to-forest-950/90" aria-hidden="true" />
+
+    <!-- Top Badge Row -->
+    <div class="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-paper/10 pb-4">
+      <div class="flex items-center gap-2">
+        <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse" />
+        <span class="font-mono text-[0.7rem] font-bold uppercase tracking-[0.2em] text-orange">
+          // STANDORT & KOORDINATEN
+        </span>
+      </div>
+      <span class="stamp-distressed font-mono text-[0.62rem] border-paper/30 text-paper/80 px-2.5 py-0.5 uppercase tracking-wider">
+        {coordinates}
+      </span>
+    </div>
+
+    <!-- Center Pin & Details Area -->
+    <div class="relative z-10 my-auto py-6 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-5">
+      <div class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-orange bg-forest-900 shadow-[0_0_20px_rgba(255,90,31,0.3)]">
+        <MapPin class="h-7 w-7 text-orange" />
+        <span class="absolute -inset-1.5 animate-ping rounded-full border border-orange/40" />
+      </div>
+      <div>
+        <h3 class="display text-2xl sm:text-3xl text-paper uppercase tracking-wide">
+          {title}
+        </h3>
+        {address && (
+          <p class="font-mono text-xs sm:text-sm text-paper/80 mt-1">
+            {address}
+          </p>
+        )}
+        <p class="mt-2 text-xs text-paper/60 flex items-center justify-center sm:justify-start gap-1.5 font-mono">
+          <ShieldCheck class="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+          <span>100 % DSGVO-konform: Keine Datenübertragung ohne Klick.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom Actions & External Links -->
+    <div class="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-paper/10 pt-4">
+      <!-- 2-Click Load Map Button -->
+      <button
+        type="button"
+        class="load-interactive-map-btn group inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange/10 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-orange transition-all hover:bg-orange hover:text-forest-950"
+        data-embed-url={resolvedEmbedUrl}
+        data-title={title}
+      >
+        <Compass class="h-4 w-4 transition-transform group-hover:rotate-45" />
+        <span>Interaktive Karte laden</span>
+      </button>
+
+      <!-- Quick External App Links -->
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <a
+          href={googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900/80 px-3 py-1.5 font-mono text-[0.7rem] font-bold uppercase tracking-wider text-paper/80 transition-colors hover:border-orange hover:text-orange"
+        >
+          <Navigation class="h-3 w-3 text-orange" />
+          <span>Google Maps ↗</span>
+        </a>
+        <a
+          href={appleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900/80 px-3 py-1.5 font-mono text-[0.7rem] font-bold uppercase tracking-wider text-paper/80 transition-colors hover:border-orange hover:text-orange"
+        >
+          <Navigation class="h-3 w-3 text-orange" />
+          <span>Apple Maps ↗</span>
+        </a>
+        <a
+          href={osmUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hidden sm:inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900/80 px-3 py-1.5 font-mono text-[0.7rem] font-bold uppercase tracking-wider text-paper/80 transition-colors hover:border-orange hover:text-orange"
+        >
+          <Navigation class="h-3 w-3 text-orange" />
+          <span>OSM ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Iframe Wrapper (Populated on 2-Click) -->
+  <div class="privacy-map-frame absolute inset-0 hidden h-full w-full bg-forest-950">
+    <!-- Populated via client-side script -->
+  </div>
+</div>
+
+<script>
+  function setupPrivacyMaps() {
+    const containers = document.querySelectorAll<HTMLElement>('.privacy-map-container')
+
+    containers.forEach((container) => {
+      const btn = container.querySelector<HTMLButtonElement>('.load-interactive-map-btn')
+      const frameContainer = container.querySelector<HTMLElement>('.privacy-map-frame')
+      const staticContainer = container.querySelector<HTMLElement>('.privacy-map-static')
+
+      if (!btn || !frameContainer || !staticContainer) return
+
+      btn.addEventListener('click', () => {
+        const embedUrl = btn.dataset.embedUrl
+        const title = btn.dataset.title || 'Karte'
+        if (!embedUrl) return
+
+        frameContainer.innerHTML = `
+          <iframe
+            src="${embedUrl}"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="${title}"
+            class="h-full w-full border-0 grayscale invert contrast-125 hover:grayscale-0 hover:invert-0 transition-all duration-500"
+          ></iframe>
+        `
+        staticContainer.classList.add('hidden')
+        frameContainer.classList.remove('hidden')
+      })
+    })
+  }
+
+  // Run on initial load and view transitions
+  setupPrivacyMaps()
+  document.addEventListener('astro:page-load', setupPrivacyMaps)
+</script>
