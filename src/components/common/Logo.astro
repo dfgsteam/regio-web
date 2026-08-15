@@ -1,12 +1,14 @@
 ---
 interface Props {
   variant?: 'icon' | 'full' | 'badge'
+  tone?: 'light' | 'white' | 'dark' | 'auto'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   class?: string
 }
 
 const {
   variant = 'icon',
+  tone = 'light',
   size = 'md',
   class: className,
 } = Astro.props
@@ -17,6 +19,9 @@ const sizeClasses = {
   lg: 'h-14 w-auto',
   xl: 'h-20 w-auto',
 }[size]
+
+const isDark = tone === 'dark'
+const logoSrc = isDark ? '/logo_wegweiser_dark.svg' : '/logo_wegweiser_white.svg'
 ---
 
 {variant === 'badge' ? (
@@ -39,120 +44,27 @@ const sizeClasses = {
         </textPath>
       </text>
 
-      <g transform="translate(42, 38) scale(0.48)">
-        <!-- SMJ Cross (Back) -->
-        <g fill="#F1EBDD" stroke="#111713" stroke-width="3">
-          <!-- Ring segments -->
-          <path d="M 124 74 A 86 86 0 0 1 200 74 L 192 92 A 66 66 0 0 0 132 92 Z" />
-          <path d="M 234 108 A 86 86 0 0 1 234 184 L 216 176 A 66 66 0 0 0 216 116 Z" />
-          <path d="M 200 218 A 86 86 0 0 1 124 218 L 132 200 A 66 66 0 0 0 192 200 Z" />
-          <path d="M 90 184 A 86 86 0 0 1 90 108 L 108 116 A 66 66 0 0 0 108 176 Z" />
-
-          <!-- Cross arms -->
-          <path d="M 146 14 L 178 14 L 178 48 L 170 48 L 170 94 L 154 94 L 154 48 L 146 48 Z" />
-          <path d="M 146 278 L 178 278 L 178 244 L 170 244 L 170 198 L 154 198 L 154 244 L 146 244 Z" />
-          <path d="M 14 130 L 14 162 L 48 162 L 48 154 L 94 154 L 94 138 L 48 138 L 48 130 Z" />
-          <path d="M 310 130 L 310 162 L 276 162 L 276 154 L 230 154 L 230 138 L 276 138 L 276 130 Z" />
-        </g>
-
-        <!-- Shrine Roof & Center Post -->
-        <g fill="#111713" stroke="#F1EBDD" stroke-width="4" stroke-linejoin="round">
-          <!-- Shrine Peak -->
-          <path d="M 162 20 L 136 68 L 146 68 L 146 104 L 178 104 L 178 68 L 188 68 Z" />
-          <!-- Lower Pole -->
-          <rect x="155" y="186" width="14" height="92" rx="2" />
-        </g>
-        <!-- Bell Arch Window -->
-        <path d="M 157 72 A 5 5 0 0 1 167 72 L 167 90 L 157 90 Z" fill="#F1EBDD" />
-
-        <!-- Wegweiser Signboard Hexagon -->
-        <polygon
-          points="20,146 54,98 270,98 304,146 270,194 54,194"
-          fill="#111713"
-          stroke="#F1EBDD"
-          stroke-width="7"
-          stroke-linejoin="round"
-        />
-
-        <!-- WEGWEISER Text -->
-        <text
-          x="162"
-          y="160"
-          fill="#FF5A1F"
-          font-family="'Anton', Impact, 'Arial Black', sans-serif"
-          font-weight="900"
-          font-size="44"
-          text-anchor="middle"
-          letter-spacing="3"
-        >
-          WEGWEISER
-        </text>
+      <g transform="translate(48, 48) scale(0.44)">
+        <image href="/logo_wegweiser_white.svg" width="328" height="288" />
       </g>
     </svg>
   </div>
 ) : (
   <div class:list={['relative inline-flex items-center gap-3', className]}>
-    <svg
-      viewBox="0 0 328 292"
-      class:list={[sizeClasses, 'shrink-0 drop-shadow-sm']}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="SMJ Regio Wegweiser Logo"
-    >
-      <!-- SMJ Cross (Back) -->
-      <g fill="#111713" stroke="#F1EBDD" stroke-width="3.5" stroke-linejoin="round">
-        <!-- Upper & Lower Ring Segments -->
-        <path d="M 124 74 A 86 86 0 0 1 200 74 L 192 92 A 66 66 0 0 0 132 92 Z" />
-        <path d="M 234 108 A 86 86 0 0 1 234 184 L 216 176 A 66 66 0 0 0 216 116 Z" />
-        <path d="M 200 218 A 86 86 0 0 1 124 218 L 132 200 A 66 66 0 0 0 192 200 Z" />
-        <path d="M 90 184 A 86 86 0 0 1 90 108 L 108 116 A 66 66 0 0 0 108 176 Z" />
-
-        <!-- Stepped Cross Arms (Top, Bottom, Left, Right) -->
-        <path d="M 146 14 L 178 14 L 178 48 L 170 48 L 170 94 L 154 94 L 154 48 L 146 48 Z" />
-        <path d="M 146 278 L 178 278 L 178 244 L 170 244 L 170 198 L 154 198 L 154 244 L 146 244 Z" />
-        <path d="M 14 130 L 14 162 L 48 162 L 48 154 L 94 154 L 94 138 L 48 138 L 48 130 Z" />
-        <path d="M 310 130 L 310 162 L 276 162 L 276 154 L 230 154 L 230 138 L 276 138 L 276 130 Z" />
-      </g>
-
-      <!-- Shrine Roof & Center Post -->
-      <g fill="#111713" stroke="#F1EBDD" stroke-width="4.5" stroke-linejoin="round">
-        <!-- Shrine Peak -->
-        <path d="M 162 18 L 134 68 L 145 68 L 145 104 L 179 104 L 179 68 L 190 68 Z" />
-        <!-- Lower Pole -->
-        <rect x="154" y="186" width="16" height="92" rx="2" />
-      </g>
-
-      <!-- Bell Arch Window -->
-      <path d="M 157 72 A 5 5 0 0 1 167 72 L 167 92 L 157 92 Z" fill="#F1EBDD" />
-
-      <!-- Wegweiser Signboard Hexagon -->
-      <polygon
-        points="18,146 54,96 270,96 306,146 270,196 54,196"
-        fill="#111713"
-        stroke="#F1EBDD"
-        stroke-width="7"
-        stroke-linejoin="round"
-      />
-
-      <!-- WEGWEISER Text -->
-      <text
-        x="162"
-        y="161"
-        fill="#FF5A1F"
-        font-family="'Anton', Impact, 'Arial Black', sans-serif"
-        font-weight="900"
-        font-size="45"
-        text-anchor="middle"
-        letter-spacing="2.8"
-      >
-        WEGWEISER
-      </text>
-    </svg>
+    <img
+      src={logoSrc}
+      alt="SMJ Regio Wegweiser Logo"
+      class:list={[sizeClasses, 'shrink-0 object-contain drop-shadow-sm']}
+      loading="eager"
+      decoding="async"
+    />
 
     {variant === 'full' && (
       <span class="flex flex-col leading-tight">
         <span class="font-mono text-[0.6rem] font-bold uppercase tracking-[0.28em] text-orange">SMJ Regio</span>
-        <span class="font-display text-lg uppercase tracking-wider text-paper">Wegweiser</span>
+        <span class:list={['font-display text-lg uppercase tracking-wider', isDark ? 'text-forest-950' : 'text-paper']}>
+          Wegweiser
+        </span>
       </span>
     )}
   </div>
