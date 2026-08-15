@@ -7,22 +7,35 @@ interface Props {
   title: string
   description: string
   image?: string
+  imageAlt?: string
   noIndex?: boolean
   publishedAt?: Date
   author?: string
+  tags?: string[]
 }
 
-const { title, description, image, noIndex, publishedAt, author } = Astro.props
+const { title, description, image, imageAlt, noIndex, publishedAt, author, tags = [] } = Astro.props
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '')
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
 
 const articleStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: title,
   description,
-  image,
+  image: image ? new URL(image, Astro.site).toString() : `${siteUrl}/og-image.png`,
   datePublished: publishedAt?.toISOString(),
-  author: { '@type': 'Organization', name: author ?? 'SMJ Regio Wegweiser' },
-  publisher: { '@type': 'Organization', name: 'SMJ Regio Wegweiser' },
+  dateModified: publishedAt?.toISOString(),
+  articleSection: tags.join(', '),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+  author: { '@type': 'Organization', name: author ?? 'SMJ Regio Wegweiser', url: siteUrl },
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${siteUrl}/#organization`,
+    name: 'SMJ Regio Wegweiser',
+    logo: { '@type': 'ImageObject', url: `${siteUrl}/og-image.png` },
+  },
 }
 ---
 
@@ -30,6 +43,8 @@ const articleStructuredData = {
   title={title}
   description={description}
   image={image}
+  imageAlt={imageAlt}
+  ogType="article"
   noIndex={noIndex}
   structuredData={articleStructuredData}
 >

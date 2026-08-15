@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://smj-wegweiser.de/sitemap-index.xml
+# Keep in sync with the SITE_URL default in astro.config.mjs
+Sitemap: https://regio.hnld.de/sitemap-index.xml

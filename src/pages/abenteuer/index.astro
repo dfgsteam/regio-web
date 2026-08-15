@@ -5,15 +5,10 @@ import Eyebrow from '../../components/common/Eyebrow.astro'
 import EventCard from '../../components/events/EventCard.astro'
 import Button from '../../components/common/Button.astro'
 import { Calendar } from '@lucide/astro'
-import { getCollection } from 'astro:content'
 import { getCurrentCamp } from '../../lib/camps'
 import { eventProvider, formatAgeRange } from '../../lib/events'
 
-const [allEvents, specialEvents, currentCamp] = await Promise.all([
-  eventProvider.getEvents(),
-  getCollection('specialEvents').catch(() => []),
-  getCurrentCamp(),
-])
+const [allEvents, currentCamp] = await Promise.all([eventProvider.getEvents(), getCurrentCamp()])
 
 const now = new Date()
 const upcoming = allEvents
@@ -23,10 +18,6 @@ const past = allEvents
   .filter((event) => event.end < now)
   .sort((a, b) => b.start.getTime() - a.start.getTime())
   .slice(0, 3)
-
-const activeSpecials = specialEvents
-  .filter((event) => event.data.active)
-  .sort((a, b) => a.data.date.start.getTime() - b.data.date.start.getTime())
 
 const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.data.age.max) : null
 ---
@@ -65,29 +56,16 @@ const age = currentCamp ? formatAgeRange(currentCamp.data.age.min, currentCamp.d
     </section>
   )}
 
-  {activeSpecials.length > 0 && (
+  {upcoming.some((event) => event.category === 'special') && (
     <section class="bg-forest-950 py-16">
       <Container>
         <Eyebrow label="Besondere Abenteuer" />
         <div class="mt-8 grid gap-6 md:grid-cols-2">
-          {activeSpecials.map((special) => (
-            <EventCard
-              event={{
-                id: special.id,
-                title: special.data.title,
-                slug: special.data.slug,
-                start: special.data.date.start,
-                end: special.data.date.end,
-                location: special.data.location.name,
-                ageMin: special.data.age.min,
-                ageMax: special.data.age.max,
-                teaser: special.data.teaser,
-                category: 'special',
-              }}
-              href={`/abenteuer/${special.data.slug}/`}
-              featured={special.data.featured}
-            />
-          ))}
+          {upcoming
+            .filter((event) => event.category === 'special')
+            .map((special) => (
+              <EventCard event={special} href={`/abenteuer/${special.slug}/`} featured />
+            ))}
         </div>
       </Container>
     </section>

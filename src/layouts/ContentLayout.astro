@@ -7,18 +7,22 @@ interface Props {
   title: string
   description: string
   image?: string
+  imageAlt?: string
   noIndex?: boolean
-  structuredData?: object
+  canonicalPath?: string
+  structuredData?: object | object[]
 }
 
-const { title, description, image, noIndex, structuredData } = Astro.props
+const { title, description, image, imageAlt, noIndex, canonicalPath, structuredData } = Astro.props
 ---
 
 <BaseLayout
   title={title}
   description={description}
   image={image}
+  imageAlt={imageAlt}
   noIndex={noIndex}
+  canonicalPath={canonicalPath}
   structuredData={structuredData}
 >
   <Header />

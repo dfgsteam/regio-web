@@ -13,21 +13,11 @@ import JournalSection from '../components/home/JournalSection.astro'
 import FinalCta from '../components/home/FinalCta.astro'
 import Header from '../components/navigation/Header.astro'
 import Footer from '../components/navigation/Footer.astro'
-
-const organizationStructuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'SMJ Regio Wegweiser',
-  url: Astro.site?.toString() || 'https://regio.hnld.de',
-  description:
-    'Jugendverband der Schönstatt-Mannesjugend in der Region Wegweiser. Zeltlager, Wochenenden und Gemeinschaft für Jungs von 9 bis 14 Jahren.',
-}
 ---
 
 <BaseLayout
   title="SMJ Regio Wegweiser – Raus. Ins Abenteuer."
   description="Zeltlager. Lagerfeuer. Wettkämpfe. Freunde. Zehn Tage, die anders sind als alles davor. Die SMJ Regio Wegweiser – Abenteuer und Gemeinschaft für Jungs von 9 bis 14."
-  structuredData={organizationStructuredData}
 >
   <Header />
   <main>

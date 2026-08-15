@@ -10,28 +10,54 @@ interface Props {
 
 const { camp } = Astro.props
 
+const siteUrl = Astro.site?.toString().replace(/\/$/, '')
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
+
 const eventStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Event',
   name: camp.title,
-  description: camp.motto,
+  description: camp.story ?? camp.motto,
+  image: new URL(camp.theme.assets.hero, Astro.site).toString(),
   startDate: camp.date.start.toISOString(),
   endDate: camp.date.end.toISOString(),
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   eventStatus: 'https://schema.org/EventScheduled',
+  organizer: { '@type': 'Organization', '@id': `${siteUrl}/#organization` },
   location: {
     '@type': 'Place',
     name: camp.location.name,
   },
-  offers: camp.registration.enabled ? { '@type': 'Offer', url: camp.registration.url } : undefined,
+  offers: camp.registration.enabled
+    ? {
+        '@type': 'Offer',
+        url: camp.registration.url ?? canonicalUrl,
+        availability: 'https://schema.org/InStock',
+        validFrom: camp.registration.deadline?.toISOString(),
+      }
+    : undefined,
 }
+
+const faqStructuredData =
+  camp.faq.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: camp.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      }
+    : undefined
 ---
 
 <BaseLayout
   title={`${camp.title} – ${camp.motto}`}
   description={`${camp.motto}: ${camp.date.start.toLocaleDateString('de-DE')} – ${camp.date.end.toLocaleDateString('de-DE')} in ${camp.location.name}. Für ${camp.age.min}–${camp.age.max} Jahre.`}
   image={camp.theme.assets.hero}
-  structuredData={eventStructuredData}
+  imageAlt={`Zeltlager ${camp.year} – ${camp.motto}`}
+  structuredData={[eventStructuredData, faqStructuredData].filter(Boolean)}
 >
   <Header />
   <div

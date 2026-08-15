@@ -1,0 +1,29 @@
+---
+import Container from './Container.astro'
+import Button from './Button.astro'
+import Coordinates from './Coordinates.astro'
+---
+
+<section class="flex min-h-svh items-center bg-forest-950 py-32">
+  <Container class="text-center">
+    <p class="eyebrow mb-6">Lost in the field</p>
+    <h1 class="display display-xl text-paper">
+      Hier ist<br />
+      <span class="text-orange">kein Weg.</span>
+    </h1>
+    <p class="mx-auto mt-8 max-w-md leading-relaxed text-paper/70">
+      Diese Seite existiert nicht – oder sie wurde umgezogen. Das passiert den besten Expeditionen.
+    </p>
+    <div class="mt-12 flex flex-wrap items-center justify-center gap-4">
+      <Button href="/" variant="primary" size="lg">
+        Zurück zum Start
+      </Button>
+      <Button href="/abenteuer/" variant="ghost" size="lg">
+        Zum nächsten Abenteuer
+      </Button>
+    </div>
+    <div class="mt-16 flex justify-center">
+      <Coordinates value="FEHLER 404 · KEINE KOORDINATEN" />
+    </div>
+  </Container>
+</section>

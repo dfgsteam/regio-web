@@ -74,6 +74,13 @@ if (!event) {
 if (!event) {
   return Astro.redirect('/abenteuer/')
 }
+
+// Slug variants exist so legacy WordPress URLs keep working. Variant
+// pages are near-duplicates, so consolidate search signals on the
+// canonical slug via self-referencing canonicals on the primary URL.
+const isCanonicalSlug = Astro.params.slug === event.slug
+const canonicalPath = isCanonicalSlug ? undefined : `/abenteuer/${event.slug}/`
+
 const templateType = getEventTemplateType(event.title, event.category)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 const formattedDate = formatDateRange(event.start, event.end)
@@ -92,14 +99,20 @@ const eyebrowLabel = isPast
       ? 'Sterntreffen · Zeltlager-Nachtreffen'
       : 'Veranstaltung · SMJ Regio Wegweiser'
 
+const siteUrl = Astro.site?.toString().replace(/\/$/, '')
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
+
 const eventStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Event',
   name: event.title,
   description: event.teaser ?? event.description,
+  image: event.image ? new URL(event.image, Astro.site).toString() : `${siteUrl}/og-image.png`,
   startDate: event.start.toISOString(),
   endDate: event.end.toISOString(),
-  eventStatus: isPast ? 'https://schema.org/EventMovedOnline' : 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: isPast ? 'https://schema.org/EventScheduled' : 'https://schema.org/EventScheduled',
+  organizer: { '@type': 'Organization', '@id': `${siteUrl}/#organization` },
   location: {
     '@type': 'Place',
     name: event.location,
@@ -113,7 +126,9 @@ const eventStructuredData = {
         availability: 'https://schema.org/InStock',
         url: event.registrationUrl,
       }
-    : undefined,
+    : event.registrationUrl && !isPast
+      ? { '@type': 'Offer', url: event.registrationUrl, availability: 'https://schema.org/InStock' }
+      : undefined,
 }
 ---
 
@@ -121,6 +136,7 @@ const eventStructuredData = {
   title={`${event.title} – SMJ Regio Wegweiser`}
   description={event.teaser ?? `${event.title} der SMJ Regio Wegweiser vom ${formattedDate}.`}
   image={event.image ?? '/placeholders/wide.svg'}
+  canonicalPath={canonicalPath}
   structuredData={eventStructuredData}
 >
   <!-- Header / Hero Section -->

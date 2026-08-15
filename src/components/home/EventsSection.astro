@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content'
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
 import Button from '../common/Button.astro'
@@ -10,45 +9,14 @@ import type { Event } from '../../lib/events'
 
 type DisplayItem = { event: Event; href?: string; featured: boolean }
 
-const [allEvents, specialEvents] = await Promise.all([
-  eventProvider.getEvents(),
-  getCollection('specialEvents').catch(() => []),
-])
+const allEvents = await eventProvider.getEvents()
 
 const now = new Date()
 const upcoming = allEvents
   .filter((event) => event.end >= now)
   .sort((a, b) => a.start.getTime() - b.start.getTime())
 
-const featuredSpecial = specialEvents
-  .filter((event) => event.data.active && event.data.featured)
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())[0]
-
-const providerIds = new Set(allEvents.map((event) => event.slug))
-const specialNotInProvider: DisplayItem | null =
-  featuredSpecial && !providerIds.has(featuredSpecial.data.slug)
-    ? {
-        event: {
-          id: featuredSpecial.id,
-          title: featuredSpecial.data.title,
-          slug: featuredSpecial.data.slug,
-          start: featuredSpecial.data.date.start,
-          end: featuredSpecial.data.date.end,
-          location: featuredSpecial.data.location.name,
-          ageMin: featuredSpecial.data.age.min,
-          ageMax: featuredSpecial.data.age.max,
-          teaser: featuredSpecial.data.teaser,
-          category: 'special' as const,
-        },
-        href: `/abenteuer/${featuredSpecial.data.slug}/`,
-        featured: true,
-      }
-    : null
-
-const display: DisplayItem[] = [
-  ...(specialNotInProvider ? [specialNotInProvider] : []),
-  ...upcoming.slice(0, 3).map((event) => ({ event, featured: false })),
-]
+const display: DisplayItem[] = upcoming.slice(0, 3).map((event) => ({ event, featured: false }))
 ---
 
 <section id="events" class="relative bg-forest-950 py-24 sm:py-32">

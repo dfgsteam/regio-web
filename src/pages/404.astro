@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Header from '../components/navigation/Header.astro'
+import Footer from '../components/navigation/Footer.astro'
+import NotFound from '../components/common/NotFound.astro'
+---
+
+<BaseLayout
+  title="Seite nicht gefunden – SMJ Regio Wegweiser"
+  description="Diese Seite existiert nicht oder wurde umgezogen."
+  noIndex
+>
+  <Header />
+  <main>
+    <NotFound />
+  </main>
+  <Footer />
+</BaseLayout>

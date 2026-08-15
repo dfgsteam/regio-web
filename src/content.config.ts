@@ -1,4 +1,4 @@
-import { defineCollection, reference } from 'astro:content'
+import { defineCollection } from 'astro:content'
 import { glob } from 'astro/loaders'
 import { z } from 'zod/v4'
 
@@ -62,38 +62,4 @@ const camps = defineCollection({
   }),
 })
 
-const specialEvents = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/special-events' }),
-  schema: z.object({
-    title: z.string(),
-    slug: z.string(),
-    featured: z.boolean().default(false),
-    active: z.boolean().default(false),
-    publishedAt: z.coerce.date(),
-    date: z.object({
-      start: z.coerce.date(),
-      end: z.coerce.date(),
-    }),
-    age: z.object({
-      min: z.number().int(),
-      max: z.number().int().optional(),
-    }),
-    location: z.object({
-      name: z.string(),
-    }),
-    teaser: z.string(),
-    registration: z
-      .object({
-        url: z.url().optional(),
-        deadline: z.coerce.date().optional(),
-      })
-      .optional(),
-    relatedCamp: reference('camps').optional(),
-    image: z.object({
-      src: z.string(),
-      alt: z.string(),
-    }),
-  }),
-})
-
-export const collections = { posts, camps, specialEvents }
+export const collections = { posts, camps }
