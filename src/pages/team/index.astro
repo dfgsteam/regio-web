@@ -9,30 +9,34 @@ import { Mail } from '@lucide/astro'
 const teamMembers = [
   {
     role: 'Regiosprecher',
+    badge: 'Regiosprecher',
     name: 'Kilian Schlosser',
     email: 'kilian.schlosser@smj-wegweiser.de',
-    image: '/placeholders/portrait.svg',
+    image: '/team/kilian-schlosser.png',
     description:
       'Koordination der Region Wegweiser, Vernetzung und Gesamtverantwortung für die Aktionen vor Ort.',
   },
   {
-    role: '1. Diözesanleiter',
+    role: 'Diözesanleitung',
+    badge: 'Diözesanleitung',
     name: 'Vinzenz Hupe',
     email: 'vinzenz.hupe@smj-wegweiser.de',
-    image: '/placeholders/portrait.svg',
+    image: '/team/vinzenz-hupe.png',
     description:
       'Vertretung auf Diözesanebene, Aus- und Weiterbildung der Gruppenleiter sowie Jahresplanung.',
   },
   {
-    role: '2. Diözesanleiter',
+    role: 'Diözesanleitung',
+    badge: 'Diözesanleitung',
     name: 'Jonathan Hunold',
     email: 'jonathan.hunold@smj-wegweiser.de',
-    image: '/placeholders/portrait.svg',
+    image: '/team/jonathan-hunold.png',
     description:
       'Unterstützung der Leitung, Organisation von Wochenenden und Begleitung neuer Gruppenleiter.',
   },
   {
     role: 'Finanzen & Kasse',
+    badge: 'Finanzen & Kasse',
     name: 'Julian Hupe',
     email: 'julian.hupe@smj-wegweiser.de',
     image: '/placeholders/portrait.svg',
@@ -66,7 +70,7 @@ const teamMembers = [
     </Container>
   </section>
 
-  <section class="bg-forest-950 pb-20 pt-4">
+  <section class="bg-forest-950 pb-24 pt-4">
     <Container>
       <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div>
@@ -80,40 +84,53 @@ const teamMembers = [
         </p>
       </div>
 
-      <div id="team-members-container" class="grid gap-6 md:grid-cols-2">
+      <div id="team-members-container" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {
           teamMembers.map((member) => (
-            <article class="team-member-card group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900 p-6 transition-colors hover:border-orange sm:p-8">
-              <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
-                <div class="relative shrink-0 overflow-hidden border border-paper/20 bg-forest-950 w-28 h-36 sm:w-32 sm:h-40">
-                  <img
-                    src={member.image}
-                    alt={`Porträt von ${member.name} (${member.role})`}
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <span class="absolute bottom-1.5 left-1.5 bg-forest-950/90 px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-wider text-orange border border-paper/10">
-                    {member.role.split(' ')[0]}
-                  </span>
-                </div>
+            <article class="team-member-card group relative flex flex-col justify-between overflow-hidden border-2 border-paper/15 bg-forest-900 p-5 sm:p-6 transition-all duration-300 hover:border-orange hover:-translate-y-1 shadow-xl">
+              <!-- Top Graphic / Cutout Stage with Topo Lines & Backlight -->
+              <div class="relative mb-6 flex h-72 w-full items-end justify-center overflow-hidden border border-paper/10 bg-forest-950/80">
+                <!-- Topo Background Texture -->
+                <div class="texture-topo absolute inset-0 opacity-40 pointer-events-none" aria-hidden="true" />
+                
+                <!-- Warm Glow behind person on hover -->
+                <div class="absolute -bottom-6 h-40 w-40 rounded-full bg-orange/20 blur-2xl opacity-40 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" aria-hidden="true" />
 
-                <div class="flex-1">
-                  <p class="eyebrow mb-1 text-xs">{member.role}</p>
-                  <h3 class="display text-2xl sm:text-3xl text-paper transition-colors group-hover:text-orange">
-                    {member.name}
-                  </h3>
-                  <p class="mt-3 text-sm leading-relaxed text-paper/75">{member.description}</p>
+                <!-- Transparent Cutout Portrait -->
+                <img
+                  src={member.image}
+                  alt={`Porträt von ${member.name} (${member.role})`}
+                  class="relative z-10 h-full w-auto max-w-none object-contain object-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.65)] transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+
+                <!-- Clean Role Pill Badge -->
+                <div class="absolute bottom-2.5 left-2.5 z-20">
+                  <span class="stamp-distressed text-[0.6rem] border-orange/80 bg-forest-950/90 text-orange px-2.5 py-1 font-mono font-bold uppercase tracking-[0.18em]">
+                    {member.badge}
+                  </span>
                 </div>
               </div>
 
-              <div class="mt-6 border-t border-paper/10 pt-4">
-                <a
-                  href={`mailto:${member.email}`}
-                  class="inline-flex items-center gap-2.5 font-mono text-xs font-bold uppercase tracking-[0.12em] text-orange transition-colors hover:text-paper"
-                >
-                  <Mail class="h-4 w-4 shrink-0" />
-                  {member.email}
-                </a>
+              <!-- Card Content Info -->
+              <div class="flex flex-1 flex-col justify-between">
+                <div>
+                  <p class="eyebrow mb-1 text-[0.65rem] text-orange">{member.role}</p>
+                  <h3 class="display text-2xl sm:text-3xl text-paper transition-colors group-hover:text-orange">
+                    {member.name}
+                  </h3>
+                  <p class="mt-3 text-xs leading-relaxed text-paper/75">{member.description}</p>
+                </div>
+
+                <div class="mt-6 border-t border-paper/10 pt-4">
+                  <a
+                    href={`mailto:${member.email}`}
+                    class="inline-flex w-full items-center justify-center gap-2 border border-paper/20 bg-forest-950 px-3 py-2 font-mono text-[0.68rem] font-bold uppercase tracking-[0.14em] text-orange transition-all hover:border-orange hover:bg-orange hover:text-forest-950"
+                  >
+                    <Mail class="h-3.5 w-3.5 shrink-0" />
+                    <span class="truncate">E-Mail schreiben</span>
+                  </a>
+                </div>
               </div>
             </article>
           ))
