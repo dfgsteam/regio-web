@@ -1,14 +1,12 @@
 ---
 interface Props {
   variant?: 'icon' | 'full' | 'badge'
-  tone?: 'original' | 'theme' | 'monochrome'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   class?: string
 }
 
 const {
   variant = 'icon',
-  tone = 'theme',
   size = 'md',
   class: className,
 } = Astro.props
@@ -19,30 +17,6 @@ const sizeClasses = {
   lg: 'h-14 w-auto',
   xl: 'h-20 w-auto',
 }[size]
-
-const colors = {
-  original: {
-    cross: '#134675',
-    sign: '#60A238',
-    pole: '#60A238',
-    text: '#FFFFFF',
-    border: '#FFFFFF',
-  },
-  theme: {
-    cross: 'currentColor',
-    sign: '#FF5A1F',
-    pole: '#FF5A1F',
-    text: '#111713',
-    border: '#111713',
-  },
-  monochrome: {
-    cross: 'currentColor',
-    sign: 'currentColor',
-    pole: 'currentColor',
-    text: 'var(--color-forest-950, #111713)',
-    border: 'transparent',
-  },
-}[tone]
 ---
 
 {variant === 'badge' ? (
@@ -65,41 +39,51 @@ const colors = {
         </textPath>
       </text>
 
-      <g transform="translate(30, 36) scale(0.9)">
-        <g fill={tone === 'original' ? colors.cross : '#F1EBDD'} opacity={tone === 'original' ? '1' : '0.85'}>
-          <path d="M 74 54 A 48 48 0 0 1 126 54 L 120 64 A 36 36 0 0 0 80 64 Z" />
-          <path d="M 146 74 A 48 48 0 0 1 146 126 L 136 120 A 36 36 0 0 0 136 80 Z" />
-          <path d="M 126 146 A 48 48 0 0 1 74 146 L 80 136 A 36 36 0 0 0 120 136 Z" />
-          <path d="M 54 126 A 48 48 0 0 1 54 74 L 64 80 A 36 36 0 0 0 64 120 Z" />
+      <g transform="translate(42, 38) scale(0.48)">
+        <!-- SMJ Cross (Back) -->
+        <g fill="#F1EBDD" stroke="#111713" stroke-width="3">
+          <!-- Ring segments -->
+          <path d="M 124 74 A 86 86 0 0 1 200 74 L 192 92 A 66 66 0 0 0 132 92 Z" />
+          <path d="M 234 108 A 86 86 0 0 1 234 184 L 216 176 A 66 66 0 0 0 216 116 Z" />
+          <path d="M 200 218 A 86 86 0 0 1 124 218 L 132 200 A 66 66 0 0 0 192 200 Z" />
+          <path d="M 90 184 A 86 86 0 0 1 90 108 L 108 116 A 66 66 0 0 0 108 176 Z" />
 
-          <path d="M 88 12 L 112 12 L 112 36 L 106 36 L 106 70 L 94 70 L 94 36 L 88 36 Z" />
-          <path d="M 88 188 L 112 188 L 112 164 L 106 164 L 106 130 L 94 130 L 94 164 L 88 164 Z" />
-          <path d="M 12 88 L 12 112 L 36 112 L 36 106 L 70 106 L 70 94 L 36 94 L 36 88 Z" />
-          <path d="M 188 88 L 188 112 L 164 112 L 164 106 L 130 106 L 130 94 L 164 94 L 164 88 Z" />
+          <!-- Cross arms -->
+          <path d="M 146 14 L 178 14 L 178 48 L 170 48 L 170 94 L 154 94 L 154 48 L 146 48 Z" />
+          <path d="M 146 278 L 178 278 L 178 244 L 170 244 L 170 198 L 154 198 L 154 244 L 146 244 Z" />
+          <path d="M 14 130 L 14 162 L 48 162 L 48 154 L 94 154 L 94 138 L 48 138 L 48 130 Z" />
+          <path d="M 310 130 L 310 162 L 276 162 L 276 154 L 230 154 L 230 138 L 276 138 L 276 130 Z" />
         </g>
 
-        <g stroke={tone === 'original' ? '#FFFFFF' : '#111713'} stroke-width="4" stroke-linejoin="round">
-          <path d="M 100 16 L 82 48 L 88 48 L 88 74 L 112 74 L 112 48 L 118 48 Z" fill="none" />
-          <rect x="94" y="126" width="12" height="66" fill="none" />
-          <path d="M 8 100 L 46 72 Q 100 80 154 72 L 192 100 L 154 128 Q 100 120 46 128 Z" fill="none" />
+        <!-- Shrine Roof & Center Post -->
+        <g fill="#111713" stroke="#F1EBDD" stroke-width="4" stroke-linejoin="round">
+          <!-- Shrine Peak -->
+          <path d="M 162 20 L 136 68 L 146 68 L 146 104 L 178 104 L 178 68 L 188 68 Z" />
+          <!-- Lower Pole -->
+          <rect x="155" y="186" width="14" height="92" rx="2" />
         </g>
+        <!-- Bell Arch Window -->
+        <path d="M 157 72 A 5 5 0 0 1 167 72 L 167 90 L 157 90 Z" fill="#F1EBDD" />
 
-        <g fill={colors.sign}>
-          <path d="M 100 16 L 82 48 L 88 48 L 88 74 L 112 74 L 112 48 L 118 48 Z" />
-          <path d="M 96 52 A 4 4 0 0 1 104 52 L 104 64 L 96 64 Z" fill={tone === 'original' ? '#FFFFFF' : '#111713'} />
-          <rect x="95" y="124" width="10" height="68" fill={colors.pole} />
-          <path d="M 8 100 L 46 72 Q 100 80 154 72 L 192 100 L 154 128 Q 100 120 46 128 Z" />
-        </g>
+        <!-- Wegweiser Signboard Hexagon -->
+        <polygon
+          points="20,146 54,98 270,98 304,146 270,194 54,194"
+          fill="#111713"
+          stroke="#F1EBDD"
+          stroke-width="7"
+          stroke-linejoin="round"
+        />
 
+        <!-- WEGWEISER Text -->
         <text
-          x="100"
-          y="106"
-          fill={colors.text}
-          font-family="system-ui, -apple-system, sans-serif"
-          font-weight="800"
-          font-size="19"
+          x="162"
+          y="160"
+          fill="#FF5A1F"
+          font-family="'Anton', Impact, 'Arial Black', sans-serif"
+          font-weight="900"
+          font-size="44"
           text-anchor="middle"
-          letter-spacing="0.5"
+          letter-spacing="3"
         >
           WEGWEISER
         </text>
@@ -109,46 +93,57 @@ const colors = {
 ) : (
   <div class:list={['relative inline-flex items-center gap-3', className]}>
     <svg
-      viewBox="0 0 200 200"
+      viewBox="0 0 328 292"
       class:list={[sizeClasses, 'shrink-0 drop-shadow-sm']}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-label="SMJ Regio Wegweiser Logo"
     >
-      <g fill={tone === 'original' ? colors.cross : (tone === 'theme' ? '#F1EBDD' : 'currentColor')} opacity={tone === 'original' ? '1' : '0.85'}>
-        <path d="M 74 54 A 48 48 0 0 1 126 54 L 120 64 A 36 36 0 0 0 80 64 Z" />
-        <path d="M 146 74 A 48 48 0 0 1 146 126 L 136 120 A 36 36 0 0 0 136 80 Z" />
-        <path d="M 126 146 A 48 48 0 0 1 74 146 L 80 136 A 36 36 0 0 0 120 136 Z" />
-        <path d="M 54 126 A 48 48 0 0 1 54 74 L 64 80 A 36 36 0 0 0 64 120 Z" />
+      <!-- SMJ Cross (Back) -->
+      <g fill="#111713" stroke="#F1EBDD" stroke-width="3.5" stroke-linejoin="round">
+        <!-- Upper & Lower Ring Segments -->
+        <path d="M 124 74 A 86 86 0 0 1 200 74 L 192 92 A 66 66 0 0 0 132 92 Z" />
+        <path d="M 234 108 A 86 86 0 0 1 234 184 L 216 176 A 66 66 0 0 0 216 116 Z" />
+        <path d="M 200 218 A 86 86 0 0 1 124 218 L 132 200 A 66 66 0 0 0 192 200 Z" />
+        <path d="M 90 184 A 86 86 0 0 1 90 108 L 108 116 A 66 66 0 0 0 108 176 Z" />
 
-        <path d="M 88 12 L 112 12 L 112 36 L 106 36 L 106 70 L 94 70 L 94 36 L 88 36 Z" />
-        <path d="M 88 188 L 112 188 L 112 164 L 106 164 L 106 130 L 94 130 L 94 164 L 88 164 Z" />
-        <path d="M 12 88 L 12 112 L 36 112 L 36 106 L 70 106 L 70 94 L 36 94 L 36 88 Z" />
-        <path d="M 188 88 L 188 112 L 164 112 L 164 106 L 130 106 L 130 94 L 164 94 L 164 88 Z" />
+        <!-- Stepped Cross Arms (Top, Bottom, Left, Right) -->
+        <path d="M 146 14 L 178 14 L 178 48 L 170 48 L 170 94 L 154 94 L 154 48 L 146 48 Z" />
+        <path d="M 146 278 L 178 278 L 178 244 L 170 244 L 170 198 L 154 198 L 154 244 L 146 244 Z" />
+        <path d="M 14 130 L 14 162 L 48 162 L 48 154 L 94 154 L 94 138 L 48 138 L 48 130 Z" />
+        <path d="M 310 130 L 310 162 L 276 162 L 276 154 L 230 154 L 230 138 L 276 138 L 276 130 Z" />
       </g>
 
-      <g stroke={tone === 'original' ? '#FFFFFF' : '#111713'} stroke-width="4.5" stroke-linejoin="round">
-        <path d="M 100 16 L 82 48 L 88 48 L 88 74 L 112 74 L 112 48 L 118 48 Z" fill="none" />
-        <rect x="94" y="126" width="12" height="66" fill="none" />
-        <path d="M 8 100 L 46 72 Q 100 80 154 72 L 192 100 L 154 128 Q 100 120 46 128 Z" fill="none" />
+      <!-- Shrine Roof & Center Post -->
+      <g fill="#111713" stroke="#F1EBDD" stroke-width="4.5" stroke-linejoin="round">
+        <!-- Shrine Peak -->
+        <path d="M 162 18 L 134 68 L 145 68 L 145 104 L 179 104 L 179 68 L 190 68 Z" />
+        <!-- Lower Pole -->
+        <rect x="154" y="186" width="16" height="92" rx="2" />
       </g>
 
-      <g fill={colors.sign}>
-        <path d="M 100 16 L 82 48 L 88 48 L 88 74 L 112 74 L 112 48 L 118 48 Z" />
-        <path d="M 96 52 A 4 4 0 0 1 104 52 L 104 64 L 96 64 Z" fill={tone === 'original' ? '#FFFFFF' : '#111713'} />
-        <rect x="95" y="124" width="10" height="68" fill={colors.pole} />
-        <path d="M 8 100 L 46 72 Q 100 80 154 72 L 192 100 L 154 128 Q 100 120 46 128 Z" />
-      </g>
+      <!-- Bell Arch Window -->
+      <path d="M 157 72 A 5 5 0 0 1 167 72 L 167 92 L 157 92 Z" fill="#F1EBDD" />
 
+      <!-- Wegweiser Signboard Hexagon -->
+      <polygon
+        points="18,146 54,96 270,96 306,146 270,196 54,196"
+        fill="#111713"
+        stroke="#F1EBDD"
+        stroke-width="7"
+        stroke-linejoin="round"
+      />
+
+      <!-- WEGWEISER Text -->
       <text
-        x="100"
-        y="106"
-        fill={colors.text}
-        font-family="system-ui, -apple-system, sans-serif"
-        font-weight="800"
-        font-size="19"
+        x="162"
+        y="161"
+        fill="#FF5A1F"
+        font-family="'Anton', Impact, 'Arial Black', sans-serif"
+        font-weight="900"
+        font-size="45"
         text-anchor="middle"
-        letter-spacing="0.5"
+        letter-spacing="2.8"
       >
         WEGWEISER
       </text>
