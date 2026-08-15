@@ -3,10 +3,13 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import ImageFrame from '../../components/common/ImageFrame.astro'
+import { X, BookOpen, Quote, Sparkles } from '@lucide/astro'
 
 const pillars = [
   {
+    id: 'gemeinschaft',
     title: 'Gemeinschaft',
+    number: '01',
     message: 'Unsere Gemeinschaft macht Spaß. Dabei sein lohnt sich für jeden – wer mitmachen will, gehört dazu.',
     explanation:
       'Schon die Jüngsten ermutigen wir, sich einzubringen und mitzugestalten. Die Vielfalt der Talente, Typen und Temperamente soll zum Zug kommen. Jeden nehmen wir so an, wie er ist. Eine Atmosphäre der Freiheit bewahrt uns vor Gruppenzwang.',
@@ -14,9 +17,25 @@ const pillars = [
       'Im Zeltlager sind die Gruppen bunt gemischt: Die Kleinen klettern mit den Großen, die Erfahrenen zeigen den Neuen, wie man ein Zelt aufbaut. Beim Geländespiel und am Lagerfeuer zählt nur das Team.',
     bible: 'Denn wo zwei oder drei in meinem Namen versammelt sind, da bin ich mitten unter ihnen. (Mt 18,20)',
     quote: 'Die Neue Gemeinschaft, „die ein seelisches Ineinander und Miteinander und Füreinander kennt.“ (Josef Kentenich)',
+    dossier: {
+      subtitle: 'Unsere Gemeinschaft macht Spaß. Dabei sein lohnt sich für jeden.',
+      vision: [
+        'Wer mitmachen will, gehört dazu. Schon die Jüngsten ermutigen wir, sich einzubringen und mitzugestalten. Die Vielfalt der Talente, Typen und Temperamente soll zum Zug kommen. Die Originalität der Einzelnen prägt den Reichtum unserer Gemeinschaft. Jeden nehmen wir so an, wie er ist. Das Große in ihm möchten wir fördern. In der Gemeinschaft entwickeln wir uns zu starken, selbstständigen Persönlichkeiten.',
+        'Eine Atmosphäre der Freiheit bewahrt uns vor Gruppenzwang. Neue Ideen haben bei uns Platz. Gegenseitig fördern wir uns, kreativ zu sein. Wir investieren in tiefe, freundschaftliche und belastbare Beziehungen. Die Verantwortung füreinander und für das Ganze versuchen wir auch in Krisen und Konflikten wahrzunehmen. So wächst ein Miteinander von hoher Qualität.',
+        'Der Glaube an Jesus Christus trägt unser Miteinander. Gemeinsam gelebter Glaube soll zur persönlichen Gotteserfahrung führen. Dadurch helfen wir einander, dass jeder seinen Zugang zu Gott findet. So entsteht junge Kirche.',
+      ],
+      practice: [
+        'In der SMJ wird Gemeinschaft zum Erlebnis. Bei unseren Veranstaltungen, Treffen und Aktionen schaffen wir die Voraussetzungen für eine positive Gemeinschaftsatmosphäre.',
+        'Wir achten darauf, dass der Einzelne zu einer überschaubaren Gruppe gehört, in der er sich wohlfühlt. Unser Gruppenbewusstsein pflegen wir in vielen originellen Symbolen, Bannern, Liedern und Ritualen.',
+        'Zu der großen Vielfalt von Gemeinschaftserlebnissen gehören unter anderem die wöchentlichen Gruppenstunden. In ihnen beschäftigt sich die Gruppe mit Themen, die dem Alter und den Fragen der Mitglieder entsprechen.',
+        'Die Bindung an feste Orte ist uns wichtig. Unter unseren Jugendhäusern ist das Jugendzentrum Marienberg in Schönstatt der zentrale bundesweite Sammelpunkt.',
+      ],
+    },
   },
   {
+    id: 'apostelsein',
     title: 'Apostelsein',
+    number: '02',
     message: 'Wir sind Apostel aus Begeisterung für Jesus Christus. So prägen wir die Zukunft und gestalten Kirche.',
     explanation:
       'Zukunft liegt uns am Herzen. Das fordert uns heraus, unsere Gesellschaft und unsere Kirche aktiv mitzugestalten. In der eigenen Umgebung aktiv zu werden, ist das Kennzeichen eines SMJlers: Wir setzen unsere Freizeit für Projekte ein und werden zum Vorbild.',
@@ -24,9 +43,25 @@ const pillars = [
       'Unsere Gruppenleiter planen Fahrten selbst, organisieren Sozialaktionen wie 72-Stunden-Projekte und geben ihre Erfahrungen an Jüngere weiter. Jeder Beitrag zählt.',
     bible: 'Und ihr werdet Zeugen sein bis an die Grenzen der Erde. (Apg 1,8)',
     quote: '„Am meisten heute diejenigen in der Welt wirken, die das göttliche Leben, das sie in sich tragen, ausstrahlen.“ (Josef Kentenich)',
+    dossier: {
+      subtitle: 'Wir sind Apostel aus Begeisterung für Jesus Christus. So prägen wir die Zukunft.',
+      vision: [
+        'Die Zukunft liegt uns am Herzen. Das fordert uns heraus, unsere Gesellschaft und unsere Kirche mitzugestalten. Das beginnt im Kleinen, im Alltag und heißt für uns: das Gewöhnliche außergewöhnlich gut tun. Zukunft prägen beginnt in unserer nächsten Umgebung. Wir wollen zeigen: Leben als Christ kann gelingen.',
+        'Gemeinsam geben wir Zeugnis. Bei uns gibt es viele Möglichkeiten, sich einzusetzen. Was wir dabei lernen, befähigt uns für unseren späteren Lebens- und Berufsweg. Wir werden ermutigt, in unsere Umwelt hineinzuwirken und selbst zum Vorbild zu werden. Auf diesem Weg tragen wir die Idee Schönstatts in die Gesellschaft hinein.',
+        'Wir sind überzeugt, dass Gott jeden von uns zu einer einmaligen Aufgabe beruft. Wir sind die Jünger Christi, die er heute als Apostel senden will. Im Liebesbündnis mit Maria wollen wir unsere Sendung begeistert leben.',
+        'Die SMJ ist Teil der internationalen Schönstattbewegung. Das öffnet unseren Blick auch für die Jugend anderer Länder und Kulturen. Unter den Gemeinschaften wissen wir uns mit der Schönstatt-Mädchenjugend (MJF) besonders verbunden.',
+      ],
+      practice: [
+        'In der eigenen Umgebung aktiv zu werden, ist das Kennzeichen eines SMJlers. Wir setzen unsere Freizeit für unsere Freizeiten, Zeltlager und Projekte ein.',
+        'Viele von uns engagieren sich darüber hinaus in ihrer Heimatpfarrei vor Ort, im sozialen oder gesellschaftlichen Bereich.',
+        'Getragen wird unser Einsatz von der Überzeugung, dass auch der kleinste Beitrag zählt. Im Liebesbündnis verschenken wir unser Tun und Beten in allen Lebenssituationen – das nennen wir „Beiträge zum Gnadenkapital“.',
+      ],
+    },
   },
   {
+    id: 'lebensschule',
     title: 'Lebensschule',
+    number: '03',
     message: 'In dieser Lebensschule geht es um jeden Einzelnen: eigene Stärken entdecken und Persönlichkeit entfalten.',
     explanation:
       'Als junge Menschen sind wir auf der Suche nach uns selbst. Die Entfaltung der ganzen Person erheben wir zum Programm: Sich selbst erziehen zu einer festen, freien, christlichen Persönlichkeit. Ältere schulen Jüngere – so übernimmt Jugend für Jugend Verantwortung.',
@@ -34,9 +69,26 @@ const pillars = [
       'Auf Zeltlagern und Gruppenleiterschulungen übernehmen Jugendliche selbstständig Verantwortung. Sie lernen, vor Gruppen zu sprechen, Konflikte zu lösen und eigene Ideale zu verwirklichen.',
     bible: 'Wenn also jemand in Christus ist, dann ist er eine neue Schöpfung. (2 Kor 5,16f)',
     quote: '„Der ganze Sinn der Jugendreife ist weiter nichts als die Entwicklung des Persönlichen Ideals.“ (Josef Kentenich)',
+    dossier: {
+      subtitle: 'In dieser Lebensschule geht es um jeden Einzelnen. Sein Leben steht im Mittelpunkt.',
+      vision: [
+        'Als junge Menschen sind wir auf der Suche nach uns selbst. Die eigenen Stärken und Grenzen wollen wir entdecken und mit ihnen umgehen lernen. Die Entfaltung der ganzen Person erheben wir deshalb zum Programm.',
+        'Sich selbst erziehen zu einer festen, freien, christlichen Persönlichkeit ist unser Ziel. Je mehr der Einzelne weiß, wer er ist und wozu es ihn gibt, desto mehr wird er fähig, sein Leben eigenverantwortlich zu meistern.',
+        'In unserer Lebensschule lernen wir voneinander. Ältere werden geschult, bei Jüngeren die Fragen und Entwicklungen wahrzunehmen, die sie selbst vor wenigen Jahren durchlebt haben. Das befähigt sie, sich für sie einzusetzen und eigene Erfahrungen weiterzugeben. So übernimmt Jugend für Jugend Verantwortung.',
+        'In der eigenen Entwicklung kann der Einzelne die Erfahrung machen, dass Gott durch die Lebensgeschichte spricht: Mensch, du bist wertvoll!',
+      ],
+      practice: [
+        'Die SMJ erlebt sich vor allem auf Zeltlagern, Tagungen und Gruppenleiterschulungen als Lebensschule. Diese werden von Mitgliedern der SMJ selbstständig geleitet.',
+        'Zu den Zeltlagern sind Jungs zwischen 9 und 14 Jahren eingeladen. Nach einer packenden Spielidee werden Thema, Spiele und Bauwerke vorbereitet.',
+        'Die Kreise ab 15 Jahren greifen die im Jugendalter wichtigen Lebensthemen auf – von Identität über Freundschaft bis zu Glaube und Zukunft.',
+        'Wir schaffen Räume, in denen jeder ermutigt wird, sich auf die Suche nach seinem „Persönlichen Ideal“ zu machen: dem göttlichen Funken und der Lebensvision, die in jedem ganz einzigartig brennt.',
+      ],
+    },
   },
   {
+    id: 'mannsein',
     title: 'Mannsein',
+    number: '04',
     message: 'Ein echter Mann trainiert alle seine Seiten: ehrlich, mutig, verlässlich und füreinander da.',
     explanation:
       'Die eigene Männlichkeit zu entdecken, ist ein großes Abenteuer. Jungs dürfen bei uns Jungs sein: ihre Kräfte messen, Gefühle ehrlich ausdrücken und Schwächen anerkennen. Mannsein heißt für uns: für andere einstehen, Wort halten und Verantwortung übernehmen.',
@@ -44,9 +96,25 @@ const pillars = [
       'Sport, Geländespiele und Nachtwachen fordern heraus. Die Älteren tragen die Jüngeren mit: Wer beim Marsch schlapp macht, bekommt eine Hand – und lernt, selbst welche zu geben.',
     bible: 'Gott schuf also den Mann als sein Abbild; als Abbild Gottes schuf er ihn. (Gen 1,27)',
     quote: '„Vor Gott Kind, vor der Welt aber die kraftvollste, eigenwüchsigste und eigenständigste Mannesgestalt.“ (Josef Kentenich)',
+    dossier: {
+      subtitle: 'Ein echter Mann trainiert alle seine Seiten. Bei uns entsteht Männerkultur.',
+      vision: [
+        'Die eigene Männlichkeit zu entdecken, ist für einen Jungen ein großes Abenteuer. Für sein Selbstbewusstsein ist es notwendig, dieses Profil seiner Person zu entwickeln.',
+        'Kräfte messen, Herausforderungen annehmen, etwas leisten und schöpferisch sein gehören dazu. Wir legen Wert auf eine unbefangene und ehrfürchtige Bejahung des eigenen Körpers, die hilft, ein reifes Verhältnis zur eigenen Identität und Sexualität zu finden.',
+        'Jungs und Mädchen brauchen für ihre Suche nach Identität eigene Räume. Deshalb ist unsere Jugendarbeit jungen- und männerspezifisch. Männlichkeit kann sich bei uns in ganzer Breite entfalten: sich ausprobieren, Gefühle zum Ausdruck bringen, Schwächen ehrlich anerkennen und gemeinsam an Zielen wachsen.',
+        'Die Selbstentdeckung als Mann richtet sich an unserer persönlichen Berufung aus, die jedem Einzelnen als Lebensvision von Gott geschenkt ist.',
+      ],
+      practice: [
+        'In der SMJ kommt das, was in jungen Männern steckt, voll zum Zug: Sport, Waldläufe, Nachtgeländespiele, Zeltlagerbau und ehrliche Lagerfeuerrunden.',
+        'Jugendliche übernehmen früh Leitungsverantwortung für Vorbereitung und Durchführung. Gelungene Lebensbeispiele und Vorbilder inspirieren für den eigenen Lebensweg.',
+        'Das, was einen aktuell bewegt und herausfordert, gibt für den nächsten Schritt der Selbsterziehung die Richtung an. Die dabei gefassten konkreten Tagesvorsätze nennen wir „Partikularexamen“.',
+      ],
+    },
   },
   {
+    id: 'liebesbuendnis',
     title: 'Liebesbündnis',
+    number: '05',
     message: 'Im Liebesbündnis wird unser Glaube konkret und alltagstauglich. Mit beiden Beinen fest im Leben.',
     explanation:
       'Wir wollen mit beiden Beinen auf dem Boden stehen und zugleich mit dem Herzen in Gott verankert sein. Das Liebesbündnis mit Maria ist unser Schlüssel zu einem lebendigen Glauben. Es schenkt Geborgenheit, Orientierung und innere Freiheit in allen Lebenslagen.',
@@ -54,13 +122,26 @@ const pillars = [
       'Im Zeltlager errichten wir ein Lagerheiligtum als Ort der Stille und Kraft. Kurze Andachten am Feuer und persönliche Gebete machen den Glauben ganz natürlich erlebbar.',
     bible: 'Frau, siehe dein Sohn! Dann sagte er zu dem Jünger: Siehe deine Mutter! (Joh 19,26-27)',
     quote: '„Dieses Bündnis ist die Ur- und Grundform unserer Existenz, die zündende Zielgestalt und die Grundkraft für den ganzen Menschen.“ (Josef Kentenich)',
+    dossier: {
+      subtitle: 'Im Liebesbündnis wird unser Glaube konkret. Dieser Glaube geht unter die Haut.',
+      vision: [
+        'Wir wollen mit beiden Beinen auf dem Boden stehen und zugleich mit dem Herzen in Gott verankert sein. Unser Glaube muss alltagstauglich sein: Alles, was der Einzelne erlebt, kann für ihn ein Sprungbrett zu Gott sein.',
+        'Beziehungen sind der Geschmack am Leben. Wir legen Wert auf das organische Wachstum unserer Bindungen an Menschen, Orte und Ideale. Dieses Netz von Bindungen erleichtert es uns, das persönliche Bündnis mit Gott zu leben.',
+        'Das Liebesbündnis mit Maria ist unser Schlüssel zu einem lebendigen Glauben. Wir binden uns an die Mutter und Erzieherin Jesu und wollen in ihrer Begleitung lernen, als Christen mutig zu leben. Entsprechend unserer persönlichen Entwicklung vertiefen wir dieses Bündnis.',
+      ],
+      practice: [
+        'Glaube will an konkreten Orten spürbar werden: Das Heiligtum – jene kleine Kapelle, in der Schönstatt gegründet wurde – ist für uns ein heiliger Raum, an dem man zur Ruhe kommt und sich zu Hause fühlt.',
+        'Deshalb errichten wir bei Zeltlagern ein Lagerheiligtum und zu Hause ein Haus- oder Zimmerheiligtum.',
+        'In unserer Gebetskultur legen wir großen Wert auf persönliche, frei formulierte Gebete. Mit Gott bleiben wir den Tag entlang durch die bewusste Alltagsgestaltung in Verbindung – das nennen wir „Geistliche Tagesordnung“.',
+      ],
+    },
   },
 ]
 ---
 
 <ContentLayout
   title="Grundsätze – SMJ Regio Wegweiser"
-  description="Gemeinschaft, Lebensschule, Liebesbündnis, Apostelsein, Mannsein: die fünf Säulen der SMJ Regio Wegweiser – kurz, ehrlich und mit Beispielen aus dem Alltag."
+  description="Gemeinschaft, Apostelsein, Lebensschule, Mannsein, Liebesbündnis: die fünf Säulen der SMJ Regio Wegweiser – Kernaussagen, Alltagspraxis und theologische Hintergründe."
 >
   <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
     <Container>
@@ -90,14 +171,14 @@ const pillars = [
             </h2>
           </div>
           <span class="stamp-distressed font-mono text-[0.65rem] uppercase tracking-[0.2em] border-orange/80 bg-forest-950 text-orange px-3 py-1 self-start sm:self-auto">
-            Gemeinschaft · Lebensschule · Liebesbündnis · Apostelsein · Mannsein
+            Gemeinschaft · Apostelsein · Lebensschule · Mannsein · Liebesbündnis
           </span>
         </div>
 
         <div class="relative z-10 overflow-hidden border border-paper/15">
           <ImageFrame
             src="/images/saeulen-monument.jpg"
-            alt="Die fünf Säulen der SMJ: Gemeinschaft, Lebensschule, Liebesbündnis, Apostelsein, Mannsein"
+            alt="Die fünf Säulen der SMJ: Gemeinschaft, Apostelsein, Lebensschule, Mannsein, Liebesbündnis"
             ratio="16:10"
           />
         </div>
@@ -107,7 +188,7 @@ const pillars = [
 
   <section id="pillars-detail-container" class="relative bg-forest-950 pb-28 pt-8 overflow-hidden">
     <Container class="space-y-28">
-      {pillars.map((pillar, index) => (
+      {pillars.map((pillar) => (
         <article class="pillar-detail-article relative grid gap-10 lg:grid-cols-[1fr_1.2fr] border-t border-paper/10 pt-16 first:border-0 first:pt-0">
           <!-- Background watermark text -->
           <span class="pillar-watermark pointer-events-none absolute -top-8 right-0 font-display text-8xl font-black text-paper/[0.03] select-none sm:text-9xl">
@@ -115,12 +196,25 @@ const pillars = [
           </span>
 
           <div>
-            <span class="pillar-number inline-block font-mono text-lg font-bold text-orange">{String(index + 1).padStart(2, '0')}</span>
+            <span class="pillar-number inline-block font-mono text-lg font-bold text-orange">{pillar.number}</span>
             <h2 class="pillar-title display text-4xl sm:text-5xl lg:text-6xl mt-3 text-paper whitespace-nowrap">{pillar.title}</h2>
             <p class="pillar-message mt-6 max-w-md font-display text-2xl uppercase leading-snug text-paper/90">
               {pillar.message}
             </p>
+
+            <div class="mt-8">
+              <button
+                type="button"
+                data-open-modal={`modal-${pillar.id}`}
+                class="group/btn inline-flex items-center gap-2.5 border border-paper/20 bg-forest-900/90 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all duration-300 hover:border-orange hover:bg-orange hover:text-forest-950 focus-visible:outline-2 focus-visible:outline-orange"
+              >
+                <BookOpen class="h-3.5 w-3.5 text-orange transition-colors group-hover/btn:text-forest-950" />
+                <span>Hintergründe & Pädagogik</span>
+                <span class="text-orange transition-transform duration-300 group-hover/btn:translate-x-1 group-hover/btn:text-forest-950">→</span>
+              </button>
+            </div>
           </div>
+
           <div class="flex flex-col gap-6">
             <div class="grid gap-6 sm:grid-cols-2">
               <div class="pillar-card border border-paper/10 bg-forest-900/50 p-6">
@@ -146,6 +240,116 @@ const pillars = [
     </Container>
   </section>
 
+  <!-- Pillar Dossier Dialog Modals -->
+  {pillars.map((pillar) => (
+    <dialog
+      id={`modal-${pillar.id}`}
+      class="pillar-modal fixed inset-0 m-auto max-h-[90vh] w-[92vw] max-w-3xl overflow-y-auto border-2 border-paper/20 bg-forest-950 p-0 text-paper shadow-[0_25px_70px_rgba(0,0,0,0.95)] backdrop:bg-forest-950/80 backdrop:backdrop-blur-md"
+      aria-labelledby={`modal-title-${pillar.id}`}
+    >
+      <div class="relative p-6 sm:p-10">
+        <!-- Topo Background Texture -->
+        <div class="texture-topo absolute inset-0 opacity-15 pointer-events-none" aria-hidden="true" />
+        
+        <!-- Header Bar -->
+        <div class="relative z-10 flex items-start justify-between gap-4 border-b border-paper/15 pb-6">
+          <div>
+            <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
+              <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse" />
+              <span>// EXPEDITION FIELD FILE · SÄULE {pillar.number}</span>
+            </div>
+            <h2 id={`modal-title-${pillar.id}`} class="display mt-2 text-3xl sm:text-4xl lg:text-5xl uppercase text-paper">
+              {pillar.title}
+            </h2>
+            <p class="mt-2 font-mono text-xs text-paper/70 sm:text-sm">
+              {pillar.dossier.subtitle}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            data-close-modal={`modal-${pillar.id}`}
+            class="group inline-flex h-10 w-10 shrink-0 items-center justify-center border border-paper/20 bg-forest-900 text-paper transition-all duration-300 hover:border-orange hover:bg-orange hover:text-forest-950 focus-visible:outline-2 focus-visible:outline-orange"
+            aria-label="Dialog schließen"
+          >
+            <X class="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+          </button>
+        </div>
+
+        <!-- Body Content -->
+        <div class="relative z-10 mt-8 space-y-8 text-sm leading-relaxed text-paper/85 sm:text-base">
+          
+          <!-- Vision Section -->
+          <div class="space-y-4">
+            <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange flex items-center gap-2">
+              <Sparkles class="h-3.5 w-3.5" />
+              <span>LEITVISION & VERSTÄNDNIS</span>
+            </h3>
+            {pillar.dossier.vision.map((paragraph) => (
+              <p class="text-paper/80 leading-relaxed">{paragraph}</p>
+            ))}
+          </div>
+
+          <!-- Bible Callout Box -->
+          <div class="border-l-2 border-orange bg-forest-900/60 p-5 shadow-inner">
+            <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.16em] text-orange">
+              <Quote class="h-3.5 w-3.5" />
+              <span>BIBLISCHES FUNDAMENT</span>
+            </div>
+            <p class="mt-2 text-sm sm:text-base italic text-paper/90 font-serif leading-relaxed">
+              „{pillar.bible}“
+            </p>
+          </div>
+
+          <!-- Practice Section -->
+          <div class="space-y-4 border-t border-paper/10 pt-6">
+            <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange flex items-center gap-2">
+              <BookOpen class="h-3.5 w-3.5" />
+              <span>IN DER PRAXIS & PÄDAGOGIK</span>
+            </h3>
+            <ul class="space-y-3">
+              {pillar.dossier.practice.map((item) => (
+                <li class="flex items-start gap-3 text-paper/80">
+                  <span class="font-mono text-orange mt-0.5 shrink-0">▸</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Josef Kentenich Quote Box -->
+          <div class="border border-paper/15 bg-gradient-to-r from-forest-900 via-forest-900/80 to-forest-950 p-6">
+            <span class="font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-orange block mb-2">
+              // WORT DES GRÜNDERS PATER JOSEF KENTENICH
+            </span>
+            <blockquote class="text-sm sm:text-base italic text-paper/90 leading-relaxed font-serif">
+              {pillar.quote}
+            </blockquote>
+          </div>
+        </div>
+
+        <!-- Footer Bar -->
+        <div class="relative z-10 mt-10 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4 border-t border-paper/15 pt-6">
+          <button
+            type="button"
+            data-close-modal={`modal-${pillar.id}`}
+            class="inline-flex items-center justify-center border border-paper/30 bg-transparent px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-colors hover:border-paper hover:bg-paper/10"
+          >
+            Schließen
+          </button>
+          
+          <a
+            href="/abenteuer/"
+            class="inline-flex items-center justify-center gap-2 border border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-ember hover:border-ember hover:text-paper"
+          >
+            <span>Erlebe es selbst im Abenteuer</span>
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+    </dialog>
+  ))}
+
   <section class="bg-forest-900 py-20">
     <Container class="grid items-center gap-12 lg:grid-cols-2">
       <ImageFrame src="/placeholders/story.svg" alt="Platzhalterbild – Abend am Lagerfeuer" ratio="4:5" class="max-w-md" />
@@ -167,4 +371,63 @@ const pillars = [
 
 <script>
   import '../../scripts/animations/pillars-detail'
+
+  function initPillarModals() {
+    // Open modal buttons
+    const openBtns = document.querySelectorAll<HTMLButtonElement>('[data-open-modal]')
+    openBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.getAttribute('data-open-modal')
+        if (!modalId) return
+        const dialog = document.getElementById(modalId) as HTMLDialogElement | null
+        if (dialog && typeof dialog.showModal === 'function') {
+          dialog.showModal()
+          document.body.classList.add('overflow-hidden')
+        }
+      })
+    })
+
+    // Close modal buttons
+    const closeBtns = document.querySelectorAll<HTMLButtonElement>('[data-close-modal]')
+    closeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.getAttribute('data-close-modal')
+        if (!modalId) return
+        const dialog = document.getElementById(modalId) as HTMLDialogElement | null
+        if (dialog) {
+          dialog.close()
+          document.body.classList.remove('overflow-hidden')
+        }
+      })
+    })
+
+    // Close on backdrop click
+    const dialogs = document.querySelectorAll<HTMLDialogElement>('.pillar-modal')
+    dialogs.forEach((dialog) => {
+      dialog.addEventListener('click', (e) => {
+        const rect = dialog.getBoundingClientRect()
+        const isInDialog =
+          rect.top <= e.clientY &&
+          e.clientY <= rect.top + rect.height &&
+          rect.left <= e.clientX &&
+          e.clientX <= rect.left + rect.width
+        if (!isInDialog) {
+          dialog.close()
+          document.body.classList.remove('overflow-hidden')
+        }
+      })
+
+      dialog.addEventListener('close', () => {
+        document.body.classList.remove('overflow-hidden')
+      })
+    })
+  }
+
+  // Init on DOM load & Astro page swap
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPillarModals)
+  } else {
+    initPillarModals()
+  }
+  document.addEventListener('astro:page-load', initPillarModals)
 </script>
