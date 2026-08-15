@@ -6,7 +6,7 @@ import ImageFrame from '../../components/common/ImageFrame.astro'
 
 const pillars = [
   {
-    title: 'Zusammenhalt',
+    title: 'Gemeinschaft',
     message: 'Du musst hier nicht irgendwer sein. Du musst nur dabei sein.',
     explanation:
       'Bei uns gibt es keine Rangliste und keinen, der außen vor bleibt. Wer beim Lager dabei ist, gehört dazu – vom ersten Tag an.',
@@ -14,7 +14,7 @@ const pillars = [
       'Im Zeltlager sind die Gruppen bunt gemischt: Die Kleinen klettern mit den Großen, die Erfahrenen zeigen den Neuen, wie man ein Zelt aufbaut. Beim Geländespiel zählt nur das Team.',
   },
   {
-    title: 'Verantwortung',
+    title: 'Lebensschule',
     message: 'Wer etwas trägt, wächst daran. Auch mit 12.',
     explanation:
       'Verantwortung ist bei uns kein Wort für Erwachsene. Sie beginnt beim Feuerholzholen und endet bei der eigenen Gruppe. Wer trägt, gehört dazu.',
@@ -22,12 +22,20 @@ const pillars = [
       'Jeder Tag im Lager hat Aufgaben: Wasser holen, Feuer machen, Material pflegen. Ältere leiten jüngere an – und lernen dabei selbst am meisten.',
   },
   {
-    title: 'Wachsen',
-    message: 'Jedes Lager ein Stück weiter. An Herausforderungen, die man sich selbst gewählt hat.',
+    title: 'Liebesbündnis',
+    message: 'Ein tragfähiges Fundament. Vertrauen, Geborgenheit und echter Zusammenhalt.',
     explanation:
-      'Wir wachsen nicht an Vorgaben, sondern an echten Herausforderungen. Und die schönste Erkenntnis: Meist kann man mehr, als man sich zutraut.',
+      'Wir wachsen nicht an Vorgaben, sondern an verlässlichen Beziehungen. Das Liebesbündnis steht für ein tiefes Versprechen: füreinander da zu sein und das Gute im anderen zu sehen.',
     example:
-      'Im Winterlager führt der erste Schnee zu neuen Aufgaben: Wer baut den besten Unterschlupf? Wer kocht bei Minusgraden? Am Ende sind alle ein Stück größer – buchstäblich und im übertragenen Sinn.',
+      'Im Lager und bei den Gruppenstunden spürt man das: Wenn es schwierig wird oder das Wetter umschlägt, hält die Gemeinschaft zusammen – ohne Wenn und Aber.',
+  },
+  {
+    title: 'Apostelsein',
+    message: 'Selbst anpacken, Vorbild sein und Verantwortung für die Welt übernehmen.',
+    explanation:
+      'Apostelsein bedeutet für uns: nicht nur zuschauen, sondern aktiv gestalten. Werte leben, für Schwächere einstehen und den Mut haben, die Initiative zu ergreifen.',
+    example:
+      'Unsere Gruppenleiter planen Fahrten selbst, organisieren Sozialaktionen und geben ihre Erfahrungen weiter. Sie leiten andere an und wachsen selbst dabei.',
   },
   {
     title: 'Mannsein',
@@ -37,20 +45,12 @@ const pillars = [
     example:
       'Die Ältesten tragen nachts das jüngere Lager mit. Wer beim Zeltaufbau schlapp macht, bekommt eine Hand – und lernt, selbst welche zu geben.',
   },
-  {
-    title: 'Glaube',
-    message: 'Abenteuer ist mehr als Action. Stille, Fragen, und Gott mitten drin.',
-    explanation:
-      'Der Glaube ist bei uns kein Extra auf dem Stundenplan. Er gehört zum Lager wie das Feuer: morgens kurz, abends ehrlich, unterwegs ganz natürlich.',
-    example:
-      'Der Abend am Feuer endet oft mit einer kurzen Andacht. Keiner muss etwas sagen. Aber jeder darf – und die Stille dazwischen trägt mehr als viele Worte.',
-  },
 ]
 ---
 
 <ContentLayout
   title="Grundsätze – SMJ Regio Wegweiser"
-  description="Zusammenhalt, Verantwortung, Wachsen, Mannsein, Glaube: die fünf Säulen der SMJ Regio Wegweiser – kurz, ehrlich und mit Beispielen aus dem Alltag."
+  description="Gemeinschaft, Lebensschule, Liebesbündnis, Apostelsein, Mannsein: die fünf Säulen der SMJ Regio Wegweiser – kurz, ehrlich und mit Beispielen aus dem Alltag."
 >
   <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
     <Container>
@@ -60,12 +60,42 @@ const pillars = [
         <span class="text-orange">stehen.</span>
       </h1>
       <p class="mt-8 max-w-xl leading-relaxed text-forest-950/75">
-        Fünf Säulen. Kein Papier, keine Worthülsen. Jede Säule hat eine Kernbotschaft, eine kurze Erklärung – und ein Beispiel aus unserem Alltag.
+        Fünf Säulen. Kein Papier, keine Worthülsen. Eingemeißelt in Stein, gelebt in jedem Zeltlager und an jedem Wochenende.
       </p>
     </Container>
   </section>
 
-  <section id="pillars-detail-container" class="relative bg-forest-950 py-20 overflow-hidden">
+  <!-- Real Five Pillars Monument Hero Showcase -->
+  <section class="bg-forest-950 py-16">
+    <Container size="wide">
+      <div class="relative overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 sm:p-10 shadow-2xl">
+        <div class="texture-topo absolute inset-0 opacity-20 pointer-events-none" aria-hidden="true" />
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-radial from-orange/20 via-orange/5 to-transparent blur-3xl opacity-60" aria-hidden="true" />
+
+        <div class="relative z-10 mb-6 flex flex-col justify-between gap-4 border-b border-paper/10 pb-6 sm:flex-row sm:items-end">
+          <div>
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.25em] text-orange">// DAS FUNDAMENT</span>
+            <h2 class="display mt-1 text-3xl sm:text-4xl lg:text-5xl uppercase text-paper">
+              Die fünf Säulen <span class="text-orange">der SMJ.</span>
+            </h2>
+          </div>
+          <span class="stamp-distressed font-mono text-[0.65rem] uppercase tracking-[0.2em] border-orange/80 bg-forest-950 text-orange px-3 py-1 self-start sm:self-auto">
+            Gemeinschaft · Lebensschule · Liebesbündnis · Apostelsein · Mannsein
+          </span>
+        </div>
+
+        <div class="relative z-10 overflow-hidden border border-paper/15">
+          <ImageFrame
+            src="/images/saeulen-monument.jpg"
+            alt="Die fünf Säulen der SMJ: Gemeinschaft, Lebensschule, Liebesbündnis, Apostelsein, Mannsein"
+            ratio="16:10"
+          />
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section id="pillars-detail-container" class="relative bg-forest-950 pb-28 pt-8 overflow-hidden">
     <Container class="space-y-28">
       {pillars.map((pillar, index) => (
         <article class="pillar-detail-article relative grid gap-10 lg:grid-cols-[1fr_1.2fr] border-t border-paper/10 pt-16 first:border-0 first:pt-0">
