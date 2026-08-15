@@ -41,24 +41,24 @@ const socialLinks = [
 ---
 
 <footer class="border-t border-paper/10 bg-forest-950 text-paper">
-  <div class="mx-auto grid w-full max-w-6xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.3fr_1fr_1.1fr_1.4fr]">
-    <!-- Brand & Socials -->
-    <div class="flex flex-col justify-between">
-      <div>
-        <a href="/" class="inline-block transition-transform duration-300 hover:scale-105" aria-label="Zur Startseite">
+  <div class="mx-auto w-full max-w-6xl px-5 py-16 sm:px-8">
+    <!-- Top Brand Banner across full width -->
+    <div class="flex flex-col justify-between gap-8 border-b border-paper/10 pb-12 md:flex-row md:items-center">
+      <div class="flex items-center gap-5 sm:gap-6">
+        <a href="/" class="shrink-0 transition-transform duration-300 hover:scale-105" aria-label="Zur Startseite">
           <Logo variant="icon" size="2xl" />
         </a>
-        <p class="mt-6 font-display text-3xl uppercase leading-tight text-paper">
-          Raus.<br /><span class="text-orange">Ins Abenteuer.</span>
-        </p>
-        <p class="mono-label mt-5 text-xs text-paper/70">SMJ Regio Wegweiser</p>
-        <p class="mono-label text-xs text-paper/50">Schönstatt-Mannesjugend Diözese Erfurt</p>
-        <p class="mono-label text-[0.68rem] text-paper/40 mt-1">Pater-Kentenich-Weg 3 · 37308 Heilbad Heiligenstadt</p>
+        <div>
+          <span class="font-mono text-[0.68rem] font-bold uppercase tracking-[0.3em] text-orange">SMJ Regio Wegweiser</span>
+          <p class="display mt-1 text-3xl uppercase tracking-wide text-paper sm:text-4xl">
+            Raus. <span class="text-orange">Ins Abenteuer.</span>
+          </p>
+        </div>
       </div>
 
       <!-- Social Media Buttons -->
-      <div class="mt-8">
-        <p class="eyebrow mb-3 text-[0.65rem]">Folge der Region</p>
+      <div class="flex flex-col md:items-end gap-2.5">
+        <p class="eyebrow text-[0.65rem]">Folge der Region</p>
         <div class="flex items-center gap-3">
           {
             socialLinks.map((social) => (
@@ -77,74 +77,91 @@ const socialLinks = [
       </div>
     </div>
 
-    <!-- Navigation Links -->
-    <nav aria-label="Hauptnavigation">
-      <h2 class="eyebrow mb-4">Navigation</h2>
-      <ul class="space-y-2.5 text-sm">
-        {
-          navigationLinks.map((link) => (
-            <li>
-              <a href={link.href} class="text-paper/80 transition-colors hover:text-orange">
-                {link.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+    <!-- 4 Main Columns across the width -->
+    <div class="grid gap-10 pt-12 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Column 1: Contact & Address -->
+      <div>
+        <h3 class="eyebrow mb-4">Kontakt & Anlaufstelle</h3>
+        <p class="mono-label text-xs font-bold text-paper/90">SMJ Regio Wegweiser</p>
+        <p class="mono-label mt-1 text-xs text-paper/60">Schönstatt-Mannesjugend Diözese Erfurt</p>
+        <p class="mono-label mt-3 text-[0.72rem] leading-relaxed text-paper/50">
+          Pater-Kentenich-Weg 3<br />
+          37308 Heilbad Heiligenstadt
+        </p>
+        <a href="/kontakt/" class="mt-4 inline-block font-mono text-xs font-bold uppercase tracking-[0.18em] text-orange hover:underline">
+          Kontaktformular →
+        </a>
+      </div>
 
-    <!-- Verband & Netzwerk & Kalender -->
-    <nav aria-label="Verband und Netzwerk">
-      <h2 class="eyebrow mb-4">Netzwerk & Termine</h2>
-      <ul class="space-y-3 text-sm">
-        {
-          partnerLinks.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                target={link.external ? '_blank' : undefined}
-                rel={link.external ? 'noopener noreferrer' : undefined}
-                class="inline-flex items-center gap-1.5 text-paper/80 transition-colors hover:text-orange"
-              >
-                {link.icon === 'calendar' && <Calendar class="h-3.5 w-3.5 text-orange shrink-0" />}
-                <span>{link.label}</span>
-                {link.external && <ExternalLink class="h-3 w-3 text-paper/40 shrink-0" />}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+      <!-- Column 2: Navigation Links -->
+      <nav aria-label="Hauptnavigation">
+        <h3 class="eyebrow mb-4">Navigation</h3>
+        <ul class="space-y-2.5 text-sm">
+          {
+            navigationLinks.map((link) => (
+              <li>
+                <a href={link.href} class="text-paper/80 transition-colors hover:text-orange">
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-    <!-- Newsletter Subscription Form -->
-    <div>
-      <h2 class="eyebrow mb-4">Newsletter</h2>
-      <p class="text-xs leading-relaxed text-paper/75">
-        Immer wissen, wann Anmeldungen öffnen und was in der Region passiert. Kein Spam.
-      </p>
+      <!-- Column 3: Verband & Netzwerk & Kalender -->
+      <nav aria-label="Verband und Netzwerk">
+        <h3 class="eyebrow mb-4">Netzwerk & Termine</h3>
+        <ul class="space-y-3 text-sm">
+          {
+            partnerLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noopener noreferrer' : undefined}
+                  class="inline-flex items-center gap-1.5 text-paper/80 transition-colors hover:text-orange"
+                >
+                  {link.icon === 'calendar' && <Calendar class="h-3.5 w-3.5 text-orange shrink-0" />}
+                  <span>{link.label}</span>
+                  {link.external && <ExternalLink class="h-3 w-3 text-paper/40 shrink-0" />}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-      <form id="footer-newsletter-form" action="/api/newsletter.php" method="POST" class="mt-4 space-y-3" novalidate>
-        <div class="relative">
-          <input
-            type="email"
-            name="email"
-            id="footer-newsletter-email"
-            required
-            placeholder="deine.mail@adresse.de"
-            class="w-full border border-paper/20 bg-forest-900 px-3.5 py-2.5 font-mono text-xs text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none"
-          />
-          <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
-        </div>
+      <!-- Column 4: Newsletter Subscription Form -->
+      <div>
+        <h3 class="eyebrow mb-4">Newsletter</h3>
+        <p class="text-xs leading-relaxed text-paper/75">
+          Immer wissen, wann Anmeldungen öffnen und was in der Region passiert. Kein Spam.
+        </p>
 
-        <button
-          type="submit"
-          class="w-full bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-forest-950 transition-all hover:bg-paper cursor-pointer"
-        >
-          Newsletter abonnieren
-        </button>
+        <form id="footer-newsletter-form" action="/api/newsletter.php" method="POST" class="mt-4 space-y-3" novalidate>
+          <div class="relative">
+            <input
+              type="email"
+              name="email"
+              id="footer-newsletter-email"
+              required
+              placeholder="deine.mail@adresse.de"
+              class="w-full border border-paper/20 bg-forest-900 px-3.5 py-2.5 font-mono text-xs text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none"
+            />
+            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+          </div>
 
-        <p id="footer-newsletter-status" class="hidden font-mono text-[0.68rem]"></p>
-      </form>
+          <button
+            type="submit"
+            class="w-full bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-forest-950 transition-all hover:bg-paper cursor-pointer"
+          >
+            Newsletter abonnieren
+          </button>
+
+          <p id="footer-newsletter-status" class="hidden font-mono text-[0.68rem]"></p>
+        </form>
+      </div>
     </div>
   </div>
 
