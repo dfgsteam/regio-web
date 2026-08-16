@@ -3,18 +3,27 @@ import { getCollection } from 'astro:content'
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
+import { Search, X, Calendar, ArrowUpDown } from '@lucide/astro'
 
 const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
 const sorted = posts.sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+
+// Extract unique years and count
+const years = Array.from(new Set(sorted.map((p) => p.data.publishedAt.getFullYear()))).sort((a, b) => b - a)
+const yearCounts = years.reduce((acc, y) => {
+  acc[y] = sorted.filter((p) => p.data.publishedAt.getFullYear() === y).length
+  return acc
+}, {} as Record<number, number>)
 ---
 
 <ContentLayout
   title="Aktuelles – SMJ Regio Wegweiser"
-  description="Aktuelle Berichte, Vereinsnachrichten, pädagogische Einblicke und Geschichten aus der Region Wegweiser."
+  description="Aktuelle Berichte, Vereinsnachrichten, Zeltlager-Rückblicke und Geschichten aus der Region Wegweiser mit interaktiver Suche und Jahresarchiv."
 >
-  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
+  <!-- Hero Section -->
+  <section class="texture-paper relative bg-paper pb-20 pt-40 text-forest-950">
     <Container>
-      <Eyebrow label="Aktuelles & Vereinsleben" muted />
+      <Eyebrow label="Aktuelles & Archiv" muted />
       <h1 class="display display-xl mt-6 text-forest-950">
         Berichte, Einblicke<br />
         <span class="text-orange whitespace-nowrap">&amp; Vereinsleben.</span>
@@ -25,62 +34,338 @@ const sorted = posts.sort((a, b) => b.data.publishedAt.getTime() - a.data.publis
     </Container>
   </section>
 
-  <section class="bg-forest-950 py-20">
-    <Container class="divide-y divide-paper/15">
-      {sorted.map((post) => (
-        <article class="group grid gap-8 py-12 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] lg:gap-12 items-center">
-          <a href={`/aktuelles/${post.id}/`} class="relative block overflow-hidden border border-paper/20 bg-forest-900 aspect-[16/10] sm:aspect-[4/3] shrink-0">
-            <img
-              src={post.data.image.src}
-              alt={post.data.image.alt}
-              loading="lazy"
-              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-            {post.data.tags.length > 0 && (
-              <span class="absolute bottom-2 left-2 bg-forest-950/90 px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider text-orange border border-paper/10">
-                {post.data.tags[0]}
-              </span>
-            )}
-          </a>
-
-          <div class="flex flex-col justify-center">
-            <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs text-paper/60 mb-3">
-              <time datetime={post.data.publishedAt.toISOString()}>
-                {post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
-              </time>
-              <span>·</span>
-              <span class="text-paper/80">{post.data.author}</span>
-              {post.data.tags.length > 1 && (
-                <>
-                  <span>·</span>
-                  <span class="text-orange uppercase tracking-wider font-semibold">
-                    {post.data.tags.slice(1).join(' · ')}
-                  </span>
-                </>
-              )}
-            </div>
-
-            <h2 class="display display-md text-paper group-hover:text-orange transition-colors">
-              <a href={`/aktuelles/${post.id}/`}>
-                {post.data.title}
-              </a>
-            </h2>
-
-            <p class="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-paper/75">
-              {post.data.description}
-            </p>
-
-            <div class="mt-6">
-              <a
-                href={`/aktuelles/${post.id}/`}
-                class="inline-flex items-center gap-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-all hover:text-orange hover:gap-3"
-              >
-                Weiterlesen →
-              </a>
-            </div>
+  <!-- Filter & Search Control Center -->
+  <section class="sticky top-20 z-30 border-y border-paper/15 bg-forest-950/95 backdrop-blur-md py-4 shadow-xl">
+    <Container>
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <!-- Search Input Bar -->
+        <div class="relative flex-1 max-w-xl">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-paper/40">
+            <Search class="h-4 w-4" />
           </div>
-        </article>
-      ))}
+          <input
+            type="text"
+            id="posts-search-input"
+            placeholder="Beiträge nach Stichwort, Thema, Ort durchsuchen..."
+            class="w-full border-2 border-paper/20 bg-forest-900/90 py-2.5 pl-10 pr-10 font-sans text-sm text-paper placeholder-paper/40 transition-colors focus:border-orange focus:bg-forest-900 focus:outline-none"
+          />
+          <button
+            id="posts-search-clear"
+            type="button"
+            class="absolute inset-y-0 right-0 hidden items-center pr-3 text-paper/40 hover:text-orange cursor-pointer"
+            aria-label="Suche leeren"
+          >
+            <X class="h-4 w-4" />
+          </button>
+        </div>
+
+        <!-- Sort & Counter Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 sm:justify-end">
+          <div class="flex items-center gap-2 border border-paper/20 bg-forest-900/80 px-3 py-1.5 font-mono text-xs text-paper">
+            <ArrowUpDown class="h-3.5 w-3.5 text-orange" />
+            <select
+              id="posts-sort-select"
+              class="bg-transparent font-mono text-xs text-paper uppercase focus:outline-none cursor-pointer"
+            >
+              <option value="newest" class="bg-forest-900 text-paper">Neueste zuerst</option>
+              <option value="oldest" class="bg-forest-900 text-paper">Älteste zuerst</option>
+            </select>
+          </div>
+
+          <span id="posts-results-count" class="mono-label text-[0.68rem] text-paper/60">
+            {sorted.length} VON {sorted.length} BEITRÄGEN
+          </span>
+        </div>
+      </div>
+
+      <!-- Year Filter Pills -->
+      <div class="mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        <span class="mono-label text-[0.65rem] text-paper/50 shrink-0 mr-1 flex items-center gap-1.5">
+          <Calendar class="h-3 w-3 text-orange" />
+          <span>JAHR:</span>
+        </span>
+        
+        <button
+          type="button"
+          data-year-filter="all"
+          class="year-filter-btn active shrink-0 border border-orange bg-orange px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 transition-all cursor-pointer"
+        >
+          Alle ({sorted.length})
+        </button>
+
+        {years.map((year) => (
+          <button
+            type="button"
+            data-year-filter={String(year)}
+            class="year-filter-btn shrink-0 border border-paper/20 bg-forest-900 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-paper/80 transition-all hover:border-orange hover:text-paper cursor-pointer"
+          >
+            {year} <span class="text-orange/80 text-[0.65rem]">({yearCounts[year]})</span>
+          </button>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- Posts Stream Section -->
+  <section class="bg-forest-950 py-16">
+    <Container>
+      <!-- Empty State -->
+      <div id="posts-empty-state" class="hidden py-24 text-center border-2 border-dashed border-paper/15 bg-forest-900/40 p-8">
+        <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-orange/10 text-orange mb-4">
+          <Search class="h-6 w-6" />
+        </div>
+        <h3 class="display display-sm text-paper uppercase">Keine Beiträge gefunden</h3>
+        <p class="mt-2 text-sm text-paper/70 max-w-md mx-auto">
+          Für deine aktuelle Such- und Filterkombination gibt es keine Treffer.
+        </p>
+        <button
+          id="posts-reset-btn"
+          type="button"
+          class="mt-6 inline-flex items-center gap-2 border border-orange bg-orange/10 px-5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-colors cursor-pointer"
+        >
+          Filter zurücksetzen
+        </button>
+      </div>
+
+      <!-- Posts List -->
+      <div id="posts-container" class="divide-y divide-paper/15">
+        {sorted.map((post) => {
+          const year = post.data.publishedAt.getFullYear()
+          const searchTokens = `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.data.author} ${year}`.toLowerCase()
+          return (
+            <article
+              class="post-item group grid gap-8 py-12 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] lg:gap-12 items-center transition-all duration-300"
+              data-year={String(year)}
+              data-timestamp={String(post.data.publishedAt.getTime())}
+              data-search-tokens={searchTokens}
+            >
+              <!-- Thumbnail with PhotoViewer Link -->
+              <div class="relative block overflow-hidden border border-paper/20 bg-forest-900 aspect-[16/10] sm:aspect-[4/3] shrink-0">
+                <img
+                  src={post.data.image.src}
+                  alt={post.data.image.alt}
+                  data-photo-viewer="true"
+                  data-caption={post.data.title}
+                  data-date={post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  data-link-url={post.data.instagramUrl}
+                  loading="lazy"
+                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in"
+                />
+                {post.data.tags.length > 0 && (
+                  <span class="absolute bottom-2 left-2 bg-forest-950/90 px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider text-orange border border-paper/10">
+                    {post.data.tags[0]}
+                  </span>
+                )}
+                {post.data.instagramUrl && (
+                  <span class="absolute top-2 right-2 bg-forest-950/80 p-1 text-orange border border-paper/10" title="Instagram Post">
+                    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                  </span>
+                )}
+              </div>
+
+              <!-- Content Column -->
+              <div class="flex flex-col justify-center">
+                <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs text-paper/60 mb-3">
+                  <time datetime={post.data.publishedAt.toISOString()} class="text-orange font-bold">
+                    {post.data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+                  </time>
+                  <span>·</span>
+                  <span class="text-paper/80">{post.data.author}</span>
+                  {post.data.tags.length > 1 && (
+                    <>
+                      <span>·</span>
+                      <span class="text-paper/60 uppercase tracking-wider text-[0.68rem]">
+                        {post.data.tags.slice(1, 4).join(' · ')}
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                <h2 class="display display-md text-paper group-hover:text-orange transition-colors">
+                  <a href={`/aktuelles/${post.id}/`}>
+                    {post.data.title}
+                  </a>
+                </h2>
+
+                <p class="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-paper/75 line-clamp-3">
+                  {post.data.description}
+                </p>
+
+                <div class="mt-6 flex items-center gap-6">
+                  <a
+                    href={`/aktuelles/${post.id}/`}
+                    class="inline-flex items-center gap-2 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-all hover:text-orange hover:gap-3"
+                  >
+                    <span>Artikel lesen</span>
+                    <span>→</span>
+                  </a>
+
+                  {post.data.instagramUrl && (
+                    <a
+                      href={post.data.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-1 font-mono text-[0.68rem] uppercase tracking-wider text-paper/50 transition-colors hover:text-orange"
+                    >
+                      <span>Instagram ↗</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
     </Container>
   </section>
 </ContentLayout>
+
+<!-- Client-side Fast Filtering & Sorting Script -->
+<script>
+  function setupPostsFilter() {
+    const searchInput = document.getElementById('posts-search-input') as HTMLInputElement | null
+    const clearBtn = document.getElementById('posts-search-clear') as HTMLButtonElement | null
+    const sortSelect = document.getElementById('posts-sort-select') as HTMLSelectElement | null
+    const resultsCount = document.getElementById('posts-results-count')
+    const emptyState = document.getElementById('posts-empty-state')
+    const resetBtn = document.getElementById('posts-reset-btn')
+    const container = document.getElementById('posts-container')
+    const yearButtons = document.querySelectorAll<HTMLButtonElement>('.year-filter-btn')
+
+    if (!container) return
+
+    const postElements = Array.from(container.querySelectorAll<HTMLElement>('.post-item'))
+    const totalCount = postElements.length
+
+    let selectedYear = 'all'
+    let searchQuery = ''
+    let sortOrder: 'newest' | 'oldest' = 'newest'
+
+    function filterAndSort() {
+      const query = searchQuery.trim().toLowerCase()
+      let visibleCount = 0
+
+      // Filter elements
+      postElements.forEach((el) => {
+        const itemYear = el.dataset.year || ''
+        const tokens = el.dataset.searchTokens || ''
+
+        const matchesYear = selectedYear === 'all' || itemYear === selectedYear
+        const matchesSearch = query === '' || tokens.includes(query)
+
+        if (matchesYear && matchesSearch) {
+          el.style.display = 'grid'
+          visibleCount++
+        } else {
+          el.style.display = 'none'
+        }
+      })
+
+      // Sort elements
+      const sortedElements = [...postElements].sort((a, b) => {
+        const timeA = Number(a.dataset.timestamp || 0)
+        const timeB = Number(b.dataset.timestamp || 0)
+        return sortOrder === 'newest' ? timeB - timeA : timeA - timeB
+      })
+
+      if (container) {
+        sortedElements.forEach((el) => container.appendChild(el))
+      }
+
+      // Update Results Counter
+      if (resultsCount) {
+        resultsCount.textContent = `${visibleCount} VON ${totalCount} BEITRÄGEN`
+      }
+
+      // Empty State
+      if (emptyState && container) {
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden')
+          container.classList.add('hidden')
+        } else {
+          emptyState.classList.add('hidden')
+          container.classList.remove('hidden')
+        }
+      }
+
+      // Clear button visibility
+      if (clearBtn) {
+        if (searchQuery.length > 0) {
+          clearBtn.classList.remove('hidden')
+          clearBtn.classList.add('inline-flex')
+        } else {
+          clearBtn.classList.remove('inline-flex')
+          clearBtn.classList.add('hidden')
+        }
+      }
+    }
+
+    // Search Input Listener
+    searchInput?.addEventListener('input', (e) => {
+      searchQuery = (e.target as HTMLInputElement).value
+      filterAndSort()
+    })
+
+    // Clear Search Button
+    clearBtn?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = ''
+      searchQuery = ''
+      filterAndSort()
+      searchInput?.focus()
+    })
+
+    // Year Filter Buttons
+    yearButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const y = btn.dataset.yearFilter || 'all'
+        selectedYear = y
+
+        yearButtons.forEach((b) => {
+          b.classList.remove('active', 'border-orange', 'bg-orange', 'text-forest-950')
+          b.classList.add('border-paper/20', 'bg-forest-900', 'text-paper/80')
+        })
+
+        btn.classList.remove('border-paper/20', 'bg-forest-900', 'text-paper/80')
+        btn.classList.add('active', 'border-orange', 'bg-orange', 'text-forest-950')
+
+        filterAndSort()
+      })
+    })
+
+    // Sort Order Selector
+    sortSelect?.addEventListener('change', (e) => {
+      sortOrder = (e.target as HTMLSelectElement).value as 'newest' | 'oldest'
+      filterAndSort()
+    })
+
+    // Reset Button
+    resetBtn?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = ''
+      searchQuery = ''
+      selectedYear = 'all'
+
+      yearButtons.forEach((b) => {
+        if (b.dataset.yearFilter === 'all') {
+          b.classList.add('active', 'border-orange', 'bg-orange', 'text-forest-950')
+          b.classList.remove('border-paper/20', 'bg-forest-900', 'text-paper/80')
+        } else {
+          b.classList.remove('active', 'border-orange', 'bg-orange', 'text-forest-950')
+          b.classList.add('border-paper/20', 'bg-forest-900', 'text-paper/80')
+        }
+      })
+
+      filterAndSort()
+    })
+
+    // Initial trigger
+    filterAndSort()
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPostsFilter)
+  } else {
+    setupPostsFilter()
+  }
+
+  document.addEventListener('astro:page-load', setupPostsFilter)
+</script>
