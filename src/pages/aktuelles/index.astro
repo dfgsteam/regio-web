@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content'
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
+import BrandIcon from '../../components/common/BrandIcon.astro'
 import { Search, X, Calendar, ArrowUpDown } from '@lucide/astro'
 
 const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
@@ -23,124 +24,122 @@ const yearCounts = years.reduce((acc, y) => {
   <!-- Hero Section -->
   <section class="texture-paper relative bg-paper pb-20 pt-40 text-forest-950">
     <Container>
-      <Eyebrow label="Aktuelles & Archiv" muted />
+      <Eyebrow label="Journal & Berichte" muted />
       <h1 class="display display-xl mt-6 text-forest-950">
-        Berichte, Einblicke<br />
-        <span class="text-orange whitespace-nowrap">&amp; Vereinsleben.</span>
+        Aktuelles aus der<br />
+        <span class="text-orange">Region.</span>
       </h1>
-      <p class="mt-8 max-w-2xl leading-relaxed text-forest-950/75">
-        Neuigkeiten aus der Region, Verbandsentscheidungen, Einblicke in unser Leitungsmodell und Geschichten von Zeltlagern und Aktionen.
+      <p class="mt-6 max-w-xl text-base leading-relaxed text-forest-950/75">
+        Geschichten vom Lagerfeuer, Einblicke in unsere Aktionen und offizielle Berichte der SMJ Regio Wegweiser.
       </p>
     </Container>
   </section>
 
-  <!-- Filter & Search Control Center -->
-  <section class="relative z-20 border-b border-paper/15 bg-forest-950 py-8">
+  <!-- Filter, Search & Archive Bar -->
+  <section class="bg-forest-900 border-y border-paper/15 py-6">
     <Container>
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <!-- Search Input Bar -->
-        <div class="relative flex-1 max-w-xl">
-          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-paper/40">
-            <Search class="h-4 w-4" />
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <!-- Search Input -->
+        <div class="relative flex-1 max-w-md">
+          <label for="post-search" class="sr-only">Beiträge durchsuchen</label>
+          <div class="relative">
+            <input
+              type="text"
+              id="post-search"
+              placeholder="Beiträge durchsuchen (z.B. Zeltlager, 2024, Burg)..."
+              class="w-full bg-forest-950 border border-paper/20 px-4 py-2.5 pl-10 pr-10 font-mono text-xs text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
+            />
+            <Search class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-orange" />
+            <button
+              id="search-clear"
+              type="button"
+              class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-paper/40 hover:text-orange transition-colors p-1"
+              title="Suche zurücksetzen"
+            >
+              <X class="h-3.5 w-3.5" />
+            </button>
           </div>
-          <input
-            type="text"
-            id="posts-search-input"
-            placeholder="Beiträge nach Stichwort, Thema, Ort durchsuchen..."
-            class="w-full border-2 border-paper/20 bg-forest-900/90 py-2.5 pl-10 pr-10 font-sans text-sm text-paper placeholder-paper/40 transition-colors focus:border-orange focus:bg-forest-900 focus:outline-none"
-          />
-          <button
-            id="posts-search-clear"
-            type="button"
-            class="absolute inset-y-0 right-0 hidden items-center pr-3 text-paper/40 hover:text-orange cursor-pointer"
-            aria-label="Suche leeren"
-          >
-            <X class="h-4 w-4" />
-          </button>
         </div>
 
-        <!-- Sort & Counter Bar -->
-        <div class="flex flex-wrap items-center justify-between gap-4 sm:justify-end">
-          <div class="flex items-center gap-2 border border-paper/20 bg-forest-900/80 px-3 py-1.5 font-mono text-xs text-paper">
-            <ArrowUpDown class="h-3.5 w-3.5 text-orange" />
+        <!-- Sort Select & Result Count -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <ArrowUpDown class="h-3.5 w-3.5 text-orange shrink-0" />
             <select
-              id="posts-sort-select"
-              class="bg-transparent font-mono text-xs text-paper uppercase focus:outline-none cursor-pointer"
+              id="sort-select"
+              class="bg-forest-950 border border-paper/20 px-3 py-2 font-mono text-xs text-paper focus:border-orange focus:outline-none"
             >
-              <option value="newest" class="bg-forest-900 text-paper">Neueste zuerst</option>
-              <option value="oldest" class="bg-forest-900 text-paper">Älteste zuerst</option>
+              <option value="date-desc">Neueste zuerst</option>
+              <option value="date-asc">Älteste zuerst</option>
+              <option value="title-asc">Titel A–Z</option>
             </select>
           </div>
-
-          <span id="posts-results-count" class="mono-label text-[0.68rem] text-paper/60">
-            {sorted.length} VON {sorted.length} BEITRÄGEN
+          <span id="post-counter" class="font-mono text-xs text-paper/60 whitespace-nowrap">
+            {sorted.length} {sorted.length === 1 ? 'Beitrag' : 'Beiträge'}
           </span>
         </div>
       </div>
 
       <!-- Year Filter Pills -->
-      <div class="mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-        <span class="mono-label text-[0.65rem] text-paper/50 shrink-0 mr-1 flex items-center gap-1.5">
+      <div class="mt-4 pt-4 border-t border-paper/10 flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+        <span class="font-mono text-[0.65rem] uppercase text-paper/50 tracking-wider mr-1 shrink-0 flex items-center gap-1">
           <Calendar class="h-3 w-3 text-orange" />
-          <span>JAHR:</span>
+          Jahr:
         </span>
-        
         <button
           type="button"
           data-year-filter="all"
-          class="year-filter-btn active shrink-0 border border-orange bg-orange px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 transition-all cursor-pointer"
+          class="year-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-orange text-forest-950 border border-orange"
         >
           Alle ({sorted.length})
         </button>
-
-        {years.map((year) => (
-          <button
-            type="button"
-            data-year-filter={String(year)}
-            class="year-filter-btn shrink-0 border border-paper/20 bg-forest-900 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-paper/80 transition-all hover:border-orange hover:text-paper cursor-pointer"
-          >
-            {year} <span class="text-orange/80 text-[0.65rem]">({yearCounts[year]})</span>
-          </button>
-        ))}
+        {
+          years.map((y) => (
+            <button
+              type="button"
+              data-year-filter={String(y)}
+              class="year-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-forest-950 text-paper/70 border border-paper/20 hover:border-orange hover:text-paper"
+            >
+              {y} ({yearCounts[y]})
+            </button>
+          ))
+        }
       </div>
     </Container>
   </section>
 
-  <!-- Posts Stream Section -->
-  <section class="bg-forest-950 py-16">
+  <!-- Posts Grid Section -->
+  <section class="bg-forest-950 py-16 sm:py-24">
     <Container>
-      <!-- Empty State -->
-      <div id="posts-empty-state" class="hidden py-24 text-center border-2 border-dashed border-paper/15 bg-forest-900/40 p-8">
-        <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-orange/10 text-orange mb-4">
-          <Search class="h-6 w-6" />
-        </div>
-        <h3 class="display display-sm text-paper uppercase">Keine Beiträge gefunden</h3>
-        <p class="mt-2 text-sm text-paper/70 max-w-md mx-auto">
-          Für deine aktuelle Such- und Filterkombination gibt es keine Treffer.
+      <!-- No Results State -->
+      <div id="no-results-message" class="hidden text-center py-16 border-2 border-dashed border-paper/15 p-8">
+        <p class="font-display text-2xl text-paper">Keine passenden Beiträge gefunden</p>
+        <p class="font-mono text-xs text-paper/60 mt-2 max-w-md mx-auto">
+          Probiere einen anderen Suchbegriff oder setze die Filter zurück.
         </p>
         <button
-          id="posts-reset-btn"
+          id="reset-filter-btn"
           type="button"
-          class="mt-6 inline-flex items-center gap-2 border border-orange bg-orange/10 px-5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-colors cursor-pointer"
+          class="mt-6 inline-flex items-center gap-2 border border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors"
         >
           Filter zurücksetzen
         </button>
       </div>
 
-      <!-- Posts List -->
-      <div id="posts-container" class="divide-y divide-paper/15">
+      <div id="posts-grid" class="space-y-12">
         {sorted.map((post) => {
-          const year = post.data.publishedAt.getFullYear()
-          const searchTokens = `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.data.author} ${year}`.toLowerCase()
+          const postYear = post.data.publishedAt.getFullYear()
+          const searchKeywords = `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${postYear}`.toLowerCase()
           return (
             <article
-              class="post-item group grid gap-8 py-12 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] lg:gap-12 items-center transition-all duration-300"
-              data-year={String(year)}
-              data-timestamp={String(post.data.publishedAt.getTime())}
-              data-search-tokens={searchTokens}
+              class="post-card group grid gap-8 border border-paper/10 bg-forest-900/40 p-6 transition-all hover:border-paper/25 sm:p-8 lg:grid-cols-[380px_1fr]"
+              data-year={postYear}
+              data-date={post.data.publishedAt.getTime()}
+              data-title={post.data.title.toLowerCase()}
+              data-search={searchKeywords}
             >
-              <!-- Thumbnail with PhotoViewer Link -->
-              <div class="relative block overflow-hidden border border-paper/20 bg-forest-900 aspect-[16/10] sm:aspect-[4/3] shrink-0">
+              <!-- Thumbnail Column -->
+              <div class="relative overflow-hidden aspect-[16/10] bg-forest-950">
                 <img
                   src={post.data.image.src}
                   alt={post.data.image.alt}
@@ -158,7 +157,7 @@ const yearCounts = years.reduce((acc, y) => {
                 )}
                 {post.data.instagramUrl && (
                   <span class="absolute top-2 right-2 bg-forest-950/80 p-1 text-orange border border-paper/10" title="Instagram Post">
-                    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                    <BrandIcon name="instagram" class="h-3.5 w-3.5 fill-current" />
                   </span>
                 )}
               </div>

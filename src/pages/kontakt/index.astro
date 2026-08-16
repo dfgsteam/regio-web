@@ -4,6 +4,7 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Coordinates from '../../components/common/Coordinates.astro'
 import LeafletMap from '../../components/common/LeafletMap.astro'
+import BrandIcon from '../../components/common/BrandIcon.astro'
 ---
 
 <ContentLayout
@@ -94,99 +95,109 @@ import LeafletMap from '../../components/common/LeafletMap.astro'
 
       <aside class="h-fit border border-paper/15 bg-forest-900 p-8 lg:sticky lg:top-28">
         <h2 class="display display-sm text-paper">Direkter Draht</h2>
-        <ul class="mt-6 space-y-5 text-sm text-paper/80">
-          <li>
-            <p class="mono-label mb-1">E-Mail Anlaufstelle</p>
-            <a href="mailto:kontakt@smj-wegweiser.de" class="text-orange font-bold underline underline-offset-4 hover:text-paper">
-              kontakt@smj-wegweiser.de
-            </a>
-          </li>
-          <li class="border-t border-paper/15 pt-4">
-            <p class="mono-label mb-1">Allgemeine Postanschrift</p>
-            <p class="text-paper text-sm leading-relaxed">
-              SMJ Regio Wegweiser<br />
-              Pater-Kentenich-Weg 3<br />
-              37308 Heilbad Heiligenstadt
-            </p>
-          </li>
-          <li class="border-t border-paper/15 pt-4">
-            <p class="mono-label mb-1">Zeltlagerplatz (Wiesental)</p>
-            <p class="text-paper text-sm leading-relaxed">
-              Birkenfelder Str.<br />
-              37318 Uder (Ortsteil Thalwenden)
-            </p>
-          </li>
-        </ul>
-        <div class="mt-8 border-t border-paper/15 pt-6">
-          <p class="mono-label mb-3">Social Media & Kanäle</p>
-          <div class="mt-4 space-y-3">
-            <a
-              href="https://www.whatsapp.com/channel/0029VaQxDPOF6smxyB2t4519"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex items-center justify-between border-2 border-green-500/40 bg-forest-950 p-3.5 text-sm text-paper transition-all hover:border-green-500 hover:bg-forest-900 shadow-md"
-            >
-              <div class="flex items-center gap-3">
-                <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current text-green-500 transition-transform group-hover:scale-110">
-                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.79 14.07c-.24.68-1.41 1.25-1.95 1.33-.51.08-1.18.11-3.41-.81-2.85-1.18-4.69-4.08-4.83-4.27-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.09 1-2.37.24-.28.53-.35.71-.35.18 0 .35.01.5.01.16 0 .38-.06.59.45.24.58.82 2 .89 2.15.07.15.12.33.02.53-.1.2-.15.33-.3.51-.15.18-.31.4-.44.54-.15.15-.3.32-.13.62.17.3 1.05 1.73 2.26 2.81 1.56 1.39 2.87 1.82 3.28 2.02.41.2.65.17.89-.11.24-.28 1.03-1.2 1.3-1.61.27-.41.55-.35.92-.21.38.14 2.39 1.13 2.8 1.33.41.2.68.3.78.47.1.18.1 1.02-.14 1.7z"/>
-                </svg>
-                <div>
-                  <span class="font-mono text-xs font-bold text-paper block">WhatsApp-Kanal</span>
-                  <span class="font-mono text-[0.62rem] text-green-400 block">Offizielle Updates & Termine</span>
-                </div>
-              </div>
-              <span class="font-mono text-[0.65rem] font-bold uppercase text-green-400">Beitreten ↗</span>
-            </a>
+        <p class="mt-2 text-xs leading-relaxed text-paper/70">
+          Schreib uns über das Formular oder erreich uns direkt per E-Mail.
+        </p>
 
-            <a
-              href="https://www.instagram.com/regio.wegweiser/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex items-center justify-between border border-paper/20 bg-forest-950/60 p-3 text-sm text-paper transition-all hover:border-orange hover:bg-forest-950"
-            >
-              <div class="flex items-center gap-3">
-                <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 text-orange transition-transform group-hover:scale-110">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                </svg>
-                <span class="font-mono text-xs text-paper/90">@regio.wegweiser</span>
-              </div>
-              <span class="font-mono text-[0.65rem] uppercase text-orange">Instagram →</span>
-            </a>
+        <div class="space-y-4 border-t border-paper/15 pt-6">
+            <div>
+              <p class="mono-label text-[0.65rem] text-muted">E-Mail</p>
+              <a
+                href="mailto:kontakt@smj-wegweiser.de"
+                class="mono-label mt-1 block text-sm font-bold text-orange hover:underline"
+              >
+                kontakt@smj-wegweiser.de
+              </a>
+            </div>
 
-            <a
-              href="https://www.youtube.com/channel/UC1BbR9tT5hsZzEzPXbJ7pFw"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex items-center justify-between border border-paper/20 bg-forest-950/60 p-3 text-sm text-paper transition-all hover:border-orange hover:bg-forest-950"
-            >
-              <div class="flex items-center gap-3">
-                <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 text-orange transition-transform group-hover:scale-110">
-                  <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
-                  <polygon points="10 15 15 12 10 9 10 15" fill="currentColor"/>
-                </svg>
-                <span class="font-mono text-xs text-paper/90">SMJ Regio Wegweiser</span>
-              </div>
-              <span class="font-mono text-[0.65rem] uppercase text-orange">YouTube →</span>
-            </a>
-
-            <a
-              href="https://www.facebook.com/regiowegweiser"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex items-center justify-between border border-paper/20 bg-forest-950/60 p-3 text-sm text-paper transition-all hover:border-orange hover:bg-forest-950"
-            >
-              <div class="flex items-center gap-3">
-                <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 text-orange transition-transform group-hover:scale-110">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                </svg>
-                <span class="font-mono text-xs text-paper/90">/regiowegweiser</span>
-              </div>
-              <span class="font-mono text-[0.65rem] uppercase text-orange">Facebook →</span>
-            </a>
+            <div>
+              <p class="mono-label text-[0.65rem] text-muted">Zeltlager-Team</p>
+              <a
+                href="mailto:zeltlager@smj-wegweiser.de"
+                class="mono-label mt-1 block text-sm font-bold text-orange hover:underline"
+              >
+                zeltlager@smj-wegweiser.de
+              </a>
+            </div>
           </div>
-        </div>
+
+          <div class="border-t border-paper/15 pt-6">
+            <h4 class="mono-label text-xs uppercase tracking-wider text-paper">Standorte</h4>
+            <ul class="mt-4 space-y-4 text-xs leading-relaxed text-paper/70">
+              <li>
+                <strong class="text-paper">Klause Heiligenstadt</strong><br />
+                <p class="mt-0.5 text-paper/60">
+                  Pater-Kentenich-Weg 3<br />
+                  37308 Heilbad Heiligenstadt
+                </p>
+              </li>
+              <li>
+                <strong class="text-paper">Zeltplatz Wiesenthal</strong><br />
+                <p class="mt-0.5 text-paper/60">
+                  Birkenfelder Str.<br />
+                  37318 Uder (Ortsteil Thalwenden)
+                </p>
+              </li>
+            </ul>
+            <div class="mt-8 border-t border-paper/15 pt-6">
+              <p class="mono-label mb-3">Social Media & Kanäle</p>
+              <div class="mt-4 space-y-3">
+                <a
+                  href="https://www.whatsapp.com/channel/0029VaQxDPOF6smxyB2t4519"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex items-center justify-between border-2 border-green-500/40 bg-forest-950 p-3.5 text-sm text-paper transition-all hover:border-green-500 hover:bg-forest-900 shadow-md"
+                >
+                  <div class="flex items-center gap-3">
+                    <BrandIcon name="whatsapp" class="h-5 w-5 fill-current text-green-500 transition-transform group-hover:scale-110" />
+                    <div>
+                      <span class="font-mono text-xs font-bold text-paper block">WhatsApp-Kanal</span>
+                      <span class="font-mono text-[0.62rem] text-green-400 block">Offizielle Updates & Termine</span>
+                    </div>
+                  </div>
+                  <span class="font-mono text-[0.65rem] font-bold uppercase text-green-400">Beitreten ↗</span>
+                </a>
+
+                <a
+                  href="https://www.instagram.com/regio.wegweiser/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex items-center justify-between border border-paper/20 bg-forest-950/60 p-3 text-sm text-paper transition-all hover:border-orange hover:bg-forest-950"
+                >
+                  <div class="flex items-center gap-3">
+                    <BrandIcon name="instagram" class="h-4 w-4 fill-current text-orange transition-transform group-hover:scale-110" />
+                    <span class="font-mono text-xs text-paper/90">@regio.wegweiser</span>
+                  </div>
+                  <span class="font-mono text-[0.65rem] uppercase text-orange">Instagram →</span>
+                </a>
+
+                <a
+                  href="https://www.youtube.com/channel/UC1BbR9tT5hsZzEzPXbJ7pFw"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex items-center justify-between border border-paper/20 bg-forest-950/60 p-3 text-sm text-paper transition-all hover:border-orange hover:bg-forest-950"
+                >
+                  <div class="flex items-center gap-3">
+                    <BrandIcon name="youtube" class="h-4 w-4 fill-current text-orange transition-transform group-hover:scale-110" />
+                    <span class="font-mono text-xs text-paper/90">SMJ Regio Wegweiser</span>
+                  </div>
+                  <span class="font-mono text-[0.65rem] uppercase text-orange">YouTube →</span>
+                </a>
+
+                <a
+                  href="https://www.facebook.com/regiowegweiser"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group flex items-center justify-between border border-paper/20 bg-forest-950/60 p-3 text-sm text-paper transition-all hover:border-orange hover:bg-forest-950"
+                >
+                  <div class="flex items-center gap-3">
+                    <BrandIcon name="facebook" class="h-4 w-4 fill-current text-orange transition-transform group-hover:scale-110" />
+                    <span class="font-mono text-xs text-paper/90">/regiowegweiser</span>
+                  </div>
+                  <span class="font-mono text-[0.65rem] uppercase text-orange">Facebook →</span>
+                </a>
+              </div>
+            </div>      </div>
 
         <div class="mt-6 border-t border-paper/15 pt-6">
           <Coordinates value="WIESENTAL · N 51° 22' 04.8 · E 10° 06' 55.6" />

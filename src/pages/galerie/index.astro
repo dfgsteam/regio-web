@@ -3,6 +3,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Coordinates from '../../components/common/Coordinates.astro'
+import BrandIcon from '../../components/common/BrandIcon.astro'
 import { instagramPosts } from '../../lib/instagram/feed'
 ---
 
@@ -30,7 +31,7 @@ import { instagramPosts } from '../../lib/instagram/feed'
           rel="noopener noreferrer"
           class="inline-flex items-center gap-3 bg-orange px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-forest-950 transition-all hover:bg-forest-950 hover:text-paper"
         >
-          <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2 stroke-linecap-round stroke-linejoin-round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          <BrandIcon name="instagram" class="h-4 w-4 fill-current" />
           <span>@regio.wegweiser folgen →</span>
         </a>
       </div>

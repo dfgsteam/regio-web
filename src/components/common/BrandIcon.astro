@@ -1,0 +1,58 @@
+---
+import {
+  siWhatsapp,
+  siInstagram,
+  siFacebook,
+  siYoutube,
+  siGooglemaps,
+  siApple,
+  siOpenstreetmap,
+} from 'simple-icons'
+
+export type BrandName =
+  | 'whatsapp'
+  | 'instagram'
+  | 'facebook'
+  | 'youtube'
+  | 'googlemaps'
+  | 'apple'
+  | 'openstreetmap'
+
+interface Props {
+  name: BrandName | string
+  class?: string
+  size?: number | string
+  color?: string
+  title?: string
+}
+
+const { name, class: className = 'h-5 w-5', size, color, title } = Astro.props
+
+const iconMap: Record<string, typeof siWhatsapp> = {
+  whatsapp: siWhatsapp,
+  instagram: siInstagram,
+  facebook: siFacebook,
+  youtube: siYoutube,
+  googlemaps: siGooglemaps,
+  apple: siApple,
+  openstreetmap: siOpenstreetmap,
+}
+
+const iconKey = name.toLowerCase().replace(/[^a-z]/g, '')
+const icon = iconMap[iconKey] || siWhatsapp
+const iconTitle = title || icon.title
+---
+
+<svg
+  role="img"
+  viewBox="0 0 24 24"
+  fill={color || 'currentColor'}
+  class={className}
+  width={size}
+  height={size}
+  aria-label={iconTitle}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title>{iconTitle}</title>
+  <path d={icon.path} />
+</svg>

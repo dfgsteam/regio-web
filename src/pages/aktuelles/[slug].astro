@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content'
 import PostLayout from '../../layouts/PostLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
+import BrandIcon from '../../components/common/BrandIcon.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
@@ -25,8 +26,18 @@ interface Props {
 }
 
 const { post, prevPost, nextPost } = Astro.props
-const { Content } = await render(post)
 const { data } = post
+const { Content } = await render(post)
+
+const date = data.publishedAt.toLocaleDateString('de-DE', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+})
+
+// Reading time calculation (avg 200 words/min)
+const words = (data.description + ' ' + (post.body || '')).trim().split(/\s+/).length
+const readingTimeMinutes = Math.max(1, Math.ceil(words / 200))
 ---
 
 <PostLayout
@@ -38,49 +49,41 @@ const { data } = post
   author={data.author}
   tags={data.tags}
 >
-  <!-- Hero Section with Breadcrumbs -->
-  <section class="texture-paper relative bg-paper pb-20 pt-36 text-forest-950">
-    <Container class="max-w-4xl">
-      <!-- Breadcrumbs Navigation -->
-      <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 font-mono text-xs text-forest-950/60">
-        <a href="/" class="transition-colors hover:text-orange">Start</a>
+  <article class="texture-paper relative bg-paper pb-16 pt-36 text-forest-950">
+    <Container class="max-w-3xl">
+      <!-- Breadcrumb Navigation -->
+      <nav class="mb-6 flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-wider text-forest-950/60" aria-label="Breadcrumb">
+        <a href="/" class="hover:text-orange transition-colors">Start</a>
         <span>/</span>
-        <a href="/aktuelles/" class="transition-colors hover:text-orange">Aktuelles</a>
+        <a href="/aktuelles/" class="hover:text-orange transition-colors">Aktuelles</a>
         <span>/</span>
-        <span class="text-orange truncate max-w-xs sm:max-w-md">{data.title}</span>
+        <span class="text-orange truncate max-w-[200px] sm:max-w-xs">{data.title}</span>
       </nav>
 
-      <Eyebrow label="Aktuelles & Berichte" muted />
-      <h1 class="display display-lg sm:display-xl mt-4 text-forest-950">{data.title}</h1>
-      
-      <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-forest-950/70">
-        <time datetime={data.publishedAt.toISOString()} class="font-bold text-forest-950">
-          {data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+      <Eyebrow label={data.tags[0] || 'Bericht'} muted />
+      <h1 class="display display-lg mt-4 text-forest-950">{data.title}</h1>
+
+      <div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-y border-forest-950/15 py-3 font-mono text-xs text-forest-950/70">
+        <time datetime={data.publishedAt.toISOString()} class="text-orange font-bold">
+          {date}
         </time>
         <span>·</span>
         <span>{data.author}</span>
-        {data.tags.length > 0 && (
-          <>
-            <span>·</span>
-            <span class="text-orange uppercase tracking-wider font-semibold">
-              {data.tags.join(' · ')}
-            </span>
-          </>
-        )}
+        <span>·</span>
+        <span>ca. {readingTimeMinutes} Min. Lesezeit</span>
       </div>
     </Container>
-  </section>
+  </article>
 
-  <!-- Post Main Content -->
   <section class="bg-forest-950 py-16">
-    <Container class="max-w-4xl">
-      <figure class="mb-14 overflow-hidden border-2 border-paper/15 bg-forest-900 shadow-2xl">
+    <Container class="max-w-3xl">
+      <figure class="mb-12 border-2 border-paper/15 overflow-hidden bg-forest-900">
         <img
           src={data.image.src}
           alt={data.image.alt}
           data-photo-viewer="true"
           data-caption={data.title}
-          data-date={data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+          data-date={date}
           data-link-url={data.instagramUrl}
           class="aspect-[16/10] w-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-102"
         />
@@ -92,9 +95,12 @@ const { data } = post
 
       {data.instagramUrl && (
         <div class="mt-12 border border-paper/15 bg-forest-900/60 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <span class="mono-label text-[0.65rem] text-orange">// INSTAGRAM @REGIO.WEGWEISER</span>
-            <p class="font-display text-lg text-paper uppercase mt-1">Diesen Beitrag auf Instagram ansehen</p>
+          <div class="flex items-center gap-3">
+            <BrandIcon name="instagram" class="h-6 w-6 fill-current text-orange shrink-0" />
+            <div>
+              <span class="mono-label text-[0.65rem] text-orange">// INSTAGRAM @REGIO.WEGWEISER</span>
+              <p class="font-display text-lg text-paper uppercase mt-0.5">Diesen Beitrag auf Instagram ansehen</p>
+            </div>
           </div>
           <a
             href={data.instagramUrl}
