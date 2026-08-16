@@ -1,0 +1,55 @@
+---
+interface Props {
+  matomoUrl?: string
+  siteId?: string | number
+}
+
+const {
+  matomoUrl = import.meta.env.PUBLIC_MATOMO_URL || 'https://tracking.hunold24.de/',
+  siteId = import.meta.env.PUBLIC_MATOMO_SITE_ID || '6',
+} = Astro.props
+
+const normalizedUrl = matomoUrl.endsWith('/') ? matomoUrl : `${matomoUrl}/`
+const trackerUrl = `${normalizedUrl}matomo.php`
+const scriptSrc = `${normalizedUrl}matomo.js`
+---
+
+<script is:inline define:vars={{ normalizedUrl, trackerUrl, scriptSrc, siteId }}>
+  var _paq = (window._paq = window._paq || [])
+  /* 1. Cookie-freies Tracking (Keine Cookies im Browser ablegen -> kein Cookie-Banner nach TDDDG erforderlich) */
+  _paq.push(['disableCookies'])
+
+  /* 2. Do Not Track respektieren (Browser-Einstellung gegen Tracking) */
+  _paq.push(['setDoNotTrack', true])
+
+  /* 3. Link- und Download-Tracking */
+  _paq.push(['enableLinkTracking'])
+
+  /* 4. Ersten Seitenaufruf tracken */
+  _paq.push(['setTrackerUrl', trackerUrl])
+  _paq.push(['setSiteId', String(siteId)])
+  _paq.push(['trackPageView'])
+
+  /* 5. Matomo Skript asynchron laden */
+  ;(function () {
+    var d = document,
+      g = d.createElement('script'),
+      s = d.getElementsByTagName('script')[0]
+    g.async = true
+    g.src = scriptSrc
+    if (s && s.parentNode) {
+      s.parentNode.insertBefore(g, s)
+    } else {
+      d.head.appendChild(g)
+    }
+  })()
+
+  /* 6. Astro ViewTransitions / Page Navigation Event Support */
+  document.addEventListener('astro:page-load', function () {
+    if (window._paq && window.location) {
+      window._paq.push(['setCustomUrl', window.location.href])
+      window._paq.push(['setDocumentTitle', document.title])
+      window._paq.push(['trackPageView'])
+    }
+  })
+</script>

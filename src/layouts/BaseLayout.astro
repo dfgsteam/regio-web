@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import Matomo from '../components/common/Matomo.astro'
 
 interface Props {
   title: string
@@ -124,6 +125,9 @@ const organizationStructuredData = {
       // scroll state: mark "at top" immediately on first paint.
       document.documentElement.classList.add('is-at-top')
     </script>
+
+    <!-- Matomo Web Analytics (Cookie-Free & Privacy-Friendly) -->
+    <Matomo />
   </head>
   <body class:list={['texture-grain']}>
     <slot />
