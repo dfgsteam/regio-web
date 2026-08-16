@@ -51,8 +51,26 @@ const { data } = post
         <Content />
       </article>
 
-      <a href="/aktuelles/" class="mt-16 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
-        ← Zurück zu Aktuelles
+      {data.instagramUrl && (
+        <div class="mt-12 border border-paper/15 bg-forest-900/60 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <span class="mono-label text-[0.65rem] text-orange">// INSTAGRAM @REGIO.WEGWEISER</span>
+            <p class="font-display text-lg text-paper uppercase mt-1">Diesen Beitrag auf Instagram ansehen</p>
+          </div>
+          <a
+            href={data.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 border border-orange bg-orange/10 px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-colors shrink-0"
+          >
+            <span>Auf Instagram öffnen</span>
+            <span>↗</span>
+          </a>
+        </div>
+      )}
+
+      <a href="/aktuelles/" class="mt-14 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+        ← Zurück zu allen Beiträgen
       </a>
     </Container>
   </section>
