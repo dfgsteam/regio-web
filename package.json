@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "build": "astro build",
     "sync:calendar": "node scripts/sync-calendar.mjs",
+    "sync:instagram": "node scripts/sync-instagram.mjs",
     "astro": "astro",
     "check": "astro check",
     "typecheck": "astro check",

@@ -1,3 +1,5 @@
+import localPosts from '../../data/instagram.json'
+
 export interface InstagramPost {
   id: string
   image: string
@@ -11,7 +13,7 @@ export interface InstagramPost {
   url: string
 }
 
-export const instagramPosts: InstagramPost[] = [
+export const defaultInstagramPosts: InstagramPost[] = [
   {
     id: 'post-1',
     image: '/placeholders/story.svg',
@@ -85,3 +87,8 @@ export const instagramPosts: InstagramPost[] = [
     url: 'https://www.instagram.com/regio.wegweiser/',
   },
 ]
+
+export const instagramPosts: InstagramPost[] =
+  localPosts && Array.isArray(localPosts) && localPosts.length > 0
+    ? (localPosts as InstagramPost[])
+    : defaultInstagramPosts
