@@ -7,17 +7,24 @@ import Eyebrow from '../../components/common/Eyebrow.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
-  return posts.map((post) => ({
+  const sorted = posts.sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  return sorted.map((post, idx) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      prevPost: sorted[idx + 1] ?? null,
+      nextPost: sorted[idx - 1] ?? null,
+    },
   }))
 }
 
 interface Props {
   post: CollectionEntry<'posts'>
+  prevPost: CollectionEntry<'posts'> | null
+  nextPost: CollectionEntry<'posts'> | null
 }
 
-const { post } = Astro.props
+const { post, prevPost, nextPost } = Astro.props
 const { Content } = await render(post)
 const { data } = post
 ---
@@ -26,22 +33,45 @@ const { data } = post
   title={`${data.title} – SMJ Regio Wegweiser`}
   description={data.description}
   image={data.image.src}
+  imageAlt={data.image.alt}
   publishedAt={data.publishedAt}
   author={data.author}
+  tags={data.tags}
 >
-  <section class="texture-paper relative bg-paper pb-24 pt-40 text-forest-950">
-    <Container>
-      <Eyebrow label="Aktuelles" muted />
-      <h1 class="display display-xl mt-6 max-w-5xl text-forest-950">{data.title}</h1>
-      <p class="mono-label mt-6">
-        {data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })} · {data.author}
-      </p>
-      {data.tags.length > 0 && (
-        <p class="mono-label mt-3 text-orange">{data.tags.join(' · ')}</p>
-      )}
+  <!-- Hero Section with Breadcrumbs -->
+  <section class="texture-paper relative bg-paper pb-20 pt-36 text-forest-950">
+    <Container class="max-w-4xl">
+      <!-- Breadcrumbs Navigation -->
+      <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 font-mono text-xs text-forest-950/60">
+        <a href="/" class="transition-colors hover:text-orange">Start</a>
+        <span>/</span>
+        <a href="/aktuelles/" class="transition-colors hover:text-orange">Aktuelles</a>
+        <span>/</span>
+        <span class="text-orange truncate max-w-xs sm:max-w-md">{data.title}</span>
+      </nav>
+
+      <Eyebrow label="Aktuelles & Berichte" muted />
+      <h1 class="display display-lg sm:display-xl mt-4 text-forest-950">{data.title}</h1>
+      
+      <div class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-forest-950/70">
+        <time datetime={data.publishedAt.toISOString()} class="font-bold text-forest-950">
+          {data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+        </time>
+        <span>·</span>
+        <span>{data.author}</span>
+        {data.tags.length > 0 && (
+          <>
+            <span>·</span>
+            <span class="text-orange uppercase tracking-wider font-semibold">
+              {data.tags.join(' · ')}
+            </span>
+          </>
+        )}
+      </div>
     </Container>
   </section>
 
+  <!-- Post Main Content -->
   <section class="bg-forest-950 py-16">
     <Container class="max-w-4xl">
       <figure class="mb-14 overflow-hidden border-2 border-paper/15 bg-forest-900 shadow-2xl">
@@ -55,6 +85,7 @@ const { data } = post
           class="aspect-[16/10] w-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-102"
         />
       </figure>
+
       <article class="prose-rough">
         <Content />
       </article>
@@ -77,9 +108,44 @@ const { data } = post
         </div>
       )}
 
-      <a href="/aktuelles/" class="mt-14 inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
-        ← Zurück zu allen Beiträgen
-      </a>
+      <!-- Previous / Next Article Navigation -->
+      <nav class="mt-16 border-t border-paper/15 pt-8 grid gap-6 sm:grid-cols-2">
+        {prevPost ? (
+          <a
+            href={`/aktuelles/${prevPost.id}/`}
+            class="group border border-paper/15 bg-forest-900/50 p-5 transition-all hover:border-orange hover:bg-forest-900"
+          >
+            <span class="mono-label text-[0.62rem] text-paper/50 flex items-center gap-1">
+              <span>←</span> <span>VORHERIGER BEITRAG</span>
+            </span>
+            <p class="display text-lg text-paper mt-1 group-hover:text-orange transition-colors line-clamp-2">
+              {prevPost.data.title}
+            </p>
+          </a>
+        ) : (
+          <div />
+        )}
+
+        {nextPost && (
+          <a
+            href={`/aktuelles/${nextPost.id}/`}
+            class="group border border-paper/15 bg-forest-900/50 p-5 text-right transition-all hover:border-orange hover:bg-forest-900 sm:col-start-2"
+          >
+            <span class="mono-label text-[0.62rem] text-paper/50 flex items-center justify-end gap-1">
+              <span>NÄCHSTER BEITRAG</span> <span>→</span>
+            </span>
+            <p class="display text-lg text-paper mt-1 group-hover:text-orange transition-colors line-clamp-2">
+              {nextPost.data.title}
+            </p>
+          </a>
+        )}
+      </nav>
+
+      <div class="mt-10 text-center">
+        <a href="/aktuelles/" class="inline-flex items-center gap-3 border-b-2 border-orange pb-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:text-orange">
+          ← Zurück zur Beitragsübersicht
+        </a>
+      </div>
     </Container>
   </section>
 </PostLayout>

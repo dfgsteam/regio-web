@@ -21,21 +21,52 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
 
 const articleStructuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Article',
+  '@type': 'BlogPosting',
   headline: title,
   description,
+  inLanguage: 'de-DE',
   image: image ? new URL(image, Astro.site).toString() : `${siteUrl}/og-image.png`,
   datePublished: publishedAt?.toISOString(),
   dateModified: publishedAt?.toISOString(),
-  articleSection: tags.join(', '),
+  keywords: tags.join(', '),
+  articleSection: tags[0] || 'Aktuelles',
   mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
-  author: { '@type': 'Organization', name: author ?? 'SMJ Regio Wegweiser', url: siteUrl },
+  author: {
+    '@type': 'Organization',
+    name: author ?? 'SMJ Regio Wegweiser',
+    url: siteUrl,
+  },
   publisher: {
     '@type': 'Organization',
     '@id': `${siteUrl}/#organization`,
     name: 'SMJ Regio Wegweiser',
     logo: { '@type': 'ImageObject', url: `${siteUrl}/og-image.png` },
   },
+}
+
+const breadcrumbStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Startseite',
+      item: `${siteUrl}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Aktuelles & Berichte',
+      item: `${siteUrl}/aktuelles/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: title,
+      item: canonicalUrl,
+    },
+  ],
 }
 ---
 
@@ -46,7 +77,12 @@ const articleStructuredData = {
   imageAlt={imageAlt}
   ogType="article"
   noIndex={noIndex}
-  structuredData={articleStructuredData}
+  articlePublishedTime={publishedAt?.toISOString()}
+  articleModifiedTime={publishedAt?.toISOString()}
+  articleAuthor={author ?? 'SMJ Regio Wegweiser'}
+  articleTags={tags}
+  articleSection={tags[0] || 'Aktuelles'}
+  structuredData={[articleStructuredData, breadcrumbStructuredData]}
 >
   <Header />
   <main>
