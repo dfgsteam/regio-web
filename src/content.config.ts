@@ -16,6 +16,8 @@ const posts = defineCollection({
     }),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    disabled: z.boolean().default(false),
+    active: z.boolean().default(true),
     instagramUrl: z.string().optional(),
     instagramId: z.string().optional(),
   }),

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content'
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
 
-const posts = await getCollection('posts', ({ data }) => !data.draft)
+const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
 const latest = posts
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
   .slice(0, 3)

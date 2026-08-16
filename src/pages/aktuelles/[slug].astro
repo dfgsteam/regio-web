@@ -6,7 +6,7 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts', ({ data }) => !data.draft)
+  const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },

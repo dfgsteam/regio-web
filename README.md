@@ -144,8 +144,8 @@ registration:
 ---
 ```
 
-### 2. Journal-Beiträge & News erstellen
-Neue Artikel werden unter `src/content/posts/[slug].mdx` abgelegt:
+### 2. Journal-Beiträge & News verwalten (Erstellen & Deaktivieren)
+Artikel werden unter `src/content/posts/[slug].mdx` abgelegt (oder automatisch via `npm run sync:instagram` aus Instagram erzeugt):
 
 ```yaml
 ---
@@ -158,10 +158,21 @@ image:
   alt: "Lagerfeuerrunde im Zeltlager"
 tags: ["Zeltlager", "Rückblick"]
 draft: false
+disabled: false
 ---
 
 Hier steht der Artikelinhalt im Markdown-Format...
 ```
+
+#### 🚫 Wie deaktiviere ich einen Post?
+Um einen Beitrag von der Website auszublenden (ohne die Datei löschen zu müssen):
+1. Öffne die gewünschte `.mdx`-Datei in [`src/content/posts/`](src/content/posts/).
+2. Setze im Kopfbereich (Frontmatter) entweder:
+   * **`draft: true`**
+   * **`disabled: true`**
+   * oder **`active: false`**
+
+*Sobald einer dieser Werte gesetzt ist, wird der Post beim Build automatisch von der Startseite, aus der Übersicht (`/aktuelles/`) und aus allen Feeds entfernt.*
 
 ### 3. Termine & Events verwalten
 

@@ -4,7 +4,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 
-const posts = await getCollection('posts', ({ data }) => !data.draft)
+const posts = await getCollection('posts', ({ data }) => !data.draft && !data.disabled && data.active !== false)
 const sorted = posts.sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
 ---
 
