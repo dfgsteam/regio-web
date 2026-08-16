@@ -44,8 +44,16 @@ const { data } = post
 
   <section class="bg-forest-950 py-16">
     <Container class="max-w-4xl">
-      <figure class="mb-14">
-        <img src={data.image.src} alt={data.image.alt} class="aspect-[16/10] w-full object-cover" />
+      <figure class="mb-14 overflow-hidden border-2 border-paper/15 bg-forest-900 shadow-2xl">
+        <img
+          src={data.image.src}
+          alt={data.image.alt}
+          data-photo-viewer="true"
+          data-caption={data.title}
+          data-date={data.publishedAt.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}
+          data-link-url={data.instagramUrl}
+          class="aspect-[16/10] w-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-102"
+        />
       </figure>
       <article class="prose-rough">
         <Content />

@@ -91,24 +91,24 @@ import { instagramPosts } from '../../lib/instagram/feed'
               </div>
 
               <!-- Post Media -->
-              <a
-                href={post.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="relative block aspect-[4/5] overflow-hidden bg-forest-950"
-              >
+              <div class="relative block aspect-[4/5] overflow-hidden bg-forest-950 cursor-zoom-in">
                 <img
                   src={post.image}
                   alt={post.alt}
+                  data-photo-viewer="true"
+                  data-caption={post.caption || post.alt}
+                  data-date={post.date}
+                  data-link-url={post.url}
                   loading="lazy"
                   class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div class="absolute inset-0 bg-forest-950/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center">
-                  <span class="inline-flex items-center gap-2 bg-forest-950/90 border border-orange px-3.5 py-1.5 font-mono text-xs text-paper">
-                    Auf Instagram ansehen ↗
+                <div class="pointer-events-none absolute inset-0 bg-forest-950/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center">
+                  <span class="inline-flex items-center gap-2 bg-forest-950/90 border border-orange px-3.5 py-1.5 font-mono text-xs text-paper shadow-xl">
+                    <span>Foto vergrößern</span>
+                    <span class="text-orange">⤢</span>
                   </span>
                 </div>
-              </a>
+              </div>
 
               <!-- Post Actions & Caption -->
               <div class="p-5 flex-1 flex flex-col justify-between">
