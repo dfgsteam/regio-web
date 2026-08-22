@@ -1,0 +1,1 @@
+import{n as e,t}from"./ScrollTrigger.Cgjl6ODA.js";e.registerPlugin(t);function n(e){t.getAll().forEach(t=>{let n=t.trigger;if(!e){t.kill();return}n&&(n===e||e.contains(n))&&t.kill()})}function r(t,r){let i=e.context(()=>{let e=r();return()=>{e?.(),n(t)}},t);return()=>i.revert()}export{r as t};

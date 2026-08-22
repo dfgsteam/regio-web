@@ -1,0 +1,350 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SMJ Regio Wegweiser//Terminkalender//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:SMJ Regio Wegweiser Termine
+X-WR-TIMEZONE:Europe/Berlin
+X-WR-CALDESC:Offizielle Termine, Zeltlager und Wochenenden der SMJ Regio Wegweiser
+BEGIN:VEVENT
+UID:41eel8kqgrm8soof5qd0clibsc@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20210716T090000Z
+DTEND:20210719T090000Z
+SUMMARY:Bistumsjugendtag
+URL:https://regio.hnld.de/abenteuer/bistumsjugendtag-2021/
+DESCRIPTION:Herzliche Einladung zu Bistumsjugendtag der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/bistumsjugendtag-2021/
+LOCATION:Region Wegweiser
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:7tds6f5umcslfoqvgpq6jgfppj@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20210729T090000Z
+DTEND:20210808T090000Z
+SUMMARY:Griechen-Zeltlager - Der Ruf der Götter
+URL:https://regio.hnld.de/abenteuer/zeltlager-2021/
+DESCRIPTION:Für alle Jungs von 10-14 Jahre\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2021/
+LOCATION:Wiesental, Birkenfelder Str., 37318 Thalwenden, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:1tappor8r3dviteta27dmngpnn@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20211022T090000Z
+DTEND:20211025T090000Z
+SUMMARY:Zeltlagernachtreffen
+URL:https://regio.hnld.de/abenteuer/zeltlager-2021/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2021/
+LOCATION:Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:0h5mhjn9tlf6rqcc0qmsaorbqi@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20211029T090000Z
+DTEND:20211103T090000Z
+SUMMARY:Gruppenleiterschulung
+URL:https://regio.hnld.de/abenteuer/gruppenleiterschulung-2021/
+DESCRIPTION:Herzliche Einladung zu Gruppenleiterschulung der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/gruppenleiterschulung-2021/
+LOCATION:Jugendzentrum Marienberg, Am Marienberg 4, 56179 Vallendar, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:h4pfpccj618vk6p0bpo99nbomc4pkqctqsjmina3j9u3m34hjs4dr7vu8q@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20220610T160000Z
+DTEND:20220612T130000Z
+SUMMARY:Actionwochenende
+URL:https://regio.hnld.de/abenteuer/actionwochenende-1-2022/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-1-2022/
+LOCATION:Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:tq3jp0bn18450ie580913mv6udfs8257r570am17mvv6ub6llfl37sd88r@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20220719T090000Z
+DTEND:20220726T090000Z
+SUMMARY:Actionwoche in München
+URL:https://regio.hnld.de/abenteuer/actionwoche-in-muenchen-2022/
+DESCRIPTION:Actionwoche für Jungs ab 15 Jahre.\ngemeinsame Anreise von Heilbad Heiligenstadt.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwoche-in-muenchen-2022/
+LOCATION:Herzerichstraße 138-140, 81477 München
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:c26i9ols0mkh5th1kj1358lu44vdblu6k094j6nvnniadtbru46kgibfqn@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20220804T130000Z
+DTEND:20220813T120000Z
+SUMMARY:Western-Zeltlager Thalwenden
+URL:https://regio.hnld.de/abenteuer/zeltlager-2022/
+DESCRIPTION:Zeltlager für Jungs von 10-14 Jahren.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2022/
+LOCATION:Birkenfelder Straße, Birkenfelder Str., 37318 Thalwenden, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:jk5esg80me7npt6rnaj3dmkkt6c7t0e43uiglrgr1thr14jofp6f19pjpq@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20221111T170000Z
+DTEND:20221113T140000Z
+SUMMARY:Zeltlagernachtreffen
+URL:https://regio.hnld.de/abenteuer/zeltlager-2022/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2022/
+LOCATION:Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:845o4m0qvog8dl8e5pd9qd0oc1gl8m3a00ve54ie3s76cu63d1j96hca1h@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20221202T170000Z
+DTEND:20221204T140000Z
+SUMMARY:Actionwochenende
+URL:https://regio.hnld.de/abenteuer/actionwochenende-2-2022/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-2-2022/
+LOCATION:Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:vrpkdo4caq4b0oa4jpff7fhcllv65ghi9duga9lte8v2fqqcabcbkn1d9f@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20230720T090000Z
+DTEND:20230730T090000Z
+SUMMARY:Zeltlager Thalwenden
+URL:https://regio.hnld.de/abenteuer/zeltlager-2023/
+DESCRIPTION:Für Jungs von 10 bis 15 Jahre\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2023/
+LOCATION:Wiesental, Birkenfelder Str., 37318 Thalwenden, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:d8q66n95i5l8jlsal0111gaea7penaa5lb7tv2ug13piqn3k92gvu6kvi6@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20230807T090000Z
+DTEND:20230814T090000Z
+SUMMARY:Utopia Island - eine neue Welt
+URL:https://regio.hnld.de/abenteuer/utopia-island-eine-neue-welt-2023/
+DESCRIPTION:Herzliche Einladung zu Utopia Island - eine neue Welt der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/utopia-island-eine-neue-welt-2023/
+LOCATION:Kiehnwerder, 14776 Brandenburg an der Havel, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2n7qh5te42git59jeu7ban7lm8@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20231013T160000Z
+DTEND:20231015T123000Z
+SUMMARY:Sterntreffen (Zeltlagernachtreffen)
+URL:https://regio.hnld.de/abenteuer/zeltlager-2023/
+DESCRIPTION:Hier gibt's Infos oder gleich jetzt !\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2023/
+LOCATION:Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:0n59rb2mpk1erjiuvr2vfmdfbu@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20231201T170000Z
+DTEND:20231203T133000Z
+SUMMARY:Actionwochenende 3
+URL:https://regio.hnld.de/abenteuer/actionwochenende-3-2023/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-3-2023/
+LOCATION:Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:6eam9hg7qikhvkhujlb9s7bbiq@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240202T160000Z
+DTEND:20240204T140000Z
+SUMMARY:Actionwochenende 1
+URL:https://regio.hnld.de/abenteuer/actionwochenende-1-2024/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-1-2024/
+LOCATION:Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:crs09ct6fc273pn2sbbg7ms43fottualsb9un5a7a5t5oul4gd11ijbqc7@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240418T090000Z
+DTEND:20240422T090000Z
+SUMMARY:72h Aktion des BDKJ
+URL:https://regio.hnld.de/abenteuer/72h-aktion-des-bdkj-2024/
+DESCRIPTION:Herzliche Einladung zu 72h Aktion des BDKJ der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/72h-aktion-des-bdkj-2024/
+LOCATION:Region Wegweiser
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:49pljnic1git7qjkovvofs9m7o@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240420T090000Z
+DTEND:20240421T090000Z
+SUMMARY:72h Aktion - Kindertag
+URL:https://regio.hnld.de/abenteuer/72h-aktion-kindertag-2024/
+DESCRIPTION:72h-Aktion: Spiel, Spaß und Spannung für die ganze Familie! Gemeinsam mit der MJF Erfurt und leicht verspielt veranstalten wir im Rahmen der bundesweiten 72h-Ak...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/72h-aktion-kindertag-2024/
+LOCATION:Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:45op3mg64cjldk13aknc2t5nr1@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240614T150000Z
+DTEND:20240616T130000Z
+SUMMARY:Actionwochenende 2
+URL:https://regio.hnld.de/abenteuer/actionwochenende-2-2024/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-2-2024/
+LOCATION:Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:1n1jmdpgfimh9m11piimdoni42@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240627T090000Z
+DTEND:20240707T090000Z
+SUMMARY:Zeltlager Thalwenden
+URL:https://regio.hnld.de/abenteuer/zeltlager-2024/
+DESCRIPTION:Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2024/
+LOCATION:Zeltplatz Wiesental, Thalwenden
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:1tgl95fhhfpcpm2p666tk1k0cb@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240809T150000Z
+DTEND:20240811T130000Z
+SUMMARY:Sterntreffen
+URL:https://regio.hnld.de/abenteuer/sterntreffen-2024/
+DESCRIPTION:Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wieder...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/sterntreffen-2024/
+LOCATION:Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:6hhe12c6gau5h0amfj7gla5mlk@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240830T140000Z
+DTEND:20240901T130000Z
+SUMMARY:Nacht des Heiligtums
+URL:https://regio.hnld.de/abenteuer/nacht-des-heiligtums-2024/
+DESCRIPTION:Herzliche Einladung zu Nacht des Heiligtums der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/nacht-des-heiligtums-2024/
+LOCATION:Urheiligtum Schönstatt, 56179 Vallendar, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:dqm0fs2qgt7l79ihips8t994d0pml52rmut80dgp9q0pi55uc4a8m114jq@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20240930T090000Z
+DTEND:20241007T090000Z
+SUMMARY:Herbstwoche für Ältere
+URL:https://regio.hnld.de/abenteuer/herbstwoche-fuer-aeltere-2024/
+DESCRIPTION:Herzliche Einladung zu Herbstwoche für Ältere der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/herbstwoche-fuer-aeltere-2024/
+LOCATION:Region Wegweiser
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:78j7i02p8g0uqbf7vvbkr5krfq@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20241108T160000Z
+DTEND:20241110T140000Z
+SUMMARY:Actionwochenende 3
+URL:https://regio.hnld.de/abenteuer/actionwochenende-3-2024/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-3-2024/
+LOCATION:Schönstatt-Mannesjugend Regio Wegweiser, Pater-Kentenich-Weg 3, 37308 Heilbad Heiligenstadt, Deutschland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:g9scr8blg95vbornihr55ctii5tqn2i946o0u6521p10010682o9dbuemq@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20250425T090000Z
+DTEND:20250428T090000Z
+SUMMARY:Actionwochenende
+URL:https://regio.hnld.de/abenteuer/actionwochenende-2025/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-2025/
+LOCATION:Klause 2.0, Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:471u1d0aeele4ganhpu6ci68mksq8gi6hpg3o4v3m79v3k71itu0urilco@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20250703T090000Z
+DTEND:20250713T090000Z
+SUMMARY:Zeltlager 2025
+URL:https://regio.hnld.de/abenteuer/zeltlager-2025/
+DESCRIPTION:Herzliche Einladung zu Zeltlager 2025 der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2025/
+LOCATION:Zeltplatz Wiesental, Thalwenden
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2pm8h0lktjfouv1m2800d71gm2@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20251128T090000Z
+DTEND:20251201T090000Z
+SUMMARY:Actionwochenende 3
+URL:https://regio.hnld.de/abenteuer/actionwochenende-3-2025/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-3-2025/
+LOCATION:Klause 2.0, Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:5kciib7rruqmg4f6ps8up44ier@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20260130T160000Z
+DTEND:20260201T150000Z
+SUMMARY:Actionwochenende 1
+URL:https://regio.hnld.de/abenteuer/actionwochenende-1-2026/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-1-2026/
+LOCATION:Klause 2.0, Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:6p0pd8t82f2bqci0sgosjhq84g@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20260425T090000Z
+DTEND:20260426T090000Z
+SUMMARY:Familientag im Rahmen der BDKJ Sozialaktion
+URL:https://regio.hnld.de/abenteuer/familientag-im-rahmen-der-bdkj-sozialaktion-2026/
+DESCRIPTION:Herzliche Einladung zu Familientag im Rahmen der BDKJ Sozialaktion der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Ü...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/familientag-im-rahmen-der-bdkj-sozialaktion-2026/
+LOCATION:Region Wegweiser
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:3f5en6h897uqgr7g37nma14vpn@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20260508T160000Z
+DTEND:20260510T130000Z
+SUMMARY:Actionwochenende 2
+URL:https://regio.hnld.de/abenteuer/actionwochenende-2-2026/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-2-2026/
+LOCATION:Klause 2.0, Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:3aou5v62ip2mlsb79havsrakur@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20260708T090000Z
+DTEND:20260718T090000Z
+SUMMARY:Zeltlager Thalwenden
+URL:https://regio.hnld.de/abenteuer/zeltlager-2026/
+DESCRIPTION:Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/zeltlager-2026/
+LOCATION:Zeltplatz Wiesental, Thalwenden
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:245fiaddbntagqf2d5n4a0c6na@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20260828T150000Z
+DTEND:20260830T140000Z
+SUMMARY:Sterntreffen
+URL:https://regio.hnld.de/abenteuer/sterntreffen-2026/
+DESCRIPTION:Das offizielle Nachtreffen für alle Jungs, die im Zeltlager dabei waren! Drei Tage voller Mutproben, Kameradschaft, wilder Lagergeschichten und das große Wieder...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/sterntreffen-2026/
+LOCATION:Klause 2.0, Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:1t4tc4h6ooi3pd75vgb68q8ujd@google.com@smj-wegweiser.de
+DTSTAMP:20260822T064805Z
+DTSTART:20261120T160000Z
+DTEND:20261122T150000Z
+SUMMARY:Actionwochenende 3
+URL:https://regio.hnld.de/abenteuer/actionwochenende-3-2026/
+DESCRIPTION:Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß un...\n\nAlle Infos, Packliste & Anmeldung: https://regio.hnld.de/abenteuer/actionwochenende-3-2026/
+LOCATION:Klause 2.0, Heiligenstadt
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR

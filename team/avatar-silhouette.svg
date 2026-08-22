@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500" fill="none">
+  <!-- Subtle silhouette shadow -->
+  <path d="M200 80 C160 80 130 110 130 150 C130 190 155 220 185 230 C110 250 80 300 70 380 C65 420 60 470 60 500 L340 500 C340 470 335 420 330 380 C320 300 290 250 215 230 C245 220 270 190 270 150 C270 110 240 80 200 80 Z" fill="#182019" stroke="#FF5A1F" stroke-width="2" stroke-opacity="0.35" stroke-dasharray="6 4" />
+  
+  <!-- Head & shoulders inner gradient fill -->
+  <path d="M200 85 C165 85 138 112 138 148 C138 184 162 212 188 222 C120 242 92 288 82 365 C78 402 73 450 72 490 L328 490 C327 450 322 402 318 365 C308 288 280 242 212 222 C238 212 262 184 262 148 C262 112 235 85 200 85 Z" fill="#141B15" opacity="0.9" />
+
+  <!-- Compass / Crosshair Reticle -->
+  <circle cx="200" cy="150" r="45" stroke="#FF5A1F" stroke-width="1.5" stroke-opacity="0.4" stroke-dasharray="3 3" />
+  <line x1="200" y1="90" x2="200" y2="210" stroke="#FF5A1F" stroke-width="1.5" stroke-opacity="0.3" />
+  <line x1="140" y1="150" x2="260" y2="150" stroke="#FF5A1F" stroke-width="1.5" stroke-opacity="0.3" />
+
+  <!-- Monospace Annotation -->
+  <text x="200" y="320" font-family="'Space Mono', monospace" font-size="11" font-weight="bold" fill="#FF5A1F" text-anchor="middle" letter-spacing="2" opacity="0.8">// FOTO FOLGT</text>
+  <text x="200" y="340" font-family="'Space Mono', monospace" font-size="9" fill="#F1EBDD" text-anchor="middle" letter-spacing="1" opacity="0.4">LEITERTEAM</text>
+</svg>
