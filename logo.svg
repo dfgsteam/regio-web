@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 292">
+  <!-- SMJ Cross (Back) -->
+  <g fill="#111713" stroke="#F1EBDD" stroke-width="4.5" stroke-linejoin="round">
+    <path d="M 124 74 A 86 86 0 0 1 200 74 L 192 92 A 66 66 0 0 0 132 92 Z" />
+    <path d="M 234 108 A 86 86 0 0 1 234 184 L 216 176 A 66 66 0 0 0 216 116 Z" />
+    <path d="M 200 218 A 86 86 0 0 1 124 218 L 132 200 A 66 66 0 0 0 192 200 Z" />
+    <path d="M 90 184 A 86 86 0 0 1 90 108 L 108 116 A 66 66 0 0 0 108 176 Z" />
+
+    <path d="M 146 14 L 178 14 L 178 48 L 170 48 L 170 94 L 154 94 L 154 48 L 146 48 Z" />
+    <path d="M 146 278 L 178 278 L 178 244 L 170 244 L 170 198 L 154 198 L 154 244 L 146 244 Z" />
+    <path d="M 14 130 L 14 162 L 48 162 L 48 154 L 94 154 L 94 138 L 48 138 L 48 130 Z" />
+    <path d="M 310 130 L 310 162 L 276 162 L 276 154 L 230 154 L 230 138 L 276 138 L 276 130 Z" />
+  </g>
+
+  <!-- Shrine Roof & Center Post -->
+  <g fill="#111713" stroke="#F1EBDD" stroke-width="5" stroke-linejoin="round">
+    <path d="M 162 18 L 134 68 L 145 68 L 145 104 L 179 104 L 179 68 L 190 68 Z" />
+    <rect x="154" y="186" width="16" height="92" rx="2" />
+  </g>
+
+  <!-- Bell Arch Window -->
+  <path d="M 157 72 A 5 5 0 0 1 167 72 L 167 92 L 157 92 Z" fill="#F1EBDD" />
+
+  <!-- Wegweiser Signboard Hexagon -->
+  <polygon
+    points="18,146 54,96 270,96 306,146 270,196 54,196"
+    fill="#111713"
+    stroke="#F1EBDD"
+    stroke-width="7"
+    stroke-linejoin="round"
+  />
+
+  <!-- WEGWEISER Text -->
+  <text
+    x="162"
+    y="161"
+    fill="#FF5A1F"
+    font-family="'Anton', Impact, 'Arial Black', sans-serif"
+    font-weight="900"
+    font-size="45"
+    text-anchor="middle"
+    letter-spacing="2.8"
+  >
+    WEGWEISER
+  </text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1350" viewBox="0 0 2400 1350">
+  <rect width="2400" height="1350" fill="#182019"/>
+  <g fill="none" stroke="#2E3B2C" stroke-width="2" opacity="0.85">
+<ellipse cx="1584" cy="567" rx="139.5" ry="90" transform="rotate(-8 1584 567)"/>
+<ellipse cx="1584" cy="567" rx="279" ry="180" transform="rotate(-8 1584 567)"/>
+<ellipse cx="1584" cy="567" rx="418.5" ry="270" transform="rotate(-8 1584 567)"/>
+<ellipse cx="1584" cy="567" rx="558" ry="360" transform="rotate(-8 1584 567)"/>
+<ellipse cx="1584" cy="567" rx="697.5" ry="450" transform="rotate(-8 1584 567)"/>
+<ellipse cx="1584" cy="567" rx="837" ry="540" transform="rotate(-8 1584 567)"/>
+<ellipse cx="1584" cy="567" rx="976.5" ry="630" transform="rotate(-8 1584 567)"/>
+  </g>
+  <g fill="none" stroke="#3A4A37" stroke-width="1.4" opacity="0.7">
+<ellipse cx="576" cy="918.0000000000001" rx="139.5" ry="90" transform="rotate(-8 576 918.0000000000001)"/>
+<ellipse cx="576" cy="918.0000000000001" rx="279" ry="180" transform="rotate(-8 576 918.0000000000001)"/>
+<ellipse cx="576" cy="918.0000000000001" rx="418.5" ry="270" transform="rotate(-8 576 918.0000000000001)"/>
+<ellipse cx="576" cy="918.0000000000001" rx="558" ry="360" transform="rotate(-8 576 918.0000000000001)"/>
+<ellipse cx="576" cy="918.0000000000001" rx="697.5" ry="450" transform="rotate(-8 576 918.0000000000001)"/>
+<ellipse cx="576" cy="918.0000000000001" rx="837" ry="540" transform="rotate(-8 576 918.0000000000001)"/>
+<ellipse cx="576" cy="918.0000000000001" rx="976.5" ry="630" transform="rotate(-8 576 918.0000000000001)"/>
+  </g>
+  <path d="M22 48H74M48 22V74" stroke="#E2A93B" stroke-width="2"/>
+<circle cx="48" cy="48" r="2.5" fill="#E2A93B"/>
+  <path d="M2326 1302H2378M2352 1276V1328" stroke="#E2A93B" stroke-width="2"/>
+<circle cx="2352" cy="1302" r="2.5" fill="#E2A93B"/>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#E2A93B" font-size="61" letter-spacing="4">
+    <text x="144" y="675">CAMP HERO</text>
+    <text x="144" y="788" opacity="0.55">16:9 — 2400×1350</text>
+  </g>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#8D9389" font-size="40" letter-spacing="3">
+    <text x="144" y="900">BILD FOLGT.</text>
+    <text x="144" y="961">WIRD DURCH ECHTES FOTO ERSETZT.</text>
+  </g>
+</svg>
