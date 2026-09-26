@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+  <rect width="1200" height="1500" fill="#182019"/>
+  <g fill="none" stroke="#2E3B2C" stroke-width="2" opacity="0.85">
+<ellipse cx="792" cy="630" rx="124" ry="80" transform="rotate(-8 792 630)"/>
+<ellipse cx="792" cy="630" rx="248" ry="160" transform="rotate(-8 792 630)"/>
+<ellipse cx="792" cy="630" rx="372" ry="240" transform="rotate(-8 792 630)"/>
+<ellipse cx="792" cy="630" rx="496" ry="320" transform="rotate(-8 792 630)"/>
+<ellipse cx="792" cy="630" rx="620" ry="400" transform="rotate(-8 792 630)"/>
+<ellipse cx="792" cy="630" rx="744" ry="480" transform="rotate(-8 792 630)"/>
+<ellipse cx="792" cy="630" rx="868" ry="560" transform="rotate(-8 792 630)"/>
+  </g>
+  <g fill="none" stroke="#3A4A37" stroke-width="1.4" opacity="0.7">
+<ellipse cx="288" cy="1020.0000000000001" rx="124" ry="80" transform="rotate(-8 288 1020.0000000000001)"/>
+<ellipse cx="288" cy="1020.0000000000001" rx="248" ry="160" transform="rotate(-8 288 1020.0000000000001)"/>
+<ellipse cx="288" cy="1020.0000000000001" rx="372" ry="240" transform="rotate(-8 288 1020.0000000000001)"/>
+<ellipse cx="288" cy="1020.0000000000001" rx="496" ry="320" transform="rotate(-8 288 1020.0000000000001)"/>
+<ellipse cx="288" cy="1020.0000000000001" rx="620" ry="400" transform="rotate(-8 288 1020.0000000000001)"/>
+<ellipse cx="288" cy="1020.0000000000001" rx="744" ry="480" transform="rotate(-8 288 1020.0000000000001)"/>
+<ellipse cx="288" cy="1020.0000000000001" rx="868" ry="560" transform="rotate(-8 288 1020.0000000000001)"/>
+  </g>
+  <path d="M22 48H74M48 22V74" stroke="#C9BA99" stroke-width="2"/>
+<circle cx="48" cy="48" r="2.5" fill="#C9BA99"/>
+  <path d="M1126 1452H1178M1152 1426V1478" stroke="#C9BA99" stroke-width="2"/>
+<circle cx="1152" cy="1452" r="2.5" fill="#C9BA99"/>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#C9BA99" font-size="68" letter-spacing="4">
+    <text x="72" y="750">STORY SLOT</text>
+    <text x="72" y="875" opacity="0.55">4:5 — 1200×1500</text>
+  </g>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#8D9389" font-size="44" letter-spacing="3">
+    <text x="72" y="1000">BILD FOLGT.</text>
+    <text x="72" y="1068">WIRD DURCH ECHTES FOTO ERSETZT.</text>
+  </g>
+</svg>

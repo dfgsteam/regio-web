@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600">
+  <rect width="2400" height="1600" fill="#182019"/>
+  <g fill="none" stroke="#2E3B2C" stroke-width="2" opacity="0.85">
+<ellipse cx="1584" cy="672" rx="165.33333333333334" ry="106.66666666666667" transform="rotate(-8 1584 672)"/>
+<ellipse cx="1584" cy="672" rx="330.6666666666667" ry="213.33333333333334" transform="rotate(-8 1584 672)"/>
+<ellipse cx="1584" cy="672" rx="496" ry="320" transform="rotate(-8 1584 672)"/>
+<ellipse cx="1584" cy="672" rx="661.3333333333334" ry="426.6666666666667" transform="rotate(-8 1584 672)"/>
+<ellipse cx="1584" cy="672" rx="826.6666666666667" ry="533.3333333333334" transform="rotate(-8 1584 672)"/>
+<ellipse cx="1584" cy="672" rx="992" ry="640" transform="rotate(-8 1584 672)"/>
+<ellipse cx="1584" cy="672" rx="1157.3333333333335" ry="746.6666666666667" transform="rotate(-8 1584 672)"/>
+  </g>
+  <g fill="none" stroke="#3A4A37" stroke-width="1.4" opacity="0.7">
+<ellipse cx="576" cy="1088" rx="165.33333333333334" ry="106.66666666666667" transform="rotate(-8 576 1088)"/>
+<ellipse cx="576" cy="1088" rx="330.6666666666667" ry="213.33333333333334" transform="rotate(-8 576 1088)"/>
+<ellipse cx="576" cy="1088" rx="496" ry="320" transform="rotate(-8 576 1088)"/>
+<ellipse cx="576" cy="1088" rx="661.3333333333334" ry="426.6666666666667" transform="rotate(-8 576 1088)"/>
+<ellipse cx="576" cy="1088" rx="826.6666666666667" ry="533.3333333333334" transform="rotate(-8 576 1088)"/>
+<ellipse cx="576" cy="1088" rx="992" ry="640" transform="rotate(-8 576 1088)"/>
+<ellipse cx="576" cy="1088" rx="1157.3333333333335" ry="746.6666666666667" transform="rotate(-8 576 1088)"/>
+  </g>
+  <path d="M22 48H74M48 22V74" stroke="#FF5A1F" stroke-width="2"/>
+<circle cx="48" cy="48" r="2.5" fill="#FF5A1F"/>
+  <path d="M2326 1552H2378M2352 1526V1578" stroke="#FF5A1F" stroke-width="2"/>
+<circle cx="2352" cy="1552" r="2.5" fill="#FF5A1F"/>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#FF5A1F" font-size="73" letter-spacing="4">
+    <text x="144" y="800">HERO SLOT</text>
+    <text x="144" y="933" opacity="0.55">3:2 — 2400×1600</text>
+  </g>
+  <g font-family="'Space Mono', 'Courier New', monospace" fill="#8D9389" font-size="47" letter-spacing="3">
+    <text x="144" y="1067">BILD FOLGT.</text>
+    <text x="144" y="1140">WIRD DURCH ECHTES FOTO ERSETZT.</text>
+  </g>
+</svg>
