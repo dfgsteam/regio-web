@@ -324,6 +324,8 @@ FTP-Upload auf dem Webspace
 
 Für den lokalen Sync gehören die Zugangsdaten in die ignorierte `.env.local`. Bei GitHub unter **Settings → Secrets and variables → Actions** `CIVICRM_API_KEY` als Repository Secret hinterlegen; `CIVICRM_SITE_KEY` nur, falls die AuthX-Konfiguration den Site-Key verlangt. Ohne API-Key bleibt der letzte Civi-Cache erhalten.
 
+Während der Umstellung bleiben Kalenderlinks zum alten CiviCRM aktiv, wenn sich ein Event noch nicht eindeutig über Titel und Datum im neuen CiviCRM finden lässt. Alte und neue Event-IDs werden nicht gleichgesetzt. Nach Abschaltung des Altsystems `CIVICRM_LEGACY_LINKS_ENABLED=false` lokal in `.env` und bei GitHub als Actions-Variable setzen. Dann werden nicht zugeordnete alte Anmeldelinks ausgeblendet.
+
 Beispiel für `.env.local`:
 
 ```bash

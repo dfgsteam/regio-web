@@ -2,6 +2,7 @@ import rawRegistration from '../../data/civi-registration.json'
 import type { Event } from '../events/types'
 
 const CIVICRM_BASE_URL = 'https://civi.smj-wegweiser.de'
+const LEGACY_CIVI_LINKS_ENABLED = import.meta.env.CIVICRM_LEGACY_LINKS_ENABLED !== 'false'
 
 interface CiviRegistration {
   id: number
@@ -47,11 +48,21 @@ export function civiIdFromUrl(url?: string): number | undefined {
   if (!url) return undefined
   try {
     const parsed = new URL(url)
-    if (!parsed.pathname.includes('/civicrm/event/register')) return undefined
+    if (parsed.origin !== CIVICRM_BASE_URL || !parsed.pathname.includes('/civicrm/event/register')) return undefined
     const id = Number(parsed.searchParams.get('id'))
     return Number.isSafeInteger(id) && id > 0 ? id : undefined
   } catch {
     return undefined
+  }
+}
+
+function isLegacyCiviUrl(url?: string): boolean {
+  if (!url) return false
+  try {
+    const parsed = new URL(url)
+    return parsed.hostname === 'smj-wegweiser.de' && parsed.pathname.includes('/civicrm/event/register')
+  } catch {
+    return false
   }
 }
 
@@ -82,11 +93,15 @@ export function enrichEventWithCivi(event: Event, registrations: CiviRegistratio
       })()
 
   if (!matched) {
-    return explicitId
-      ? rawRegistration.updatedAt
+    if (explicitId) {
+      return rawRegistration.updatedAt
         ? { ...event, civiEventId: explicitId, registrationUrl: undefined, registrationStatus: 'unavailable' }
         : { ...event, civiEventId: explicitId, registrationUrl: registrationUrl(explicitId) }
-      : event
+    }
+    if (isLegacyCiviUrl(event.registrationUrl) && !LEGACY_CIVI_LINKS_ENABLED) {
+      return { ...event, registrationUrl: undefined, registrationStatus: 'unavailable' }
+    }
+    return event
   }
 
   const civiStart = berlinDate(matched.start)
