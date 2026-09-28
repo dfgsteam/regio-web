@@ -10,7 +10,7 @@ export const CIVICRM_BASE_URL = 'https://civi.smj-wegweiser.de'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const output = path.join(root, 'src/data/civi-registration.json')
 
-for (const name of ['.env', '.env.local']) {
+for (const name of ['.env.local', '.env']) {
   const file = path.join(root, name)
   if (fs.existsSync(file)) process.loadEnvFile(file)
 }
