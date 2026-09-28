@@ -89,6 +89,11 @@ export function enrichEventWithCivi(event: Event, registrations: CiviRegistratio
       : event
   }
 
+  const civiStart = berlinDate(matched.start)
+  if (explicitId && (!civiStart || dateInBerlin(civiStart) !== dateInBerlin(event.start))) {
+    return { ...event, civiEventId: explicitId, registrationUrl: undefined, registrationStatus: 'unavailable' }
+  }
+
   const registrationOpensAt = berlinDate(matched.registrationStart)
   const registrationDeadline = berlinDate(matched.registrationEnd)
   return {
