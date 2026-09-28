@@ -1,0 +1,54 @@
+---
+import Logo from '../common/Logo.astro'
+import { ArrowLeft, LogOut } from '@lucide/astro'
+
+interface Props {
+  backHref?: string
+  backLabel?: string
+  currentTitle?: string
+}
+
+const {
+  backHref = '/',
+  backLabel = 'Zurück zur Website',
+  currentTitle = 'Medien-Zentrale',
+} = Astro.props
+---
+
+<header class="border-b border-paper/20 bg-forest-950 px-4 py-3 sm:px-8">
+  <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+    <div class="flex items-center gap-3.5">
+      <a href="/" class="flex items-center gap-2 group" title="Zur Website-Startseite">
+        <Logo size="sm" tone="light" />
+      </a>
+      <span class="text-paper/20 hidden sm:inline">|</span>
+      <a href="/toolbox/" class="flex items-center gap-2">
+        <span class="inline-block border border-orange/50 bg-orange/10 px-2 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-orange">
+          Leiter-Toolbox
+        </span>
+        <span class="hidden md:inline font-mono text-xs text-paper/70 font-bold uppercase tracking-wide">
+          // {currentTitle}
+        </span>
+      </a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a
+        href={backHref}
+        class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/80 hover:border-paper/40 hover:text-paper transition-colors rounded-xs"
+      >
+        <ArrowLeft class="h-3.5 w-3.5 text-orange" />
+        <span class="hidden sm:inline">{backLabel}</span>
+        <span class="sm:hidden">Zurück</span>
+      </a>
+      <a
+        href="/toolbox-auth/logout.php"
+        class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/70 hover:border-orange hover:text-orange transition-colors rounded-xs"
+        title="Von der Leiter-Toolbox abmelden"
+      >
+        <LogOut class="h-3.5 w-3.5 text-orange" />
+        <span class="hidden sm:inline">Abmelden</span>
+      </a>
+    </div>
+  </div>
+</header>

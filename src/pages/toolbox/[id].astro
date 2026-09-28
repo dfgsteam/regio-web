@@ -1,5 +1,6 @@
 ---
-import ContentLayout from '../../layouts/ContentLayout.astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ToolboxHeader from '../../components/navigation/ToolboxHeader.astro'
 import Container from '../../components/common/Container.astro'
 import Logo from '../../components/common/Logo.astro'
 import {
@@ -162,11 +163,13 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 #smj #regiowegweiser #jugendleitetjugend #eichsfeld #abenteuer #zeltlager #outdoor #lagerfeuer`
 ---
 
-<ContentLayout
+<BaseLayout
   title={`Materialien & Medien: ${title} – SMJ Leiter-Toolbox`}
   description={`Alle Vorlagen, Flyer, Social-Media-Grafiken und QR-Codes für ${title} der SMJ Regio Wegweiser.`}
   noIndex={true}
 >
+  <ToolboxHeader currentTitle={title} backHref="/toolbox/" backLabel="Zurück zur Toolbox" />
+
   <!-- Top Navigation & Action Header -->
   <section class="border-b border-paper/15 bg-forest-950 py-6">
     <Container>
@@ -470,7 +473,11 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
       </div>
     </Container>
   </section>
-</ContentLayout>
+
+  <footer class="border-t border-paper/15 bg-forest-950 py-8 px-4 font-mono text-xs text-paper/50 text-center">
+    <p>SMJ Regio Wegweiser &bull; Interner Bereich &bull; Nur für Gruppenleiter &amp; Mitarbeiter</p>
+  </footer>
+</BaseLayout>
 
 <script>
   import { downloadQrPng } from '../../scripts/qrcode-renderer'
