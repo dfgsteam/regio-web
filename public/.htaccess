@@ -31,17 +31,6 @@ AddCharset UTF-8 .html .css .js .json .xml .ics
   RewriteEngine On
   RewriteBase /
 
-  # Redirect old WordPress URLs (Backward Compatibility)
-  RewriteRule ^veranstaltungen/?(.*)$ /abenteuer/$1 [R=301,L]
-  RewriteRule ^zeltlager/?(.*)$ /abenteuer/zeltlager/$1 [R=301,L]
-
-  # ----------------------------------------------------------------------------
-  # Weiterleitung von Legacy-Pfaden auf den zentralen /toolbox/ Namespace
-  # ----------------------------------------------------------------------------
-  RewriteRule ^flyer/(.*)$ /toolbox/flyer/$1 [R=301,L]
-  RewriteRule ^social/(.*)$ /toolbox/social/$1 [R=301,L]
-  RewriteRule ^qrcode/?$ /toolbox/ [R=301,L]
-
   # ----------------------------------------------------------------------------
   # Authentik Guard: Schutz für die gesamte Leiter-Toolbox (/toolbox/*)
   # ----------------------------------------------------------------------------

@@ -25,15 +25,8 @@ export default defineConfig({
       filter: (page) => {
         const url = new URL(page)
 
-        // /journal/ routes are 301 redirects to /aktuelles/ — never
-        // list redirect targets in the sitemap.
-        if (url.pathname.startsWith('/journal/')) return false
-
-        // Internal team tool pages (e.g. /toolbox/, /qrcode/, /flyer/, /social/) are noindex and excluded
+        // Internal team tool pages (/toolbox/*) are noindex and excluded
         if (url.pathname.startsWith('/toolbox')) return false
-        if (url.pathname.startsWith('/qrcode')) return false
-        if (url.pathname.startsWith('/flyer')) return false
-        if (url.pathname.startsWith('/social')) return false
 
         // Event slug variants exist so legacy WordPress URLs keep
         // working, but only the canonical slug belongs in the sitemap.
