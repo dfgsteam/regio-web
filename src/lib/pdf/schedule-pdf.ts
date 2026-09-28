@@ -1,4 +1,5 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib'
+import fontkit from '@pdf-lib/fontkit'
 import QRCode from 'qrcode'
 import fs from 'node:fs'
 
@@ -36,6 +37,8 @@ function cleanText(text: string): string {
  */
 export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<Uint8Array> {
   const doc = await PDFDocument.create()
+  doc.registerFontkit(fontkit)
+
   doc.setTitle(`SMJ Termine: ${cleanText(options.periodTitle)}`)
   doc.setAuthor('SMJ Regio Wegweiser')
   doc.setCreator('SMJ Regio Wegweiser Leiter-Toolbox')
@@ -54,10 +57,35 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
   const cWhite = rgb(1, 1, 1)
   const cMuted = rgb(110 / 255, 115 / 255, 108 / 255)
 
-  // Standard Fonts
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold)
-  const fontRegular = await doc.embedFont(StandardFonts.Helvetica)
-  const fontBoldOblique = await doc.embedFont(StandardFonts.HelveticaBoldOblique)
+  // 1. Embed Brand Fonts (Anton for Display, Caveat for Handwriting, Space Mono for Utility, Inter for Body)
+  let fontDisplay: PDFFont
+  let fontHand: PDFFont
+  let fontMono: PDFFont
+  let fontBody: PDFFont
+
+  try {
+    fontDisplay = await doc.embedFont(fs.readFileSync('src/assets/fonts/Anton-Regular.ttf'))
+  } catch {
+    fontDisplay = await doc.embedFont(StandardFonts.HelveticaBold)
+  }
+
+  try {
+    fontHand = await doc.embedFont(fs.readFileSync('src/assets/fonts/Caveat-Bold.ttf'))
+  } catch {
+    fontHand = await doc.embedFont(StandardFonts.HelveticaBoldOblique)
+  }
+
+  try {
+    fontMono = await doc.embedFont(fs.readFileSync('src/assets/fonts/SpaceMono-Bold.ttf'))
+  } catch {
+    fontMono = await doc.embedFont(StandardFonts.CourierBold)
+  }
+
+  try {
+    fontBody = await doc.embedFont(fs.readFileSync('src/assets/fonts/Inter-Regular.ttf'))
+  } catch {
+    fontBody = await doc.embedFont(StandardFonts.Helvetica)
+  }
 
   // Generate QR code for targetUrl
   const targetUrl = options.targetUrl || 'https://smj-wegweiser.de/abenteuer/'
@@ -154,7 +182,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: headerTextX,
         y: currY - 9,
         size: 7,
-        font: fontBold,
+        font: fontMono,
         color: cOrange,
       })
 
@@ -162,13 +190,13 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: headerTextX,
         y: currY - 18,
         size: 5.5,
-        font: fontRegular,
+        font: fontBody,
         color: cMuted,
       })
 
       // Badge top right
       const badgeStr = 'TERMINKALENDER'
-      const badgeW = fontBold.widthOfTextAtSize(badgeStr, 6.5) + 10
+      const badgeW = fontMono.widthOfTextAtSize(badgeStr, 6.5) + 10
       page.drawRectangle({
         x: W - marginX - badgeW,
         y: currY - 16,
@@ -180,7 +208,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: W - marginX - badgeW + 5,
         y: currY - 12,
         size: 6.5,
-        font: fontBold,
+        font: fontMono,
         color: cWhite,
       })
 
@@ -199,8 +227,8 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       page.drawText('// RAUS. INS ABENTEUER.', {
         x: marginX,
         y: currY,
-        size: 6.5,
-        font: fontBold,
+        size: 8,
+        font: fontHand,
         color: cOrange,
       })
 
@@ -212,7 +240,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: marginX,
         y: currY,
         size: titleSize,
-        font: fontBold,
+        font: fontDisplay,
         color: cForest,
       })
 
@@ -222,8 +250,8 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         page.drawText(cleanText(options.periodSubtitle), {
           x: marginX,
           y: currY,
-          size: 7.5,
-          font: fontBoldOblique,
+          size: 8.5,
+          font: fontHand,
           color: cMuted,
         })
         currY -= 12
@@ -236,15 +264,15 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: marginX,
         y: currY - 6,
         size: 6.5,
-        font: fontBold,
+        font: fontMono,
         color: cOrange,
       })
 
       page.drawText(`Fortsetzung (${pageIdx + 1}/${totalPages})`, {
-        x: W - marginX - fontRegular.widthOfTextAtSize(`Fortsetzung (${pageIdx + 1}/${totalPages})`, 6),
+        x: W - marginX - fontMono.widthOfTextAtSize(`Fortsetzung (${pageIdx + 1}/${totalPages})`, 6),
         y: currY - 6,
         size: 6,
-        font: fontRegular,
+        font: fontMono,
         color: cMuted,
       })
 
@@ -279,7 +307,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: marginX + 6,
         y: currY - 3,
         size: 6.8,
-        font: fontBold,
+        font: fontMono,
         color: cOrange,
       })
 
@@ -291,8 +319,8 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       page.drawText(evTitle, {
         x: marginX + 6,
         y: currY - 13,
-        size: 8.5,
-        font: fontBold,
+        size: 9.5,
+        font: fontDisplay,
         color: cForest,
       })
 
@@ -309,7 +337,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
           x: marginX + 6,
           y: currY - 22,
           size: 6.2,
-          font: fontRegular,
+          font: fontBody,
           color: cMuted,
         })
       }
@@ -359,7 +387,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: innerX + 6,
         y: innerY - 6.5,
         size: 5.5,
-        font: fontBold,
+        font: fontMono,
         color: cForest,
       })
 
@@ -369,7 +397,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: innerX,
         y: innerY,
         size: 6.5,
-        font: fontRegular,
+        font: fontBody,
         color: cForest,
       })
 
@@ -380,7 +408,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: innerX,
         y: innerY,
         size: 7.5,
-        font: fontBold,
+        font: fontMono,
         color: cOrange,
       })
 
@@ -390,7 +418,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: innerX,
         y: innerY,
         size: 5.5,
-        font: fontRegular,
+        font: fontBody,
         color: cMuted,
       })
 
@@ -400,7 +428,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: innerX,
         y: innerY,
         size: 5.5,
-        font: fontBold,
+        font: fontMono,
         color: cForest,
       })
 
@@ -420,7 +448,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: qrX + 6,
         y: qrY - 7,
         size: 4.8,
-        font: fontBold,
+        font: fontMono,
         color: cForest,
       })
     }
@@ -433,17 +461,17 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         x: marginX,
         y: footerY,
         size: 5,
-        font: fontRegular,
+        font: fontBody,
         color: cMuted,
       },
     )
 
     const pageNotice = `SEITE ${pageIdx + 1} / ${totalPages}`
     page.drawText(pageNotice, {
-      x: W - marginX - fontBold.widthOfTextAtSize(pageNotice, 5),
+      x: W - marginX - fontMono.widthOfTextAtSize(pageNotice, 5),
       y: footerY,
       size: 5,
-      font: fontBold,
+      font: fontMono,
       color: cForest,
     })
   }

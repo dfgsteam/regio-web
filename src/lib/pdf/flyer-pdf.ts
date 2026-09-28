@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib'
+import fontkit from '@pdf-lib/fontkit'
 import QRCode from 'qrcode'
 import fs from 'node:fs'
 import type { ResolvedFlyerData } from './flyer-content'
@@ -46,6 +47,8 @@ function wrapText(text: string, maxWidth: number, font: PDFFont, fontSize: numbe
 
 export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> {
   const doc = await PDFDocument.create()
+  doc.registerFontkit(fontkit)
+
   doc.setTitle(`SMJ Flyer: ${cleanText(data.title)}`)
   doc.setAuthor('SMJ Regio Wegweiser')
   doc.setCreator('SMJ Regio Wegweiser Leiter-Toolbox')
@@ -63,12 +66,37 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   const cWhite = rgb(1, 1, 1)
   const cMuted = rgb(100 / 255, 105 / 255, 98 / 255)
 
-  // Standard Vector Fonts
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold)
-  const fontRegular = await doc.embedFont(StandardFonts.Helvetica)
-  const fontBoldOblique = await doc.embedFont(StandardFonts.HelveticaBoldOblique)
+  // 1. Embed Brand Fonts (Anton for Display, Caveat for Handwriting, Space Mono for Utility, Inter for Body)
+  let fontDisplay: PDFFont
+  let fontHand: PDFFont
+  let fontMono: PDFFont
+  let fontBody: PDFFont
 
-  // 1. Full Page Background
+  try {
+    fontDisplay = await doc.embedFont(fs.readFileSync('src/assets/fonts/Anton-Regular.ttf'))
+  } catch {
+    fontDisplay = await doc.embedFont(StandardFonts.HelveticaBold)
+  }
+
+  try {
+    fontHand = await doc.embedFont(fs.readFileSync('src/assets/fonts/Caveat-Bold.ttf'))
+  } catch {
+    fontHand = await doc.embedFont(StandardFonts.HelveticaBoldOblique)
+  }
+
+  try {
+    fontMono = await doc.embedFont(fs.readFileSync('src/assets/fonts/SpaceMono-Bold.ttf'))
+  } catch {
+    fontMono = await doc.embedFont(StandardFonts.CourierBold)
+  }
+
+  try {
+    fontBody = await doc.embedFont(fs.readFileSync('src/assets/fonts/Inter-Regular.ttf'))
+  } catch {
+    fontBody = await doc.embedFont(StandardFonts.Helvetica)
+  }
+
+  // Background
   page.drawRectangle({
     x: 0,
     y: 0,
@@ -118,8 +146,8 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
       const logoPngBuffer = fs.readFileSync('public/logo_wegweiser_dark.png')
       logoImage = await doc.embedPng(logoPngBuffer)
     }
-  } catch (err) {
-    console.warn('Could not load logo PNG, fallback to text logo', err)
+  } catch {
+    // fallback without logo
   }
 
   // --- HEADER SECTION ---
@@ -140,7 +168,7 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     x: headerTextX,
     y: headerTopY - 16,
     size: 9.5,
-    font: fontBold,
+    font: fontMono,
     color: cOrange,
   })
 
@@ -148,14 +176,14 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     x: headerTextX,
     y: headerTopY - 30,
     size: 8,
-    font: fontRegular,
+    font: fontBody,
     color: cMuted,
   })
 
   // Category Badge (Top Right)
   const categoryStr = cleanText((data.categoryLabel || 'AKTION').toUpperCase())
-  const catTextWidth = fontBold.widthOfTextAtSize(categoryStr, 8.5)
-  const catBadgeW = catTextWidth + 16
+  const catTextWidth = fontMono.widthOfTextAtSize(categoryStr, 8)
+  const catBadgeW = catTextWidth + 18
   const catBadgeH = 22
   const catBadgeX = W - marginX - catBadgeW
   const catBadgeY = headerTopY - 24
@@ -169,10 +197,10 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   })
 
   page.drawText(categoryStr, {
-    x: catBadgeX + 8,
+    x: catBadgeX + 9,
     y: catBadgeY + 6.5,
-    size: 8.5,
-    font: fontBold,
+    size: 8,
+    font: fontMono,
     color: cWhite,
   })
 
@@ -186,49 +214,54 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   })
 
   // --- TITLE & MOTTO SECTION ---
-  let currY = headerDividerY - 20
+  let currY = headerDividerY - 22
 
   page.drawText('//  RAUS. INS ABENTEUER.', {
     x: marginX,
     y: currY,
-    size: 9,
-    font: fontBold,
+    size: 9.5,
+    font: fontMono,
     color: cOrange,
   })
 
-  currY -= 26
+  currY -= 36
 
-  // Main Event Title
+  // Main Event Title (Anton display font)
   const titleText = cleanText(data.title.toUpperCase())
-  const titleFontSize = titleText.length > 30 ? 18 : 23
+  const titleFontSize = titleText.length > 26 ? 30 : 36
   page.drawText(titleText, {
     x: marginX,
     y: currY,
     size: titleFontSize,
-    font: fontBold,
+    font: fontDisplay,
     color: cForest,
   })
 
-  currY -= titleFontSize + 4
+  currY -= 16
 
+  // Motto / Subtitle (Caveat handwriting font with clean word wrapping)
   if (data.subtitle) {
-    page.drawText(`// ${cleanText(data.subtitle)}`, {
-      x: marginX,
-      y: currY,
-      size: 11,
-      font: fontBoldOblique,
-      color: cOrange,
-    })
-    currY -= 20
+    const mottoLines = wrapText(`// ${cleanText(data.subtitle)}`, contentW, fontHand, 17)
+    for (const mLine of mottoLines) {
+      page.drawText(cleanText(mLine), {
+        x: marginX,
+        y: currY,
+        size: 17,
+        font: fontHand,
+        color: cOrange,
+      })
+      currY -= 20
+    }
+    currY -= 6
   } else {
-    currY -= 8
+    currY -= 10
   }
 
   // --- 4 KEY FACTS CARDS ---
   currY -= 4
   const factGap = 8
   const cardW = (contentW - 3 * factGap) / 4
-  const cardH = 42
+  const cardH = 46
 
   const facts = [
     { label: 'WANN', value: cleanText(data.dateStr) },
@@ -249,86 +282,85 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     })
 
     page.drawText(fact.label, {
-      x: cardX + 7,
-      y: currY - 13,
+      x: cardX + 8,
+      y: currY - 14,
       size: 7,
-      font: fontBold,
+      font: fontMono,
       color: cOrange,
     })
 
     let val = fact.value
-    let valSize = 7.5
-    if (val.length > 21) valSize = 6.8
+    let valSize = 8
+    if (val.length > 20) valSize = 7.2
     if (val.length > 28) {
       val = val.substring(0, 27) + '...'
-      valSize = 6.2
+      valSize = 6.5
     }
     page.drawText(val, {
-      x: cardX + 7,
-      y: currY - 29,
+      x: cardX + 8,
+      y: currY - 32,
       size: valSize,
-      font: fontBold,
+      font: fontBody,
       color: cPaper,
     })
   })
 
-  currY -= cardH + 18
+  currY -= cardH + 24
 
   // --- DAS ERWARTET DICH (DESCRIPTION BLOCK) ---
-  page.drawText('DAS ERWARTET DICH BEI DIESER AKTION:', {
+  page.drawText('DAS ERWARTET DICH BEI DIESER AKTION', {
     x: marginX,
     y: currY,
-    size: 8.5,
-    font: fontBold,
+    size: 13,
+    font: fontDisplay,
     color: cForest,
   })
 
-  currY -= 4
+  currY -= 5
   page.drawLine({
     start: { x: marginX, y: currY },
-    end: { x: marginX + 220, y: currY },
-    thickness: 1,
-    color: cSand,
-  })
-
-  currY -= 14
-
-  if (data.description) {
-    const descLines = wrapText(data.description, contentW, fontRegular, 8.5)
-    // Take up to 4 lines to preserve balance
-    const linesToDraw = descLines.slice(0, 4)
-    for (const line of linesToDraw) {
-      page.drawText(cleanText(line), {
-        x: marginX,
-        y: currY,
-        size: 8.5,
-        font: fontRegular,
-        color: cForest,
-      })
-      currY -= 12.5
-    }
-  }
-
-  currY -= 10
-
-  // --- HIGHLIGHTS SECTION ---
-  page.drawText('PROGRAMM-HIGHLIGHTS:', {
-    x: marginX,
-    y: currY,
-    size: 8.5,
-    font: fontBold,
-    color: cForest,
-  })
-
-  currY -= 4
-  page.drawLine({
-    start: { x: marginX, y: currY },
-    end: { x: marginX + 160, y: currY },
+    end: { x: marginX + 260, y: currY },
     thickness: 1,
     color: cSand,
   })
 
   currY -= 16
+
+  if (data.description) {
+    const descLines = wrapText(data.description, contentW, fontBody, 9.5)
+    const linesToDraw = descLines.slice(0, 5)
+    for (const line of linesToDraw) {
+      page.drawText(cleanText(line), {
+        x: marginX,
+        y: currY,
+        size: 9.5,
+        font: fontBody,
+        color: cForest,
+      })
+      currY -= 14
+    }
+  }
+
+  currY -= 12
+
+  // --- HIGHLIGHTS SECTION ---
+  page.drawText('PROGRAMM-HIGHLIGHTS', {
+    x: marginX,
+    y: currY,
+    size: 13,
+    font: fontDisplay,
+    color: cForest,
+  })
+
+  currY -= 5
+  page.drawLine({
+    start: { x: marginX, y: currY },
+    end: { x: marginX + 180, y: currY },
+    thickness: 1,
+    color: cSand,
+  })
+
+  currY -= 18
 
   const rawHighlights = data.highlights && data.highlights.length > 0 ? data.highlights.slice(0, 3) : []
 
@@ -344,45 +376,44 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     page.drawText(cleanText(h.title.toUpperCase()), {
       x: marginX + 10,
       y: currY - 4,
-      size: 9.5,
-      font: fontBold,
+      size: 11,
+      font: fontDisplay,
       color: cForest,
     })
 
     page.drawText(cleanText(h.desc), {
       x: marginX + 10,
       y: currY - 17,
-      size: 8,
-      font: fontRegular,
+      size: 8.5,
+      font: fontBody,
       color: cForest,
     })
 
-    currY -= 30
+    currY -= 32
   }
 
-  currY -= 6
+  currY -= 8
 
   // --- WAS DU BRAUCHST (PACKLISTE & INFOS) ---
   if (data.packingList && data.packingList.length > 0) {
-    page.drawText('WAS DU BRAUCHST (PACKLISTE & INFOS):', {
+    page.drawText('WAS DU BRAUCHST (PACKLISTE & INFOS)', {
       x: marginX,
       y: currY,
-      size: 8,
-      font: fontBold,
+      size: 12,
+      font: fontDisplay,
       color: cForest,
     })
 
-    currY -= 4
+    currY -= 5
     page.drawLine({
       start: { x: marginX, y: currY },
-      end: { x: marginX + 200, y: currY },
+      end: { x: marginX + 220, y: currY },
       thickness: 1,
       color: cSand,
     })
 
-    currY -= 14
+    currY -= 16
 
-    // Render items in 2 columns
     const items = data.packingList.slice(0, 6)
     const colW = contentW / 2
     const itemsPerCol = Math.ceil(items.length / 2)
@@ -393,25 +424,25 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
       const col = i < itemsPerCol ? 0 : 1
       const row = i < itemsPerCol ? i : i - itemsPerCol
       const itemX = marginX + col * colW
-      const itemY = currY - row * 13
+      const itemY = currY - row * 14
 
       page.drawText(`- ${cleanText(item)}`, {
         x: itemX,
         y: itemY,
-        size: 7.5,
-        font: fontRegular,
+        size: 8,
+        font: fontBody,
         color: cForest,
       })
     }
 
-    currY -= itemsPerCol * 13 + 12
+    currY -= itemsPerCol * 14 + 14
   }
 
-  // --- REGISTRATION & CONTACT BOX (Fills bottom area before footer) ---
+  // --- REGISTRATION & CONTACT BOX ---
+  // Well-proportioned, sleek box (height: 120 pt) sitting right above the footer
   const footerY = 28
-  const regBoxBottomY = footerY + 16
-  const regBoxH = Math.max(150, currY - regBoxBottomY)
-  const regBoxY = regBoxBottomY
+  const regBoxH = 120
+  const regBoxY = footerY + 16
 
   // Box background & border
   page.drawRectangle({
@@ -428,10 +459,10 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   const regTextX = marginX + 16
   let cardInnerY = regBoxY + regBoxH - 18
 
-  // Badge
+  // Orange Badge
   page.drawRectangle({
     x: regTextX,
-    y: cardInnerY - 14,
+    y: cardInnerY - 13,
     width: 175,
     height: 16,
     color: cOrange,
@@ -440,94 +471,78 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     x: regTextX + 8,
     y: cardInnerY - 9,
     size: 7,
-    font: fontBold,
+    font: fontMono,
     color: cForest,
   })
 
-  cardInnerY -= 34
+  cardInnerY -= 30
 
   page.drawText('Jetzt anmelden & Plaetze sichern!', {
     x: regTextX,
     y: cardInnerY,
-    size: 13.5,
-    font: fontBold,
+    size: 14,
+    font: fontDisplay,
     color: cForest,
   })
 
-  cardInnerY -= 17
+  cardInnerY -= 15
 
   page.drawText(
-    'Kamera ans Handy halten oder Link im Browser oeffnen.\nDort gibt es die offizielle Anmeldung, Packliste und alle Infos fuer Eltern.',
+    'Kamera ans Handy halten oder Link im Browser oeffnen.\nDort gibt es die offizielle Anmeldung, Packliste und alle Infos fuer deine Eltern.',
     {
       x: regTextX,
       y: cardInnerY,
-      size: 8,
-      font: fontRegular,
+      size: 7.8,
+      font: fontBody,
       color: cForest,
-      lineHeight: 12,
+      lineHeight: 11,
     },
   )
 
-  cardInnerY -= 28
+  cardInnerY -= 26
 
   const displayUrl = cleanText(data.shortUrl || data.targetUrl.replace(/^https?:\/\//, ''))
   page.drawText(`->  ${displayUrl}`, {
     x: regTextX,
     y: cardInnerY,
-    size: 9.5,
-    font: fontBold,
+    size: 9,
+    font: fontMono,
     color: cOrange,
   })
 
-  // Contact Info block (using event.contact directly as-is)
+  // Contact Info block
   if (data.contact && (data.contact.name || data.contact.email || data.contact.phone)) {
-    cardInnerY -= 16
+    cardInnerY -= 14
     page.drawLine({
       start: { x: regTextX, y: cardInnerY },
       end: { x: regTextX + 310, y: cardInnerY },
-      thickness: 0.75,
+      thickness: 0.5,
       color: cSand,
     })
 
-    cardInnerY -= 12
-    page.drawText('FRAGEN ZUR AKTION? ANSPRECHPARTNER:', {
-      x: regTextX,
-      y: cardInnerY,
-      size: 6.8,
-      font: fontBold,
-      color: cOrange,
-    })
-
-    cardInnerY -= 11
-    let contactLine = data.contact.name || 'SMJ Regio Wegweiser'
+    cardInnerY -= 10
+    let contactLine = `Ansprechpartner: ${data.contact.name || 'SMJ Regio Wegweiser'}`
     if (data.contact.role) {
       contactLine += ` (${data.contact.role})`
     }
-    page.drawText(cleanText(contactLine), {
-      x: regTextX,
-      y: cardInnerY,
-      size: 7.8,
-      font: fontBold,
-      color: cForest,
-    })
-
     const details: string[] = []
     if (data.contact.phone) details.push(`Tel.: ${data.contact.phone}`)
     if (data.contact.email) details.push(`E-Mail: ${data.contact.email}`)
     if (details.length > 0) {
-      cardInnerY -= 10
-      page.drawText(cleanText(details.join('   -   ')), {
-        x: regTextX,
-        y: cardInnerY,
-        size: 7.2,
-        font: fontRegular,
-        color: cForest,
-      })
+      contactLine += `  -  ${details.join('  -  ')}`
     }
+
+    page.drawText(cleanText(contactLine), {
+      x: regTextX,
+      y: cardInnerY,
+      size: 7,
+      font: fontBody,
+      color: cForest,
+    })
   }
 
-  // Right Side: Large Scannable QR Code
-  const qrBoxSize = 100
+  // Right Side: Crisp QR Code
+  const qrBoxSize = 88
   const qrBoxX = W - marginX - qrBoxSize - 16
   const qrBoxY = regBoxY + (regBoxH - qrBoxSize) / 2 + 5
 
@@ -539,10 +554,10 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   })
 
   page.drawText('HIER SCANNEN ^', {
-    x: qrBoxX + 18,
-    y: qrBoxY - 11,
-    size: 6.5,
-    font: fontBold,
+    x: qrBoxX + 14,
+    y: qrBoxY - 10,
+    size: 6,
+    font: fontMono,
     color: cForest,
   })
 
@@ -553,17 +568,17 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
       x: marginX,
       y: footerY,
       size: 6,
-      font: fontRegular,
+      font: fontMono,
       color: cMuted,
     },
   )
 
   const printNotice = 'Druckfertiger A4-Aushang'
   page.drawText(printNotice, {
-    x: W - marginX - fontRegular.widthOfTextAtSize(printNotice, 6),
+    x: W - marginX - fontMono.widthOfTextAtSize(printNotice, 6),
     y: footerY,
     size: 6,
-    font: fontRegular,
+    font: fontMono,
     color: cMuted,
   })
 
