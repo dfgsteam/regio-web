@@ -89,6 +89,7 @@ const yearCounts = years.reduce((acc, y) => {
         <button
           type="button"
           data-year-filter="all"
+          aria-pressed="true"
           class="year-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-orange text-forest-950 border border-orange"
         >
           Alle ({sorted.length})
@@ -98,6 +99,7 @@ const yearCounts = years.reduce((acc, y) => {
             <button
               type="button"
               data-year-filter={String(y)}
+              aria-pressed="false"
               class="year-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-forest-950 text-paper/70 border border-paper/20 hover:border-orange hover:text-paper"
             >
               {y} ({yearCounts[y]})
@@ -222,23 +224,24 @@ const yearCounts = years.reduce((acc, y) => {
 <!-- Client-side Fast Filtering & Sorting Script -->
 <script>
   function setupPostsFilter() {
-    const searchInput = document.getElementById('posts-search-input') as HTMLInputElement | null
-    const clearBtn = document.getElementById('posts-search-clear') as HTMLButtonElement | null
-    const sortSelect = document.getElementById('posts-sort-select') as HTMLSelectElement | null
-    const resultsCount = document.getElementById('posts-results-count')
-    const emptyState = document.getElementById('posts-empty-state')
-    const resetBtn = document.getElementById('posts-reset-btn')
-    const container = document.getElementById('posts-container')
+    const searchInput = document.getElementById('post-search') as HTMLInputElement | null
+    const clearBtn = document.getElementById('search-clear') as HTMLButtonElement | null
+    const sortSelect = document.getElementById('sort-select') as HTMLSelectElement | null
+    const resultsCount = document.getElementById('post-counter')
+    const emptyState = document.getElementById('no-results-message')
+    const resetBtn = document.getElementById('reset-filter-btn')
+    const container = document.getElementById('posts-grid')
     const yearButtons = document.querySelectorAll<HTMLButtonElement>('.year-filter-btn')
 
-    if (!container) return
+    if (!container || container.dataset.filterInitialized === 'true') return
+    container.dataset.filterInitialized = 'true'
 
-    const postElements = Array.from(container.querySelectorAll<HTMLElement>('.post-item'))
+    const postElements = Array.from(container.querySelectorAll<HTMLElement>('.post-card'))
     const totalCount = postElements.length
 
     let selectedYear = 'all'
     let searchQuery = ''
-    let sortOrder: 'newest' | 'oldest' = 'newest'
+    let sortOrder: 'date-desc' | 'date-asc' | 'title-asc' = 'date-desc'
 
     function filterAndSort() {
       const query = searchQuery.trim().toLowerCase()
@@ -247,13 +250,13 @@ const yearCounts = years.reduce((acc, y) => {
       // Filter elements
       postElements.forEach((el) => {
         const itemYear = el.dataset.year || ''
-        const tokens = el.dataset.searchTokens || ''
+        const tokens = el.dataset.search || ''
 
         const matchesYear = selectedYear === 'all' || itemYear === selectedYear
         const matchesSearch = query === '' || tokens.includes(query)
 
         if (matchesYear && matchesSearch) {
-          el.style.display = 'grid'
+          el.style.display = ''
           visibleCount++
         } else {
           el.style.display = 'none'
@@ -262,9 +265,12 @@ const yearCounts = years.reduce((acc, y) => {
 
       // Sort elements
       const sortedElements = [...postElements].sort((a, b) => {
-        const timeA = Number(a.dataset.timestamp || 0)
-        const timeB = Number(b.dataset.timestamp || 0)
-        return sortOrder === 'newest' ? timeB - timeA : timeA - timeB
+        if (sortOrder === 'title-asc') {
+          return (a.dataset.title || '').localeCompare(b.dataset.title || '', 'de')
+        }
+        const timeA = Number(a.dataset.date || 0)
+        const timeB = Number(b.dataset.date || 0)
+        return sortOrder === 'date-desc' ? timeB - timeA : timeA - timeB
       })
 
       if (container) {
@@ -273,7 +279,9 @@ const yearCounts = years.reduce((acc, y) => {
 
       // Update Results Counter
       if (resultsCount) {
-        resultsCount.textContent = `${visibleCount} VON ${totalCount} BEITRÄGEN`
+        resultsCount.textContent = visibleCount === totalCount
+          ? `${totalCount} ${totalCount === 1 ? 'Beitrag' : 'Beiträge'}`
+          : `${visibleCount} von ${totalCount} Beiträgen`
       }
 
       // Empty State
@@ -321,11 +329,13 @@ const yearCounts = years.reduce((acc, y) => {
 
         yearButtons.forEach((b) => {
           b.classList.remove('active', 'border-orange', 'bg-orange', 'text-forest-950')
-          b.classList.add('border-paper/20', 'bg-forest-900', 'text-paper/80')
+          b.classList.add('border-paper/20', 'bg-forest-950', 'text-paper/70')
+          b.setAttribute('aria-pressed', 'false')
         })
 
-        btn.classList.remove('border-paper/20', 'bg-forest-900', 'text-paper/80')
+        btn.classList.remove('border-paper/20', 'bg-forest-950', 'text-paper/70')
         btn.classList.add('active', 'border-orange', 'bg-orange', 'text-forest-950')
+        btn.setAttribute('aria-pressed', 'true')
 
         filterAndSort()
       })
@@ -333,7 +343,7 @@ const yearCounts = years.reduce((acc, y) => {
 
     // Sort Order Selector
     sortSelect?.addEventListener('change', (e) => {
-      sortOrder = (e.target as HTMLSelectElement).value as 'newest' | 'oldest'
+      sortOrder = (e.target as HTMLSelectElement).value as typeof sortOrder
       filterAndSort()
     })
 
@@ -342,14 +352,18 @@ const yearCounts = years.reduce((acc, y) => {
       if (searchInput) searchInput.value = ''
       searchQuery = ''
       selectedYear = 'all'
+      sortOrder = 'date-desc'
+      if (sortSelect) sortSelect.value = sortOrder
 
       yearButtons.forEach((b) => {
         if (b.dataset.yearFilter === 'all') {
           b.classList.add('active', 'border-orange', 'bg-orange', 'text-forest-950')
-          b.classList.remove('border-paper/20', 'bg-forest-900', 'text-paper/80')
+          b.classList.remove('border-paper/20', 'bg-forest-950', 'text-paper/70')
+          b.setAttribute('aria-pressed', 'true')
         } else {
           b.classList.remove('active', 'border-orange', 'bg-orange', 'text-forest-950')
-          b.classList.add('border-paper/20', 'bg-forest-900', 'text-paper/80')
+          b.classList.add('border-paper/20', 'bg-forest-950', 'text-paper/70')
+          b.setAttribute('aria-pressed', 'false')
         }
       })
 
