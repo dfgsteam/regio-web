@@ -4,6 +4,7 @@ import Eyebrow from '../common/Eyebrow.astro'
 import FieldNote from '../common/FieldNote.astro'
 import ImageFrame from '../common/ImageFrame.astro'
 import Sticker from '../common/Sticker.astro'
+import expectImage from '../../assets/images/home/expect-action.jpg'
 
 const terms = ['Gemeinschaft', 'Feuer', '100% Analog', 'Wettkampf', 'Natur', 'Handyfrei', 'Glaube', 'Verantwortung']
 ---
@@ -41,9 +42,10 @@ const terms = ['Gemeinschaft', 'Feuer', '100% Analog', 'Wettkampf', 'Natur', 'Ha
 
       <div class="relative">
         <ImageFrame
-          src="/images/home/expect-action.jpg"
+          src={expectImage}
           alt="Jungs der SMJ im Zeltlager-Einsatz"
           ratio="4:5"
+          sizes="(min-width: 640px) 384px, 100vw"
           class="reveal w-full max-w-sm"
         />
         <FieldNote meta="FIELD NOTE 03 · 22:37 UHR" rotate="-3deg" class="absolute -bottom-8 -left-4 z-10 sm:-left-12">

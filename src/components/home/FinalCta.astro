@@ -4,6 +4,8 @@ import Eyebrow from '../common/Eyebrow.astro'
 import Button from '../common/Button.astro'
 import Coordinates from '../common/Coordinates.astro'
 import BrandIcon from '../common/BrandIcon.astro'
+import { Picture } from 'astro:assets'
+import valleyImage from '../../assets/images/home/final-cta-valley.jpg'
 
 const socialChannels = [
   {
@@ -43,7 +45,17 @@ const socialChannels = [
 
 <section id="final-cta" class="texture-vignette relative overflow-hidden bg-forest-950 py-28 sm:py-36">
   <div class="absolute inset-0 opacity-40" aria-hidden="true">
-    <img src="/images/home/final-cta-valley.jpg" alt="" loading="lazy" class="h-full w-full object-cover" />
+    <Picture
+      src={valleyImage}
+      alt=""
+      loading="lazy"
+      class="h-full w-full object-cover"
+      pictureAttributes={{ class: 'block h-full w-full' }}
+      formats={['avif']}
+      fallbackFormat="webp"
+      widths={[480, 768, 1200, 1600, 2000, 2400]}
+      sizes="100vw"
+    />
     <div class="absolute inset-0 bg-forest-950/60" />
   </div>
 

@@ -285,8 +285,8 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 - **Rollen:** Einheitlich als `Diözesanleitung` oder `Regiosprecher` deklariert.
 
 ### 5. Bilder & Assets verwalten
-* **Startseiten-Bilder:** Liegen sauber geordnet unter `public/images/home/`.
-* **Automatische Optimierung:** Astro optimiert Bilder beim Build für moderne Web-Formate (WebP/AVIF).
+* **Startseiten-Bilder:** Die Originale liegen unter `src/assets/images/home/`.
+* **Automatische Optimierung:** Astro erzeugt beim Build responsive Größen in AVIF und WebP. Fotos unter `public/` werden dagegen unverändert ausgeliefert.
 
 ---
 

@@ -1,40 +1,47 @@
 ---
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
+import { Picture } from 'astro:assets'
+import reelDeparture from '../../assets/images/home/reel-01-aufbruch.jpg'
+import reelCamp from '../../assets/images/home/reel-02-lager.jpg'
+import reelFire from '../../assets/images/home/reel-03-feuer.jpg'
+import reelCommunity from '../../assets/images/home/reel-04-gemeinschaft.jpg'
+import reelAction from '../../assets/images/home/reel-05-einsatz.jpg'
+import reelNight from '../../assets/images/home/reel-06-nacht.jpg'
 
 const frames = [
   {
-    src: '/images/home/reel-01-aufbruch.jpg',
+    src: reelDeparture,
     alt: 'Aufbruch und Wanderung mit Rucksack',
     label: 'Der Aufbruch',
     note: 'Unterwegs auf Pfaden abseits des Alltags',
   },
   {
-    src: '/images/home/reel-02-lager.jpg',
+    src: reelCamp,
     alt: 'Zeltstadt und Schwarzzelte im Wiesental',
     label: 'Das Lager',
     note: 'Zehn Tage Zeltstadt ohne Strom & Handy',
   },
   {
-    src: '/images/home/reel-03-feuer.jpg',
+    src: reelFire,
     alt: 'Lagerfeuer und Kochen am offenen Feuer',
     label: 'Das Feuer',
     note: 'Funkenflug und Glut unterm Sternenhimmel',
   },
   {
-    src: '/images/home/reel-04-gemeinschaft.jpg',
+    src: reelCommunity,
     alt: 'Gemeinschaft am Lagertisch',
     label: 'Die Gemeinschaft',
     note: 'Freundschaften und Zusammenhalt fürs Leben',
   },
   {
-    src: '/images/home/reel-05-einsatz.jpg',
+    src: reelAction,
     alt: 'Geländespiel und Action im Wald',
     label: 'Der Einsatz',
     note: 'Taktik, Tempo & Teamgeist im Gelände',
   },
   {
-    src: '/images/home/reel-06-nacht.jpg',
+    src: reelNight,
     alt: 'Nachtwache und Andacht bei Fackelschein',
     label: 'Die Nacht',
     note: 'Fackelschein, Nachtwache & Stille',
@@ -52,7 +59,17 @@ const frames = [
         frames.map((frame) => (
           <figure class="reveal">
             <div class="overflow-hidden border border-paper/15 bg-forest-900">
-              <img src={frame.src} alt={frame.alt} loading="lazy" class="aspect-[5/3] w-full object-cover" />
+              <Picture
+                src={frame.src}
+                alt={frame.alt}
+                loading="lazy"
+                class="aspect-[5/3] w-full object-cover"
+                pictureAttributes={{ class: 'block' }}
+                formats={['avif']}
+                fallbackFormat="webp"
+                widths={[320, 480, 640, 960, 1200]}
+                sizes="(min-width: 640px) calc(100vw - 64px), calc(100vw - 40px)"
+              />
             </div>
             <figcaption class="mt-3 flex flex-col gap-0.5">
               <span class="font-display text-2xl uppercase text-paper">{frame.label}</span>
@@ -81,7 +98,17 @@ const frames = [
                 <div class="texture-tape absolute -top-3 left-6 z-10 h-6 w-24 -rotate-3" aria-hidden="true" />
                 <div class="texture-tape absolute -bottom-3 right-6 z-10 h-6 w-24 rotate-2" aria-hidden="true" />
                 
-                <img src={frame.src} alt={frame.alt} loading="lazy" class="aspect-[5/3] w-full object-cover" />
+                <Picture
+                  src={frame.src}
+                  alt={frame.alt}
+                  loading="lazy"
+                  class="aspect-[5/3] w-full object-cover"
+                  pictureAttributes={{ class: 'block' }}
+                  formats={['avif']}
+                  fallbackFormat="webp"
+                  widths={[480, 640, 860, 1200]}
+                  sizes="(min-width: 1654px) 860px, 52vw"
+                />
                 
                 <span class="stamp-distressed absolute bottom-4 left-4 z-10 -rotate-1 bg-forest-950/90 text-[0.62rem]">
                   Expedition 0{index + 1}

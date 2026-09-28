@@ -2,6 +2,8 @@
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
 import ImageFrame from '../common/ImageFrame.astro'
+import faithMain from '../../assets/images/home/faith-main.jpg'
+import faithDetail from '../../assets/images/home/faith-detail.jpg'
 
 const words = ['Gemeinschaft.', 'Stille.', 'Gebet.', 'Fragen.', 'Glaube, der zum Leben gehört.']
 ---
@@ -10,15 +12,17 @@ const words = ['Gemeinschaft.', 'Stille.', 'Gebet.', 'Fragen.', 'Glaube, der zum
   <Container class="grid items-center gap-14 lg:grid-cols-2">
     <div class="relative order-2 lg:order-1">
       <ImageFrame
-        src="/images/home/faith-main.jpg"
+        src={faithMain}
         alt="Glaube und Andacht am Lagerfeuer"
         ratio="4:5"
+        sizes="(min-width: 640px) 448px, 100vw"
         class="faith-night w-full max-w-md"
       />
       <ImageFrame
-        src="/images/home/faith-detail.jpg"
+        src={faithDetail}
         alt="Stille und Natur im Zeltlager"
         ratio="16:10"
+        sizes="(min-width: 1024px) 30vw, 65vw"
         class="faith-day absolute -bottom-10 -right-4 hidden w-2/3 sm:block"
       />
     </div>
