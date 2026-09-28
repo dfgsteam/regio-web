@@ -12,6 +12,7 @@ import {
   Calendar,
   MapPin,
   FileText,
+  Smartphone,
   SlidersHorizontal,
   ShieldCheck,
 } from '@lucide/astro'
@@ -37,6 +38,7 @@ export interface QrCardItem {
   categoryLabel: string
   targetUrl: string
   flyerUrl?: string
+  socialUrl?: string
   dateStr?: string
   location?: string
   ageGroup?: string
@@ -145,6 +147,7 @@ for (const camp of allCamps) {
     categoryLabel: `Zeltlager ${camp.data.year}`,
     targetUrl: `${BASE_DOMAIN}/abenteuer/zeltlager-${camp.data.year}/`,
     flyerUrl: `/flyer/zeltlager-${camp.data.year}/`,
+    socialUrl: `/social/zeltlager-${camp.data.year}/`,
     dateStr: formatDateRange(camp.data.date.start, camp.data.date.end),
     location: camp.data.location.name,
     ageGroup: formatAgeRange(camp.data.age.min, camp.data.age.max) || undefined,
@@ -170,6 +173,7 @@ for (const ev of sortedEvents) {
     categoryLabel: isWeekend ? 'Wochenende' : isSpecial ? 'Sonderaktion' : 'Veranstaltung',
     targetUrl: `${BASE_DOMAIN}/abenteuer/${ev.slug}/`,
     flyerUrl: `/flyer/${ev.slug}/`,
+    socialUrl: `/social/${ev.slug}/`,
     dateStr: formatDateRange(ev.start, ev.end),
     location: ev.location,
     ageGroup: ageFormatted || undefined,
@@ -281,10 +285,19 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 <FileText class="h-4 w-4" />
                 <span>📄 A4 Flyer drucken</span>
               </a>
+              <a
+                id="custom-social-btn"
+                href={`/social/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                target="_blank"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
+              >
+                <Smartphone class="h-4 w-4 text-orange" />
+                <span>📱 Story &amp; Post</span>
+              </a>
               <button
                 type="button"
                 id="custom-download-1024"
-                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
               >
                 <Download class="h-4 w-4" />
                 <span>PNG (1024 px)</span>
@@ -292,10 +305,10 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
               <button
                 type="button"
                 id="custom-download-2048"
-                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
               >
                 <Download class="h-4 w-4 text-orange" />
-                <span>Print HD (2048 px)</span>
+                <span>Print HD</span>
               </button>
               <button
                 type="button"
@@ -303,7 +316,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900/60 px-4 py-3 font-mono text-xs uppercase tracking-wider text-paper/80 transition-all hover:border-paper hover:text-paper cursor-pointer"
               >
                 <Copy class="h-3.5 w-3.5" />
-                <span id="custom-copy-text">Link kopieren</span>
+                <span id="custom-copy-text">Link</span>
               </button>
             </div>
           </div>
@@ -428,6 +441,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 data-title={item.title}
                 data-filename={item.filename}
                 data-flyer-url={item.flyerUrl || ''}
+                data-social-url={item.socialUrl || ''}
               >
                 <div>
                   <!-- Header Badge & Quick URL -->
@@ -498,15 +512,28 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 <!-- Bottom Actions -->
                 <div class="border-t border-paper/10 pt-4 flex flex-col gap-2">
                   {item.flyerUrl ? (
-                    <a
-                      href={item.flyerUrl}
-                      target="_blank"
-                      class="inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
-                      title="Druckfertigen DIN A4 Flyer öffnen"
-                    >
-                      <FileText class="h-4 w-4 shrink-0" />
-                      <span>📄 A4 Flyer drucken</span>
-                    </a>
+                    <div class="flex items-center gap-2">
+                      <a
+                        href={item.flyerUrl}
+                        target="_blank"
+                        class="flex-1 inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange px-3 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+                        title="Druckfertigen DIN A4 Flyer öffnen"
+                      >
+                        <FileText class="h-3.5 w-3.5 shrink-0" />
+                        <span>📄 A4 Flyer</span>
+                      </a>
+                      {item.socialUrl && (
+                        <a
+                          href={item.socialUrl}
+                          target="_blank"
+                          class="flex-1 inline-flex items-center justify-center gap-1.5 border-2 border-orange/40 bg-forest-950 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer shadow-md"
+                          title="Instagram Story & Post Vorlage öffnen"
+                        >
+                          <Smartphone class="h-3.5 w-3.5 shrink-0" />
+                          <span>📱 Story &amp; Post</span>
+                        </a>
+                      )}
+                    </div>
                   ) : (
                     <button
                       type="button"
@@ -596,6 +623,15 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           <FileText class="h-4 w-4" />
           <span>A4 Flyer öffnen</span>
         </a>
+        <a
+          id="modal-social-link"
+          href="/social/custom/"
+          target="_blank"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
+        >
+          <Smartphone class="h-4 w-4 text-orange" />
+          <span>📱 Story &amp; Post</span>
+        </a>
         <button
           type="button"
           id="modal-download-1024"
@@ -628,6 +664,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   const customPreview = document.getElementById('custom-qr-preview')
   const customCaption = document.getElementById('custom-preview-caption')
   const customFlyerBtn = document.getElementById('custom-flyer-btn') as HTMLAnchorElement | null
+  const customSocialBtn = document.getElementById('custom-social-btn') as HTMLAnchorElement | null
   const customDownload1024 = document.getElementById('custom-download-1024')
   const customDownload2048 = document.getElementById('custom-download-2048')
   const customCopyBtn = document.getElementById('custom-copy-btn')
@@ -639,6 +676,9 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     if (customCaption) customCaption.textContent = text
     if (customFlyerBtn) {
       customFlyerBtn.href = `/flyer/custom/?url=${encodeURIComponent(text)}`
+    }
+    if (customSocialBtn) {
+      customSocialBtn.href = `/social/custom/?url=${encodeURIComponent(text)}`
     }
 
     try {
@@ -673,7 +713,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         await navigator.clipboard.writeText(text)
         customCopyText.textContent = 'Kopiert! ✓'
         setTimeout(() => {
-          if (customCopyText) customCopyText.textContent = 'Link kopieren'
+          if (customCopyText) customCopyText.textContent = 'Link'
         }, 2000)
       } catch (err) {
         console.error('Clipboard copy error', err)
@@ -732,6 +772,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           card.dataset.title || '',
           card.dataset.filename || '',
           card.dataset.flyerUrl || '',
+          card.dataset.socialUrl || '',
         )
       }
     }
@@ -744,10 +785,17 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   const modalUrl = document.getElementById('modal-url')
   const modalPreview = document.getElementById('modal-qr-preview')
   const modalFlyerLink = document.getElementById('modal-flyer-link') as HTMLAnchorElement | null
+  const modalSocialLink = document.getElementById('modal-social-link') as HTMLAnchorElement | null
   const modalDownload1024 = document.getElementById('modal-download-1024')
   const modalDownload2048 = document.getElementById('modal-download-2048')
 
-  async function openModal(url: string, title: string, filename: string, flyerUrl?: string) {
+  async function openModal(
+    url: string,
+    title: string,
+    filename: string,
+    flyerUrl?: string,
+    socialUrl?: string,
+  ) {
     if (!modal || !modalPreview) return
     activeModalUrl = url
     activeModalFilename = filename
@@ -760,6 +808,14 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         modalFlyerLink.href = flyerUrl
       } else {
         modalFlyerLink.href = `/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+      }
+    }
+
+    if (modalSocialLink) {
+      if (socialUrl) {
+        modalSocialLink.href = socialUrl
+      } else {
+        modalSocialLink.href = `/social/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
       }
     }
 
