@@ -109,4 +109,40 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /*
+   * Pinned desktop stories intentionally show one chapter at a time. When
+   * motion is reduced, switch to their complete vertical counterparts so no
+   * chapter or image depends on a ScrollTrigger to become visible.
+   */
+  @media (min-width: 64rem) and (prefers-reduced-motion: reduce) {
+    #expedition-reel {
+      overflow: visible;
+      padding-block: 6rem;
+    }
+
+    #expedition-reel .reel-mobile,
+    #pillars,
+    #shadow-story-mobile {
+      display: block !important;
+    }
+
+    #expedition-reel .reel-desktop,
+    #pillars-desktop,
+    #shadow-story-desktop {
+      display: none !important;
+    }
+
+    #analog .card-stack-deck {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    #analog .card-stack-item {
+      position: relative !important;
+      inset: auto !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
 }
