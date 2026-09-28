@@ -1,0 +1,831 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Logo from '../../../components/common/Logo.astro'
+import {
+  ArrowLeft,
+  Calendar,
+  Download,
+  Copy,
+  Printer,
+  Smartphone,
+  ExternalLink,
+  MessageSquare,
+  FileText,
+  Compass,
+} from '@lucide/astro'
+import { eventProvider, formatDateRange, formatAgeRange } from '../../../lib/events'
+import { getAllCamps } from '../../../lib/camps'
+import { buildSchedulePresets } from '../../../lib/pdf/schedule-pdf'
+
+const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
+const presets = buildSchedulePresets(events, camps)
+const initialPresetKey = 'terminkarte'
+const initialPreset = presets[initialPresetKey] ?? presets['terminkarte-2026'] ?? {
+  periodTitle: 'Kommende Termine',
+  periodSubtitle: 'Die nächsten Monate im Überblick',
+  events: [],
+  targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+}
+
+// Prepare all events JSON for client-side filtering and rendering
+const allEventsJson = JSON.stringify(
+  [
+    ...camps.map((c) => ({
+      id: `camp-${c.data.year}`,
+      title: `${c.data.title}${c.data.motto ? ` – ${c.data.motto}` : ''}`,
+      start: c.data.date.start.toISOString(),
+      end: c.data.date.end.toISOString(),
+      dateStr: formatDateRange(c.data.date.start, c.data.date.end),
+      location: c.data.location?.name || 'Wiesental bei Thalwenden',
+      ageGroup: formatAgeRange(c.data.age?.min, c.data.age?.max) || '9–14 Jahre',
+      category: 'camp',
+    })),
+    ...events.map((e) => ({
+      id: `event-${e.slug}`,
+      title: e.title,
+      start: e.start.toISOString(),
+      end: e.end.toISOString(),
+      dateStr: formatDateRange(e.start, e.end),
+      location: e.location || 'Klause 2.0, Heiligenstadt',
+      ageGroup: formatAgeRange(e.ageMin, e.ageMax) || undefined,
+      category: e.category || 'event',
+    })),
+  ].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()),
+)
+
+const presetsJson = JSON.stringify(presets)
+---
+
+<BaseLayout
+  title="Terminkarte & Sammel-Übersicht – Leiter-Toolbox"
+  description="Erstelle A6-Taschenkalender (PDF), Multi-Slide Instagram-Karussells und WhatsApp-Terminlisten für beliebige Zeiträume."
+  noIndex={true}
+>
+  <!-- Screen Navigation Bar -->
+  <div class="border-b border-paper/20 bg-forest-950 px-4 py-3 sticky top-0 z-50 shadow-md">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a
+          href="/toolbox/"
+          class="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-paper/70 hover:text-paper transition-colors py-2 px-3 border border-paper/20 rounded-xs bg-forest-900/60"
+        >
+          <ArrowLeft class="h-4 w-4" />
+          <span>Zurück zur Toolbox</span>
+        </a>
+        <span class="hidden sm:inline font-mono text-xs text-paper/40">|</span>
+        <span class="inline-flex items-center gap-1.5 font-mono text-xs text-orange font-bold uppercase truncate">
+          <Calendar class="h-3.5 w-3.5" />
+          <span>Terminkarten-Studio</span>
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a
+          id="server-pdf-link"
+          href="/toolbox/flyers/terminkarte.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-3.5 py-1.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+        >
+          <Download class="h-3.5 w-3.5" />
+          <span>A6 PDF öffnen (.pdf) ↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main class="bg-forest-950 py-8 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto space-y-8">
+      
+      <!-- Top Title & Overview Header -->
+      <div class="border-b border-paper/15 pb-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-orange mb-1">
+              <Compass class="h-4 w-4" />
+              <span>TERMIN-SAMMLUNG &amp; JAHRESVORSCHAU</span>
+            </div>
+            <h1 class="display text-3xl sm:text-4xl text-paper uppercase">
+              Terminkarte &amp; Sammel-Flyer
+            </h1>
+            <p class="mt-1 font-sans text-sm text-paper/70 max-w-2xl">
+              Generiere für einen beliebigen Zeitraum fertige Terminkarten im kompakten <strong>DIN A6 Postkartenformat (mehrseitiges PDF)</strong>, 
+              als <strong>Multi-Slide Instagram-Karussell</strong> oder als strukturierte <strong>WhatsApp-Sammelnachricht</strong> mit direktem Kalender-Link.
+            </p>
+          </div>
+
+          <div class="border border-paper/20 bg-forest-900/60 p-3 rounded-xs text-right hidden sm:block">
+            <span class="block font-mono text-[0.65rem] uppercase text-paper/50">Direktes Kalender-Abo</span>
+            <span class="block font-mono text-xs text-orange font-bold">smj-wegweiser.de/api/calendar.ics</span>
+          </div>
+        </div>
+
+        <!-- Period Selector Toolbar -->
+        <div class="mt-6 pt-5 border-t border-paper/10 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-mono text-xs text-paper/60 uppercase font-bold mr-1">Zeitraum wählen:</span>
+            <button
+              type="button"
+              class="period-preset-btn active px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs"
+              data-preset="terminkarte"
+            >
+              Nächste 6 Monate
+            </button>
+            <button
+              type="button"
+              class="period-preset-btn px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all border border-paper/20 text-paper/80 hover:border-paper hover:text-paper cursor-pointer rounded-xs bg-forest-900/60"
+              data-preset="terminkarte-2026"
+            >
+              Ganzes Jahr 2026
+            </button>
+            <button
+              type="button"
+              class="period-preset-btn px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all border border-paper/20 text-paper/80 hover:border-paper hover:text-paper cursor-pointer rounded-xs bg-forest-900/60"
+              data-preset="terminkarte-h1-2026"
+            >
+              1. Halbjahr 2026
+            </button>
+            <button
+              type="button"
+              class="period-preset-btn px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all border border-paper/20 text-paper/80 hover:border-paper hover:text-paper cursor-pointer rounded-xs bg-forest-900/60"
+              data-preset="terminkarte-h2-2026"
+            >
+              2. Halbjahr 2026
+            </button>
+            <button
+              type="button"
+              class="period-preset-btn px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all border border-paper/20 text-paper/80 hover:border-paper hover:text-paper cursor-pointer rounded-xs bg-forest-900/60"
+              data-preset="terminkarte-2027"
+            >
+              Jahr 2027
+            </button>
+          </div>
+
+          <div class="font-mono text-xs text-paper/60">
+            <span id="period-events-count" class="font-bold text-orange">6</span> Termine im Zeitraum
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Studio Tabs: 1. A6 PDF, 2. Instagram, 3. WhatsApp -->
+      <div>
+        <div class="flex border-b-2 border-paper/20 mb-6">
+          <button
+            type="button"
+            class="tab-btn active px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-orange border-b-2 border-orange -mb-[2px] cursor-pointer flex items-center gap-2"
+            data-tab="pdf"
+          >
+            <FileText class="h-4 w-4" />
+            <span>DIN A6 Taschenkarte (PDF &amp; Druck)</span>
+          </button>
+          <button
+            type="button"
+            class="tab-btn px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-paper/60 hover:text-paper border-b-2 border-transparent -mb-[2px] cursor-pointer flex items-center gap-2"
+            data-tab="social"
+          >
+            <Smartphone class="h-4 w-4" />
+            <span>Instagram Karussell &amp; Story</span>
+          </button>
+          <button
+            type="button"
+            class="tab-btn px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-paper/60 hover:text-paper border-b-2 border-transparent -mb-[2px] cursor-pointer flex items-center gap-2"
+            data-tab="whatsapp"
+          >
+            <MessageSquare class="h-4 w-4" />
+            <span>WhatsApp Text-Vorlage</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: DIN A6 PDF POCKET CARD -->
+        <div id="tab-content-pdf" class="tab-pane space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 bg-forest-900/60 p-4 border border-paper/20 rounded-xs">
+            <div>
+              <h3 class="font-display text-lg text-paper uppercase">Kompakte DIN A6 Taschenkarte (105 × 148 mm)</h3>
+              <p class="font-sans text-xs text-paper/70">
+                Optimiert als Handzettel zum Verteilen, für Schaukästen oder als Beilage im Brief. 
+                Erzeugt bei vielen Terminen automatisch Folgeseiten mit QR-Code zum Kalender.
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                id="client-pdf-btn"
+                class="inline-flex items-center gap-1.5 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+              >
+                <Download class="h-4 w-4" />
+                <span>PDF herunterladen (.pdf)</span>
+              </button>
+              <button
+                type="button"
+                id="print-a6-btn"
+                class="inline-flex items-center gap-1.5 border border-paper/30 bg-forest-900 px-3 py-2 font-mono text-xs uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-all cursor-pointer"
+              >
+                <Printer class="h-3.5 w-3.5" />
+                <span>Drucken</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- A6 Visual Preview Container -->
+          <div class="flex flex-wrap justify-center gap-8 py-6 bg-forest-900/40 p-4 sm:p-8 border border-paper/10 rounded-sm">
+            
+            <!-- Page 1 Preview (DIN A6 aspect ratio: 105 x 148 mm) -->
+            <div
+              id="a6-preview-page-1"
+              class="bg-paper text-forest-950 p-4 shadow-2xl relative flex flex-col justify-between border-2 border-forest-950"
+              style="width: 105mm; height: 148mm; max-height: 148mm; box-sizing: border-box; overflow: hidden;"
+            >
+              <div>
+                <!-- A6 Header -->
+                <div class="flex items-center justify-between border-b-2 border-forest-950 pb-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 flex items-center justify-center p-0.5 border border-forest-950 bg-forest-950 text-paper">
+                      <Logo size="sm" tone="dark" />
+                    </div>
+                    <div>
+                      <span class="block font-mono text-[0.55rem] font-bold text-orange uppercase tracking-wider">SMJ Regio Wegweiser</span>
+                      <span class="block font-mono text-[0.45rem] text-forest-950/70 uppercase">Mannesjugend</span>
+                    </div>
+                  </div>
+                  <span class="bg-forest-950 text-paper px-2 py-0.5 font-mono text-[0.5rem] font-bold uppercase">
+                    Kalender
+                  </span>
+                </div>
+
+                <!-- A6 Title -->
+                <div class="mb-2">
+                  <span class="block font-mono text-[0.55rem] font-bold text-orange uppercase">// RAUS. INS ABENTEUER.</span>
+                  <h2 id="a6-preview-title" class="font-display text-xl uppercase tracking-tight text-forest-950 leading-tight">
+                    {initialPreset.periodTitle}
+                  </h2>
+                  <p id="a6-preview-subtitle" class="font-hand text-xs text-forest-950/80 font-bold">
+                    // {initialPreset.periodSubtitle}
+                  </p>
+                </div>
+
+                <!-- A6 Events List -->
+                <div id="a6-preview-events" class="space-y-1.5 text-xs">
+                  <!-- Rendered dynamically via JavaScript -->
+                </div>
+              </div>
+
+              <!-- A6 Bottom QR & Web Box -->
+              <div class="border border-forest-950 bg-white p-2 mt-2 flex items-center justify-between gap-3">
+                <div class="space-y-0.5 flex-1">
+                  <span class="inline-block bg-orange text-forest-950 font-mono text-[0.45rem] font-bold uppercase px-1 py-0.2">
+                    Online &bull; Anmeldung
+                  </span>
+                  <p class="font-display text-[0.7rem] uppercase text-forest-950 leading-tight">
+                    Alle Infos &amp; Kalender-Abo:
+                  </p>
+                  <p class="font-mono text-[0.55rem] font-bold text-orange">
+                    smj-wegweiser.de/abenteuer/
+                  </p>
+                  <p class="font-mono text-[0.45rem] text-forest-950/60">
+                    Abo: /api/calendar.ics
+                  </p>
+                </div>
+                <div class="w-12 h-12 border border-forest-950 bg-white p-0.5 flex items-center justify-center shrink-0">
+                  <div id="a6-preview-qr" class="w-full h-full flex items-center justify-center"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Page 2 Preview (Shown if > 5 events) -->
+            <div
+              id="a6-preview-page-2"
+              class="hidden bg-paper text-forest-950 p-4 shadow-2xl flex flex-col justify-between border-2 border-forest-950"
+              style="width: 105mm; height: 148mm; max-height: 148mm; box-sizing: border-box; overflow: hidden;"
+            >
+              <div>
+                <div class="flex items-center justify-between border-b-2 border-forest-950 pb-2 mb-2">
+                  <span class="font-mono text-[0.55rem] font-bold text-orange uppercase">SMJ Regio Wegweiser &bull; Termine</span>
+                  <span class="font-mono text-[0.5rem] text-forest-950/70 uppercase">Seite 2 / 2</span>
+                </div>
+                <div id="a6-preview-events-page-2" class="space-y-2 text-xs">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <div class="border border-forest-950 bg-white p-2 mt-2 flex items-center justify-between gap-3">
+                <div class="space-y-0.5 flex-1">
+                  <span class="inline-block bg-orange text-forest-950 font-mono text-[0.45rem] font-bold uppercase px-1 py-0.2">
+                    Wegweiser Online
+                  </span>
+                  <p class="font-display text-[0.7rem] uppercase text-forest-950 leading-tight">
+                    Kamera ans Handy halten &amp; Plätze sichern!
+                  </p>
+                  <p class="font-mono text-[0.55rem] font-bold text-orange">
+                    smj-wegweiser.de/abenteuer/
+                  </p>
+                </div>
+                <div class="w-12 h-12 border border-forest-950 bg-white p-0.5 flex items-center justify-center shrink-0">
+                  <div id="a6-preview-qr-page-2" class="w-full h-full flex items-center justify-center"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 2: INSTAGRAM KARUSSELL & STORY -->
+        <div id="tab-content-social" class="tab-pane hidden space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 bg-forest-900/60 p-4 border border-paper/20 rounded-xs">
+            <div>
+              <h3 class="font-display text-lg text-paper uppercase">Multi-Slide Instagram Karussell &amp; Story</h3>
+              <p class="font-sans text-xs text-paper/70">
+                Teile den Terminplan als mehrteiliges Karussell auf Instagram oder als Story mit Link-Sticker.
+              </p>
+            </div>
+
+            <!-- Format Toggle -->
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs text-paper/60 uppercase">Format:</span>
+              <button
+                type="button"
+                class="social-format-btn active px-3 py-1 font-mono text-xs font-bold uppercase border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs"
+                data-format="post"
+              >
+                Post 1:1
+              </button>
+              <button
+                type="button"
+                class="social-format-btn px-3 py-1 font-mono text-xs font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60"
+                data-format="portrait"
+              >
+                Portrait 4:5
+              </button>
+              <button
+                type="button"
+                class="social-format-btn px-3 py-1 font-mono text-xs font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60"
+                data-format="story"
+              >
+                Story 9:16
+              </button>
+            </div>
+          </div>
+
+          <!-- Carousel Slides Grid -->
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            
+            <!-- Slide 1 Card -->
+            <div class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
+              <div class="flex items-center justify-between border-b border-paper/10 pb-2">
+                <span class="font-mono text-xs font-bold uppercase text-orange">Slide 1 &bull; Termine Teil 1</span>
+                <button
+                  type="button"
+                  class="download-slide-btn inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950"
+                  data-slide="0"
+                >
+                  <Download class="h-3 w-3" />
+                  <span>Download .PNG</span>
+                </button>
+              </div>
+              <div class="aspect-square bg-forest-950 border border-paper/20 p-2 flex items-center justify-center overflow-hidden">
+                <canvas id="canvas-slide-0" class="w-full h-full object-contain"></canvas>
+              </div>
+            </div>
+
+            <!-- Slide 2 Card -->
+            <div class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
+              <div class="flex items-center justify-between border-b border-paper/10 pb-2">
+                <span class="font-mono text-xs font-bold uppercase text-orange">Slide 2 &bull; Termine Teil 2</span>
+                <button
+                  type="button"
+                  class="download-slide-btn inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950"
+                  data-slide="1"
+                >
+                  <Download class="h-3 w-3" />
+                  <span>Download .PNG</span>
+                </button>
+              </div>
+              <div class="aspect-square bg-forest-950 border border-paper/20 p-2 flex items-center justify-center overflow-hidden">
+                <canvas id="canvas-slide-1" class="w-full h-full object-contain"></canvas>
+              </div>
+            </div>
+
+            <!-- Slide 3 / Final Card -->
+            <div class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
+              <div class="flex items-center justify-between border-b border-paper/10 pb-2">
+                <span class="font-mono text-xs font-bold uppercase text-orange">Slide 3 &bull; Abschluss &amp; QR</span>
+                <button
+                  type="button"
+                  class="download-slide-btn inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950"
+                  data-slide="2"
+                >
+                  <Download class="h-3 w-3" />
+                  <span>Download .PNG</span>
+                </button>
+              </div>
+              <div class="aspect-square bg-forest-950 border border-paper/20 p-2 flex items-center justify-center overflow-hidden">
+                <canvas id="canvas-slide-2" class="w-full h-full object-contain"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Instagram Caption Copy Box -->
+          <div class="border border-paper/20 bg-forest-900/60 p-4 rounded-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs font-bold uppercase text-orange">Passende Instagram Caption (Beitragstext):</span>
+              <button
+                type="button"
+                id="copy-caption-btn"
+                class="inline-flex items-center gap-1 font-mono text-xs border border-orange px-3 py-1 bg-orange/10 text-orange hover:bg-orange hover:text-forest-950 cursor-pointer transition-colors"
+              >
+                <Copy class="h-3.5 w-3.5" />
+                <span id="copy-caption-text">Caption kopieren</span>
+              </button>
+            </div>
+            <textarea
+              id="instagram-caption-area"
+              rows="5"
+              readonly
+              class="w-full bg-forest-950 border border-paper/20 p-3 font-mono text-xs text-paper/90 rounded-xs focus:outline-none select-all"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- TAB 3: WHATSAPP TEXT TEMPLATE -->
+        <div id="tab-content-whatsapp" class="tab-pane hidden space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 bg-forest-900/60 p-4 border border-paper/20 rounded-xs">
+            <div>
+              <h3 class="font-display text-lg text-paper uppercase">WhatsApp-Sammelnachricht</h3>
+              <p class="font-sans text-xs text-paper/70">
+                Fertig formatierte Nachricht mit Emojis für WhatsApp-Gruppen, Elternverteiler und Status-Updates.
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                id="copy-whatsapp-btn"
+                class="inline-flex items-center gap-1.5 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+              >
+                <Copy class="h-4 w-4" />
+                <span id="copy-whatsapp-text">Nachricht kopieren</span>
+              </button>
+              <a
+                id="share-whatsapp-btn"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 border border-paper/30 bg-forest-900 px-3 py-2 font-mono text-xs uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-all cursor-pointer"
+              >
+                <ExternalLink class="h-3.5 w-3.5 text-orange" />
+                <span>In WhatsApp öffnen</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Message Text Area -->
+          <div class="border border-paper/20 bg-forest-900/40 p-4 sm:p-6 rounded-xs">
+            <textarea
+              id="whatsapp-text-area"
+              rows="16"
+              readonly
+              class="w-full bg-forest-950 border border-paper/20 p-4 font-mono text-xs text-paper/90 rounded-xs focus:outline-none select-all leading-relaxed"
+            ></textarea>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ allEventsJson, presetsJson }}>
+  window.__SCHEDULE_EVENTS__ = JSON.parse(allEventsJson)
+  window.__SCHEDULE_PRESETS__ = JSON.parse(presetsJson)
+</script>
+
+<script>
+  import { generateQrSvg } from '../../../scripts/qrcode-renderer'
+  import { openOrDownloadClientSchedulePdf } from '../../../scripts/client-schedule-pdf'
+  import {
+    renderScheduleSlideToCanvas,
+    downloadCanvasPng,
+  } from '../../../scripts/schedule-social-canvas'
+
+  const allEvents = (window as any).__SCHEDULE_EVENTS__ || []
+  const presets = (window as any).__SCHEDULE_PRESETS__ || {}
+
+  let activePresetKey = 'terminkarte'
+  let activeSocialFormat: 'post' | 'portrait' | 'story' = 'post'
+
+  // Tab switching
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tab-btn')
+  const tabPanes = document.querySelectorAll<HTMLDivElement>('.tab-pane')
+
+  tabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.getAttribute('data-tab')
+      tabBtns.forEach((b) => {
+        b.classList.remove('active', 'text-orange', 'border-orange')
+        b.classList.add('text-paper/60', 'border-transparent')
+      })
+      btn.classList.add('active', 'text-orange', 'border-orange')
+      btn.classList.remove('text-paper/60', 'border-transparent')
+
+      tabPanes.forEach((pane) => pane.classList.add('hidden'))
+      const activePane = document.getElementById(`tab-content-${targetTab}`)
+      if (activePane) activePane.classList.remove('hidden')
+
+      if (targetTab === 'social') {
+        renderAllSocialSlides()
+      }
+    })
+  })
+
+  // Preset switching
+  const presetBtns = document.querySelectorAll<HTMLButtonElement>('.period-preset-btn')
+  presetBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      presetBtns.forEach((b) => {
+        b.classList.remove('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+        b.classList.add('border', 'border-paper/20', 'text-paper/80')
+      })
+      btn.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+      btn.classList.remove('border', 'border-paper/20', 'text-paper/80')
+
+      activePresetKey = btn.getAttribute('data-preset') || 'terminkarte'
+      updateStudioUI()
+    })
+  })
+
+  // Format switching for Social
+  const formatBtns = document.querySelectorAll<HTMLButtonElement>('.social-format-btn')
+  formatBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach((b) => {
+        b.classList.remove('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+        b.classList.add('border', 'border-paper/20', 'text-paper/80')
+      })
+      btn.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+      btn.classList.remove('border', 'border-paper/20', 'text-paper/80')
+
+      activeSocialFormat = (btn.getAttribute('data-format') || 'post') as 'post' | 'portrait' | 'story'
+      renderAllSocialSlides()
+    })
+  })
+
+  function getActivePresetData() {
+    return (
+      presets[activePresetKey] || {
+        id: activePresetKey,
+        periodTitle: 'Kommende Termine',
+        periodSubtitle: 'Die nächsten Monate im Überblick',
+        events: allEvents.slice(0, 6),
+        targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+      }
+    )
+  }
+
+  // Update UI Elements
+  async function updateStudioUI() {
+    const data = getActivePresetData()
+    const eventsList = data.events || []
+
+    // Update count & server link
+    const countEl = document.getElementById('period-events-count')
+    if (countEl) countEl.textContent = String(eventsList.length)
+
+    const serverLinkEl = document.getElementById('server-pdf-link') as HTMLAnchorElement | null
+    if (serverLinkEl) {
+      serverLinkEl.href = `/toolbox/flyers/${activePresetKey}.pdf`
+    }
+
+    // Update A6 Preview Page 1
+    const titleEl = document.getElementById('a6-preview-title')
+    if (titleEl) titleEl.textContent = data.periodTitle
+
+    const subEl = document.getElementById('a6-preview-subtitle')
+    if (subEl) subEl.textContent = data.periodSubtitle ? `// ${data.periodSubtitle}` : ''
+
+    const p1Container = document.getElementById('a6-preview-events')
+    const p2Container = document.getElementById('a6-preview-events-page-2')
+    const page2El = document.getElementById('a6-preview-page-2')
+
+    const p1Events = eventsList.length <= 5 ? eventsList : eventsList.slice(0, 5)
+    const p2Events = eventsList.length > 5 ? eventsList.slice(5) : []
+
+    if (p1Container) {
+      p1Container.innerHTML = p1Events
+        .map(
+          (e: any) => `
+        <div class="border-l-2 border-orange pl-2 py-0.5">
+          <span class="block font-mono text-[0.55rem] font-bold text-orange">${e.dateStr.toUpperCase()}</span>
+          <span class="block font-bold text-[0.65rem] text-forest-950 uppercase truncate">${e.title}</span>
+          <span class="block font-sans text-[0.5rem] text-forest-950/70 truncate">${[e.location, e.ageGroup].filter(Boolean).join(' · ')}</span>
+        </div>
+      `,
+        )
+        .join('')
+    }
+
+    if (p2Events.length > 0 && page2El && p2Container) {
+      page2El.classList.remove('hidden')
+      p2Container.innerHTML = p2Events
+        .map(
+          (e: any) => `
+        <div class="border-l-2 border-orange pl-2 py-0.5">
+          <span class="block font-mono text-[0.55rem] font-bold text-orange">${e.dateStr.toUpperCase()}</span>
+          <span class="block font-bold text-[0.65rem] text-forest-950 uppercase truncate">${e.title}</span>
+          <span class="block font-sans text-[0.5rem] text-forest-950/70 truncate">${[e.location, e.ageGroup].filter(Boolean).join(' · ')}</span>
+        </div>
+      `,
+        )
+        .join('')
+    } else if (page2El) {
+      page2El.classList.add('hidden')
+    }
+
+    // QR Codes
+    const qrSvg = await generateQrSvg(data.targetUrl || 'https://smj-wegweiser.de/abenteuer/', {
+      margin: 0,
+      errorCorrectionLevel: 'M',
+    })
+    const qr1 = document.getElementById('a6-preview-qr')
+    if (qr1) qr1.innerHTML = qrSvg
+    const qr2 = document.getElementById('a6-preview-qr-page-2')
+    if (qr2) qr2.innerHTML = qrSvg
+
+    // Update WhatsApp Template
+    updateWhatsAppTemplate(data)
+
+    // Update Instagram Caption
+    updateInstagramCaption(data)
+
+    // Render Canvas Slides
+    renderAllSocialSlides()
+  }
+
+  function updateWhatsAppTemplate(data: any) {
+    const eventsList = data.events || []
+    const lines = [
+      `🏕️ *TERMINE DER SMJ REGIO WEGWEISER*`,
+      `_Raus. Ins Abenteuer._`,
+      ``,
+      `Hier ist die aktuelle Terminübersicht für *${data.periodTitle}*:`,
+      ``,
+    ]
+
+    for (const ev of eventsList) {
+      const isCamp = ev.category === 'camp' || ev.title.toLowerCase().includes('zeltlager')
+      const icon = isCamp ? '⛺' : '🔥'
+      lines.push(`${icon} *${ev.title}*`)
+      lines.push(`📅 ${ev.dateStr}`)
+      if (ev.location) lines.push(`📍 ${ev.location}`)
+      if (ev.ageGroup) lines.push(`👥 ${ev.ageGroup}`)
+      lines.push(``)
+    }
+
+    lines.push(`📲 *Alle Infos, Packlisten & Online-Anmeldung:*`)
+    lines.push(`👉 https://smj-wegweiser.de/abenteuer/`)
+    lines.push(``)
+    lines.push(`📅 *Kalender abonnieren (Google / Apple / Outlook):*`)
+    lines.push(`👉 https://smj-wegweiser.de/api/calendar.ics`)
+
+    const fullText = lines.join('\n')
+    const textarea = document.getElementById('whatsapp-text-area') as HTMLTextAreaElement | null
+    if (textarea) textarea.value = fullText
+
+    const shareBtn = document.getElementById('share-whatsapp-btn') as HTMLAnchorElement | null
+    if (shareBtn) {
+      shareBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`
+    }
+  }
+
+  function updateInstagramCaption(data: any) {
+    const eventsList = data.events || []
+    const lines = [
+      `RAUS. INS ABENTEUER. 🏕️🔥`,
+      ``,
+      `Hier sind alle Termine & Aktionen für ${data.periodTitle}:`,
+      ``,
+    ]
+
+    for (const ev of eventsList) {
+      lines.push(`• ${ev.dateStr}: ${ev.title}`)
+    }
+
+    lines.push(``)
+    lines.push(`👉 Alle Infos, Packlisten und die Online-Anmeldung findest du über den Link in unserer Bio oder unter smj-wegweiser.de/abenteuer/!`)
+    lines.push(``)
+    lines.push(`#smjwegweiser #zeltlager #abenteuer #jugend #draussen #schoenstatt #jugendleiter #outdoor #thueringen #eichsfeld`)
+
+    const captionArea = document.getElementById('instagram-caption-area') as HTMLTextAreaElement | null
+    if (captionArea) captionArea.value = lines.join('\n')
+  }
+
+  async function renderAllSocialSlides() {
+    const data = getActivePresetData()
+    const eventsList = data.events || []
+
+    const slide1Events = eventsList.slice(0, 4)
+    const slide2Events = eventsList.slice(4, 8)
+
+    const c0 = document.getElementById('canvas-slide-0') as HTMLCanvasElement | null
+    const c1 = document.getElementById('canvas-slide-1') as HTMLCanvasElement | null
+    const c2 = document.getElementById('canvas-slide-2') as HTMLCanvasElement | null
+
+    if (c0) {
+      await renderScheduleSlideToCanvas(c0, {
+        format: activeSocialFormat,
+        periodTitle: data.periodTitle,
+        periodSubtitle: data.periodSubtitle,
+        slideIndex: 0,
+        totalSlides: 3,
+        events: slide1Events,
+        targetUrl: data.targetUrl,
+      })
+    }
+
+    if (c1) {
+      await renderScheduleSlideToCanvas(c1, {
+        format: activeSocialFormat,
+        periodTitle: data.periodTitle,
+        periodSubtitle: 'Weitere Termine',
+        slideIndex: 1,
+        totalSlides: 3,
+        events: slide2Events.length > 0 ? slide2Events : slide1Events,
+        targetUrl: data.targetUrl,
+      })
+    }
+
+    if (c2) {
+      await renderScheduleSlideToCanvas(c2, {
+        format: activeSocialFormat,
+        periodTitle: 'Jetzt Anmelden',
+        periodSubtitle: 'smj-wegweiser.de/abenteuer/',
+        slideIndex: 2,
+        totalSlides: 3,
+        events: [],
+        targetUrl: data.targetUrl,
+      })
+    }
+  }
+
+  // Copy buttons
+  const copyWaBtn = document.getElementById('copy-whatsapp-btn')
+  if (copyWaBtn) {
+    copyWaBtn.addEventListener('click', () => {
+      const textarea = document.getElementById('whatsapp-text-area') as HTMLTextAreaElement | null
+      if (textarea) {
+        navigator.clipboard.writeText(textarea.value)
+        const textSpan = document.getElementById('copy-whatsapp-text')
+        if (textSpan) textSpan.textContent = 'Kopiert! ✓'
+        setTimeout(() => {
+          if (textSpan) textSpan.textContent = 'Nachricht kopieren'
+        }, 2500)
+      }
+    })
+  }
+
+  const copyCapBtn = document.getElementById('copy-caption-btn')
+  if (copyCapBtn) {
+    copyCapBtn.addEventListener('click', () => {
+      const captionArea = document.getElementById('instagram-caption-area') as HTMLTextAreaElement | null
+      if (captionArea) {
+        navigator.clipboard.writeText(captionArea.value)
+        const textSpan = document.getElementById('copy-caption-text')
+        if (textSpan) textSpan.textContent = 'Kopiert! ✓'
+        setTimeout(() => {
+          if (textSpan) textSpan.textContent = 'Caption kopieren'
+        }, 2500)
+      }
+    })
+  }
+
+  // Download slide buttons
+  const downloadSlideBtns = document.querySelectorAll<HTMLButtonElement>('.download-slide-btn')
+  downloadSlideBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const slideIdx = parseInt(btn.getAttribute('data-slide') || '0', 10)
+      const canvas = document.getElementById(`canvas-slide-${slideIdx}`) as HTMLCanvasElement | null
+      if (canvas) {
+        downloadCanvasPng(canvas, `SMJ-Termine-Slide-${slideIdx + 1}`)
+      }
+    })
+  })
+
+  // Client PDF Generation / Download
+  const clientPdfBtn = document.getElementById('client-pdf-btn')
+  if (clientPdfBtn) {
+    clientPdfBtn.addEventListener('click', async () => {
+      const data = getActivePresetData()
+      await openOrDownloadClientSchedulePdf(data, 'download')
+    })
+  }
+
+  // Print button
+  const printA6Btn = document.getElementById('print-a6-btn')
+  if (printA6Btn) {
+    printA6Btn.addEventListener('click', () => {
+      window.print()
+    })
+  }
+
+  // Initial load
+  updateStudioUI()
+</script>

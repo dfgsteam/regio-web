@@ -233,7 +233,17 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       </div>
 
       <!-- Quick Feature Highlights -->
-      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 font-mono text-xs text-paper/70">
+      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5 font-mono text-xs text-paper/70">
+        <a href="/toolbox/terminkarte/" class="border-2 border-orange/50 bg-forest-900/90 p-3 rounded-xs hover:border-orange hover:bg-forest-900 transition-all block group">
+          <div class="flex items-center justify-between text-orange font-bold text-sm">
+            <div class="flex items-center gap-1.5">
+              <Calendar class="h-4 w-4 shrink-0" />
+              <span>TERMINKARTE</span>
+            </div>
+            <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+          </div>
+          <span class="text-[0.7rem] text-paper/70 block mt-0.5">A6 PDF, Insta &amp; WhatsApp</span>
+        </a>
         <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
           <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
             <FileText class="h-4 w-4 shrink-0" />
@@ -430,6 +440,34 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   <!-- Items Grid Section -->
   <section class="py-12 bg-forest-950">
     <Container>
+      <!-- Terminkarte Callout Banner -->
+      <div class="mb-8 border-2 border-orange/40 bg-gradient-to-r from-forest-900 via-forest-900/90 to-forest-950 p-4 sm:p-5 rounded-xs flex flex-wrap items-center justify-between gap-4 shadow-lg">
+        <div class="flex items-center gap-3.5">
+          <div class="h-11 w-11 shrink-0 bg-orange/15 border-2 border-orange flex items-center justify-center text-orange rounded-xs">
+            <Calendar class="h-5 w-5" />
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-display text-lg sm:text-xl text-paper uppercase leading-tight">
+                Terminkarte &amp; Sammel-Flyer
+              </h3>
+              <span class="font-mono text-[0.6rem] uppercase tracking-wider text-orange border border-orange/40 px-1.5 py-0.5 bg-orange/10 font-bold">
+                Neu
+              </span>
+            </div>
+            <p class="font-sans text-xs text-paper/70 mt-0.5">
+              Erstelle ausstehende Termine für beliebige Zeiträume als <strong>DIN A6 Taschenkalender (PDF)</strong>, <strong>Instagram-Karussell</strong> &amp; <strong>WhatsApp-Nachricht</strong>.
+            </p>
+          </div>
+        </div>
+        <a
+          href="/toolbox/terminkarte/"
+          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md shrink-0 rounded-xs"
+        >
+          <span>Terminkarte öffnen &rarr;</span>
+        </a>
+      </div>
+
       <!-- Results Count Bar -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-paper/10 pb-4 mb-6">
         <div class="flex flex-wrap items-center gap-3">
