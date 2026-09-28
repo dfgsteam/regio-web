@@ -17,6 +17,10 @@ import {
   ArrowRight,
   LogOut,
   Users,
+  QrCode,
+  Clock,
+  Folder,
+  MessageSquare,
 } from '@lucide/astro'
 import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
@@ -24,13 +28,15 @@ import { formatDateRange, formatAgeRange } from '../../lib/events'
 import { generateQrSvg } from '../../scripts/qrcode-renderer'
 
 const BASE_DOMAIN = 'https://smj-wegweiser.de'
+const now = new Date()
 
-// 1. Fetch Events
+// 1. Fetch Events - Chronological ascending (next upcoming first)
 const allEvents = await eventProvider.getEvents()
-const sortedEvents = allEvents.sort((a, b) => b.start.getTime() - a.start.getTime())
+const sortedEvents = allEvents.sort((a, b) => a.start.getTime() - b.start.getTime())
 
-// 2. Fetch Camps
+// 2. Fetch Camps - Chronological ascending
 const allCamps = await getAllCamps()
+const sortedCamps = allCamps.sort((a, b) => a.data.date.start.getTime() - b.data.date.start.getTime())
 
 export interface ToolboxItem {
   id: string
@@ -49,6 +55,7 @@ export interface ToolboxItem {
   filename: string
   badgeColor: string
   isFeatured?: boolean
+  isPast?: boolean
   svg?: string
 }
 
@@ -122,7 +129,8 @@ rawItems.push(
 )
 
 // Add Camps
-for (const camp of allCamps) {
+for (const camp of sortedCamps) {
+  const isPast = camp.data.date.end < now
   rawItems.push({
     id: `camp-${camp.data.year}`,
     title: `${camp.data.title}${camp.data.motto ? ` – ${camp.data.motto}` : ''}`,
@@ -139,7 +147,8 @@ for (const camp of allCamps) {
     ageGroup: formatAgeRange(camp.data.age.min, camp.data.age.max) || undefined,
     filename: `qr-smj-zeltlager-${camp.data.year}`,
     badgeColor: 'border-orange bg-orange text-forest-950 font-bold',
-    isFeatured: camp.data.active,
+    isFeatured: !isPast && camp.data.active,
+    isPast,
   })
 }
 
@@ -150,6 +159,7 @@ for (const ev of sortedEvents) {
   const ageFormatted = formatAgeRange(ev.ageMin, ev.ageMax)
   const isWeekend = ev.category === 'weekend'
   const isSpecial = ev.category === 'special'
+  const isPast = ev.end < now
 
   rawItems.push({
     id: `event-${ev.slug}`,
@@ -171,7 +181,8 @@ for (const ev of sortedEvents) {
       : isSpecial
         ? 'border-yellow-500/60 text-yellow-400 bg-yellow-950/40'
         : 'border-paper/30 text-paper/90 bg-forest-900',
-    isFeatured: ev.end >= new Date(),
+    isFeatured: !isPast,
+    isPast,
   })
 }
 
@@ -224,20 +235,32 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       <!-- Quick Feature Highlights -->
       <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 font-mono text-xs text-paper/70">
         <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <span class="text-orange font-bold block text-sm">📄 A4 FLYER</span>
-          <span class="text-[0.7rem] text-paper/60">Druck &amp; Schaukasten</span>
+          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
+            <FileText class="h-4 w-4 shrink-0" />
+            <span>A4 FLYER</span>
+          </div>
+          <span class="text-[0.7rem] text-paper/60 block mt-0.5">Druck &amp; Schaukasten</span>
         </div>
         <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <span class="text-orange font-bold block text-sm">📱 SOCIAL 9:16</span>
-          <span class="text-[0.7rem] text-paper/60">Story &amp; Feed Studio</span>
+          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
+            <Smartphone class="h-4 w-4 shrink-0" />
+            <span>SOCIAL 9:16</span>
+          </div>
+          <span class="text-[0.7rem] text-paper/60 block mt-0.5">Story &amp; Feed Studio</span>
         </div>
         <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <span class="text-orange font-bold block text-sm">🔳 QR HD 2048</span>
-          <span class="text-[0.7rem] text-paper/60">Vektor &amp; PNG</span>
+          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
+            <QrCode class="h-4 w-4 shrink-0" />
+            <span>QR HD 2048</span>
+          </div>
+          <span class="text-[0.7rem] text-paper/60 block mt-0.5">Vektor &amp; PNG</span>
         </div>
         <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <span class="text-orange font-bold block text-sm">💬 WHATSAPP</span>
-          <span class="text-[0.7rem] text-paper/60">1-Klick Textbausteine</span>
+          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
+            <MessageSquare class="h-4 w-4 shrink-0" />
+            <span>WHATSAPP</span>
+          </div>
+          <span class="text-[0.7rem] text-paper/60 block mt-0.5">1-Klick Textbausteine</span>
         </div>
       </div>
     </Container>
@@ -290,8 +313,8 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 id="custom-pdf-btn"
                 class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
               >
-                <Download class="h-4 w-4" />
-                <span>📄 A4 Flyer (.PDF) ↗</span>
+                <FileText class="h-4 w-4" />
+                <span>A4 Flyer (PDF)</span>
               </button>
               <a
                 id="custom-social-btn"
@@ -300,7 +323,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
               >
                 <Smartphone class="h-4 w-4 text-orange" />
-                <span>📱 Story &amp; Post</span>
+                <span>Story &amp; Post</span>
               </a>
               <button
                 type="button"
@@ -409,11 +432,21 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     <Container>
       <!-- Results Count Bar -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-paper/10 pb-4 mb-6">
-        <span id="qr-items-count" class="font-mono text-xs text-paper/70 font-bold">
-          Zeige alle Veranstaltungen
-        </span>
-        <span class="font-mono text-[0.7rem] text-paper/50">
-          Tipp: Klick auf den QR-Code öffnet die Großansicht mit HD-Download
+        <div class="flex flex-wrap items-center gap-3">
+          <span id="qr-items-count" class="font-mono text-xs text-paper/70 font-bold">
+            Zeige Veranstaltungen
+          </span>
+          <button
+            type="button"
+            id="qr-toggle-past"
+            class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900/80 px-2.5 py-1 font-mono text-[0.72rem] text-paper/70 hover:border-orange hover:text-orange transition-all cursor-pointer rounded-xs"
+          >
+            <Clock class="h-3.5 w-3.5 text-orange" />
+            <span id="qr-toggle-past-text">Vergangene Termine anzeigen</span>
+          </button>
+        </div>
+        <span class="font-mono text-[0.7rem] text-paper/40 hidden sm:inline">
+          Klick auf „QR-Code“ öffnet die Großansicht &amp; HD-Download
         </span>
       </div>
 
@@ -435,12 +468,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         {
           items.map((item) => {
             const searchTokens = `${item.title} ${item.subtitle || ''} ${item.categoryLabel} ${item.location || ''} ${item.dateStr || ''} ${item.targetUrl}`.toLowerCase()
-            const isInitialHidden = item.category !== 'event'
+            const isInitialHidden = item.category !== 'event' || item.isPast
             return (
               <article
-                class={`qr-card group relative border border-paper/15 bg-forest-900/70 p-4 sm:p-5 transition-all duration-200 hover:border-orange hover:bg-forest-900 rounded-xs shadow-sm ${isInitialHidden ? 'hidden' : ''}`}
+                class={`qr-card group relative border border-paper/15 bg-forest-900/70 p-4 sm:p-5 transition-all duration-200 hover:border-orange hover:bg-forest-900 rounded-xs shadow-sm ${item.isPast ? 'opacity-70' : ''} ${isInitialHidden ? 'hidden' : ''}`}
                 data-category={item.category}
                 data-search={searchTokens}
+                data-past={item.isPast ? 'true' : 'false'}
                 data-url={item.targetUrl}
                 data-title={item.title}
                 data-filename={item.filename}
@@ -450,173 +484,119 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 data-social-url={item.socialUrl || ''}
               >
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  <!-- Left Main Section: QR Thumbnail + Date + Title + Meta -->
-                  <div class="flex items-start gap-4 min-w-0 flex-1">
-                    <!-- Crisp QR Code Thumbnail (Clickable for Modal Preview) -->
-                    <div
-                      class="qr-preview-wrapper w-14 h-14 sm:w-16 sm:h-16 shrink-0 p-1 bg-white border border-paper/30 rounded-xs shadow-xs group-hover:border-orange group-hover:scale-105 transition-transform cursor-pointer flex items-center justify-center"
-                      title="Klicken für Großansicht & Download"
-                      data-preview-trigger={item.id}
-                    >
-                      <div class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={item.svg} />
+                  <!-- Main Info Section (no QR preview thumbnail!) -->
+                  <div class="min-w-0 flex-1">
+                    <!-- Badges & Date Header Line -->
+                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                      <span class={`inline-block border px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider ${item.badgeColor}`}>
+                        {item.categoryLabel}
+                      </span>
+                      {item.isFeatured && (
+                        <span class="inline-flex items-center gap-1.5 font-mono text-[0.65rem] font-bold text-orange">
+                          <span class="h-1.5 w-1.5 rounded-full bg-orange animate-pulse"></span>
+                          Aktiv
+                        </span>
+                      )}
+                      {item.isPast && (
+                        <span class="inline-flex items-center font-mono text-[0.65rem] text-paper/40 border border-paper/10 px-1.5 py-0.5">
+                          Vergangen
+                        </span>
+                      )}
+                      {item.dateStr ? (
+                        <span class="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-paper/90 border-l border-paper/15 pl-2">
+                          <Calendar class="h-3 w-3 text-orange shrink-0" />
+                          <span>{item.dateStr}</span>
+                        </span>
+                      ) : (
+                        <span class="font-mono text-[0.68rem] text-paper/40 border-l border-paper/15 pl-2">
+                          Dauerhafter Link
+                        </span>
+                      )}
                     </div>
 
-                    <!-- Texts & Details -->
-                    <div class="min-w-0 flex-1">
-                      <!-- Badges & Date Header Line -->
-                      <div class="flex flex-wrap items-center gap-2 mb-1">
-                        <span class={`inline-block border px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider ${item.badgeColor}`}>
-                          {item.categoryLabel}
-                        </span>
-                        {item.isFeatured && (
-                          <span class="font-mono text-[0.65rem] font-bold text-orange flex items-center gap-1">
-                            ★ Aktiv
-                          </span>
-                        )}
-                        {item.dateStr ? (
-                          <span class="inline-flex items-center gap-1 font-mono text-xs font-bold text-paper/90 border-l border-paper/15 pl-2">
-                            <Calendar class="h-3 w-3 text-orange shrink-0" />
-                            <span>{item.dateStr}</span>
-                          </span>
-                        ) : (
-                          <span class="font-mono text-[0.68rem] text-paper/40 border-l border-paper/15 pl-2">
-                            Dauerhafter Link
-                          </span>
-                        )}
-                      </div>
-
-                      <!-- Title -->
-                      <h3 class="display text-lg sm:text-xl text-paper group-hover:text-orange transition-colors leading-tight truncate">
-                        {item.toolboxUrl ? (
-                          <a href={item.toolboxUrl} class="hover:underline">
-                            {item.title}
-                          </a>
-                        ) : (
-                          item.title
-                        )}
-                      </h3>
-
-                      <!-- Subtitle -->
-                      {item.subtitle && (
-                        <p class="mt-0.5 text-xs text-paper/70 line-clamp-1">
-                          {item.subtitle}
-                        </p>
-                      )}
-
-                      <!-- Meta Details Line -->
-                      <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[0.72rem] text-paper/60">
-                        {item.location && (
-                          <span class="inline-flex items-center gap-1 text-paper/70">
-                            <MapPin class="h-3 w-3 text-paper/40 shrink-0" />
-                            <span class="truncate max-w-[220px]">{item.location}</span>
-                          </span>
-                        )}
-                        {item.ageGroup && (
-                          <span class="inline-flex items-center gap-1 text-paper/70">
-                            <Users class="h-3 w-3 text-paper/40 shrink-0" />
-                            <span>{item.ageGroup}</span>
-                          </span>
-                        )}
-                        <a
-                          href={item.targetUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="inline-flex items-center gap-1 text-orange hover:underline truncate max-w-[200px] sm:max-w-xs"
-                          title={item.targetUrl}
-                        >
-                          <span class="truncate">{item.targetUrl.replace(/^https?:\/\//, '')}</span>
-                          <ExternalLink class="h-2.5 w-2.5 shrink-0" />
+                    <!-- Title -->
+                    <h3 class="display text-lg sm:text-xl text-paper group-hover:text-orange transition-colors leading-tight truncate">
+                      {item.toolboxUrl ? (
+                        <a href={item.toolboxUrl} class="hover:underline">
+                          {item.title}
                         </a>
-                      </div>
+                      ) : (
+                        item.title
+                      )}
+                    </h3>
+
+                    <!-- Subtitle -->
+                    {item.subtitle && (
+                      <p class="mt-0.5 text-xs text-paper/70 line-clamp-1">
+                        {item.subtitle}
+                      </p>
+                    )}
+
+                    <!-- Meta Details Line -->
+                    <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[0.72rem] text-paper/60">
+                      {item.location && (
+                        <span class="inline-flex items-center gap-1 text-paper/70">
+                          <MapPin class="h-3 w-3 text-paper/40 shrink-0" />
+                          <span class="truncate max-w-[220px]">{item.location}</span>
+                        </span>
+                      )}
+                      {item.ageGroup && (
+                        <span class="inline-flex items-center gap-1 text-paper/70">
+                          <Users class="h-3 w-3 text-paper/40 shrink-0" />
+                          <span>{item.ageGroup}</span>
+                        </span>
+                      )}
+                      <a
+                        href={item.targetUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1 text-orange hover:underline truncate max-w-[200px] sm:max-w-xs"
+                        title={item.targetUrl}
+                      >
+                        <span class="truncate">{item.targetUrl.replace(/^https?:\/\//, '')}</span>
+                        <ExternalLink class="h-2.5 w-2.5 shrink-0" />
+                      </a>
                     </div>
                   </div>
 
-                  <!-- Right Section: Action Buttons -->
-                  <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 shrink-0 pt-3 lg:pt-0 border-t border-paper/10 lg:border-t-0">
+                  <!-- Right Section: Exactly TWO Buttons -->
+                  <div class="flex items-center gap-2.5 shrink-0 pt-3 lg:pt-0 border-t border-paper/10 lg:border-t-0">
                     {item.toolboxUrl ? (
                       <a
                         href={item.toolboxUrl}
-                        class="inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange px-3.5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-sm shrink-0"
+                        class="inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-sm shrink-0"
                       >
-                        <span>🧰 Vorlagen &amp; Vorbereitung</span>
-                        <ArrowRight class="h-3.5 w-3.5 shrink-0" />
-                      </a>
-                    ) : item.pdfUrl ? (
-                      <a
-                        href={item.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange px-3.5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-sm shrink-0"
-                      >
-                        <FileText class="h-3.5 w-3.5 shrink-0" />
-                        <span>📄 A4 Flyer (.PDF) ↗</span>
-                      </a>
-                    ) : item.flyerUrl ? (
-                      <a
-                        href={`${item.flyerUrl}?download=1`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange px-3.5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-sm shrink-0"
-                      >
-                        <FileText class="h-3.5 w-3.5 shrink-0" />
-                        <span>📄 A4 Flyer (.PDF) ↗</span>
+                        <Folder class="h-3.5 w-3.5" />
+                        <span>Materialien &amp; Vorlagen</span>
+                        <ArrowRight class="h-3.5 w-3.5" />
                       </a>
                     ) : (
-                      <button
-                        type="button"
-                        class="qr-card-download-btn inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange/10 px-3.5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer shrink-0"
-                        data-url={item.targetUrl}
-                        data-filename={item.filename}
+                      <a
+                        href={item.targetUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center gap-1.5 border border-paper/30 bg-forest-900 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-all cursor-pointer shadow-sm shrink-0"
                       >
-                        <Download class="h-3.5 w-3.5" />
-                        <span>PNG Download</span>
-                      </button>
+                        <ExternalLink class="h-3.5 w-3.5" />
+                        <span>Zur Website</span>
+                      </a>
                     )}
 
-                    <!-- Secondary Quick Actions -->
-                    <div class="flex items-center gap-1.5 shrink-0">
-                      {(item.pdfUrl || item.flyerUrl) && (
-                        <a
-                          href={item.pdfUrl || `${item.flyerUrl}?download=1`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2.5 py-2 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors"
-                          title="A4 Flyer als PDF öffnen"
-                        >
-                          <FileText class="h-3.5 w-3.5 text-orange shrink-0" />
-                          <span class="hidden sm:inline">Flyer</span>
-                        </a>
-                      )}
-                      {item.socialUrl && (
-                        <a
-                          href={item.socialUrl}
-                          target="_blank"
-                          class="inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2.5 py-2 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors"
-                          title="Instagram Story & Post Vorlage"
-                        >
-                          <Smartphone class="h-3.5 w-3.5 text-orange shrink-0" />
-                          <span class="hidden sm:inline">Social</span>
-                        </a>
-                      )}
-                      <button
-                        type="button"
-                        class="qr-card-download-btn inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2.5 py-2 font-mono text-[0.7rem] uppercase tracking-wider text-paper/70 hover:border-paper hover:text-paper transition-colors cursor-pointer"
-                        data-url={item.targetUrl}
-                        data-filename={item.filename}
-                        title="PNG QR-Code herunterladen"
-                      >
-                        <Download class="h-3.5 w-3.5" />
-                        <span class="hidden sm:inline">QR</span>
-                      </button>
-                      <button
-                        type="button"
-                        class="qr-card-copy-btn inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2.5 py-2 font-mono text-[0.7rem] uppercase tracking-wider text-paper/70 hover:border-paper hover:text-paper transition-colors cursor-pointer"
-                        data-url={item.targetUrl}
-                        title="Ziel-Link kopieren"
-                      >
-                        <Copy class="h-3.5 w-3.5" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      class="qr-trigger-btn inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-950 px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-paper/85 hover:border-orange hover:text-orange transition-colors cursor-pointer shrink-0"
+                      data-url={item.targetUrl}
+                      data-title={item.title}
+                      data-filename={item.filename}
+                      data-toolbox-url={item.toolboxUrl || ''}
+                      data-pdf-url={item.pdfUrl || ''}
+                      data-flyer-url={item.flyerUrl || ''}
+                      data-social-url={item.socialUrl || ''}
+                      title="QR-Code anzeigen & herunterladen"
+                    >
+                      <QrCode class="h-3.5 w-3.5 text-orange" />
+                      <span>QR-Code</span>
+                    </button>
                   </div>
                 </div>
               </article>
@@ -660,7 +640,8 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           href="/toolbox/custom/"
           class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
         >
-          <span>🧰 Alle Materialien</span>
+          <Folder class="h-4 w-4" />
+          <span>Alle Materialien</span>
         </a>
         <a
           id="modal-flyer-link"
@@ -670,7 +651,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
           <FileText class="h-4 w-4 text-orange" />
-          <span>📄 Flyer (PDF)</span>
+          <span>Flyer (PDF)</span>
         </a>
         <a
           id="modal-social-link"
@@ -679,7 +660,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
           <Smartphone class="h-4 w-4 text-orange" />
-          <span>📱 Social</span>
+          <span>Social Studio</span>
         </a>
         <button
           type="button"
@@ -783,7 +764,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       if (!text) return
       try {
         await navigator.clipboard.writeText(text)
-        customCopyText.textContent = 'Kopiert! ✓'
+        customCopyText.textContent = 'Kopiert'
         setTimeout(() => {
           if (customCopyText) customCopyText.textContent = 'Link'
         }, 2000)
@@ -793,7 +774,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     })
   }
 
-  // Card Downloads and Copy buttons
+  // Card Downloads, Copy buttons, and QR Trigger
   document.addEventListener('click', async (e) => {
     const target = e.target as HTMLElement
     const dlBtn = target.closest<HTMLButtonElement>('.qr-card-download-btn')
@@ -819,21 +800,19 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       return
     }
 
-    // Modal Trigger
-    const trigger = target.closest<HTMLElement>('.qr-preview-wrapper')
+    // Modal Trigger: Either QR Trigger Button or preview wrapper
+    const trigger = target.closest<HTMLElement>('.qr-trigger-btn, .qr-preview-wrapper')
     if (trigger) {
       const card = trigger.closest('.qr-card') as HTMLElement | null
-      if (card) {
-        openModal(
-          card.dataset.url || '',
-          card.dataset.title || '',
-          card.dataset.filename || '',
-          card.dataset.toolboxUrl || '',
-          card.dataset.flyerUrl || '',
-          card.dataset.socialUrl || '',
-          card.dataset.pdfUrl || '',
-        )
-      }
+      openModal(
+        trigger.dataset.url || card?.dataset.url || '',
+        trigger.dataset.title || card?.dataset.title || '',
+        trigger.dataset.filename || card?.dataset.filename || '',
+        trigger.dataset.toolboxUrl || card?.dataset.toolboxUrl || '',
+        trigger.dataset.flyerUrl || card?.dataset.flyerUrl || '',
+        trigger.dataset.socialUrl || card?.dataset.socialUrl || '',
+        trigger.dataset.pdfUrl || card?.dataset.pdfUrl || '',
+      )
     }
   })
 
@@ -919,9 +898,22 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   const noResultsEl = document.getElementById('qr-no-results')
   const resetFilterBtn = document.getElementById('qr-reset-filter-btn')
   const cards = document.querySelectorAll<HTMLElement>('.qr-card')
+  const togglePastBtn = document.getElementById('qr-toggle-past')
+  const togglePastText = document.getElementById('qr-toggle-past-text')
 
   let activeFilter = 'event'
   let activeSearch = ''
+  let showPast = false
+
+  if (togglePastBtn && togglePastText) {
+    togglePastBtn.addEventListener('click', () => {
+      showPast = !showPast
+      togglePastText.textContent = showPast ? 'Vergangene Termine ausblenden' : 'Vergangene Termine anzeigen'
+      togglePastBtn.classList.toggle('border-orange', showPast)
+      togglePastBtn.classList.toggle('text-orange', showPast)
+      applyFilterAndSearch()
+    })
+  }
 
   function applyFilterAndSearch() {
     let visibleCount = 0
@@ -929,11 +921,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     cards.forEach((card) => {
       const category = card.dataset.category || ''
       const searchData = card.dataset.search || ''
+      const isPast = card.dataset.past === 'true'
 
       const matchesFilter = activeFilter === 'all' || category === activeFilter
       const matchesSearch = !activeSearch || searchData.includes(activeSearch.toLowerCase())
+      const matchesPast = showPast || !isPast
 
-      if (matchesFilter && matchesSearch) {
+      if (matchesFilter && matchesSearch && matchesPast) {
         card.classList.remove('hidden')
         visibleCount++
       } else {

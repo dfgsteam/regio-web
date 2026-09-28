@@ -11,6 +11,7 @@ import {
   ArrowLeft,
   ExternalLink,
   Compass,
+  FileText,
 } from '@lucide/astro'
 import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../../lib/events'
 import type { Event } from '../../../lib/events'
@@ -156,8 +157,9 @@ const pdfUrl = id && id !== 'custom' ? `/flyers/${id}.pdf` : null
           <span>Zurück zur Toolbox</span>
         </a>
         <span class="hidden sm:inline font-mono text-xs text-paper/40">|</span>
-        <span class="hidden sm:inline font-mono text-xs text-orange font-bold uppercase truncate max-w-xs">
-          📄 DIN A4 Flyer
+        <span class="hidden sm:inline-flex items-center gap-1.5 font-mono text-xs text-orange font-bold uppercase truncate max-w-xs">
+          <FileText class="h-3.5 w-3.5" />
+          <span>DIN A4 Flyer</span>
         </span>
       </div>
 
@@ -170,7 +172,7 @@ const pdfUrl = id && id !== 'custom' ? `/flyers/${id}.pdf` : null
             class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
           >
             <Download class="h-4 w-4" />
-            <span>📄 Direktes PDF öffnen (.pdf) ↗</span>
+            <span>PDF öffnen (.pdf) ↗</span>
           </a>
         ) : (
           <button
@@ -179,7 +181,7 @@ const pdfUrl = id && id !== 'custom' ? `/flyers/${id}.pdf` : null
             class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
           >
             <Download class="h-4 w-4" />
-            <span>📄 PDF generieren (.pdf) ↗</span>
+            <span>PDF generieren (.pdf) ↗</span>
           </button>
         )}
         <button

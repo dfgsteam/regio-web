@@ -9,8 +9,12 @@ import {
   Smartphone,
   Square,
   Image as ImageIcon,
-  Printer,
   SlidersHorizontal,
+  FileText,
+  Calendar,
+  MapPin,
+  Users,
+  Banknote,
 } from '@lucide/astro'
 import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../../lib/events'
 import type { Event } from '../../../lib/events'
@@ -161,8 +165,9 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
           <span>Zurück zur Leiter-Toolbox</span>
         </a>
         <span class="hidden sm:inline text-paper/30">/</span>
-        <span class="hidden sm:inline font-mono text-xs font-bold text-orange">
-          📱 Social Media Studio
+        <span class="hidden sm:inline-flex items-center gap-1.5 font-mono text-xs font-bold text-orange">
+          <Smartphone class="h-3.5 w-3.5" />
+          <span>Social Media Studio</span>
         </span>
       </div>
 
@@ -172,8 +177,8 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
           target="_blank"
           class="hidden md:inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/80 hover:border-orange hover:text-orange transition-colors"
         >
-          <Printer class="h-3.5 w-3.5 text-orange" />
-          <span>📄 A4 Flyer</span>
+          <FileText class="h-3.5 w-3.5 text-orange" />
+          <span>A4 Flyer</span>
         </a>
 
         <button
@@ -292,25 +297,37 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
                 <!-- 4 Key Fact Cards -->
                 <div class="mt-4 grid grid-cols-2 gap-2 font-mono text-xs">
                   <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange block">📅 WANN?</span>
+                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
+                      <Calendar class="h-2.5 w-2.5 shrink-0" />
+                      <span>WANN?</span>
+                    </span>
                     <span id="live-date" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
                       {dateStr}
                     </span>
                   </div>
                   <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange block">📍 WO?</span>
+                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
+                      <MapPin class="h-2.5 w-2.5 shrink-0" />
+                      <span>WO?</span>
+                    </span>
                     <span id="live-location" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
                       {locationStr}
                     </span>
                   </div>
                   <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange block">👥 WER?</span>
+                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
+                      <Users class="h-2.5 w-2.5 shrink-0" />
+                      <span>WER?</span>
+                    </span>
                     <span id="live-age" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
                       {ageStr}
                     </span>
                   </div>
                   <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange block">💰 BEITRAG</span>
+                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
+                      <Banknote class="h-2.5 w-2.5 shrink-0" />
+                      <span>BEITRAG</span>
+                    </span>
                     <span id="live-price" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
                       {priceStr}
                     </span>
@@ -319,8 +336,9 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
                 <!-- Highlights Section -->
                 <div id="live-highlights-container" class="mt-3 bg-forest-900/60 border border-orange/30 p-2.5 rounded-xs">
-                  <span class="font-mono text-[0.6rem] font-bold text-orange uppercase tracking-wider block mb-1">
-                    ⚡ WAS ERWARTET DICH?
+                  <span class="font-mono text-[0.6rem] font-bold text-orange uppercase tracking-wider flex items-center gap-1 mb-1">
+                    <Sparkles class="h-3 w-3 shrink-0" />
+                    <span>WAS ERWARTET DICH?</span>
                   </span>
                   <p id="live-highlights-text" class="text-xs text-paper/80 leading-relaxed font-sans line-clamp-2">
                     {highlights.join('  ·  ')}
@@ -635,7 +653,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(captionTextarea.value)
-        copyLabel.textContent = 'Kopiert! ✓'
+        copyLabel.textContent = 'Kopiert'
         setTimeout(() => {
           copyLabel.textContent = 'Kopieren'
         }, 2000)

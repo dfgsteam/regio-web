@@ -14,6 +14,9 @@ import {
   MessageSquare,
   Sparkles,
   Compass,
+  MapPin,
+  Users,
+  Banknote,
 } from '@lucide/astro'
 import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../lib/events'
 import type { Event } from '../../lib/events'
@@ -211,8 +214,9 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               {categoryLabel}
             </span>
             {isFeatured && (
-              <span class="font-mono text-[0.65rem] font-bold text-orange flex items-center gap-1">
-                ★ Aktuelle Aktion
+              <span class="font-mono text-[0.65rem] font-bold text-orange flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+                Aktuelle Aktion
               </span>
             )}
           </div>
@@ -227,20 +231,32 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
         <!-- Quick Facts Pill Bar -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
           <div class="bg-forest-900 border border-paper/15 p-2.5">
-            <span class="text-[0.6rem] text-orange font-bold uppercase block">📅 WANN</span>
-            <span class="text-paper font-bold text-xs truncate block">{dateStr}</span>
+            <span class="text-[0.6rem] text-orange font-bold uppercase flex items-center gap-1">
+              <Calendar class="h-3 w-3 shrink-0" />
+              <span>WANN</span>
+            </span>
+            <span class="text-paper font-bold text-xs truncate block mt-0.5">{dateStr}</span>
           </div>
           <div class="bg-forest-900 border border-paper/15 p-2.5">
-            <span class="text-[0.6rem] text-orange font-bold uppercase block">📍 WO</span>
-            <span class="text-paper font-bold text-xs truncate block">{locationStr}</span>
+            <span class="text-[0.6rem] text-orange font-bold uppercase flex items-center gap-1">
+              <MapPin class="h-3 w-3 shrink-0" />
+              <span>WO</span>
+            </span>
+            <span class="text-paper font-bold text-xs truncate block mt-0.5">{locationStr}</span>
           </div>
           <div class="bg-forest-900 border border-paper/15 p-2.5">
-            <span class="text-[0.6rem] text-orange font-bold uppercase block">👥 WER</span>
-            <span class="text-paper font-bold text-xs truncate block">{ageStr}</span>
+            <span class="text-[0.6rem] text-orange font-bold uppercase flex items-center gap-1">
+              <Users class="h-3 w-3 shrink-0" />
+              <span>WER</span>
+            </span>
+            <span class="text-paper font-bold text-xs truncate block mt-0.5">{ageStr}</span>
           </div>
           <div class="bg-forest-900 border border-paper/15 p-2.5">
-            <span class="text-[0.6rem] text-orange font-bold uppercase block">💰 BEITRAG</span>
-            <span class="text-paper font-bold text-xs truncate block">{priceStr}</span>
+            <span class="text-[0.6rem] text-orange font-bold uppercase flex items-center gap-1">
+              <Banknote class="h-3 w-3 shrink-0" />
+              <span>BEITRAG</span>
+            </span>
+            <span class="text-paper font-bold text-xs truncate block mt-0.5">{priceStr}</span>
           </div>
         </div>
       </div>
@@ -295,8 +311,8 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               rel="noopener noreferrer"
               class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
             >
-              <Download class="h-4 w-4" />
-              <span>📄 A4 Flyer als PDF öffnen (.pdf) ↗</span>
+              <FileText class="h-4 w-4" />
+              <span>A4 Flyer als PDF öffnen (.pdf) ↗</span>
             </a>
             {flyerUrl && (
               <a
@@ -357,7 +373,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
             >
               <Smartphone class="h-4 w-4" />
-              <span>📱 Social Studio öffnen</span>
+              <span>Social Studio öffnen</span>
             </a>
           </div>
         </div>
@@ -504,7 +520,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
     btnCopyWhatsapp.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(textareaWhatsapp.value)
-        labelWhatsapp.textContent = 'Kopiert! ✓'
+        labelWhatsapp.textContent = 'Kopiert'
         setTimeout(() => {
           labelWhatsapp.textContent = 'Text kopieren'
         }, 2000)
@@ -523,7 +539,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
     btnCopyCaption.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(textareaCaption.value)
-        labelCaption.textContent = 'Kopiert! ✓'
+        labelCaption.textContent = 'Kopiert'
         setTimeout(() => {
           labelCaption.textContent = 'Text kopieren'
         }, 2000)
@@ -543,7 +559,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
       if (!url) return
       try {
         await navigator.clipboard.writeText(url)
-        labelLink.textContent = 'Kopiert! ✓'
+        labelLink.textContent = 'Kopiert'
         setTimeout(() => {
           labelLink.textContent = 'Ziel-URL kopieren'
         }, 2000)
