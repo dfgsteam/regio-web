@@ -5,7 +5,7 @@
  *
  * 1. Synchronizes ALL posts from Instagram Graph API (with pagination).
  * 2. Fetches all images from single posts and multi-image carousel albums.
- * 3. Downloads and stores all photos locally under public/images/instagram/.
+ * 3. Downloads and stores optimized WebP photos under public/images/instagram/.
  * 4. Generates AI-assisted headlines (via Gemini API if GEMINI_API_KEY is set, or smart NLP heuristics).
  * 5. Creates MDX post pages in src/content/posts/.
  * 6. PRESERVES existing posts (never overwrites an already synced post).
@@ -15,6 +15,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -86,7 +87,8 @@ async function downloadImage(url, destPath) {
     const arrayBuffer = await res.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     fs.mkdirSync(path.dirname(destPath), { recursive: true })
-    fs.writeFileSync(destPath, buffer)
+    const optimized = await sharp(buffer).rotate().webp({ quality: 78, effort: 4 }).toBuffer()
+    fs.writeFileSync(destPath, optimized)
     return true
   } catch (err) {
     console.warn(`[sync-instagram] Warnung: Download fehlgeschlagen für ${url}:`, err.message)
@@ -239,12 +241,12 @@ async function main() {
       if (item.media_type === 'CAROUSEL_ALBUM') {
         const children = await fetchCarouselChildren(item.id)
         for (const child of children) {
-          const u = child.media_url || child.thumbnail_url
+          const u = child.media_type === 'VIDEO' ? child.thumbnail_url : (child.media_url || child.thumbnail_url)
           if (u) imageUrls.push(u)
         }
       }
       if (imageUrls.length === 0) {
-        const u = item.media_url || item.thumbnail_url
+        const u = item.media_type === 'VIDEO' ? item.thumbnail_url : (item.media_url || item.thumbnail_url)
         if (u) imageUrls.push(u)
       }
 
@@ -252,7 +254,7 @@ async function main() {
       const localImagePaths = []
       for (let i = 0; i < imageUrls.length; i++) {
         const remoteUrl = imageUrls[i]
-        const fileName = `${item.id}_${i}.jpg`
+        const fileName = `${item.id}_${i}.webp`
         const localAbsPath = path.join(IMAGES_DIR, fileName)
         const localWebPath = `/images/instagram/${fileName}`
 

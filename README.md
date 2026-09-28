@@ -287,6 +287,7 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 ### 5. Bilder & Assets verwalten
 * **Startseiten-Bilder:** Die Originale liegen unter `src/assets/images/home/`.
 * **Automatische Optimierung:** Astro erzeugt beim Build responsive Größen in AVIF und WebP. Fotos unter `public/` werden dagegen unverändert ausgeliefert.
+* **Instagram-Bilder:** `npm run sync:instagram` speichert neue Fotos und Video-Vorschaubilder als WebP unter `public/images/instagram/`.
 
 ---
 
