@@ -18,6 +18,7 @@ import {
 import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
 import { formatDateRange, formatAgeRange } from '../../lib/events'
+import { generateQrSvg } from '../../scripts/qrcode-renderer'
 
 const BASE_DOMAIN = 'https://smj-wegweiser.de'
 
@@ -41,12 +42,13 @@ export interface QrCardItem {
   filename: string
   badgeColor: string
   isFeatured?: boolean
+  svg?: string
 }
 
-const items: QrCardItem[] = []
+const rawItems: Omit<QrCardItem, 'svg'>[] = []
 
 // Add Core Channels & Quicklinks
-items.push(
+rawItems.push(
   {
     id: 'channel-whatsapp',
     title: 'Offizieller WhatsApp-Kanal',
@@ -134,7 +136,7 @@ items.push(
 
 // Add Camps
 for (const camp of allCamps) {
-  items.push({
+  rawItems.push({
     id: `camp-${camp.data.year}`,
     title: `${camp.data.title}${camp.data.motto ? ` – ${camp.data.motto}` : ''}`,
     subtitle: `Sommerzeltlager ${camp.data.year} im Wiesental`,
@@ -152,13 +154,13 @@ for (const camp of allCamps) {
 
 // Add Events
 for (const ev of sortedEvents) {
-  if (items.some((it) => it.id === `event-${ev.slug}`)) continue
+  if (rawItems.some((it) => it.id === `event-${ev.slug}`)) continue
 
   const ageFormatted = formatAgeRange(ev.ageMin, ev.ageMax)
   const isWeekend = ev.category === 'weekend'
   const isSpecial = ev.category === 'special'
 
-  items.push({
+  rawItems.push({
     id: `event-${ev.slug}`,
     title: ev.title,
     subtitle: ev.teaser || 'Aktion & Veranstaltung der SMJ Regio Wegweiser',
@@ -177,6 +179,18 @@ for (const ev of sortedEvents) {
     isFeatured: ev.end >= new Date(),
   })
 }
+
+// Pre-generate crisp SVG vector QR codes at build time for instant rendering
+const items: QrCardItem[] = await Promise.all(
+  rawItems.map(async (item) => ({
+    ...item,
+    svg: await generateQrSvg(item.targetUrl, { margin: 2, errorCorrectionLevel: 'M' }),
+  })),
+)
+
+// Initial custom SVG for the generator tool preview
+const initialCustomUrl = 'https://smj-wegweiser.de/abenteuer/zeltlager-2026/'
+const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, errorCorrectionLevel: 'M' })
 ---
 
 <ContentLayout
@@ -227,6 +241,9 @@ for (const ev of sortedEvents) {
               <p class="font-mono text-xs text-paper/60">Gib einen beliebigen Link ein und erstelle sofort deinen Download-Code</p>
             </div>
           </div>
+          <span class="font-mono text-[0.65rem] uppercase tracking-widest text-orange border border-orange/30 px-3 py-1 bg-orange/5">
+            Live Tool
+          </span>
         </div>
 
         <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] items-center">
@@ -240,7 +257,7 @@ for (const ev of sortedEvents) {
                 <input
                   type="text"
                   id="custom-url-input"
-                  value="https://smj-wegweiser.de/abenteuer/zeltlager-2026/"
+                  value={initialCustomUrl}
                   placeholder="https://smj-wegweiser.de/..."
                   class="w-full bg-forest-900 border-2 border-paper/20 px-4 py-3 font-mono text-sm text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
                 />
@@ -279,14 +296,14 @@ for (const ev of sortedEvents) {
             </div>
           </div>
 
-          <!-- Preview Column (Strictly Contained) -->
-          <div class="flex flex-col items-center justify-center p-5 bg-forest-900 border border-paper/15 text-center overflow-hidden">
+          <!-- Preview Column -->
+          <div class="flex flex-col items-center justify-center p-5 bg-forest-900 border border-paper/15 text-center">
             <p class="mono-label text-[0.65rem] text-paper/50 mb-3">// LIVE VORSCHAU</p>
-            <div class="w-48 h-48 max-w-full bg-white p-2.5 border-2 border-paper/30 shadow-xl flex items-center justify-center overflow-hidden rounded-sm">
-              <canvas id="custom-qr-canvas" class="w-full h-full block object-contain"></canvas>
+            <div class="w-44 h-44 max-w-full p-2.5 bg-white border-2 border-paper/30 shadow-xl flex items-center justify-center rounded-sm">
+              <div id="custom-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={initialCustomSvg} />
             </div>
             <p id="custom-preview-caption" class="mt-3 font-mono text-[0.65rem] text-orange truncate max-w-[200px]">
-              https://smj-wegweiser.de/abenteuer/zeltlager-2026/
+              {initialCustomUrl}
             </p>
           </div>
         </div>
@@ -442,18 +459,14 @@ for (const ev of sortedEvents) {
                   )}
                 </div>
 
-                <!-- Center QR Code Canvas Preview (Fixed Size Container) -->
+                <!-- Center QR Code SVG Preview -->
                 <div class="my-6 flex flex-col items-center">
                   <div
-                    class="qr-preview-wrapper w-44 h-44 max-w-full p-2.5 bg-white border border-paper/30 rounded-sm shadow-md transition-transform duration-300 group-hover:scale-105 cursor-pointer flex items-center justify-center overflow-hidden"
+                    class="qr-preview-wrapper w-44 h-44 max-w-full p-2.5 bg-white border border-paper/30 rounded-sm shadow-md transition-transform duration-300 group-hover:scale-105 cursor-pointer flex items-center justify-center"
                     title="Klicken zum Vergrößern"
                     data-preview-trigger={item.id}
                   >
-                    <canvas
-                      data-qr-target={item.targetUrl}
-                      data-qr-filename={item.filename}
-                      class="qr-item-canvas w-full h-full block object-contain"
-                    ></canvas>
+                    <div class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={item.svg} />
                   </div>
 
                   <!-- Target URL Display -->
@@ -474,6 +487,7 @@ for (const ev of sortedEvents) {
                   <button
                     type="button"
                     class="qr-card-download-btn inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange/10 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
+                    data-url={item.targetUrl}
                     data-filename={item.filename}
                   >
                     <Download class="h-3.5 w-3.5" />
@@ -530,8 +544,8 @@ for (const ev of sortedEvents) {
       </div>
 
       <div class="my-6 flex justify-center">
-        <div class="w-64 h-64 sm:w-72 sm:h-72 max-w-full p-3 bg-white border-4 border-paper shadow-2xl flex items-center justify-center overflow-hidden rounded-sm">
-          <canvas id="modal-qr-canvas" class="w-full h-full block object-contain"></canvas>
+        <div class="w-64 h-64 sm:w-72 sm:h-72 max-w-full p-3 bg-white border-4 border-paper shadow-2xl flex items-center justify-center rounded-sm">
+          <div id="modal-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block"></div>
         </div>
       </div>
 
@@ -566,33 +580,14 @@ for (const ev of sortedEvents) {
 </ContentLayout>
 
 <script>
-  import { renderQrToCanvas, downloadCanvasAsPng } from '../../scripts/qrcode-renderer'
+  import { generateQrSvg, generateQrDataUrl, downloadQrPng } from '../../scripts/qrcode-renderer'
 
   let activeModalUrl = ''
   let activeModalFilename = 'qr-smj-code'
 
-  // Initialize all QR card canvases
-  async function initCardCanvases() {
-    const canvases = document.querySelectorAll<HTMLCanvasElement>('.qr-item-canvas')
-    for (const canvas of canvases) {
-      const url = canvas.dataset.qrTarget
-      if (!url) continue
-      try {
-        await renderQrToCanvas(canvas, url, {
-          size: 512,
-          darkColor: '#000000',
-          lightColor: '#ffffff',
-          margin: 2,
-        })
-      } catch (err) {
-        console.error('Error rendering QR canvas:', err)
-      }
-    }
-  }
-
   // Custom Generator Logic
   const customInput = document.getElementById('custom-url-input') as HTMLInputElement | null
-  const customCanvas = document.getElementById('custom-qr-canvas') as HTMLCanvasElement | null
+  const customPreview = document.getElementById('custom-qr-preview')
   const customCaption = document.getElementById('custom-preview-caption')
   const customDownload1024 = document.getElementById('custom-download-1024')
   const customDownload2048 = document.getElementById('custom-download-2048')
@@ -600,17 +595,13 @@ for (const ev of sortedEvents) {
   const customCopyText = document.getElementById('custom-copy-text')
 
   async function updateCustomQR() {
-    if (!customCanvas || !customInput) return
+    if (!customInput || !customPreview) return
     const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
     if (customCaption) customCaption.textContent = text
 
     try {
-      await renderQrToCanvas(customCanvas, text, {
-        size: 512,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
+      const svg = await generateQrSvg(text, { margin: 2, errorCorrectionLevel: 'M' })
+      customPreview.innerHTML = svg
     } catch (e) {
       console.error('Custom QR render failed', e)
     }
@@ -621,28 +612,14 @@ for (const ev of sortedEvents) {
   if (customDownload1024 && customInput) {
     customDownload1024.addEventListener('click', async () => {
       const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
-      const offCanvas = document.createElement('canvas')
-      await renderQrToCanvas(offCanvas, text, {
-        size: 1024,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
-      downloadCanvasAsPng(offCanvas, 'qr-smj-custom-1024.png')
+      await downloadQrPng(text, 'qr-smj-custom-1024.png', 1024)
     })
   }
 
   if (customDownload2048 && customInput) {
     customDownload2048.addEventListener('click', async () => {
       const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
-      const offCanvas = document.createElement('canvas')
-      await renderQrToCanvas(offCanvas, text, {
-        size: 2048,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
-      downloadCanvasAsPng(offCanvas, 'qr-smj-custom-2048-hd.png')
+      await downloadQrPng(text, 'qr-smj-custom-2048-hd.png', 2048)
     })
   }
 
@@ -668,18 +645,11 @@ for (const ev of sortedEvents) {
     const dlBtn = target.closest<HTMLButtonElement>('.qr-card-download-btn')
     if (dlBtn) {
       const card = dlBtn.closest('.qr-card') as HTMLElement | null
-      const url = card?.dataset.url
-      const filename = card?.dataset.filename || 'qr-smj-code'
+      const url = dlBtn.dataset.url || card?.dataset.url
+      const filename = dlBtn.dataset.filename || card?.dataset.filename || 'qr-smj-code'
       if (!url) return
 
-      const offCanvas = document.createElement('canvas')
-      await renderQrToCanvas(offCanvas, url, {
-        size: 1024,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
-      downloadCanvasAsPng(offCanvas, `${filename}.png`)
+      await downloadQrPng(url, `${filename}.png`, 1024)
       return
     }
 
@@ -689,14 +659,7 @@ for (const ev of sortedEvents) {
       const filename = hdBtn.dataset.filename || 'qr-smj-hd'
       if (!url) return
 
-      const offCanvas = document.createElement('canvas')
-      await renderQrToCanvas(offCanvas, url, {
-        size: 2048,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
-      downloadCanvasAsPng(offCanvas, `${filename}.png`)
+      await downloadQrPng(url, `${filename}.png`, 2048)
       return
     }
 
@@ -732,25 +695,21 @@ for (const ev of sortedEvents) {
   const modalClose = document.getElementById('qr-modal-close')
   const modalTitle = document.getElementById('modal-title')
   const modalUrl = document.getElementById('modal-url')
-  const modalCanvas = document.getElementById('modal-qr-canvas') as HTMLCanvasElement | null
+  const modalPreview = document.getElementById('modal-qr-preview')
   const modalDownload1024 = document.getElementById('modal-download-1024')
   const modalDownload2048 = document.getElementById('modal-download-2048')
   const modalPrintBtn = document.getElementById('modal-print-btn')
 
   async function openModal(url: string, title: string, filename: string) {
-    if (!modal || !modalCanvas) return
+    if (!modal || !modalPreview) return
     activeModalUrl = url
     activeModalFilename = filename
 
     if (modalTitle) modalTitle.textContent = title
     if (modalUrl) modalUrl.textContent = url
 
-    await renderQrToCanvas(modalCanvas, url, {
-      size: 1024,
-      darkColor: '#000000',
-      lightColor: '#ffffff',
-      margin: 2,
-    })
+    const svg = await generateQrSvg(url, { margin: 2, errorCorrectionLevel: 'M' })
+    modalPreview.innerHTML = svg
 
     modal.showModal()
   }
@@ -765,34 +724,21 @@ for (const ev of sortedEvents) {
   if (modalDownload1024) {
     modalDownload1024.addEventListener('click', async () => {
       if (!activeModalUrl) return
-      const offCanvas = document.createElement('canvas')
-      await renderQrToCanvas(offCanvas, activeModalUrl, {
-        size: 1024,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
-      downloadCanvasAsPng(offCanvas, `${activeModalFilename}-1024.png`)
+      await downloadQrPng(activeModalUrl, `${activeModalFilename}-1024.png`, 1024)
     })
   }
 
   if (modalDownload2048) {
     modalDownload2048.addEventListener('click', async () => {
       if (!activeModalUrl) return
-      const offCanvas = document.createElement('canvas')
-      await renderQrToCanvas(offCanvas, activeModalUrl, {
-        size: 2048,
-        darkColor: '#000000',
-        lightColor: '#ffffff',
-        margin: 2,
-      })
-      downloadCanvasAsPng(offCanvas, `${activeModalFilename}-2048-hd.png`)
+      await downloadQrPng(activeModalUrl, `${activeModalFilename}-2048-hd.png`, 2048)
     })
   }
 
-  if (modalPrintBtn && modalCanvas) {
-    modalPrintBtn.addEventListener('click', () => {
-      const dataUrl = modalCanvas.toDataURL('image/png')
+  if (modalPrintBtn) {
+    modalPrintBtn.addEventListener('click', async () => {
+      if (!activeModalUrl) return
+      const dataUrl = await generateQrDataUrl(activeModalUrl, 1024)
       const win = window.open('', '_blank')
       if (win) {
         win.document.documentElement.innerHTML = `
@@ -921,13 +867,7 @@ for (const ev of sortedEvents) {
     })
   }
 
-  // Run on page load & view transitions
-  initCardCanvases()
-  updateCustomQR()
+  // Initial filter run
   applyFilters()
-  document.addEventListener('astro:page-load', () => {
-    initCardCanvases()
-    updateCustomQR()
-    applyFilters()
-  })
+  document.addEventListener('astro:page-load', applyFilters)
 </script>

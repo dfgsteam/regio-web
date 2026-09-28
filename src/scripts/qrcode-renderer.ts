@@ -1,48 +1,57 @@
 import QRCode from 'qrcode'
 
-export interface QrRenderOptions {
-  size?: number
-  darkColor?: string
-  lightColor?: string
+export interface QrOptions {
   margin?: number
   errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H'
+  darkColor?: string
+  lightColor?: string
 }
 
 /**
- * Renders a crisp, high-resolution QR code onto a canvas element.
+ * Generates an SVG string representation of a pure, crisp QR code.
  */
-export async function renderQrToCanvas(
-  canvas: HTMLCanvasElement,
-  text: string,
-  options: QrRenderOptions = {},
-): Promise<void> {
-  const size = options.size || 1024
-  const darkColor = options.darkColor || '#000000'
-  const lightColor = options.lightColor || '#ffffff'
-  const margin = options.margin ?? 2
-  const ecLevel = options.errorCorrectionLevel || 'M'
-
-  canvas.width = size
-  canvas.height = size
-
-  // Render pure QR matrix to canvas
-  await QRCode.toCanvas(canvas, text, {
-    width: size,
-    margin,
-    errorCorrectionLevel: ecLevel,
+export async function generateQrSvg(text: string, options: QrOptions = {}): Promise<string> {
+  return await QRCode.toString(text, {
+    type: 'svg',
+    margin: options.margin ?? 2,
+    errorCorrectionLevel: options.errorCorrectionLevel ?? 'M',
     color: {
-      dark: darkColor,
-      light: lightColor,
+      dark: options.darkColor || '#000000',
+      light: options.lightColor || '#ffffff',
     },
   })
 }
 
 /**
- * Downloads a canvas as a PNG file.
+ * Generates a high-res PNG data URL of a QR code.
  */
-export function downloadCanvasAsPng(canvas: HTMLCanvasElement, filename: string): void {
+export async function generateQrDataUrl(
+  text: string,
+  width = 1024,
+  options: QrOptions = {},
+): Promise<string> {
+  return await QRCode.toDataURL(text, {
+    width,
+    margin: options.margin ?? 2,
+    errorCorrectionLevel: options.errorCorrectionLevel ?? 'M',
+    color: {
+      dark: options.darkColor || '#000000',
+      light: options.lightColor || '#ffffff',
+    },
+  })
+}
+
+/**
+ * Triggers a direct download of a QR code PNG file.
+ */
+export async function downloadQrPng(
+  text: string,
+  filename: string,
+  width = 1024,
+  options: QrOptions = {},
+): Promise<void> {
   const cleanName = filename.endsWith('.png') ? filename : `${filename}.png`
-  const dataUrl = canvas.toDataURL('image/png')
+  const dataUrl = await generateQrDataUrl(text, width, options)
   const link = document.createElement('a')
   link.href = dataUrl
   link.download = cleanName
