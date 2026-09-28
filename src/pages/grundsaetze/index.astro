@@ -3,6 +3,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import ImageFrame from '../../components/common/ImageFrame.astro'
+import pillarsMonument from '../../assets/images/saeulen-monument.jpg'
 import { X, BookOpen, Quote, Sparkles } from '@lucide/astro'
 
 const pillars = [
@@ -177,7 +178,7 @@ const pillars = [
 
         <div class="relative z-10 overflow-hidden border border-paper/15">
           <ImageFrame
-            src="/images/saeulen-monument.jpg"
+            src={pillarsMonument}
             alt="Die fünf Säulen der SMJ: Gemeinschaft, Apostelsein, Lebensschule, Mannsein, Liebesbündnis"
             ratio="16:10"
           />

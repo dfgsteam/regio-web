@@ -281,7 +281,7 @@ Jeder Termin erhält eine saubere, suchmaschinenfreundliche URL:
 
 ### 4. Teammitglieder anpassen
 Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/index.astro) im Array `teamMembers` verwaltet:
-- **Porträts:** Freigestellte PNGs (ohne Hintergrund) unter `public/team/[name].png` ablegen.
+- **Porträts:** Freigestellte PNGs (ohne Hintergrund) unter `src/assets/images/team/[name].png` ablegen; Astro erzeugt daraus WebP-Dateien für die Website.
 - **Rollen:** Einheitlich als `Diözesanleitung` oder `Regiosprecher` deklariert.
 
 ### 5. Bilder & Assets verwalten

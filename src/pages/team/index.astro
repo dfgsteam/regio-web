@@ -4,6 +4,11 @@ import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
 import Button from '../../components/common/Button.astro'
 import { Mail } from '@lucide/astro'
+import { Image } from 'astro:assets'
+import teamGroup from '../../assets/images/team/team-group.png'
+import kilianPortrait from '../../assets/images/team/kilian-schlosser.png'
+import vinzenzPortrait from '../../assets/images/team/vinzenz-hupe.png'
+import jonathanPortrait from '../../assets/images/team/jonathan-hunold.png'
 
 const teamMembers = [
   {
@@ -11,7 +16,7 @@ const teamMembers = [
     badge: 'Regiosprecher',
     name: 'Kilian Schlosser',
     email: 'kilian.schlosser@smj-wegweiser.de',
-    image: '/team/kilian-schlosser.png',
+    image: kilianPortrait,
     description:
       'Koordination der Region Wegweiser, Vernetzung und Gesamtverantwortung für die Aktionen vor Ort.',
   },
@@ -20,7 +25,7 @@ const teamMembers = [
     badge: 'Diözesanleitung',
     name: 'Vinzenz Hupe',
     email: 'vinzenz.hupe@smj-wegweiser.de',
-    image: '/team/vinzenz-hupe.png',
+    image: vinzenzPortrait,
     description:
       'Vertretung auf Diözesanebene, Aus- und Weiterbildung der Gruppenleiter sowie Jahresplanung.',
   },
@@ -29,7 +34,7 @@ const teamMembers = [
     badge: 'Diözesanleitung',
     name: 'Jonathan Hunold',
     email: 'jonathan.hunold@smj-wegweiser.de',
-    image: '/team/jonathan-hunold.png',
+    image: jonathanPortrait,
     description:
       'Unterstützung der Leitung, Organisation von Wochenenden und Begleitung neuer Gruppenleiter.',
   },
@@ -165,11 +170,14 @@ const teamMembers = [
 
         <!-- Cutout Group Image Stage -->
         <div class="relative z-10 flex w-full items-end justify-center pt-2">
-          <img
-            src="/team/team-group.png"
+          <Image
+            src={teamGroup}
             alt="Das gesamte Leitungsteam der SMJ Regio Wegweiser"
             class="max-h-[520px] w-full max-w-5xl object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.85)]"
             loading="lazy"
+            format="webp"
+            widths={[480, 768, 1200, 1600, 1920]}
+            sizes="(min-width: 1024px) 1024px, 100vw"
           />
         </div>
       </div>
@@ -222,12 +230,24 @@ const teamMembers = [
 
               <!-- Cutout Hero Character Stage -->
               <div class="absolute inset-0 flex items-end justify-center pointer-events-none overflow-hidden pb-16 pt-10">
-                <img
-                  src={member.image}
-                  alt={`Porträt von ${member.name} (${member.role})`}
-                  class="relative z-10 h-[88%] w-auto max-w-[95%] object-contain object-bottom transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
-                  loading="lazy"
-                />
+                {typeof member.image === 'string' ? (
+                  <img
+                    src={member.image}
+                    alt={`Porträt von ${member.name} (${member.role})`}
+                    class="relative z-10 h-[88%] w-auto max-w-[95%] object-contain object-bottom transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
+                    loading="lazy"
+                  />
+                ) : (
+                  <Image
+                    src={member.image}
+                    alt={`Porträt von ${member.name} (${member.role})`}
+                    class="relative z-10 h-[88%] w-auto max-w-[95%] object-contain object-bottom transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
+                    loading="lazy"
+                    format="webp"
+                    widths={[240, 360, 480, 600]}
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                  />
+                )}
               </div>
 
               <!-- Smooth Dark Layered Gradient Overlay (over image z-10, under text z-20) -->
@@ -294,4 +314,3 @@ const teamMembers = [
 <script>
   import '../../scripts/animations/team-stamps'
 </script>
-
