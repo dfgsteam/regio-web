@@ -11,7 +11,7 @@ import {
   Sparkles,
   Calendar,
   MapPin,
-  Printer,
+  FileText,
   SlidersHorizontal,
   ShieldCheck,
 } from '@lucide/astro'
@@ -36,6 +36,7 @@ export interface QrCardItem {
   category: 'event' | 'camp' | 'channel' | 'page'
   categoryLabel: string
   targetUrl: string
+  flyerUrl?: string
   dateStr?: string
   location?: string
   ageGroup?: string
@@ -143,6 +144,7 @@ for (const camp of allCamps) {
     category: 'camp',
     categoryLabel: `Zeltlager ${camp.data.year}`,
     targetUrl: `${BASE_DOMAIN}/abenteuer/zeltlager-${camp.data.year}/`,
+    flyerUrl: `/flyer/zeltlager-${camp.data.year}/`,
     dateStr: formatDateRange(camp.data.date.start, camp.data.date.end),
     location: camp.data.location.name,
     ageGroup: formatAgeRange(camp.data.age.min, camp.data.age.max) || undefined,
@@ -167,6 +169,7 @@ for (const ev of sortedEvents) {
     category: 'event',
     categoryLabel: isWeekend ? 'Wochenende' : isSpecial ? 'Sonderaktion' : 'Veranstaltung',
     targetUrl: `${BASE_DOMAIN}/abenteuer/${ev.slug}/`,
+    flyerUrl: `/flyer/${ev.slug}/`,
     dateStr: formatDateRange(ev.start, ev.end),
     location: ev.location,
     ageGroup: ageFormatted || undefined,
@@ -269,13 +272,22 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 
             <!-- Action Buttons -->
             <div class="pt-2 flex flex-wrap items-center gap-3">
+              <a
+                id="custom-flyer-btn"
+                href={`/flyer/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                target="_blank"
+                class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
+              >
+                <FileText class="h-4 w-4" />
+                <span>📄 A4 Flyer drucken</span>
+              </a>
               <button
                 type="button"
                 id="custom-download-1024"
-                class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
               >
                 <Download class="h-4 w-4" />
-                <span>PNG Herunterladen (1024 px)</span>
+                <span>PNG (1024 px)</span>
               </button>
               <button
                 type="button"
@@ -415,6 +427,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 data-url={item.targetUrl}
                 data-title={item.title}
                 data-filename={item.filename}
+                data-flyer-url={item.flyerUrl || ''}
               >
                 <div>
                   <!-- Header Badge & Quick URL -->
@@ -484,24 +497,48 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 
                 <!-- Bottom Actions -->
                 <div class="border-t border-paper/10 pt-4 flex flex-col gap-2">
-                  <button
-                    type="button"
-                    class="qr-card-download-btn inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange/10 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
-                    data-url={item.targetUrl}
-                    data-filename={item.filename}
-                  >
-                    <Download class="h-3.5 w-3.5" />
-                    <span>PNG Herunterladen</span>
-                  </button>
+                  {item.flyerUrl ? (
+                    <a
+                      href={item.flyerUrl}
+                      target="_blank"
+                      class="inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+                      title="Druckfertigen DIN A4 Flyer öffnen"
+                    >
+                      <FileText class="h-4 w-4 shrink-0" />
+                      <span>📄 A4 Flyer drucken</span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      class="qr-card-download-btn inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange/10 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
+                      data-url={item.targetUrl}
+                      data-filename={item.filename}
+                    >
+                      <Download class="h-3.5 w-3.5" />
+                      <span>PNG Herunterladen</span>
+                    </button>
+                  )}
 
                   <div class="flex items-center gap-2">
+                    {item.flyerUrl && (
+                      <button
+                        type="button"
+                        class="qr-card-download-btn flex-1 inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-950 px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors cursor-pointer"
+                        data-url={item.targetUrl}
+                        data-filename={item.filename}
+                        title="PNG QR-Code herunterladen"
+                      >
+                        <Download class="h-3 w-3" />
+                        <span>PNG</span>
+                      </button>
+                    )}
                     <button
                       type="button"
                       class="qr-card-copy-btn flex-1 inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-950 px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/70 hover:border-paper hover:text-paper transition-colors cursor-pointer"
                       data-url={item.targetUrl}
                     >
                       <Copy class="h-3 w-3" />
-                      <span class="copy-label">Link kopieren</span>
+                      <span class="copy-label">Link</span>
                     </button>
                     <button
                       type="button"
@@ -550,29 +587,30 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       </div>
 
       <div class="flex flex-wrap items-center justify-center gap-3">
+        <a
+          id="modal-flyer-link"
+          href="/flyer/custom/"
+          target="_blank"
+          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
+        >
+          <FileText class="h-4 w-4" />
+          <span>A4 Flyer öffnen</span>
+        </a>
         <button
           type="button"
           id="modal-download-1024"
-          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
-          <Download class="h-4 w-4" />
+          <Download class="h-4 w-4 text-orange" />
           <span>PNG 1024px</span>
         </button>
         <button
           type="button"
           id="modal-download-2048"
-          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
           <Download class="h-4 w-4 text-orange" />
-          <span>Print HD (2048px)</span>
-        </button>
-        <button
-          type="button"
-          id="modal-print-btn"
-          class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900 px-4 py-2.5 font-mono text-xs uppercase tracking-wider text-paper/80 hover:border-paper hover:text-paper transition-colors cursor-pointer"
-        >
-          <Printer class="h-4 w-4" />
-          <span>Drucken</span>
+          <span>HD 2048px</span>
         </button>
       </div>
     </div>
@@ -580,7 +618,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 </ContentLayout>
 
 <script>
-  import { generateQrSvg, generateQrDataUrl, downloadQrPng } from '../../scripts/qrcode-renderer'
+  import { generateQrSvg, downloadQrPng } from '../../scripts/qrcode-renderer'
 
   let activeModalUrl = ''
   let activeModalFilename = 'qr-smj-code'
@@ -589,6 +627,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   const customInput = document.getElementById('custom-url-input') as HTMLInputElement | null
   const customPreview = document.getElementById('custom-qr-preview')
   const customCaption = document.getElementById('custom-preview-caption')
+  const customFlyerBtn = document.getElementById('custom-flyer-btn') as HTMLAnchorElement | null
   const customDownload1024 = document.getElementById('custom-download-1024')
   const customDownload2048 = document.getElementById('custom-download-2048')
   const customCopyBtn = document.getElementById('custom-copy-btn')
@@ -598,6 +637,9 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     if (!customInput || !customPreview) return
     const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
     if (customCaption) customCaption.textContent = text
+    if (customFlyerBtn) {
+      customFlyerBtn.href = `/flyer/custom/?url=${encodeURIComponent(text)}`
+    }
 
     try {
       const svg = await generateQrSvg(text, { margin: 2, errorCorrectionLevel: 'M' })
@@ -672,7 +714,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         await navigator.clipboard.writeText(url)
         if (label) label.textContent = 'Kopiert! ✓'
         setTimeout(() => {
-          if (label) label.textContent = 'Link kopieren'
+          if (label) label.textContent = 'Link'
         }, 2000)
       } catch (err) {
         console.error('Copy failed', err)
@@ -685,7 +727,12 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     if (trigger) {
       const card = trigger.closest('.qr-card') as HTMLElement | null
       if (card) {
-        openModal(card.dataset.url || '', card.dataset.title || '', card.dataset.filename || '')
+        openModal(
+          card.dataset.url || '',
+          card.dataset.title || '',
+          card.dataset.filename || '',
+          card.dataset.flyerUrl || '',
+        )
       }
     }
   })
@@ -696,17 +743,25 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   const modalTitle = document.getElementById('modal-title')
   const modalUrl = document.getElementById('modal-url')
   const modalPreview = document.getElementById('modal-qr-preview')
+  const modalFlyerLink = document.getElementById('modal-flyer-link') as HTMLAnchorElement | null
   const modalDownload1024 = document.getElementById('modal-download-1024')
   const modalDownload2048 = document.getElementById('modal-download-2048')
-  const modalPrintBtn = document.getElementById('modal-print-btn')
 
-  async function openModal(url: string, title: string, filename: string) {
+  async function openModal(url: string, title: string, filename: string, flyerUrl?: string) {
     if (!modal || !modalPreview) return
     activeModalUrl = url
     activeModalFilename = filename
 
     if (modalTitle) modalTitle.textContent = title
     if (modalUrl) modalUrl.textContent = url
+
+    if (modalFlyerLink) {
+      if (flyerUrl) {
+        modalFlyerLink.href = flyerUrl
+      } else {
+        modalFlyerLink.href = `/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+      }
+    }
 
     const svg = await generateQrSvg(url, { margin: 2, errorCorrectionLevel: 'M' })
     modalPreview.innerHTML = svg
@@ -732,34 +787,6 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     modalDownload2048.addEventListener('click', async () => {
       if (!activeModalUrl) return
       await downloadQrPng(activeModalUrl, `${activeModalFilename}-2048-hd.png`, 2048)
-    })
-  }
-
-  if (modalPrintBtn) {
-    modalPrintBtn.addEventListener('click', async () => {
-      if (!activeModalUrl) return
-      const dataUrl = await generateQrDataUrl(activeModalUrl, 1024)
-      const win = window.open('', '_blank')
-      if (win) {
-        win.document.documentElement.innerHTML = `
-          <head>
-            <title>${modalTitle?.textContent || 'SMJ QR-Code'}</title>
-            <style>
-              body { font-family: sans-serif; text-align: center; padding: 40px; background: #fff; color: #111; }
-              h1 { margin-bottom: 8px; font-size: 24px; text-transform: uppercase; }
-              p { color: #555; font-family: monospace; font-size: 14px; margin-bottom: 24px; }
-              img { width: 320px; height: 320px; border: 1px solid #ddd; }
-            </style>
-          </head>
-          <body>
-            <h1>${modalTitle?.textContent || 'SMJ QR-Code'}</h1>
-            <p>${activeModalUrl}</p>
-            <img src="${dataUrl}" alt="QR Code" />
-          </body>
-        `
-        win.focus()
-        setTimeout(() => win.print(), 250)
-      }
     })
   }
 

@@ -29,8 +29,9 @@ export default defineConfig({
         // list redirect targets in the sitemap.
         if (url.pathname.startsWith('/journal/')) return false
 
-        // Internal team tool pages (e.g. /qrcode/) are noindex and excluded
+        // Internal team tool pages (e.g. /qrcode/, /flyer/) are noindex and excluded
         if (url.pathname.startsWith('/qrcode')) return false
+        if (url.pathname.startsWith('/flyer')) return false
 
         // Event slug variants exist so legacy WordPress URLs keep
         // working, but only the canonical slug belongs in the sitemap.
