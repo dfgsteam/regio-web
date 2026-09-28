@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro'
 import Header from '../components/navigation/Header.astro'
 import Footer from '../components/navigation/Footer.astro'
 import type { CollectionEntry } from 'astro:content'
+import { isCampRegistrationOpen } from '../lib/camps'
 
 interface Props {
   camp: CollectionEntry<'camps'>['data']
@@ -28,7 +29,7 @@ const eventStructuredData = {
     '@type': 'Place',
     name: camp.location.name,
   },
-  offers: camp.registration.enabled
+  offers: isCampRegistrationOpen(camp)
     ? {
         '@type': 'Offer',
         url: camp.registration.url ?? canonicalUrl,

@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content'
 import Container from '../common/Container.astro'
 import Eyebrow from '../common/Eyebrow.astro'
 import Button from '../common/Button.astro'
-import { getCurrentCamp } from '../../lib/camps'
+import { getCurrentCamp, isCampRegistrationOpen } from '../../lib/camps'
 
 interface Props {
   camp?: CollectionEntry<'camps'>
@@ -62,7 +62,7 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
           <Button href="/abenteuer/zeltlager/" variant="camp" size="lg">
             Zum Zeltlager
           </Button>
-          {registration.enabled && registration.url && (
+          {isCampRegistrationOpen(camp.data) && (
             <Button href={registration.url} variant="ghost" size="lg">
               Anmeldung
             </Button>

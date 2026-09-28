@@ -3,6 +3,18 @@ import type { CollectionEntry } from 'astro:content'
 
 export type CampEntry = CollectionEntry<'camps'>
 
+export function isCampRegistrationOpen(camp: CampEntry['data'], now = new Date()): boolean {
+  if (!camp.active || !camp.registration.enabled || !camp.registration.url) return false
+
+  // Dates in camp frontmatter have no time component. The deadline remains
+  // valid through its listed day; registration closes when the camp starts.
+  const deadlineEnd = camp.registration.deadline
+    ? camp.registration.deadline.getTime() + 86_400_000
+    : Number.POSITIVE_INFINITY
+
+  return now.getTime() < Math.min(deadlineEnd, camp.date.start.getTime())
+}
+
 export async function getCampByYear(year?: string | number): Promise<CampEntry | null> {
   const camps = await getCollection('camps')
   const target = Number(year)
