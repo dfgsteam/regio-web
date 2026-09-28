@@ -283,12 +283,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
             <div class="pt-2 flex flex-wrap items-center gap-3">
               <a
                 id="custom-flyer-btn"
-                href={`/toolbox/flyer/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                href={`/toolbox/flyer/custom/?url=${encodeURIComponent(initialCustomUrl)}&download=1`}
                 target="_blank"
+                rel="noopener noreferrer"
                 class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
               >
                 <FileText class="h-4 w-4" />
-                <span>📄 A4 Flyer drucken</span>
+                <span>📄 A4 Flyer (PDF / Druck) ↗</span>
               </a>
               <a
                 id="custom-social-btn"
@@ -526,12 +527,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                     </a>
                   ) : item.flyerUrl ? (
                     <a
-                      href={item.flyerUrl}
+                      href={`${item.flyerUrl}?download=1`}
                       target="_blank"
+                      rel="noopener noreferrer"
                       class="inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
                     >
                       <FileText class="h-4 w-4 shrink-0" />
-                      <span>📄 A4 Flyer drucken</span>
+                      <span>📄 A4 Flyer (PDF / Druck) ↗</span>
                     </a>
                   ) : (
                     <button
@@ -549,10 +551,11 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                   <div class="flex items-center gap-2">
                     {item.flyerUrl && (
                       <a
-                        href={item.flyerUrl}
+                        href={`${item.flyerUrl}?download=1`}
                         target="_blank"
+                        rel="noopener noreferrer"
                         class="flex-1 inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors"
-                        title="A4 Flyer drucken"
+                        title="A4 Flyer als PDF / Drucken öffnen"
                       >
                         <FileText class="h-3 w-3 text-orange shrink-0" />
                         <span>Flyer</span>
@@ -634,12 +637,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         </a>
         <a
           id="modal-flyer-link"
-          href="/toolbox/flyer/custom/"
+          href="/toolbox/flyer/custom/?download=1"
           target="_blank"
+          rel="noopener noreferrer"
           class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
           <FileText class="h-4 w-4 text-orange" />
-          <span>📄 Flyer</span>
+          <span>📄 Flyer (PDF)</span>
         </a>
         <a
           id="modal-social-link"
@@ -689,7 +693,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
     if (customCaption) customCaption.textContent = text
     if (customFlyerBtn) {
-      customFlyerBtn.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(text)}`
+      customFlyerBtn.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(text)}&download=1`
     }
     if (customSocialBtn) {
       customSocialBtn.href = `/toolbox/social/custom/?url=${encodeURIComponent(text)}`
@@ -815,9 +819,9 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 
     if (modalFlyerLink) {
       if (flyerUrl) {
-        modalFlyerLink.href = flyerUrl
+        modalFlyerLink.href = flyerUrl.includes('?') ? `${flyerUrl}&download=1` : `${flyerUrl}?download=1`
       } else {
-        modalFlyerLink.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+        modalFlyerLink.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&download=1`
       }
     }
 

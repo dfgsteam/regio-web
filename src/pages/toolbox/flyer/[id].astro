@@ -6,7 +6,7 @@ import {
   MapPin,
   Users,
   Banknote,
-  Printer,
+  Download,
   ArrowLeft,
   ExternalLink,
   Compass,
@@ -158,14 +158,17 @@ const shortUrl = targetUrl.replace(/^https?:\/\//, '')
         </span>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
+        <span class="hidden md:inline font-mono text-[0.65rem] text-paper/60">
+          💡 Im Dialog <strong class="text-paper">„Als PDF speichern“</strong> wählen
+        </span>
         <button
           type="button"
           id="print-flyer-btn"
           class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
         >
-          <Printer class="h-4 w-4" />
-          <span>Jetzt Drucken / PDF</span>
+          <Download class="h-4 w-4" />
+          <span>Als PDF speichern / Drucken</span>
         </button>
       </div>
     </div>
@@ -381,17 +384,18 @@ const shortUrl = targetUrl.replace(/^https?:\/\//, '')
   }
 
   // Handle Custom Flyer dynamic URL params if route is /toolbox/flyer/custom
-  if (window.location.pathname.includes('/toolbox/flyer/custom') || window.location.pathname.includes('/flyer/custom')) {
-    const params = new URLSearchParams(window.location.search)
-    const customTitle = params.get('title')
-    const customDate = params.get('date')
-    const customLoc = params.get('loc')
-    const customUrl = params.get('url')
+  const searchParams = new URLSearchParams(window.location.search)
+
+  if (window.location.pathname.includes('/toolbox/flyer/custom')) {
+    const customTitle = searchParams.get('title')
+    const customDate = searchParams.get('date')
+    const customLoc = searchParams.get('loc')
+    const customUrl = searchParams.get('url')
 
     if (customTitle) {
       const h1 = document.querySelector('h1')
       if (h1) h1.textContent = customTitle
-      document.title = `A4 Flyer: ${customTitle} – SMJ Regio Wegweiser`
+      document.title = `SMJ-Flyer-${customTitle.replace(/[^a-zA-Z0-9_-]/g, '_')}`
     }
     if (customDate) {
       const dateEl = document.querySelectorAll('.a4-flyer-page p.font-bold')[0]
@@ -413,5 +417,14 @@ const shortUrl = targetUrl.replace(/^https?:\/\//, '')
           .catch((e) => console.error(e))
       }
     }
+  }
+
+  // Auto-launch print / PDF save dialog if ?download=1 or ?print=1
+  if (searchParams.get('download') === '1' || searchParams.get('print') === '1' || searchParams.get('auto') === 'print') {
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        window.print()
+      }, 350)
+    })
   }
 </script>

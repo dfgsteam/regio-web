@@ -13,7 +13,6 @@ import {
   ExternalLink,
   MessageSquare,
   Sparkles,
-  Printer,
   Compass,
 } from '@lucide/astro'
 import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../lib/events'
@@ -288,12 +287,13 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
           <div class="pt-2">
             <a
-              href={flyerUrl}
+              href={`${flyerUrl}?download=1`}
               target="_blank"
+              rel="noopener noreferrer"
               class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
             >
-              <Printer class="h-4 w-4" />
-              <span>A4 Flyer öffnen &amp; drucken</span>
+              <Download class="h-4 w-4" />
+              <span>📄 A4 Flyer als PDF / Drucken ↗</span>
             </a>
           </div>
         </div>
