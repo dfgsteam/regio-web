@@ -1,0 +1,555 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Logo from '../../components/common/Logo.astro'
+import {
+  ArrowLeft,
+  Calendar,
+  FileText,
+  Smartphone,
+  Download,
+  Copy,
+  ExternalLink,
+  MessageSquare,
+  Sparkles,
+  Printer,
+  Compass,
+} from '@lucide/astro'
+import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../lib/events'
+import type { Event } from '../../lib/events'
+import { getAllCamps } from '../../lib/camps'
+import type { CampEntry } from '../../lib/camps'
+import { generateQrSvg } from '../../scripts/qrcode-renderer'
+
+const BASE_DOMAIN = 'https://smj-wegweiser.de'
+
+export async function getStaticPaths() {
+  const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
+
+  const paths: {
+    params: { id: string }
+    props: { eventData?: Event; campData?: CampEntry; isCustom?: boolean }
+  }[] = []
+  const seen = new Set<string>()
+
+  // 1. Events
+  for (const event of events) {
+    const variants = getSlugVariants(event.slug, event.title, event.start.getFullYear())
+    for (const slug of variants) {
+      if (!seen.has(slug)) {
+        seen.add(slug)
+        paths.push({
+          params: { id: slug },
+          props: { eventData: event },
+        })
+      }
+    }
+  }
+
+  // 2. Camps
+  for (const camp of camps) {
+    const campSlug = `zeltlager-${camp.data.year}`
+    if (!seen.has(campSlug)) {
+      seen.add(campSlug)
+      paths.push({
+        params: { id: campSlug },
+        props: { campData: camp },
+      })
+    }
+  }
+
+  if (!seen.has('zeltlager')) {
+    seen.add('zeltlager')
+    paths.push({
+      params: { id: 'zeltlager' },
+      props: { campData: camps[0] },
+    })
+  }
+
+  // 3. Custom dynamic toolbox
+  if (!seen.has('custom')) {
+    seen.add('custom')
+    paths.push({
+      params: { id: 'custom' },
+      props: { isCustom: true },
+    })
+  }
+
+  return paths
+}
+
+const { eventData, campData } = Astro.props
+
+// Resolve Event Fields
+let title = 'Aktion & Abenteuer der SMJ'
+let subtitle = 'Raus. Ins Abenteuer.'
+let categoryLabel = 'Aktion'
+let badgeColor = 'border-orange/60 text-orange bg-orange/10'
+let dateStr = 'Demnächst'
+let locationStr = 'Wiesental bei Thalwenden'
+let ageStr = 'Jungs von 9–14 Jahren'
+let priceStr = 'Auf Anfrage'
+let targetUrl = `${BASE_DOMAIN}/abenteuer/`
+let flyerUrl = '/flyer/custom/'
+let socialUrl = '/social/custom/'
+let isFeatured = true
+
+if (campData) {
+  title = campData.data.title
+  subtitle = campData.data.motto || `Sommerzeltlager ${campData.data.year}`
+  categoryLabel = `Zeltlager ${campData.data.year}`
+  badgeColor = 'border-orange bg-orange text-forest-950 font-bold'
+  dateStr = formatDateRange(campData.data.date.start, campData.data.date.end)
+  locationStr = campData.data.location.name || 'Wiesental bei Thalwenden'
+  ageStr = formatAgeRange(campData.data.age.min, campData.data.age.max) || 'Jungs von 9–14 Jahren'
+  priceStr = campData.data.price || '189 €'
+  targetUrl = `${BASE_DOMAIN}/abenteuer/zeltlager-${campData.data.year}/`
+  flyerUrl = `/flyer/zeltlager-${campData.data.year}/`
+  socialUrl = `/social/zeltlager-${campData.data.year}/`
+  isFeatured = campData.data.active
+} else if (eventData) {
+  title = eventData.title
+  subtitle = eventData.teaser || 'Ein Wochenende voller Action, Natur und starker Gemeinschaft.'
+  const isWeekend = eventData.category === 'weekend'
+  const isSpecial = eventData.category === 'special'
+  categoryLabel = isWeekend ? 'Wochenende' : isSpecial ? 'Sonderaktion' : 'Veranstaltung'
+  badgeColor = isWeekend
+    ? 'border-orange/60 text-orange bg-orange/10'
+    : isSpecial
+      ? 'border-yellow-500/60 text-yellow-400 bg-yellow-950/40'
+      : 'border-paper/30 text-paper/90 bg-forest-900'
+  dateStr = formatDateRange(eventData.start, eventData.end)
+  locationStr = eventData.location || 'Klause 2.0, Heiligenstadt'
+  ageStr = formatAgeRange(eventData.ageMin, eventData.ageMax) || 'Jungs von 9–14 Jahren'
+  priceStr = eventData.price || 'Inkl. Verpflegung'
+  targetUrl = `${BASE_DOMAIN}/abenteuer/${eventData.slug}/`
+  flyerUrl = `/flyer/${eventData.slug}/`
+  socialUrl = `/social/${eventData.slug}/`
+  isFeatured = eventData.end >= new Date()
+}
+
+// Generate QR Code SVG and HD previews
+const qrSvg = await generateQrSvg(targetUrl, { margin: 1, errorCorrectionLevel: 'M' })
+
+// WhatsApp Template
+const whatsappText = `🏕️ *${title.toUpperCase()}*
+${subtitle ? `_${subtitle}_\n\n` : '\n'}Hallo zusammen! 👋
+Hier sind alle Infos zur kommenden Aktion der SMJ Regio Wegweiser:
+
+📅 *Wann:* ${dateStr}
+📍 *Wo:* ${locationStr}
+👥 *Wer:* ${ageStr}
+💰 *Beitrag:* ${priceStr}
+
+🔗 *Alle Details & Online-Anmeldung:*
+${targetUrl}
+
+Bitte gerne an interessierte Familien und Freunde weiterleiten! 🚀`
+
+// Instagram Caption Template
+const instagramCaption = `🏕️ ${title.toUpperCase()} // RAUS. INS ABENTEUER.
+
+${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft, Natur und unvergessliche Tage?
+
+📅 Wann: ${dateStr}
+📍 Wo: ${locationStr}
+👥 Wer: ${ageStr}
+💰 Beitrag: ${priceStr}
+
+👉 Alle Infos & Online-Anmeldung über den Link in der Bio oder direkt unter:
+🔗 ${targetUrl}
+
+#smj #regiowegweiser #jugendleitetjugend #eichsfeld #abenteuer #zeltlager #outdoor #lagerfeuer`
+---
+
+<ContentLayout
+  title={`Materialien & Medien: ${title} – SMJ Leiter-Toolbox`}
+  description={`Alle Vorlagen, Flyer, Social-Media-Grafiken und QR-Codes für ${title} der SMJ Regio Wegweiser.`}
+  noIndex={true}
+>
+  <!-- Top Navigation & Action Header -->
+  <section class="border-b border-paper/15 bg-forest-950 py-6">
+    <Container>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <a
+          href="/toolbox/"
+          class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-paper/70 hover:text-orange transition-colors"
+        >
+          <ArrowLeft class="h-4 w-4" />
+          <span>Zurück zur Toolbox-Übersicht</span>
+        </a>
+
+        <div class="flex items-center gap-2">
+          <a
+            href={targetUrl}
+            target="_blank"
+            class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/80 hover:border-orange hover:text-orange transition-colors"
+          >
+            <span>Website öffnen</span>
+            <ExternalLink class="h-3 w-3" />
+          </a>
+          <a
+            href="/api/calendar.ics"
+            class="hidden sm:inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/80 hover:border-orange hover:text-orange transition-colors"
+          >
+            <Calendar class="h-3 w-3 text-orange" />
+            <span>Kalender (.ics)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Event Hero Title in Toolbox -->
+      <div class="mt-6 flex flex-col md:flex-row md:items-end justify-between gap-6 border-t border-paper/10 pt-6">
+        <div>
+          <div class="flex items-center gap-2.5 mb-2">
+            <span class={`inline-block border px-2.5 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider ${badgeColor}`}>
+              {categoryLabel}
+            </span>
+            {isFeatured && (
+              <span class="font-mono text-[0.65rem] font-bold text-orange flex items-center gap-1">
+                ★ Aktuelle Aktion
+              </span>
+            )}
+          </div>
+          <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl uppercase tracking-tight text-paper leading-[1.05]">
+            {title}
+          </h1>
+          <p class="mt-2 font-hand text-xl sm:text-2xl text-orange font-bold">
+            // {subtitle}
+          </p>
+        </div>
+
+        <!-- Quick Facts Pill Bar -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+          <div class="bg-forest-900 border border-paper/15 p-2.5">
+            <span class="text-[0.6rem] text-orange font-bold uppercase block">📅 WANN</span>
+            <span class="text-paper font-bold text-xs truncate block">{dateStr}</span>
+          </div>
+          <div class="bg-forest-900 border border-paper/15 p-2.5">
+            <span class="text-[0.6rem] text-orange font-bold uppercase block">📍 WO</span>
+            <span class="text-paper font-bold text-xs truncate block">{locationStr}</span>
+          </div>
+          <div class="bg-forest-900 border border-paper/15 p-2.5">
+            <span class="text-[0.6rem] text-orange font-bold uppercase block">👥 WER</span>
+            <span class="text-paper font-bold text-xs truncate block">{ageStr}</span>
+          </div>
+          <div class="bg-forest-900 border border-paper/15 p-2.5">
+            <span class="text-[0.6rem] text-orange font-bold uppercase block">💰 BEITRAG</span>
+            <span class="text-paper font-bold text-xs truncate block">{priceStr}</span>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Materials & Tool Grid Section -->
+  <section class="py-12 bg-forest-900">
+    <Container>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- CARD 1: DIN A4 Flyer & Aushang -->
+        <div class="border-2 border-paper/20 bg-forest-950 p-6 flex flex-col justify-between rounded-sm shadow-xl relative overflow-hidden group hover:border-orange transition-colors">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="font-mono text-[0.65rem] font-bold uppercase tracking-widest text-orange flex items-center gap-1.5">
+                <FileText class="h-3.5 w-3.5" />
+                <span>DRUCK &amp; AUSHANG</span>
+              </span>
+              <span class="font-mono text-[0.65rem] text-paper/50">DIN A4</span>
+            </div>
+
+            <h2 class="font-display text-2xl uppercase tracking-wide text-paper">
+              A4 Aushang-Flyer
+            </h2>
+            <p class="font-mono text-xs text-paper/60 mt-1">
+              Druckfertiges A4-Plakat für Schaukästen, Pfarrheime, Schulen und Infowände.
+            </p>
+
+            <!-- Mini Flyer Sheet Preview -->
+            <div class="my-6 bg-paper text-forest-950 p-4 border-2 border-paper shadow-lg rounded-xs select-none">
+              <div class="flex items-center justify-between border-b border-forest-950/20 pb-2">
+                <div class="flex items-center gap-1.5">
+                  <div class="h-5 w-5"><Logo variant="icon" tone="dark" size="sm" /></div>
+                  <span class="font-display text-xs uppercase">SMJ Wegweiser</span>
+                </div>
+                <span class="font-mono text-[0.55rem] font-bold uppercase bg-orange/20 px-1 py-0.5 text-orange">A4</span>
+              </div>
+              <p class="font-display text-base uppercase text-forest-950 mt-2 truncate">{title}</p>
+              <p class="font-mono text-[0.6rem] text-forest-950/70 truncate">{dateStr} · {locationStr}</p>
+              <div class="mt-3 flex items-center justify-between gap-2 border-t border-forest-950/15 pt-2">
+                <span class="font-mono text-[0.55rem] text-orange font-bold uppercase">Online anmelden</span>
+                <div class="h-8 w-8 shrink-0 bg-white p-0.5 border border-forest-950/20 [&>svg]:h-full [&>svg]:w-full" set:html={qrSvg}></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <a
+              href={flyerUrl}
+              target="_blank"
+              class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+            >
+              <Printer class="h-4 w-4" />
+              <span>A4 Flyer öffnen &amp; drucken</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 2: Social Media & Instagram Studio -->
+        <div class="border-2 border-paper/20 bg-forest-950 p-6 flex flex-col justify-between rounded-sm shadow-xl relative overflow-hidden group hover:border-orange transition-colors">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="font-mono text-[0.65rem] font-bold uppercase tracking-widest text-orange flex items-center gap-1.5">
+                <Smartphone class="h-3.5 w-3.5" />
+                <span>INSTAGRAM &amp; STATUS</span>
+              </span>
+              <span class="font-mono text-[0.65rem] text-paper/50">1080 PX HD</span>
+            </div>
+
+            <h2 class="font-display text-2xl uppercase tracking-wide text-paper">
+              Social Media Studio
+            </h2>
+            <p class="font-mono text-xs text-paper/60 mt-1">
+              Erstelle fertige Stories (9:16), Feed Posts (1:1) und Hochformat-Posts (4:5) in Sekunden.
+            </p>
+
+            <!-- Format Badges -->
+            <div class="my-6 grid grid-cols-3 gap-2 text-center font-mono text-xs">
+              <div class="bg-forest-900 border border-paper/15 p-2.5 rounded-xs">
+                <span class="block text-orange font-bold">9:16</span>
+                <span class="text-[0.65rem] text-paper/70">Story</span>
+              </div>
+              <div class="bg-forest-900 border border-paper/15 p-2.5 rounded-xs">
+                <span class="block text-orange font-bold">1:1</span>
+                <span class="text-[0.65rem] text-paper/70">Post</span>
+              </div>
+              <div class="bg-forest-900 border border-paper/15 p-2.5 rounded-xs">
+                <span class="block text-orange font-bold">4:5</span>
+                <span class="text-[0.65rem] text-paper/70">Portrait</span>
+              </div>
+            </div>
+
+            <p class="font-mono text-xs text-paper/70">
+              Inklusive anpassbaren Link-Sticker Markierungen, Themenfarben und 1080px PNG-Export.
+            </p>
+          </div>
+
+          <div class="pt-6">
+            <a
+              href={socialUrl}
+              target="_blank"
+              class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+            >
+              <Smartphone class="h-4 w-4" />
+              <span>📱 Social Studio öffnen</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 3: QR-Code Paket & Downloads -->
+        <div class="border-2 border-paper/20 bg-forest-950 p-6 flex flex-col justify-between rounded-sm shadow-xl relative overflow-hidden group hover:border-orange transition-colors">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <span class="font-mono text-[0.65rem] font-bold uppercase tracking-widest text-orange flex items-center gap-1.5">
+                <Compass class="h-3.5 w-3.5" />
+                <span>DIREKTLINKS &amp; QR</span>
+              </span>
+              <span class="font-mono text-[0.65rem] text-paper/50">PNG &amp; HD</span>
+            </div>
+
+            <h2 class="font-display text-2xl uppercase tracking-wide text-paper">
+              QR-Code Paket
+            </h2>
+            <p class="font-mono text-xs text-paper/60 mt-1">
+              Führt direkt zur Online-Anmeldung auf <span class="text-orange">{targetUrl.replace(/^https?:\/\//, '')}</span>
+            </p>
+
+            <!-- Center QR Code Preview -->
+            <div class="my-5 flex justify-center">
+              <div class="h-32 w-32 bg-white p-2 border-2 border-paper shadow-md flex items-center justify-center rounded-xs">
+                <div class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={qrSvg}></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                id="btn-dl-qr-1024"
+                class="flex-1 inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange/10 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
+                data-url={targetUrl}
+              >
+                <Download class="h-3.5 w-3.5" />
+                <span>PNG 1024px</span>
+              </button>
+              <button
+                type="button"
+                id="btn-dl-qr-2048"
+                class="flex-1 inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-2 font-mono text-xs uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors cursor-pointer"
+                data-url={targetUrl}
+              >
+                <Download class="h-3.5 w-3.5 text-orange" />
+                <span>HD 2048px</span>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              id="btn-copy-target-link"
+              class="w-full inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/70 hover:border-paper hover:text-paper transition-colors cursor-pointer"
+              data-url={targetUrl}
+            >
+              <Copy class="h-3 w-3" />
+              <span id="copy-link-label">Ziel-URL kopieren</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TEXT TEMPLATES ROW: WhatsApp & Instagram Captions -->
+      <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- WhatsApp Template -->
+        <div class="border border-paper/20 bg-forest-950 p-6 rounded-sm">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-green-400 flex items-center gap-2">
+              <MessageSquare class="h-4 w-4" />
+              <span>WhatsApp / Signal Nachrichtenvorlage</span>
+            </h3>
+            <button
+              type="button"
+              id="btn-copy-whatsapp"
+              class="inline-flex items-center gap-1.5 border border-green-500/40 bg-green-950/40 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-green-400 hover:bg-green-500 hover:text-forest-950 transition-all cursor-pointer"
+            >
+              <Copy class="h-3 w-3" />
+              <span id="copy-whatsapp-label">Text kopieren</span>
+            </button>
+          </div>
+
+          <textarea
+            id="whatsapp-textarea"
+            rows="10"
+            class="w-full bg-forest-900 border border-paper/20 p-3 font-mono text-xs text-paper/90 leading-relaxed focus:border-green-400 focus:outline-none resize-none"
+          >{whatsappText}</textarea>
+
+          <p class="mt-2 font-mono text-[0.68rem] text-paper/50">
+            Tipp: Perfekt für Leiterrunden, WhatsApp-Gruppen mit Eltern oder zum direkten Teilen.
+          </p>
+        </div>
+
+        <!-- Instagram Caption Template -->
+        <div class="border border-paper/20 bg-forest-950 p-6 rounded-sm">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-orange flex items-center gap-2">
+              <Sparkles class="h-4 w-4" />
+              <span>Instagram Caption &amp; Hashtags</span>
+            </h3>
+            <button
+              type="button"
+              id="btn-copy-caption"
+              class="inline-flex items-center gap-1.5 border border-orange bg-orange/10 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
+            >
+              <Copy class="h-3 w-3" />
+              <span id="copy-caption-label">Text kopieren</span>
+            </button>
+          </div>
+
+          <textarea
+            id="caption-textarea"
+            rows="10"
+            class="w-full bg-forest-900 border border-paper/20 p-3 font-mono text-xs text-paper/90 leading-relaxed focus:border-orange focus:outline-none resize-none"
+          >{instagramCaption}</textarea>
+
+          <p class="mt-2 font-mono text-[0.68rem] text-paper/50">
+            Tipp: Enthält alle Termine, Handlungsaufrufe und Eichsfeld-Hashtags.
+          </p>
+        </div>
+
+      </div>
+    </Container>
+  </section>
+</ContentLayout>
+
+<script>
+  import { downloadQrPng } from '../../scripts/qrcode-renderer'
+
+  // Copy WhatsApp
+  const btnCopyWhatsapp = document.getElementById('btn-copy-whatsapp')
+  const textareaWhatsapp = document.getElementById('whatsapp-textarea') as HTMLTextAreaElement | null
+  const labelWhatsapp = document.getElementById('copy-whatsapp-label')
+
+  if (btnCopyWhatsapp && textareaWhatsapp && labelWhatsapp) {
+    btnCopyWhatsapp.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(textareaWhatsapp.value)
+        labelWhatsapp.textContent = 'Kopiert! ✓'
+        setTimeout(() => {
+          labelWhatsapp.textContent = 'Text kopieren'
+        }, 2000)
+      } catch (err) {
+        console.error('Copy WhatsApp error', err)
+      }
+    })
+  }
+
+  // Copy Caption
+  const btnCopyCaption = document.getElementById('btn-copy-caption')
+  const textareaCaption = document.getElementById('caption-textarea') as HTMLTextAreaElement | null
+  const labelCaption = document.getElementById('copy-caption-label')
+
+  if (btnCopyCaption && textareaCaption && labelCaption) {
+    btnCopyCaption.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(textareaCaption.value)
+        labelCaption.textContent = 'Kopiert! ✓'
+        setTimeout(() => {
+          labelCaption.textContent = 'Text kopieren'
+        }, 2000)
+      } catch (err) {
+        console.error('Copy Caption error', err)
+      }
+    })
+  }
+
+  // Copy Target Link
+  const btnCopyLink = document.getElementById('btn-copy-target-link')
+  const labelLink = document.getElementById('copy-link-label')
+
+  if (btnCopyLink && labelLink) {
+    btnCopyLink.addEventListener('click', async () => {
+      const url = btnCopyLink.dataset.url
+      if (!url) return
+      try {
+        await navigator.clipboard.writeText(url)
+        labelLink.textContent = 'Kopiert! ✓'
+        setTimeout(() => {
+          labelLink.textContent = 'Ziel-URL kopieren'
+        }, 2000)
+      } catch (err) {
+        console.error('Copy link error', err)
+      }
+    })
+  }
+
+  // QR Downloads
+  const btnDl1024 = document.getElementById('btn-dl-qr-1024')
+  const btnDl2048 = document.getElementById('btn-dl-qr-2048')
+
+  if (btnDl1024) {
+    btnDl1024.addEventListener('click', async () => {
+      const url = btnDl1024.dataset.url || 'https://smj-wegweiser.de/'
+      const slug = window.location.pathname.split('/').filter(Boolean).pop() || 'event'
+      await downloadQrPng(url, `qr-smj-${slug}-1024.png`, 1024)
+    })
+  }
+
+  if (btnDl2048) {
+    btnDl2048.addEventListener('click', async () => {
+      const url = btnDl2048.dataset.url || 'https://smj-wegweiser.de/'
+      const slug = window.location.pathname.split('/').filter(Boolean).pop() || 'event'
+      await downloadQrPng(url, `qr-smj-${slug}-2048-hd.png`, 2048)
+    })
+  }
+</script>

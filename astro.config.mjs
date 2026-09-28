@@ -29,7 +29,8 @@ export default defineConfig({
         // list redirect targets in the sitemap.
         if (url.pathname.startsWith('/journal/')) return false
 
-        // Internal team tool pages (e.g. /qrcode/, /flyer/, /social/) are noindex and excluded
+        // Internal team tool pages (e.g. /toolbox/, /qrcode/, /flyer/, /social/) are noindex and excluded
+        if (url.pathname.startsWith('/toolbox')) return false
         if (url.pathname.startsWith('/qrcode')) return false
         if (url.pathname.startsWith('/flyer')) return false
         if (url.pathname.startsWith('/social')) return false

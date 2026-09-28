@@ -1,0 +1,942 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro'
+import Container from '../../components/common/Container.astro'
+import Eyebrow from '../../components/common/Eyebrow.astro'
+import {
+  Download,
+  Copy,
+  Search,
+  X,
+  ExternalLink,
+  Sparkles,
+  Calendar,
+  MapPin,
+  FileText,
+  Smartphone,
+  ArrowRight,
+} from '@lucide/astro'
+import { eventProvider } from '../../lib/events'
+import { getAllCamps } from '../../lib/camps'
+import { formatDateRange, formatAgeRange } from '../../lib/events'
+import { generateQrSvg } from '../../scripts/qrcode-renderer'
+
+const BASE_DOMAIN = 'https://smj-wegweiser.de'
+
+// 1. Fetch Events
+const allEvents = await eventProvider.getEvents()
+const sortedEvents = allEvents.sort((a, b) => b.start.getTime() - a.start.getTime())
+
+// 2. Fetch Camps
+const allCamps = await getAllCamps()
+
+export interface ToolboxItem {
+  id: string
+  title: string
+  subtitle?: string
+  category: 'event' | 'camp' | 'channel' | 'page'
+  categoryLabel: string
+  targetUrl: string
+  toolboxUrl?: string
+  flyerUrl?: string
+  socialUrl?: string
+  dateStr?: string
+  location?: string
+  ageGroup?: string
+  filename: string
+  badgeColor: string
+  isFeatured?: boolean
+  svg?: string
+}
+
+const rawItems: Omit<ToolboxItem, 'svg'>[] = []
+
+// Add Core Channels & Quicklinks
+rawItems.push(
+  {
+    id: 'channel-whatsapp',
+    title: 'Offizieller WhatsApp-Kanal',
+    subtitle: 'Direkte Updates, Termine & Live-Infos aufs Handy',
+    category: 'channel',
+    categoryLabel: 'Messenger',
+    targetUrl: 'https://www.whatsapp.com/channel/0029VaQxDPOF6smxyB2t4519',
+    filename: 'qr-smj-whatsapp-kanal',
+    badgeColor: 'border-green-500/40 text-green-400 bg-green-950/40',
+    isFeatured: true,
+  },
+  {
+    id: 'channel-instagram',
+    title: 'Instagram @regio.wegweiser',
+    subtitle: 'Fotos, Storys und Impressionen von Aktionen',
+    category: 'channel',
+    categoryLabel: 'Social Media',
+    targetUrl: 'https://www.instagram.com/regio.wegweiser/',
+    filename: 'qr-smj-instagram',
+    badgeColor: 'border-pink-500/40 text-pink-400 bg-pink-950/40',
+    isFeatured: true,
+  },
+  {
+    id: 'page-home',
+    title: 'Startseite smj-wegweiser.de',
+    subtitle: 'Raus. Ins Abenteuer. – Das Portal der Region',
+    category: 'page',
+    categoryLabel: 'Website',
+    targetUrl: `${BASE_DOMAIN}/`,
+    filename: 'qr-smj-startseite',
+    badgeColor: 'border-orange/40 text-orange bg-orange/10',
+    isFeatured: true,
+  },
+  {
+    id: 'page-calendar-ics',
+    title: 'Terminkalender (iCal Abo)',
+    subtitle: 'Alle SMJ-Termine direkt im Smartphone-Kalender',
+    category: 'channel',
+    categoryLabel: 'Kalender',
+    targetUrl: `${BASE_DOMAIN}/api/calendar.ics`,
+    filename: 'qr-smj-kalender-ical',
+    badgeColor: 'border-blue-500/40 text-blue-400 bg-blue-950/40',
+  },
+  {
+    id: 'page-team',
+    title: 'Leiterrunde & Team',
+    subtitle: 'Wer wir sind – Das Prinzip Jugend leitet Jugend',
+    category: 'page',
+    categoryLabel: 'Team',
+    targetUrl: `${BASE_DOMAIN}/team/`,
+    filename: 'qr-smj-team-leiterrunde',
+    badgeColor: 'border-paper/20 text-paper/80 bg-forest-900',
+  },
+  {
+    id: 'page-kontakt',
+    title: 'Kontakt & Anlaufstelle',
+    subtitle: 'Zentrale Ansprechpartner & Kontaktformular',
+    category: 'page',
+    categoryLabel: 'Kontakt',
+    targetUrl: `${BASE_DOMAIN}/kontakt/`,
+    filename: 'qr-smj-kontakt',
+    badgeColor: 'border-paper/20 text-paper/80 bg-forest-900',
+  },
+)
+
+// Add Camps
+for (const camp of allCamps) {
+  rawItems.push({
+    id: `camp-${camp.data.year}`,
+    title: `${camp.data.title}${camp.data.motto ? ` – ${camp.data.motto}` : ''}`,
+    subtitle: `Sommerzeltlager ${camp.data.year} im Wiesental`,
+    category: 'camp',
+    categoryLabel: `Zeltlager ${camp.data.year}`,
+    targetUrl: `${BASE_DOMAIN}/abenteuer/zeltlager-${camp.data.year}/`,
+    toolboxUrl: `/toolbox/zeltlager-${camp.data.year}/`,
+    flyerUrl: `/flyer/zeltlager-${camp.data.year}/`,
+    socialUrl: `/social/zeltlager-${camp.data.year}/`,
+    dateStr: formatDateRange(camp.data.date.start, camp.data.date.end),
+    location: camp.data.location.name,
+    ageGroup: formatAgeRange(camp.data.age.min, camp.data.age.max) || undefined,
+    filename: `qr-smj-zeltlager-${camp.data.year}`,
+    badgeColor: 'border-orange bg-orange text-forest-950 font-bold',
+    isFeatured: camp.data.active,
+  })
+}
+
+// Add Events
+for (const ev of sortedEvents) {
+  if (rawItems.some((it) => it.id === `event-${ev.slug}`)) continue
+
+  const ageFormatted = formatAgeRange(ev.ageMin, ev.ageMax)
+  const isWeekend = ev.category === 'weekend'
+  const isSpecial = ev.category === 'special'
+
+  rawItems.push({
+    id: `event-${ev.slug}`,
+    title: ev.title,
+    subtitle: ev.teaser || 'Aktion & Veranstaltung der SMJ Regio Wegweiser',
+    category: 'event',
+    categoryLabel: isWeekend ? 'Wochenende' : isSpecial ? 'Sonderaktion' : 'Veranstaltung',
+    targetUrl: `${BASE_DOMAIN}/abenteuer/${ev.slug}/`,
+    toolboxUrl: `/toolbox/${ev.slug}/`,
+    flyerUrl: `/flyer/${ev.slug}/`,
+    socialUrl: `/social/${ev.slug}/`,
+    dateStr: formatDateRange(ev.start, ev.end),
+    location: ev.location,
+    ageGroup: ageFormatted || undefined,
+    filename: `qr-smj-event-${ev.slug}`,
+    badgeColor: isWeekend
+      ? 'border-orange/60 text-orange bg-orange/10'
+      : isSpecial
+        ? 'border-yellow-500/60 text-yellow-400 bg-yellow-950/40'
+        : 'border-paper/30 text-paper/90 bg-forest-900',
+    isFeatured: ev.end >= new Date(),
+  })
+}
+
+// Pre-generate crisp SVG vector QR codes at build time for instant rendering
+const items: ToolboxItem[] = await Promise.all(
+  rawItems.map(async (item) => ({
+    ...item,
+    svg: await generateQrSvg(item.targetUrl, { margin: 2, errorCorrectionLevel: 'M' }),
+  })),
+)
+
+// Initial custom SVG for the generator tool preview
+const initialCustomUrl = 'https://smj-wegweiser.de/abenteuer/zeltlager-2026/'
+const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, errorCorrectionLevel: 'M' })
+---
+
+<ContentLayout
+  title="Leiter-Toolbox & Medien-Zentrale – SMJ Regio Wegweiser"
+  description="Zentrale Medien- und Vorlagen-Toolbox für das Leitungsteam: DIN A4 Flyer, Instagram Stories, QR-Codes und Textbausteine."
+  noIndex={true}
+>
+  <!-- Hero Section -->
+  <section class="border-b border-paper/20 bg-forest-950 py-12 sm:py-16">
+    <Container>
+      <div class="max-w-3xl">
+        <Eyebrow label="// INTERNER BEREICH & MEDIEN-HUB" />
+        <h1 class="display display-lg text-paper mt-3 uppercase leading-[0.95]">
+          Leiter-Toolbox &amp;<br />
+          <span class="text-orange">Medien-Zentrale</span>
+        </h1>
+        <p class="mt-4 font-mono text-sm sm:text-base text-paper/80 leading-relaxed max-w-2xl">
+          Alle Materialien für deine Aktion an einem Ort: Druckfertige A4-Plakate, Instagram Stories (9:16), Feed Posts, gestochen scharfe QR-Codes und Textbausteine für WhatsApp.
+        </p>
+      </div>
+
+      <!-- Quick Feature Highlights -->
+      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 font-mono text-xs text-paper/70">
+        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
+          <span class="text-orange font-bold block text-sm">📄 A4 FLYER</span>
+          <span class="text-[0.7rem] text-paper/60">Druck &amp; Schaukasten</span>
+        </div>
+        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
+          <span class="text-orange font-bold block text-sm">📱 SOCIAL 9:16</span>
+          <span class="text-[0.7rem] text-paper/60">Story &amp; Feed Studio</span>
+        </div>
+        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
+          <span class="text-orange font-bold block text-sm">🔳 QR HD 2048</span>
+          <span class="text-[0.7rem] text-paper/60">Vektor &amp; PNG</span>
+        </div>
+        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
+          <span class="text-orange font-bold block text-sm">💬 WHATSAPP</span>
+          <span class="text-[0.7rem] text-paper/60">1-Klick Textbausteine</span>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Live Custom Link Generator -->
+  <section class="border-b border-paper/20 bg-forest-950 py-10">
+    <Container>
+      <div class="border-2 border-orange/40 bg-forest-900/80 p-6 sm:p-8 rounded-sm shadow-xl relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-paper/15 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 shrink-0 bg-orange/10 border border-orange flex items-center justify-center text-orange">
+              <Sparkles class="h-5 w-5" />
+            </div>
+            <div>
+              <h2 class="display text-xl sm:text-2xl text-paper uppercase">Individueller Generator</h2>
+              <p class="font-mono text-xs text-paper/60">Beliebigen Link eingeben und sofort A4-Flyer, Social-Media-Grafiken oder QR-Code erstellen</p>
+            </div>
+          </div>
+          <span class="font-mono text-[0.65rem] uppercase tracking-widest text-orange border border-orange/30 px-3 py-1 bg-orange/5">
+            Live Tool
+          </span>
+        </div>
+
+        <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] items-center">
+          <!-- Inputs Column -->
+          <div class="space-y-6">
+            <div>
+              <label for="custom-url-input" class="block font-mono text-xs font-bold uppercase tracking-wider text-paper mb-2">
+                Ziel-URL oder Text
+              </label>
+              <div class="relative">
+                <input
+                  type="text"
+                  id="custom-url-input"
+                  value={initialCustomUrl}
+                  placeholder="https://smj-wegweiser.de/..."
+                  class="w-full bg-forest-900 border-2 border-paper/20 px-4 py-3 font-mono text-sm text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
+                />
+              </div>
+              <p class="mt-2 font-mono text-[0.7rem] text-paper/50">
+                Tipp: Funktioniert mit jeder Unterseite von smj-wegweiser.de, WhatsApp-Gruppen-Links oder Anmeldeformularen.
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <a
+                id="custom-flyer-btn"
+                href={`/flyer/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                target="_blank"
+                class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
+              >
+                <FileText class="h-4 w-4" />
+                <span>📄 A4 Flyer drucken</span>
+              </a>
+              <a
+                id="custom-social-btn"
+                href={`/social/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                target="_blank"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
+              >
+                <Smartphone class="h-4 w-4 text-orange" />
+                <span>📱 Story &amp; Post</span>
+              </a>
+              <button
+                type="button"
+                id="custom-download-1024"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
+              >
+                <Download class="h-4 w-4" />
+                <span>PNG (1024 px)</span>
+              </button>
+              <button
+                type="button"
+                id="custom-download-2048"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
+              >
+                <Download class="h-4 w-4 text-orange" />
+                <span>Print HD</span>
+              </button>
+              <button
+                type="button"
+                id="custom-copy-btn"
+                class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900/60 px-4 py-3 font-mono text-xs uppercase tracking-wider text-paper/80 transition-all hover:border-paper hover:text-paper cursor-pointer"
+              >
+                <Copy class="h-3.5 w-3.5" />
+                <span id="custom-copy-text">Link</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Preview Column -->
+          <div class="flex flex-col items-center justify-center p-5 bg-forest-900 border border-paper/15 text-center">
+            <p class="mono-label text-[0.65rem] text-paper/50 mb-3">// LIVE VORSCHAU</p>
+            <div class="w-44 h-44 max-w-full p-2.5 bg-white border-2 border-paper/30 shadow-xl flex items-center justify-center rounded-sm">
+              <div id="custom-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={initialCustomSvg} />
+            </div>
+            <p id="custom-preview-caption" class="mt-3 font-mono text-[0.65rem] text-orange truncate max-w-[200px]">
+              {initialCustomUrl}
+            </p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Filter & Search Bar Section -->
+  <section class="border-b border-paper/15 bg-forest-900/90 py-8 sticky top-0 z-40 backdrop-blur-md">
+    <Container>
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <!-- Search Input -->
+        <div class="relative flex-1 max-w-lg">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-paper/40">
+            <Search class="h-4 w-4" />
+          </div>
+          <input
+            type="text"
+            id="qr-search-input"
+            placeholder="Veranstaltung, Zeltlager oder Stichwort suchen..."
+            class="w-full bg-forest-950 border border-paper/20 pl-10 pr-10 py-2.5 font-mono text-xs text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
+          />
+          <button
+            type="button"
+            id="qr-search-clear"
+            class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-paper/40 hover:text-paper cursor-pointer"
+            aria-label="Suche löschen"
+          >
+            <X class="h-4 w-4" />
+          </button>
+        </div>
+
+        <!-- Filter Categories Tabs -->
+        <div class="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+          <button
+            type="button"
+            class="qr-filter-btn px-3 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer"
+            data-filter="all"
+          >
+            Alle
+          </button>
+          <button
+            type="button"
+            class="qr-filter-btn active px-3 py-1.5 uppercase font-bold tracking-wider transition-all border-2 border-orange bg-orange text-forest-950 cursor-pointer"
+            data-filter="event"
+          >
+            Veranstaltungen
+          </button>
+          <button
+            type="button"
+            class="qr-filter-btn px-3 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer"
+            data-filter="camp"
+          >
+            Zeltlager
+          </button>
+          <button
+            type="button"
+            class="qr-filter-btn px-3 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer"
+            data-filter="channel"
+          >
+            Kanäle &amp; Links
+          </button>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Items Grid Section -->
+  <section class="py-12 bg-forest-950">
+    <Container>
+      <!-- Results Count Bar -->
+      <div class="flex items-center justify-between border-b border-paper/10 pb-4 mb-8">
+        <span id="qr-items-count" class="font-mono text-xs text-paper/60">
+          Zeige alle Veranstaltungen
+        </span>
+      </div>
+
+      <!-- No Results State -->
+      <div id="qr-no-results" class="hidden py-16 text-center border-2 border-dashed border-paper/20 bg-forest-900/40 p-8 my-8">
+        <p class="font-display text-2xl uppercase text-paper/70">Keine Inhalte gefunden</p>
+        <p class="font-mono text-xs text-paper/50 mt-2">Versuche es mit einem anderen Suchbegriff oder setze den Filter zurück.</p>
+        <button
+          type="button"
+          id="qr-reset-filter-btn"
+          class="mt-6 inline-flex items-center gap-2 border border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
+        >
+          Filter zurücksetzen
+        </button>
+      </div>
+
+      <!-- Grid -->
+      <div id="qr-items-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          items.map((item) => {
+            const searchTokens = `${item.title} ${item.subtitle || ''} ${item.categoryLabel} ${item.location || ''} ${item.dateStr || ''} ${item.targetUrl}`.toLowerCase()
+            const isInitialHidden = item.category !== 'event'
+            return (
+              <article
+                class={`qr-card group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900/60 p-6 transition-all duration-300 hover:border-orange hover:bg-forest-900 ${isInitialHidden ? 'hidden' : ''}`}
+                data-category={item.category}
+                data-search={searchTokens}
+                data-url={item.targetUrl}
+                data-title={item.title}
+                data-filename={item.filename}
+                data-toolbox-url={item.toolboxUrl || ''}
+                data-flyer-url={item.flyerUrl || ''}
+                data-social-url={item.socialUrl || ''}
+              >
+                <div>
+                  <!-- Header Badge & Quick URL -->
+                  <div class="flex items-center justify-between gap-2 mb-4">
+                    <span class={`inline-block border px-2.5 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider ${item.badgeColor}`}>
+                      {item.categoryLabel}
+                    </span>
+                    {item.isFeatured && (
+                      <span class="font-mono text-[0.65rem] font-bold text-orange flex items-center gap-1">
+                        ★ Aktiv
+                      </span>
+                    )}
+                  </div>
+
+                  <!-- Title & Subtitle -->
+                  <h3 class="display text-xl sm:text-2xl text-paper group-hover:text-orange transition-colors leading-tight">
+                    {item.toolboxUrl ? (
+                      <a href={item.toolboxUrl} class="hover:underline">
+                        {item.title}
+                      </a>
+                    ) : (
+                      item.title
+                    )}
+                  </h3>
+
+                  {item.subtitle && (
+                    <p class="mt-1 text-xs text-paper/70 line-clamp-2">
+                      {item.subtitle}
+                    </p>
+                  )}
+
+                  <!-- Meta Info: Date & Location -->
+                  {(item.dateStr || item.location || item.ageGroup) && (
+                    <div class="mt-4 space-y-1.5 border-t border-paper/10 pt-3 font-mono text-xs text-paper/60">
+                      {item.dateStr && (
+                        <div class="flex items-center gap-2 text-paper/90">
+                          <Calendar class="h-3.5 w-3.5 text-orange shrink-0" />
+                          <span>{item.dateStr}</span>
+                        </div>
+                      )}
+                      {item.location && (
+                        <div class="flex items-center gap-2 text-paper/70">
+                          <MapPin class="h-3.5 w-3.5 text-paper/40 shrink-0" />
+                          <span class="truncate">{item.location}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <!-- Center QR Code SVG Preview -->
+                <div class="my-6 flex flex-col items-center">
+                  <div
+                    class="qr-preview-wrapper w-44 h-44 max-w-full p-2.5 bg-white border border-paper/30 rounded-sm shadow-md transition-transform duration-300 group-hover:scale-105 cursor-pointer flex items-center justify-center"
+                    title="Klicken zum Vergrößern"
+                    data-preview-trigger={item.id}
+                  >
+                    <div class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={item.svg} />
+                  </div>
+
+                  <!-- Target URL Display -->
+                  <a
+                    href={item.targetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-3 inline-flex items-center gap-1 font-mono text-[0.68rem] text-orange hover:underline truncate max-w-full"
+                    title={item.targetUrl}
+                  >
+                    <span class="truncate">{item.targetUrl.replace(/^https?:\/\//, '')}</span>
+                    <ExternalLink class="h-3 w-3 shrink-0" />
+                  </a>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="border-t border-paper/10 pt-4 flex flex-col gap-2">
+                  {item.toolboxUrl ? (
+                    <a
+                      href={item.toolboxUrl}
+                      class="inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+                    >
+                      <span>🧰 Alle Materialien &amp; Vorlagen</span>
+                      <ArrowRight class="h-3.5 w-3.5 shrink-0" />
+                    </a>
+                  ) : item.flyerUrl ? (
+                    <a
+                      href={item.flyerUrl}
+                      target="_blank"
+                      class="inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+                    >
+                      <FileText class="h-4 w-4 shrink-0" />
+                      <span>📄 A4 Flyer drucken</span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      class="qr-card-download-btn inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange/10 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
+                      data-url={item.targetUrl}
+                      data-filename={item.filename}
+                    >
+                      <Download class="h-3.5 w-3.5" />
+                      <span>PNG Herunterladen</span>
+                    </button>
+                  )}
+
+                  <!-- Secondary Quick Actions -->
+                  <div class="flex items-center gap-2">
+                    {item.flyerUrl && (
+                      <a
+                        href={item.flyerUrl}
+                        target="_blank"
+                        class="flex-1 inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors"
+                        title="A4 Flyer drucken"
+                      >
+                        <FileText class="h-3 w-3 text-orange shrink-0" />
+                        <span>Flyer</span>
+                      </a>
+                    )}
+                    {item.socialUrl && (
+                      <a
+                        href={item.socialUrl}
+                        target="_blank"
+                        class="flex-1 inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors"
+                        title="Instagram Story & Post Vorlage"
+                      >
+                        <Smartphone class="h-3 w-3 text-orange shrink-0" />
+                        <span>Social</span>
+                      </a>
+                    )}
+                    <button
+                      type="button"
+                      class="qr-card-download-btn flex-1 inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/70 hover:border-paper hover:text-paper transition-colors cursor-pointer"
+                      data-url={item.targetUrl}
+                      data-filename={item.filename}
+                      title="PNG QR-Code herunterladen"
+                    >
+                      <Download class="h-3 w-3" />
+                      <span>QR</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="qr-card-copy-btn inline-flex items-center justify-center gap-1 border border-paper/20 bg-forest-950 px-2.5 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/70 hover:border-paper hover:text-paper transition-colors cursor-pointer"
+                      data-url={item.targetUrl}
+                      title="Ziel-Link kopieren"
+                    >
+                      <Copy class="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
+              </article>
+            )
+          })
+        }
+      </div>
+    </Container>
+  </section>
+
+  <!-- Large Modal Preview -->
+  <dialog
+    id="qr-modal"
+    class="backdrop:bg-forest-950/90 bg-transparent p-4 sm:p-6 max-w-xl w-full m-auto open:flex flex-col items-center justify-center"
+  >
+    <div class="relative w-full border-2 border-orange bg-forest-950 p-6 sm:p-8 shadow-2xl text-paper">
+      <button
+        id="qr-modal-close"
+        type="button"
+        class="absolute top-4 right-4 text-paper/60 hover:text-orange transition-colors p-2 cursor-pointer"
+        aria-label="Schließen"
+      >
+        <X class="h-6 w-6" />
+      </button>
+
+      <div class="text-center">
+        <span class="mono-label text-[0.65rem] text-orange">// MEDIEN- &amp; QR-VORSCHAU</span>
+        <h3 id="modal-title" class="display display-md text-paper mt-1">Materialien</h3>
+        <p id="modal-url" class="font-mono text-xs text-paper/60 mt-1 truncate max-w-md mx-auto"></p>
+      </div>
+
+      <div class="my-6 flex justify-center">
+        <div class="w-64 h-64 sm:w-72 sm:h-72 max-w-full p-3 bg-white border-4 border-paper shadow-2xl flex items-center justify-center rounded-sm">
+          <div id="modal-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block"></div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a
+          id="modal-toolbox-link"
+          href="/toolbox/custom/"
+          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
+        >
+          <span>🧰 Alle Materialien</span>
+        </a>
+        <a
+          id="modal-flyer-link"
+          href="/flyer/custom/"
+          target="_blank"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
+        >
+          <FileText class="h-4 w-4 text-orange" />
+          <span>📄 Flyer</span>
+        </a>
+        <a
+          id="modal-social-link"
+          href="/social/custom/"
+          target="_blank"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
+        >
+          <Smartphone class="h-4 w-4 text-orange" />
+          <span>📱 Social</span>
+        </a>
+        <button
+          type="button"
+          id="modal-download-1024"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
+        >
+          <Download class="h-4 w-4 text-orange" />
+          <span>PNG 1024px</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+</ContentLayout>
+
+<script>
+  import { generateQrSvg, downloadQrPng } from '../../scripts/qrcode-renderer'
+
+  let activeModalUrl = ''
+  let activeModalFilename = 'qr-smj-code'
+
+  // Custom Generator Logic
+  const customInput = document.getElementById('custom-url-input') as HTMLInputElement | null
+  const customPreview = document.getElementById('custom-qr-preview')
+  const customCaption = document.getElementById('custom-preview-caption')
+  const customFlyerBtn = document.getElementById('custom-flyer-btn') as HTMLAnchorElement | null
+  const customSocialBtn = document.getElementById('custom-social-btn') as HTMLAnchorElement | null
+  const customDownload1024 = document.getElementById('custom-download-1024')
+  const customDownload2048 = document.getElementById('custom-download-2048')
+  const customCopyBtn = document.getElementById('custom-copy-btn')
+  const customCopyText = document.getElementById('custom-copy-text')
+
+  async function updateCustomQR() {
+    if (!customInput || !customPreview) return
+    const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+    if (customCaption) customCaption.textContent = text
+    if (customFlyerBtn) {
+      customFlyerBtn.href = `/flyer/custom/?url=${encodeURIComponent(text)}`
+    }
+    if (customSocialBtn) {
+      customSocialBtn.href = `/social/custom/?url=${encodeURIComponent(text)}`
+    }
+
+    try {
+      const svg = await generateQrSvg(text, { margin: 2, errorCorrectionLevel: 'M' })
+      customPreview.innerHTML = svg
+    } catch (e) {
+      console.error('Custom QR render failed', e)
+    }
+  }
+
+  if (customInput) customInput.addEventListener('input', updateCustomQR)
+
+  if (customDownload1024 && customInput) {
+    customDownload1024.addEventListener('click', async () => {
+      const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+      await downloadQrPng(text, 'qr-smj-custom-1024.png', 1024)
+    })
+  }
+
+  if (customDownload2048 && customInput) {
+    customDownload2048.addEventListener('click', async () => {
+      const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+      await downloadQrPng(text, 'qr-smj-custom-2048-hd.png', 2048)
+    })
+  }
+
+  if (customCopyBtn && customInput && customCopyText) {
+    customCopyBtn.addEventListener('click', async () => {
+      const text = customInput.value.trim()
+      if (!text) return
+      try {
+        await navigator.clipboard.writeText(text)
+        customCopyText.textContent = 'Kopiert! ✓'
+        setTimeout(() => {
+          if (customCopyText) customCopyText.textContent = 'Link'
+        }, 2000)
+      } catch (err) {
+        console.error('Clipboard copy error', err)
+      }
+    })
+  }
+
+  // Card Downloads and Copy buttons
+  document.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement
+    const dlBtn = target.closest<HTMLButtonElement>('.qr-card-download-btn')
+    if (dlBtn) {
+      const card = dlBtn.closest('.qr-card') as HTMLElement | null
+      const url = dlBtn.dataset.url || card?.dataset.url
+      const filename = dlBtn.dataset.filename || card?.dataset.filename || 'qr-smj-code'
+      if (!url) return
+
+      await downloadQrPng(url, `${filename}.png`, 1024)
+      return
+    }
+
+    const copyBtn = target.closest<HTMLButtonElement>('.qr-card-copy-btn')
+    if (copyBtn) {
+      const url = copyBtn.dataset.url
+      if (!url) return
+      try {
+        await navigator.clipboard.writeText(url)
+      } catch (err) {
+        console.error('Copy failed', err)
+      }
+      return
+    }
+
+    // Modal Trigger
+    const trigger = target.closest<HTMLElement>('.qr-preview-wrapper')
+    if (trigger) {
+      const card = trigger.closest('.qr-card') as HTMLElement | null
+      if (card) {
+        openModal(
+          card.dataset.url || '',
+          card.dataset.title || '',
+          card.dataset.filename || '',
+          card.dataset.toolboxUrl || '',
+          card.dataset.flyerUrl || '',
+          card.dataset.socialUrl || '',
+        )
+      }
+    }
+  })
+
+  // Modal Functions
+  const modal = document.getElementById('qr-modal') as HTMLDialogElement | null
+  const modalClose = document.getElementById('qr-modal-close')
+  const modalTitle = document.getElementById('modal-title')
+  const modalUrl = document.getElementById('modal-url')
+  const modalPreview = document.getElementById('modal-qr-preview')
+  const modalToolboxLink = document.getElementById('modal-toolbox-link') as HTMLAnchorElement | null
+  const modalFlyerLink = document.getElementById('modal-flyer-link') as HTMLAnchorElement | null
+  const modalSocialLink = document.getElementById('modal-social-link') as HTMLAnchorElement | null
+  const modalDownload1024 = document.getElementById('modal-download-1024')
+
+  async function openModal(
+    url: string,
+    title: string,
+    filename: string,
+    toolboxUrl?: string,
+    flyerUrl?: string,
+    socialUrl?: string,
+  ) {
+    if (!modal || !modalPreview) return
+    activeModalUrl = url
+    activeModalFilename = filename
+
+    if (modalTitle) modalTitle.textContent = title
+    if (modalUrl) modalUrl.textContent = url
+
+    if (modalToolboxLink) {
+      if (toolboxUrl) {
+        modalToolboxLink.href = toolboxUrl
+        modalToolboxLink.classList.remove('hidden')
+      } else {
+        modalToolboxLink.classList.add('hidden')
+      }
+    }
+
+    if (modalFlyerLink) {
+      if (flyerUrl) {
+        modalFlyerLink.href = flyerUrl
+      } else {
+        modalFlyerLink.href = `/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+      }
+    }
+
+    if (modalSocialLink) {
+      if (socialUrl) {
+        modalSocialLink.href = socialUrl
+      } else {
+        modalSocialLink.href = `/social/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+      }
+    }
+
+    const svg = await generateQrSvg(url, { margin: 2, errorCorrectionLevel: 'M' })
+    modalPreview.innerHTML = svg
+
+    modal.showModal()
+  }
+
+  if (modalClose && modal) {
+    modalClose.addEventListener('click', () => modal.close())
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.close()
+    })
+  }
+
+  if (modalDownload1024) {
+    modalDownload1024.addEventListener('click', async () => {
+      if (!activeModalUrl) return
+      await downloadQrPng(activeModalUrl, `${activeModalFilename}-1024.png`, 1024)
+    })
+  }
+
+  // Instant Live Search & Filter (Default: Veranstaltungen)
+  const searchInput = document.getElementById('qr-search-input') as HTMLInputElement | null
+  const searchClear = document.getElementById('qr-search-clear')
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.qr-filter-btn')
+  const itemsCountEl = document.getElementById('qr-items-count')
+  const noResultsEl = document.getElementById('qr-no-results')
+  const resetFilterBtn = document.getElementById('qr-reset-filter-btn')
+  const cards = document.querySelectorAll<HTMLElement>('.qr-card')
+
+  let activeFilter = 'event'
+  let activeSearch = ''
+
+  function applyFilterAndSearch() {
+    let visibleCount = 0
+
+    cards.forEach((card) => {
+      const category = card.dataset.category || ''
+      const searchData = card.dataset.search || ''
+
+      const matchesFilter = activeFilter === 'all' || category === activeFilter
+      const matchesSearch = !activeSearch || searchData.includes(activeSearch.toLowerCase())
+
+      if (matchesFilter && matchesSearch) {
+        card.classList.remove('hidden')
+        visibleCount++
+      } else {
+        card.classList.add('hidden')
+      }
+    })
+
+    if (itemsCountEl) {
+      const filterName =
+        activeFilter === 'all'
+          ? 'alle Einträge'
+          : activeFilter === 'event'
+            ? 'Veranstaltungen'
+            : activeFilter === 'camp'
+              ? 'Zeltlager'
+              : 'Kanäle & Links'
+      itemsCountEl.textContent = `${visibleCount} ${visibleCount === 1 ? 'Ergebnis' : 'Ergebnisse'} für ${filterName}${activeSearch ? ` mit „${activeSearch}“` : ''}`
+    }
+
+    if (noResultsEl) {
+      if (visibleCount === 0) {
+        noResultsEl.classList.remove('hidden')
+      } else {
+        noResultsEl.classList.add('hidden')
+      }
+    }
+  }
+
+  // Search input handler
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      activeSearch = searchInput.value.trim()
+      if (searchClear) {
+        if (activeSearch) searchClear.classList.remove('hidden')
+        else searchClear.classList.add('hidden')
+      }
+      applyFilterAndSearch()
+    })
+  }
+
+  if (searchClear && searchInput) {
+    searchClear.addEventListener('click', () => {
+      searchInput.value = ''
+      activeSearch = ''
+      searchClear.classList.add('hidden')
+      applyFilterAndSearch()
+      searchInput.focus()
+    })
+  }
+
+  // Filter Buttons handler
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach((b) => {
+        b.classList.remove('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+        b.classList.add('border-paper/20', 'text-paper/70')
+      })
+      btn.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+      btn.classList.remove('border-paper/20', 'text-paper/70')
+
+      activeFilter = btn.dataset.filter || 'all'
+      applyFilterAndSearch()
+    })
+  })
+
+  if (resetFilterBtn && searchInput) {
+    resetFilterBtn.addEventListener('click', () => {
+      searchInput.value = ''
+      activeSearch = ''
+      if (searchClear) searchClear.classList.add('hidden')
+
+      filterBtns.forEach((b) => {
+        if (b.dataset.filter === 'all') {
+          b.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+          b.classList.remove('border-paper/20', 'text-paper/70')
+        } else {
+          b.classList.remove('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+          b.classList.add('border-paper/20', 'text-paper/70')
+        }
+      })
+      activeFilter = 'all'
+      applyFilterAndSearch()
+    })
+  }
+
+  // Initialize view
+  applyFilterAndSearch()
+</script>
