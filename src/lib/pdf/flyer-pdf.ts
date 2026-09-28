@@ -1,19 +1,9 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib'
 import QRCode from 'qrcode'
 import fs from 'node:fs'
+import type { ResolvedFlyerData } from './flyer-content'
 
-export interface FlyerPdfData {
-  title: string
-  subtitle?: string
-  categoryLabel?: string
-  dateStr: string
-  locationStr: string
-  ageStr: string
-  priceStr: string
-  highlights: { title: string; desc: string }[]
-  targetUrl: string
-  shortUrl?: string
-}
+export type FlyerPdfData = ResolvedFlyerData
 
 function cleanText(text: string): string {
   return text
@@ -26,6 +16,32 @@ function cleanText(text: string): string {
     .replace(/[↑▲]/g, '^')
     .replace(/[✂✄]/g, '-')
     .replace(/[★☆]/g, '*')
+}
+
+function wrapText(text: string, maxWidth: number, font: PDFFont, fontSize: number): string[] {
+  const paragraphs = text.split(/\r?\n/)
+  const lines: string[] = []
+
+  for (const para of paragraphs) {
+    const trimmed = para.trim()
+    if (!trimmed) continue
+    const words = trimmed.split(/\s+/)
+    let currentLine = ''
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word
+      const width = font.widthOfTextAtSize(cleanText(testLine), fontSize)
+      if (width <= maxWidth) {
+        currentLine = testLine
+      } else {
+        if (currentLine) lines.push(currentLine)
+        currentLine = word
+      }
+    }
+    if (currentLine) lines.push(currentLine)
+  }
+
+  return lines
 }
 
 export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> {
@@ -84,7 +100,7 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   const marginX = 36
   const contentW = W - 2 * marginX // 523.28 pt
 
-  // Generate QR Code PNG
+  // Generate High-Res QR Code PNG
   const qrPngBuffer = await QRCode.toBuffer(data.targetUrl, {
     margin: 1,
     width: 600,
@@ -106,9 +122,9 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     console.warn('Could not load logo PNG, fallback to text logo', err)
   }
 
-  // --- HEADER SECTION (y ~ 795 down to 740) ---
-  const headerTopY = H - 36
-  const logoSize = 46
+  // --- HEADER SECTION ---
+  const headerTopY = H - 34
+  const logoSize = 42
 
   if (logoImage) {
     page.drawImage(logoImage, {
@@ -122,7 +138,7 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   const headerTextX = logoImage ? marginX + logoSize + 12 : marginX
   page.drawText('SMJ REGIO WEGWEISER - KATHOLISCHE JUGEND', {
     x: headerTextX,
-    y: headerTopY - 18,
+    y: headerTopY - 16,
     size: 9.5,
     font: fontBold,
     color: cOrange,
@@ -130,7 +146,7 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
 
   page.drawText('Thueringen & Sachsen-Anhalt - smj-wegweiser.de', {
     x: headerTextX,
-    y: headerTopY - 32,
+    y: headerTopY - 30,
     size: 8,
     font: fontRegular,
     color: cMuted,
@@ -142,7 +158,7 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   const catBadgeW = catTextWidth + 16
   const catBadgeH = 22
   const catBadgeX = W - marginX - catBadgeW
-  const catBadgeY = headerTopY - 26
+  const catBadgeY = headerTopY - 24
 
   page.drawRectangle({
     x: catBadgeX,
@@ -161,30 +177,30 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   })
 
   // Header Divider Line
-  const headerDividerY = headerTopY - logoSize - 16
+  const headerDividerY = headerTopY - logoSize - 12
   page.drawLine({
     start: { x: marginX, y: headerDividerY },
     end: { x: W - marginX, y: headerDividerY },
-    thickness: 2.5,
+    thickness: 2,
     color: cForest,
   })
 
   // --- TITLE & MOTTO SECTION ---
-  let currY = headerDividerY - 22
+  let currY = headerDividerY - 20
 
   page.drawText('//  RAUS. INS ABENTEUER.', {
     x: marginX,
     y: currY,
-    size: 9.5,
+    size: 9,
     font: fontBold,
     color: cOrange,
   })
 
-  currY -= 28
+  currY -= 26
 
-  // Main Event Title (Handle long titles with font size adjustment)
+  // Main Event Title
   const titleText = cleanText(data.title.toUpperCase())
-  const titleFontSize = titleText.length > 28 ? 20 : 25
+  const titleFontSize = titleText.length > 30 ? 18 : 23
   page.drawText(titleText, {
     x: marginX,
     y: currY,
@@ -199,20 +215,20 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     page.drawText(`// ${cleanText(data.subtitle)}`, {
       x: marginX,
       y: currY,
-      size: 13,
+      size: 11,
       font: fontBoldOblique,
       color: cOrange,
     })
-    currY -= 22
+    currY -= 20
   } else {
-    currY -= 10
+    currY -= 8
   }
 
   // --- 4 KEY FACTS CARDS ---
-  currY -= 6
+  currY -= 4
   const factGap = 8
   const cardW = (contentW - 3 * factGap) / 4
-  const cardH = 46
+  const cardH = 42
 
   const facts = [
     { label: 'WANN', value: cleanText(data.dateStr) },
@@ -224,7 +240,6 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   facts.forEach((fact, i) => {
     const cardX = marginX + i * (cardW + factGap)
 
-    // Card background
     page.drawRectangle({
       x: cardX,
       y: currY - cardH,
@@ -233,37 +248,33 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
       color: cForest,
     })
 
-    // Label
     page.drawText(fact.label, {
       x: cardX + 7,
-      y: currY - 14,
-      size: 7.5,
+      y: currY - 13,
+      size: 7,
       font: fontBold,
       color: cOrange,
     })
 
-    // Value
     let val = fact.value
-    let valSize = 8
-    if (val.length > 21) {
-      valSize = 7
-    }
+    let valSize = 7.5
+    if (val.length > 21) valSize = 6.8
     if (val.length > 28) {
       val = val.substring(0, 27) + '...'
-      valSize = 6.5
+      valSize = 6.2
     }
     page.drawText(val, {
       x: cardX + 7,
-      y: currY - 32,
+      y: currY - 29,
       size: valSize,
       font: fontBold,
       color: cPaper,
     })
   })
 
-  currY -= cardH + 20
+  currY -= cardH + 18
 
-  // --- HIGHLIGHTS SECTION ---
+  // --- DAS ERWARTET DICH (DESCRIPTION BLOCK) ---
   page.drawText('DAS ERWARTET DICH BEI DIESER AKTION:', {
     x: marginX,
     y: currY,
@@ -280,16 +291,48 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     color: cSand,
   })
 
+  currY -= 14
+
+  if (data.description) {
+    const descLines = wrapText(data.description, contentW, fontRegular, 8.5)
+    // Take up to 4 lines to preserve balance
+    const linesToDraw = descLines.slice(0, 4)
+    for (const line of linesToDraw) {
+      page.drawText(cleanText(line), {
+        x: marginX,
+        y: currY,
+        size: 8.5,
+        font: fontRegular,
+        color: cForest,
+      })
+      currY -= 12.5
+    }
+  }
+
+  currY -= 10
+
+  // --- HIGHLIGHTS SECTION ---
+  page.drawText('PROGRAMM-HIGHLIGHTS:', {
+    x: marginX,
+    y: currY,
+    size: 8.5,
+    font: fontBold,
+    color: cForest,
+  })
+
+  currY -= 4
+  page.drawLine({
+    start: { x: marginX, y: currY },
+    end: { x: marginX + 160, y: currY },
+    thickness: 1,
+    color: cSand,
+  })
+
   currY -= 16
 
-  const rawHighlights = data.highlights && data.highlights.length > 0 ? data.highlights.slice(0, 3) : [
-    { title: 'Gemeinschaft & Lagerfeuer', desc: 'Zelte bauen, Nachtwache halten, neue Freunde finden.' },
-    { title: 'Großes Geländespiel & Action', desc: 'Spannende Wettkämpfe, Abenteuer im Wald und Workshops.' },
-    { title: 'Erfahrene Betreuung', desc: 'Jugend leitet Jugend mit Vollverpflegung und erfahrenen Leitern.' },
-  ]
+  const rawHighlights = data.highlights && data.highlights.length > 0 ? data.highlights.slice(0, 3) : []
 
   for (const h of rawHighlights) {
-    // Orange left bar
     page.drawRectangle({
       x: marginX,
       y: currY - 18,
@@ -298,16 +341,14 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
       color: cOrange,
     })
 
-    // Title
     page.drawText(cleanText(h.title.toUpperCase()), {
       x: marginX + 10,
       y: currY - 4,
-      size: 10,
+      size: 9.5,
       font: fontBold,
       color: cForest,
     })
 
-    // Desc
     page.drawText(cleanText(h.desc), {
       x: marginX + 10,
       y: currY - 17,
@@ -316,13 +357,61 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
       color: cForest,
     })
 
-    currY -= 32
+    currY -= 30
   }
 
-  // --- REGISTRATION & QR BOX ---
   currY -= 6
-  const regBoxH = 118
-  const regBoxY = currY - regBoxH
+
+  // --- WAS DU BRAUCHST (PACKLISTE & INFOS) ---
+  if (data.packingList && data.packingList.length > 0) {
+    page.drawText('WAS DU BRAUCHST (PACKLISTE & INFOS):', {
+      x: marginX,
+      y: currY,
+      size: 8,
+      font: fontBold,
+      color: cForest,
+    })
+
+    currY -= 4
+    page.drawLine({
+      start: { x: marginX, y: currY },
+      end: { x: marginX + 200, y: currY },
+      thickness: 1,
+      color: cSand,
+    })
+
+    currY -= 14
+
+    // Render items in 2 columns
+    const items = data.packingList.slice(0, 6)
+    const colW = contentW / 2
+    const itemsPerCol = Math.ceil(items.length / 2)
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
+      if (!item) continue
+      const col = i < itemsPerCol ? 0 : 1
+      const row = i < itemsPerCol ? i : i - itemsPerCol
+      const itemX = marginX + col * colW
+      const itemY = currY - row * 13
+
+      page.drawText(`- ${cleanText(item)}`, {
+        x: itemX,
+        y: itemY,
+        size: 7.5,
+        font: fontRegular,
+        color: cForest,
+      })
+    }
+
+    currY -= itemsPerCol * 13 + 12
+  }
+
+  // --- REGISTRATION & CONTACT BOX (Fills bottom area before footer) ---
+  const footerY = 28
+  const regBoxBottomY = footerY + 16
+  const regBoxH = Math.max(150, currY - regBoxBottomY)
+  const regBoxY = regBoxBottomY
 
   // Box background & border
   page.drawRectangle({
@@ -335,39 +424,43 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     borderWidth: 2,
   })
 
-  // Left Content
+  // Left Content Area
   const regTextX = marginX + 16
-  const regTextY = currY - 16
+  let cardInnerY = regBoxY + regBoxH - 18
 
   // Badge
   page.drawRectangle({
     x: regTextX,
-    y: regTextY - 14,
+    y: cardInnerY - 14,
     width: 175,
     height: 16,
     color: cOrange,
   })
-  page.drawText('JETZT ANMELDEN & PLAETZE SICHERN', {
-    x: regTextX + 6,
-    y: regTextY - 9,
+  page.drawText('ONLINE-ANMELDUNG & INFOS', {
+    x: regTextX + 8,
+    y: cardInnerY - 9,
     size: 7,
     font: fontBold,
     color: cForest,
   })
 
-  page.drawText('Alle Infos online - Scan den Code!', {
+  cardInnerY -= 34
+
+  page.drawText('Jetzt anmelden & Plaetze sichern!', {
     x: regTextX,
-    y: regTextY - 36,
-    size: 14,
+    y: cardInnerY,
+    size: 13.5,
     font: fontBold,
     color: cForest,
   })
+
+  cardInnerY -= 17
 
   page.drawText(
     'Kamera ans Handy halten oder Link im Browser oeffnen.\nDort gibt es die offizielle Anmeldung, Packliste und alle Infos fuer Eltern.',
     {
       x: regTextX,
-      y: regTextY - 54,
+      y: cardInnerY,
       size: 8,
       font: fontRegular,
       color: cForest,
@@ -375,17 +468,66 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
     },
   )
 
-  const cleanUrl = cleanText(data.shortUrl || data.targetUrl.replace(/^https?:\/\//, ''))
-  page.drawText(`->  ${cleanUrl}`, {
+  cardInnerY -= 28
+
+  const displayUrl = cleanText(data.shortUrl || data.targetUrl.replace(/^https?:\/\//, ''))
+  page.drawText(`->  ${displayUrl}`, {
     x: regTextX,
-    y: regTextY - 86,
+    y: cardInnerY,
     size: 9.5,
     font: fontBold,
     color: cOrange,
   })
 
-  // Right QR Code
-  const qrBoxSize = 92
+  // Contact Info block (using event.contact directly as-is)
+  if (data.contact && (data.contact.name || data.contact.email || data.contact.phone)) {
+    cardInnerY -= 16
+    page.drawLine({
+      start: { x: regTextX, y: cardInnerY },
+      end: { x: regTextX + 310, y: cardInnerY },
+      thickness: 0.75,
+      color: cSand,
+    })
+
+    cardInnerY -= 12
+    page.drawText('FRAGEN ZUR AKTION? ANSPRECHPARTNER:', {
+      x: regTextX,
+      y: cardInnerY,
+      size: 6.8,
+      font: fontBold,
+      color: cOrange,
+    })
+
+    cardInnerY -= 11
+    let contactLine = data.contact.name || 'SMJ Regio Wegweiser'
+    if (data.contact.role) {
+      contactLine += ` (${data.contact.role})`
+    }
+    page.drawText(cleanText(contactLine), {
+      x: regTextX,
+      y: cardInnerY,
+      size: 7.8,
+      font: fontBold,
+      color: cForest,
+    })
+
+    const details: string[] = []
+    if (data.contact.phone) details.push(`Tel.: ${data.contact.phone}`)
+    if (data.contact.email) details.push(`E-Mail: ${data.contact.email}`)
+    if (details.length > 0) {
+      cardInnerY -= 10
+      page.drawText(cleanText(details.join('   -   ')), {
+        x: regTextX,
+        y: cardInnerY,
+        size: 7.2,
+        font: fontRegular,
+        color: cForest,
+      })
+    }
+  }
+
+  // Right Side: Large Scannable QR Code
+  const qrBoxSize = 100
   const qrBoxX = W - marginX - qrBoxSize - 16
   const qrBoxY = regBoxY + (regBoxH - qrBoxSize) / 2 + 5
 
@@ -397,116 +539,14 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   })
 
   page.drawText('HIER SCANNEN ^', {
-    x: qrBoxX + 16,
-    y: qrBoxY - 10,
+    x: qrBoxX + 18,
+    y: qrBoxY - 11,
     size: 6.5,
     font: fontBold,
     color: cForest,
-  })
-
-  // --- TEAR-OFF STRIPS (ABREISSZETTEL) ---
-  const tearTopY = regBoxY - 24
-  const stripH = 92
-  const stripW = contentW / 6
-  const tearBottomY = tearTopY - stripH
-
-  // Dashed Cut Line Top
-  page.drawLine({
-    start: { x: marginX, y: tearTopY },
-    end: { x: W - marginX, y: tearTopY },
-    thickness: 1,
-    color: cForest,
-    dashArray: [4, 3],
-  })
-
-  page.drawText('- Hier einschneiden zum Abreissen -', {
-    x: marginX + 12,
-    y: tearTopY + 4,
-    size: 6.5,
-    font: fontBold,
-    color: cMuted,
-  })
-
-  // 6 Strips
-  for (let i = 0; i < 6; i++) {
-    const stripX = marginX + i * stripW
-
-    // Right dashed divider
-    if (i < 5) {
-      page.drawLine({
-        start: { x: stripX + stripW, y: tearTopY },
-        end: { x: stripX + stripW, y: tearBottomY },
-        thickness: 1,
-        color: cForest,
-        dashArray: [3, 3],
-      })
-    }
-
-    const centerX = stripX + stripW / 2
-
-    // 1. SMJ AKTION
-    const t1 = 'SMJ AKTION'
-    page.drawText(t1, {
-      x: centerX - fontBold.widthOfTextAtSize(t1, 6) / 2,
-      y: tearTopY - 12,
-      size: 6,
-      font: fontBold,
-      color: cOrange,
-    })
-
-    // 2. Event Title (truncated)
-    let stripTitle = cleanText(data.title.toUpperCase())
-    if (stripTitle.length > 14) stripTitle = stripTitle.substring(0, 13) + '...'
-    page.drawText(stripTitle, {
-      x: centerX - fontBold.widthOfTextAtSize(stripTitle, 6.5) / 2,
-      y: tearTopY - 22,
-      size: 6.5,
-      font: fontBold,
-      color: cForest,
-    })
-
-    // 3. Mini QR Code
-    const miniQrSize = 34
-    page.drawImage(qrImage, {
-      x: centerX - miniQrSize / 2,
-      y: tearTopY - 26 - miniQrSize,
-      width: miniQrSize,
-      height: miniQrSize,
-    })
-
-    // 4. Date short: e.g. "22.-25. Mai"
-    let shortDate = cleanText(data.dateStr).replace(/\s*\d{4}$/, '').trim()
-    if (shortDate.length > 15) shortDate = shortDate.substring(0, 14) + '..'
-    page.drawText(shortDate, {
-      x: centerX - fontBold.widthOfTextAtSize(shortDate, 5.5) / 2,
-      y: tearTopY - 68,
-      size: 5.5,
-      font: fontBold,
-      color: cForest,
-    })
-
-    // 5. Website domain
-    const dom = 'smj-wegweiser.de'
-    page.drawText(dom, {
-      x: centerX - fontRegular.widthOfTextAtSize(dom, 5) / 2,
-      y: tearTopY - 78,
-      size: 5,
-      font: fontRegular,
-      color: cMuted,
-    })
-  }
-
-  // Bottom dashed boundary
-  page.drawLine({
-    start: { x: marginX, y: tearBottomY },
-    end: { x: W - marginX, y: tearBottomY },
-    thickness: 1,
-    color: cForest,
-    dashArray: [4, 3],
   })
 
   // --- FOOTER NOTICE ---
-  const footerY = 28
   page.drawText(
     `SMJ Regio Wegweiser - Jugend leitet Jugend - Katholische Schoenstatt-Mannesjugend - Stand: ${new Date().getFullYear()}`,
     {

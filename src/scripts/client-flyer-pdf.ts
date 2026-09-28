@@ -309,10 +309,11 @@ export async function generateClientFlyerPdf(data: ClientFlyerData): Promise<Uin
     currY -= 32
   }
 
-  // --- REGISTRATION & QR BOX ---
-  currY -= 6
-  const regBoxH = 118
-  const regBoxY = currY - regBoxH
+  // --- REGISTRATION & CONTACT BOX (Fills bottom area) ---
+  const footerY = 28
+  const regBoxBottomY = footerY + 16
+  const regBoxH = Math.max(160, currY - regBoxBottomY)
+  const regBoxY = regBoxBottomY
 
   page.drawRectangle({
     x: marginX,
@@ -325,36 +326,40 @@ export async function generateClientFlyerPdf(data: ClientFlyerData): Promise<Uin
   })
 
   const regTextX = marginX + 16
-  const regTextY = currY - 16
+  let cardInnerY = regBoxY + regBoxH - 18
 
   page.drawRectangle({
     x: regTextX,
-    y: regTextY - 14,
+    y: cardInnerY - 14,
     width: 175,
     height: 16,
     color: cOrange,
   })
-  page.drawText('JETZT ANMELDEN & PLAETZE SICHERN', {
-    x: regTextX + 6,
-    y: regTextY - 9,
+  page.drawText('ONLINE-ANMELDUNG & INFOS', {
+    x: regTextX + 8,
+    y: cardInnerY - 9,
     size: 7,
     font: fontBold,
     color: cForest,
   })
 
-  page.drawText('Alle Infos online - Scan den Code!', {
+  cardInnerY -= 34
+
+  page.drawText('Jetzt anmelden & Plaetze sichern!', {
     x: regTextX,
-    y: regTextY - 36,
-    size: 14,
+    y: cardInnerY,
+    size: 13.5,
     font: fontBold,
     color: cForest,
   })
+
+  cardInnerY -= 17
 
   page.drawText(
     'Kamera ans Handy halten oder Link im Browser oeffnen.\nDort gibt es die offizielle Anmeldung, Packliste und alle Infos fuer Eltern.',
     {
       x: regTextX,
-      y: regTextY - 54,
+      y: cardInnerY,
       size: 8,
       font: fontRegular,
       color: cForest,
@@ -362,16 +367,18 @@ export async function generateClientFlyerPdf(data: ClientFlyerData): Promise<Uin
     },
   )
 
+  cardInnerY -= 28
+
   const cleanUrl = cleanText(data.targetUrl.replace(/^https?:\/\//, ''))
   page.drawText(`->  ${cleanUrl}`, {
     x: regTextX,
-    y: regTextY - 86,
+    y: cardInnerY,
     size: 9.5,
     font: fontBold,
     color: cOrange,
   })
 
-  const qrBoxSize = 92
+  const qrBoxSize = 100
   const qrBoxX = W - marginX - qrBoxSize - 16
   const qrBoxY = regBoxY + (regBoxH - qrBoxSize) / 2 + 5
 
@@ -383,107 +390,14 @@ export async function generateClientFlyerPdf(data: ClientFlyerData): Promise<Uin
   })
 
   page.drawText('HIER SCANNEN ^', {
-    x: qrBoxX + 16,
-    y: qrBoxY - 10,
+    x: qrBoxX + 18,
+    y: qrBoxY - 11,
     size: 6.5,
     font: fontBold,
     color: cForest,
-  })
-
-  // --- TEAR-OFF STRIPS ---
-  const tearTopY = regBoxY - 24
-  const stripH = 92
-  const stripW = contentW / 6
-  const tearBottomY = tearTopY - stripH
-
-  page.drawLine({
-    start: { x: marginX, y: tearTopY },
-    end: { x: W - marginX, y: tearTopY },
-    thickness: 1,
-    color: cForest,
-    dashArray: [4, 3],
-  })
-
-  page.drawText('- Hier einschneiden zum Abreissen -', {
-    x: marginX + 12,
-    y: tearTopY + 4,
-    size: 6.5,
-    font: fontBold,
-    color: cMuted,
-  })
-
-  for (let i = 0; i < 6; i++) {
-    const stripX = marginX + i * stripW
-
-    if (i < 5) {
-      page.drawLine({
-        start: { x: stripX + stripW, y: tearTopY },
-        end: { x: stripX + stripW, y: tearBottomY },
-        thickness: 1,
-        color: cForest,
-        dashArray: [3, 3],
-      })
-    }
-
-    const centerX = stripX + stripW / 2
-
-    const t1 = 'SMJ AKTION'
-    page.drawText(t1, {
-      x: centerX - fontBold.widthOfTextAtSize(t1, 6) / 2,
-      y: tearTopY - 12,
-      size: 6,
-      font: fontBold,
-      color: cOrange,
-    })
-
-    let stripTitle = cleanText(data.title.toUpperCase())
-    if (stripTitle.length > 14) stripTitle = stripTitle.substring(0, 13) + '...'
-    page.drawText(stripTitle, {
-      x: centerX - fontBold.widthOfTextAtSize(stripTitle, 6.5) / 2,
-      y: tearTopY - 22,
-      size: 6.5,
-      font: fontBold,
-      color: cForest,
-    })
-
-    const miniQrSize = 34
-    page.drawImage(qrImage, {
-      x: centerX - miniQrSize / 2,
-      y: tearTopY - 26 - miniQrSize,
-      width: miniQrSize,
-      height: miniQrSize,
-    })
-
-    let shortDate = cleanText(data.dateStr || 'Bald').replace(/\s*\d{4}$/, '').trim()
-    if (shortDate.length > 15) shortDate = shortDate.substring(0, 14) + '..'
-    page.drawText(shortDate, {
-      x: centerX - fontBold.widthOfTextAtSize(shortDate, 5.5) / 2,
-      y: tearTopY - 68,
-      size: 5.5,
-      font: fontBold,
-      color: cForest,
-    })
-
-    const dom = 'smj-wegweiser.de'
-    page.drawText(dom, {
-      x: centerX - fontRegular.widthOfTextAtSize(dom, 5) / 2,
-      y: tearTopY - 78,
-      size: 5,
-      font: fontRegular,
-      color: cMuted,
-    })
-  }
-
-  page.drawLine({
-    start: { x: marginX, y: tearBottomY },
-    end: { x: W - marginX, y: tearBottomY },
-    thickness: 1,
-    color: cForest,
-    dashArray: [4, 3],
   })
 
   // --- FOOTER NOTICE ---
-  const footerY = 28
   page.drawText(
     `SMJ Regio Wegweiser - Jugend leitet Jugend - Katholische Schoenstatt-Mannesjugend - Stand: ${new Date().getFullYear()}`,
     {

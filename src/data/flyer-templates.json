@@ -1,0 +1,108 @@
+{
+  "weekend": {
+    "categoryLabel": "Aktionswochenende",
+    "subtitle": "Ein Wochenende voller Action, Natur und starker Gemeinschaft",
+    "description": "Wenn die Tage kurz sind oder der Winter ruft, wird es Zeit für echte Abenteuer! In der Klause 2.0 in Heiligenstadt verbringen wir ein Wochenende voller Geländespiele, Action im Wald, Kochen mit der Küchencrew und gemütlichen Abenden am Kamin. Raus aus dem Alltag, 100% handyfrei – rein ins Erlebnis!",
+    "highlights": [
+      {
+        "title": "Spannende Aktionen & Geländespiele",
+        "desc": "Mutproben, Taktikspiele und Abenteuer draußen in der Natur rund um die Klause."
+      },
+      {
+        "title": "Gemeinsames Kochen & Küchencrew",
+        "desc": "Zusammen schnippeln, braten und am großen Tisch essen – wie echte Pfadfinder."
+      },
+      {
+        "title": "Kaminfeuer & Gemeinschaft",
+        "desc": "Spannende Geschichten, Spiele, Gesang und echte Freundschaften fürs Leben."
+      }
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Wetterfeste Kleidung & feste Schuhe für draußen",
+      "Schlafsack oder Bettwäsche & Laken (Leihgebühr vor Ort)",
+      "Taschenlampe oder Kopflampe",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "notes": "Bring gerne deinen besten Freund mit – gemeinsam macht es doppelt so viel Spaß!"
+  },
+  "sterntreffen": {
+    "categoryLabel": "Sterntreffen",
+    "subtitle": "Das offizielle Zeltlager-Nachtreffen in der Klause 2.0",
+    "description": "Das große Wiedersehen der Zeltgemeinschaft! Drei Tage voller Lagerfeuer-Feeling, Geländespiele rund um die Klause und die schönsten Zeltlagerfotos auf der Großleinwand. Wir kochen zusammen, lassen die Geschichten des Sommers aufleben und starten gemeinsam ins neue SMJ-Jahr.",
+    "highlights": [
+      {
+        "title": "Großes Wiedersehen",
+        "desc": "Wiedersehen mit deiner Zeltgruppe, den Gruppenleitern und alten Freunden."
+      },
+      {
+        "title": "Lagerfotos & Geschichten",
+        "desc": "Die besten Momente des Zeltlagers noch einmal auf der Leinwand erleben."
+      },
+      {
+        "title": "Geländespiele & Mutproben",
+        "desc": "Action und Herausforderungen im Wald rund um die Klause 2.0."
+      }
+    ],
+    "packingList": [
+      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Wetterfeste Kleidung & feste Schuhe für draußen",
+      "Schlafsack oder Bettwäsche & Laken",
+      "Taschenlampe oder Kopflampe",
+      "Krankenkassenkarte"
+    ],
+    "notes": "Offen für alle Teilnehmer des vergangenen Zeltlagers und alle interessierten Jungs!"
+  },
+  "camp": {
+    "categoryLabel": "Sommerzeltlager",
+    "subtitle": "10 Tage Wildnis, Lagerfeuer und echte Kameradschaft",
+    "description": "Zehn Tage draußen im malerischen Wiesental bei Thalwenden: Zelte bauen, nachts am Bundesfeuer Wache halten, packende Geländespiele nach großer Motto-Storyline und Baden im Fluss. 100% handyfreie Zeit, echte Natur und eine Gemeinschaft, die fürs Leben verbindet.",
+    "highlights": [
+      {
+        "title": "10 Tage Zeltdorf & Lagerfeuer",
+        "desc": "Nachtwache am Bundesfeuer, Fackelzug und Schlafen im Mannschaftszelt."
+      },
+      {
+        "title": "Großes Lagerspiel nach Motto",
+        "desc": "Spannende Wettkämpfe, Abenteuer und Rollenspiele im Wald."
+      },
+      {
+        "title": "Erfahrene Gruppenleiter",
+        "desc": "Rundum betreut mit Vollverpflegung aus der eigenen Lagerküche."
+      }
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Feste Wanderschuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien"
+    ],
+    "notes": "Rundum-Vollverpflegung, geschulte Gruppenleiter und 100% handyfreie Natur."
+  },
+  "general": {
+    "categoryLabel": "Aktion & Abenteuer",
+    "subtitle": "Raus ins Abenteuer – mit der SMJ Regio Wegweiser",
+    "description": "Gemeinschaft erleben, Neues wagen und draußen sein! Bei unseren Aktionen erwarten dich spannende Spiele, handwerkliche Projekte, echte Freundschaften und erfahrene Gruppenleiter. Komm vorbei und sei dabei!",
+    "highlights": [
+      {
+        "title": "Echte Gemeinschaft",
+        "desc": "Zusammenhalt und starke Erlebnisse mit Gleichaltrigen."
+      },
+      {
+        "title": "Spannendes Programm",
+        "desc": "Aktionen, Spiele und Bewegung draußen an der frischen Luft."
+      },
+      {
+        "title": "Erfahrene Betreuung",
+        "desc": "Verlässliche Gruppenleiter nach dem Prinzip 'Jugend leitet Jugend'."
+      }
+    ],
+    "packingList": [
+      "Wetterfeste Kleidung",
+      "Feste Schuhe für draußen",
+      "Gute Laune und Abenteuerlust"
+    ],
+    "notes": "Weitere Details und Anmeldung online auf unserer Website."
+  }
+}
