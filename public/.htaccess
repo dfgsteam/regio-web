@@ -36,15 +36,22 @@ AddCharset UTF-8 .html .css .js .json .xml .ics
   RewriteRule ^zeltlager/?(.*)$ /abenteuer/zeltlager/$1 [R=301,L]
 
   # ----------------------------------------------------------------------------
-  # Authentik Guard: Schutz für Leiter-Toolbox, Flyer, Social-Studio & QR-Codes
+  # Weiterleitung von Legacy-Pfaden auf den zentralen /toolbox/ Namespace
+  # ----------------------------------------------------------------------------
+  RewriteRule ^flyer/(.*)$ /toolbox/flyer/$1 [R=301,L]
+  RewriteRule ^social/(.*)$ /toolbox/social/$1 [R=301,L]
+  RewriteRule ^qrcode/?$ /toolbox/ [R=301,L]
+
+  # ----------------------------------------------------------------------------
+  # Authentik Guard: Schutz für die gesamte Leiter-Toolbox (/toolbox/*)
   # ----------------------------------------------------------------------------
   # Auth-Dateien (Login, Callback, Logout) direkt durchlassen
   RewriteCond %{REQUEST_URI} ^/toolbox-auth/ [NC]
   RewriteRule ^ - [L]
 
-  # Geschützte Bereiche (/toolbox, /flyer, /social, /qrcode) über guard.php abfedern
-  RewriteCond %{REQUEST_URI} ^/(toolbox|flyer|social|qrcode)(/.*)?$ [NC]
-  RewriteRule ^(toolbox|flyer|social|qrcode)(/.*)?$ /toolbox-auth/guard.php?path=%{REQUEST_URI} [QSA,L]
+  # Die gesamte /toolbox/* über guard.php absichern
+  RewriteCond %{REQUEST_URI} ^/toolbox(/.*)?$ [NC]
+  RewriteRule ^toolbox(/.*)?$ /toolbox-auth/guard.php?path=%{REQUEST_URI} [QSA,L]
 
   # Ensure trailing slash for directory routes (e.g. /ueber-uns -> /ueber-uns/)
   RewriteCond %{REQUEST_FILENAME} !-f

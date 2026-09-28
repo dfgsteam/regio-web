@@ -1,0 +1,417 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Logo from '../../../components/common/Logo.astro'
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Banknote,
+  Printer,
+  ArrowLeft,
+  ExternalLink,
+  Compass,
+} from '@lucide/astro'
+import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../../lib/events'
+import type { Event } from '../../../lib/events'
+import { getAllCamps } from '../../../lib/camps'
+import type { CampEntry } from '../../../lib/camps'
+import { generateQrSvg } from '../../../scripts/qrcode-renderer'
+
+const BASE_DOMAIN = 'https://smj-wegweiser.de'
+
+export async function getStaticPaths() {
+  const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
+
+  const paths: {
+    params: { id: string }
+    props: { eventData?: Event; campData?: CampEntry; isCustom?: boolean }
+  }[] = []
+  const seen = new Set<string>()
+
+  // 1. Events
+  for (const event of events) {
+    const variants = getSlugVariants(event.slug, event.title, event.start.getFullYear())
+    for (const slug of variants) {
+      if (!seen.has(slug)) {
+        seen.add(slug)
+        paths.push({
+          params: { id: slug },
+          props: { eventData: event },
+        })
+      }
+    }
+  }
+
+  // 2. Camps
+  for (const camp of camps) {
+    const campSlug = `zeltlager-${camp.data.year}`
+    if (!seen.has(campSlug)) {
+      seen.add(campSlug)
+      paths.push({
+        params: { id: campSlug },
+        props: { campData: camp },
+      })
+    }
+  }
+
+  if (!seen.has('zeltlager')) {
+    seen.add('zeltlager')
+    paths.push({
+      params: { id: 'zeltlager' },
+      props: { campData: camps[0] },
+    })
+  }
+
+  // 3. Custom dynamic flyer
+  if (!seen.has('custom')) {
+    seen.add('custom')
+    paths.push({
+      params: { id: 'custom' },
+      props: { isCustom: true },
+    })
+  }
+
+  return paths
+}
+
+const { eventData, campData } = Astro.props
+
+// Resolve Flyer Fields
+let title = 'Veranstaltung der SMJ'
+let subtitle = 'Raus. Ins Abenteuer.'
+let categoryLabel = 'Aktion & Abenteuer'
+let dateStr = 'Demnächst'
+let locationStr = 'Wiesental bei Thalwenden'
+let ageStr = 'Jungs von 9–14 Jahren'
+let priceStr = 'Auf Anfrage'
+let targetUrl = `${BASE_DOMAIN}/abenteuer/`
+let highlights = [
+  { icon: 'flame', title: 'Lagerfeuer & Nachtspiele', desc: 'Echtes Outdoor-Feeling unter freiem Himmel.' },
+  { icon: 'tree', title: 'Gemeinschaft & Natur', desc: 'Draußen sein, neue Freunde finden & Abenteuer erleben.' },
+  { icon: 'shield', title: 'Jugend leitet Jugend', desc: 'Verlässliche und geschulte Gruppenleiter vor Ort.' },
+]
+
+if (campData) {
+  title = campData.data.title
+  subtitle = campData.data.motto
+    ? `Motto: ${campData.data.motto}`
+    : `Das große Sommerzeltlager ${campData.data.year} im Wiesental`
+  categoryLabel = `Sommerzeltlager ${campData.data.year}`
+  dateStr = formatDateRange(campData.data.date.start, campData.data.date.end)
+  locationStr = campData.data.location.name || 'Wiesental bei Thalwenden'
+  ageStr = formatAgeRange(campData.data.age.min, campData.data.age.max) || 'Jungs von 9–14 Jahren'
+  priceStr = campData.data.price || '189 €'
+  targetUrl = `${BASE_DOMAIN}/abenteuer/zeltlager-${campData.data.year}/`
+  highlights = [
+    { icon: 'flame', title: '10 Tage Zeltlager & Lagerfeuer', desc: 'Zelte bauen, Nachtwache halten & Geschichten am Feuer.' },
+    { icon: 'tree', title: 'Großes Geländespiel & Mottotage', desc: 'Spannende Wettkämpfe, Workshops & Badespaß.' },
+    { icon: 'shield', title: 'Erfahrene Leiterrunde', desc: 'Rundum betreut mit Vollverpflegung aus der Lagerküche.' },
+  ]
+} else if (eventData) {
+  title = eventData.title
+  subtitle = eventData.teaser || 'Ein Wochenende voller Action, Natur und starker Gemeinschaft.'
+  categoryLabel =
+    eventData.category === 'weekend'
+      ? 'Aktionswochenende'
+      : eventData.category === 'camp'
+        ? 'Zeltlager'
+        : 'Sonderaktion'
+  dateStr = formatDateRange(eventData.start, eventData.end)
+  locationStr = eventData.location || 'Klause 2.0, Heiligenstadt'
+  ageStr = formatAgeRange(eventData.ageMin, eventData.ageMax) || 'Jungs von 9–14 Jahren'
+  priceStr = eventData.price || 'Inkl. Verpflegung'
+  targetUrl = `${BASE_DOMAIN}/abenteuer/${eventData.slug}/`
+
+  if (eventData.highlights && eventData.highlights.length > 0) {
+    highlights = eventData.highlights.slice(0, 3).map((h, i) => ({
+      icon: i === 0 ? 'flame' : i === 1 ? 'tree' : 'shield',
+      title: h,
+      desc: 'Alle Details und Ablaufzeiten auf unserer Website.',
+    }))
+  }
+}
+
+// Generate Crisp SVG QR Code
+const qrSvg = await generateQrSvg(targetUrl, { margin: 1, errorCorrectionLevel: 'M' })
+const shortUrl = targetUrl.replace(/^https?:\/\//, '')
+---
+
+<BaseLayout
+  title={`A4 Flyer: ${title} – SMJ Regio Wegweiser`}
+  description={`Druckfertiger A4-Aushang und Abreiß-Flyer für ${title}`}
+  noIndex={true}
+>
+  <!-- Screen Navigation Bar (Hidden when printing) -->
+  <div class="no-print border-b border-paper/20 bg-forest-950 px-4 py-3 sticky top-0 z-50 shadow-md">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a
+          href="/toolbox/"
+          class="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-paper/70 hover:text-paper transition-colors py-2 px-3 border border-paper/20 rounded-xs bg-forest-900/60"
+        >
+          <ArrowLeft class="h-4 w-4" />
+          <span>Zurück zur Toolbox</span>
+        </a>
+        <span class="hidden sm:inline font-mono text-xs text-paper/40">|</span>
+        <span class="hidden sm:inline font-mono text-xs text-orange font-bold uppercase truncate max-w-xs">
+          📄 DIN A4 Druckansicht
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          id="print-flyer-btn"
+          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
+        >
+          <Printer class="h-4 w-4" />
+          <span>Jetzt Drucken / PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container centered for screen preview -->
+  <div class="bg-forest-900/80 min-h-screen py-6 sm:py-12 px-2 sm:px-4 flex justify-center items-start print:p-0 print:m-0 print:bg-white">
+    
+    <!-- Printable DIN A4 Flyer Container -->
+    <article
+      class="a4-flyer-page bg-paper text-forest-950 shadow-2xl relative flex flex-col justify-between"
+      style="width: 210mm; min-height: 297mm; padding: 12mm 14mm 8mm 14mm; box-sizing: border-box;"
+    >
+      
+      <!-- Top Header Row -->
+      <div>
+        <header class="border-b-4 border-forest-950 pb-4 flex items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 shrink-0 flex items-center justify-center p-1 border-2 border-forest-950 bg-forest-950 text-paper">
+              <Logo size="lg" tone="dark" />
+            </div>
+            <div>
+              <p class="font-mono text-xs font-bold uppercase tracking-widest text-orange">
+                SMJ Regio Wegweiser &bull; Katholische Jugend
+              </p>
+              <p class="font-mono text-[0.65rem] tracking-wider uppercase text-forest-950/70">
+                Thüringen &amp; Sachsen-Anhalt &bull; smj-wegweiser.de
+              </p>
+            </div>
+          </div>
+
+          <div class="text-right shrink-0">
+            <span class="inline-block border-2 border-forest-950 bg-forest-950 text-paper px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider">
+              {categoryLabel}
+            </span>
+          </div>
+        </header>
+
+        <!-- Main Title Section -->
+        <section class="mt-6 mb-4">
+          <div class="flex items-center gap-2 mb-2 font-mono text-xs font-bold text-orange tracking-widest uppercase">
+            <Compass class="h-4 w-4" />
+            <span>RAUS. INS ABENTEUER.</span>
+          </div>
+          <h1 class="font-display text-4xl sm:text-5xl uppercase tracking-tight text-forest-950 leading-[0.95]">
+            {title}
+          </h1>
+          <p class="mt-2 font-hand text-2xl text-orange font-bold">
+            // {subtitle}
+          </p>
+        </section>
+
+        <!-- Key Facts Grid (Dark Cards for High Contrast) -->
+        <section class="my-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
+              <Calendar class="h-3.5 w-3.5" />
+              <span>Wann</span>
+            </div>
+            <p class="font-mono text-xs font-bold leading-tight">{dateStr}</p>
+          </div>
+
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
+              <MapPin class="h-3.5 w-3.5" />
+              <span>Wo</span>
+            </div>
+            <p class="font-mono text-xs font-bold leading-tight">{locationStr}</p>
+          </div>
+
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
+              <Users class="h-3.5 w-3.5" />
+              <span>Wer</span>
+            </div>
+            <p class="font-mono text-xs font-bold leading-tight">{ageStr}</p>
+          </div>
+
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
+              <Banknote class="h-3.5 w-3.5" />
+              <span>Beitrag</span>
+            </div>
+            <p class="font-mono text-xs font-bold leading-tight">{priceStr}</p>
+          </div>
+        </section>
+
+        <!-- Highlights & Program Points -->
+        <section class="my-6">
+          <h2 class="font-mono text-xs font-bold uppercase tracking-widest text-forest-950/80 mb-3 border-b-2 border-forest-950/30 pb-1">
+            Das erwartet dich bei dieser Aktion:
+          </h2>
+          <div class="space-y-3">
+            {highlights.map((h) => (
+              <div class="flex items-start gap-3 border-l-4 border-orange pl-3 py-0.5">
+                <div>
+                  <h3 class="font-display text-lg uppercase text-forest-950 tracking-wide leading-tight">
+                    {h.title}
+                  </h3>
+                  <p class="font-sans text-xs text-forest-950/80 leading-snug">
+                    {h.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <!-- Bottom Registration & QR Code Call-to-Action -->
+      <div>
+        <section class="border-2 border-forest-950 bg-paper p-4 my-4 flex items-center justify-between gap-6 relative overflow-hidden">
+          <div class="space-y-1.5">
+            <span class="inline-block bg-orange text-forest-950 font-mono text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5">
+              Jetzt Anmelden &amp; Plätze sichern
+            </span>
+            <h3 class="font-display text-2xl uppercase tracking-tight text-forest-950">
+              Alle Infos online &bull; Scan den Code!
+            </h3>
+            <p class="font-sans text-xs text-forest-950/80 max-w-md">
+              Kamera ans Handy halten oder Link im Browser öffnen. Dort gibt es die offizielle Anmeldung, Packliste und alle Details für deine Eltern.
+            </p>
+            <p class="font-mono text-xs font-bold text-forest-950 pt-1 flex items-center gap-1.5">
+              <ExternalLink class="h-3.5 w-3.5 text-orange" />
+              <span id="flyer-url-display">{shortUrl}</span>
+            </p>
+          </div>
+
+          <!-- Large Scannable QR Code -->
+          <div class="shrink-0 flex flex-col items-center">
+            <div class="border-2 border-forest-950 bg-white p-2 shadow-sm">
+              <div id="flyer-qr-container" class="w-32 h-32 flex items-center justify-center" set:html={qrSvg}></div>
+            </div>
+            <span class="font-mono text-[0.6rem] font-bold tracking-widest text-forest-950 mt-1 uppercase">
+              Hier scannen &uarr;
+            </span>
+          </div>
+        </section>
+
+        <!-- Tear-off Strips (Abreißzettel für Schwarzes Brett / Schaukasten) -->
+        <section class="pt-4 border-t-2 border-dashed border-forest-950 relative">
+          <div class="absolute -top-3 left-4 bg-paper px-2 font-mono text-[0.6rem] uppercase tracking-widest text-forest-950/60 flex items-center gap-1">
+            <span>&cross; Hier einschneiden zum Abreißen</span>
+          </div>
+
+          <div class="grid grid-cols-6 divide-x-2 divide-dashed divide-forest-950 border-r-2 border-dashed border-forest-950 h-32 pt-2">
+            {[1, 2, 3, 4, 5, 6].map(() => (
+              <div class="px-1 text-center flex flex-col justify-between items-center text-[0.6rem] font-mono leading-tight py-1">
+                <span class="font-bold text-orange uppercase tracking-wider text-[0.55rem] truncate w-full">
+                  SMJ AKTION
+                </span>
+                <span class="font-bold text-forest-950 uppercase text-[0.65rem] truncate w-full">
+                  {title}
+                </span>
+                <div class="w-12 h-12 my-0.5 border border-forest-950 p-0.5 bg-white shrink-0" set:html={qrSvg}></div>
+                <span class="text-[0.5rem] text-forest-950 font-bold truncate w-full">
+                  {dateStr.split('–')[0]}
+                </span>
+                <span class="text-[0.5rem] text-forest-950/70 truncate w-full">
+                  smj-wegweiser.de
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Footer Notice -->
+        <footer class="mt-3 pt-2 border-t border-forest-950/20 flex justify-between items-center font-mono text-[0.55rem] text-forest-950/60">
+          <span>SMJ Regio Wegweiser &bull; Jugend leitet Jugend &bull; Katholische Schönstatt-Mannesjugend</span>
+          <span>Druckfertiger Aushang &bull; Stand: {new Date().getFullYear()}</span>
+        </footer>
+      </div>
+
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    body {
+      background: white !important;
+      color: #111713 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .a4-flyer-page {
+      border: 2px solid #111713 !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      max-width: none !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      padding: 0 !important;
+    }
+  }
+</style>
+
+<script>
+  import { generateQrSvg } from '../../../scripts/qrcode-renderer'
+
+  const printBtn = document.getElementById('print-flyer-btn')
+  if (printBtn) {
+    printBtn.addEventListener('click', () => {
+      window.print()
+    })
+  }
+
+  // Handle Custom Flyer dynamic URL params if route is /toolbox/flyer/custom
+  if (window.location.pathname.includes('/toolbox/flyer/custom') || window.location.pathname.includes('/flyer/custom')) {
+    const params = new URLSearchParams(window.location.search)
+    const customTitle = params.get('title')
+    const customDate = params.get('date')
+    const customLoc = params.get('loc')
+    const customUrl = params.get('url')
+
+    if (customTitle) {
+      const h1 = document.querySelector('h1')
+      if (h1) h1.textContent = customTitle
+      document.title = `A4 Flyer: ${customTitle} – SMJ Regio Wegweiser`
+    }
+    if (customDate) {
+      const dateEl = document.querySelectorAll('.a4-flyer-page p.font-bold')[0]
+      if (dateEl) dateEl.textContent = customDate
+    }
+    if (customLoc) {
+      const locEl = document.querySelectorAll('.a4-flyer-page p.font-bold')[1]
+      if (locEl) locEl.textContent = customLoc
+    }
+    if (customUrl) {
+      const linkEl = document.getElementById('flyer-url-display')
+      if (linkEl) linkEl.textContent = customUrl.replace(/^https?:\/\//, '')
+      const qrContainer = document.getElementById('flyer-qr-container')
+      if (qrContainer) {
+        generateQrSvg(customUrl, { margin: 1, errorCorrectionLevel: 'M' })
+          .then((svg) => {
+            qrContainer.innerHTML = svg
+          })
+          .catch((e) => console.error(e))
+      }
+    }
+  }
+</script>

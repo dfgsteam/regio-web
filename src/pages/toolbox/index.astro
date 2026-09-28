@@ -128,8 +128,8 @@ for (const camp of allCamps) {
     categoryLabel: `Zeltlager ${camp.data.year}`,
     targetUrl: `${BASE_DOMAIN}/abenteuer/zeltlager-${camp.data.year}/`,
     toolboxUrl: `/toolbox/zeltlager-${camp.data.year}/`,
-    flyerUrl: `/flyer/zeltlager-${camp.data.year}/`,
-    socialUrl: `/social/zeltlager-${camp.data.year}/`,
+    flyerUrl: `/toolbox/flyer/zeltlager-${camp.data.year}/`,
+    socialUrl: `/toolbox/social/zeltlager-${camp.data.year}/`,
     dateStr: formatDateRange(camp.data.date.start, camp.data.date.end),
     location: camp.data.location.name,
     ageGroup: formatAgeRange(camp.data.age.min, camp.data.age.max) || undefined,
@@ -155,8 +155,8 @@ for (const ev of sortedEvents) {
     categoryLabel: isWeekend ? 'Wochenende' : isSpecial ? 'Sonderaktion' : 'Veranstaltung',
     targetUrl: `${BASE_DOMAIN}/abenteuer/${ev.slug}/`,
     toolboxUrl: `/toolbox/${ev.slug}/`,
-    flyerUrl: `/flyer/${ev.slug}/`,
-    socialUrl: `/social/${ev.slug}/`,
+    flyerUrl: `/toolbox/flyer/${ev.slug}/`,
+    socialUrl: `/toolbox/social/${ev.slug}/`,
     dateStr: formatDateRange(ev.start, ev.end),
     location: ev.location,
     ageGroup: ageFormatted || undefined,
@@ -280,7 +280,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
             <div class="pt-2 flex flex-wrap items-center gap-3">
               <a
                 id="custom-flyer-btn"
-                href={`/flyer/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                href={`/toolbox/flyer/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
                 target="_blank"
                 class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
               >
@@ -289,7 +289,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
               </a>
               <a
                 id="custom-social-btn"
-                href={`/social/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                href={`/toolbox/social/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
                 target="_blank"
                 class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
               >
@@ -631,7 +631,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         </a>
         <a
           id="modal-flyer-link"
-          href="/flyer/custom/"
+          href="/toolbox/flyer/custom/"
           target="_blank"
           class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
@@ -640,7 +640,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         </a>
         <a
           id="modal-social-link"
-          href="/social/custom/"
+          href="/toolbox/social/custom/"
           target="_blank"
           class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
@@ -682,10 +682,10 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
     if (customCaption) customCaption.textContent = text
     if (customFlyerBtn) {
-      customFlyerBtn.href = `/flyer/custom/?url=${encodeURIComponent(text)}`
+      customFlyerBtn.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(text)}`
     }
     if (customSocialBtn) {
-      customSocialBtn.href = `/social/custom/?url=${encodeURIComponent(text)}`
+      customSocialBtn.href = `/toolbox/social/custom/?url=${encodeURIComponent(text)}`
     }
 
     try {
@@ -810,7 +810,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       if (flyerUrl) {
         modalFlyerLink.href = flyerUrl
       } else {
-        modalFlyerLink.href = `/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+        modalFlyerLink.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
       }
     }
 
@@ -818,7 +818,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       if (socialUrl) {
         modalSocialLink.href = socialUrl
       } else {
-        modalSocialLink.href = `/social/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
+        modalSocialLink.href = `/toolbox/social/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
       }
     }
 
