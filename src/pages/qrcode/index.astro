@@ -152,7 +152,6 @@ for (const camp of allCamps) {
 
 // Add Events
 for (const ev of sortedEvents) {
-  // Avoid duplicate if slug already added
   if (items.some((it) => it.id === `event-${ev.slug}`)) continue
 
   const ageFormatted = formatAgeRange(ev.ageMin, ev.ageMax)
@@ -182,7 +181,7 @@ for (const ev of sortedEvents) {
 
 <ContentLayout
   title="QR-Code Generator & Flyer-Tools – SMJ Regio Wegweiser"
-  description="Offizielle, hochauflösende QR-Codes mit SMJ-Logo für alle Veranstaltungen, Zeltlager und Kanäle der SMJ Regio Wegweiser. Kostenlos als PNG für Flyer und Plakate herunterladen."
+  description="Druckfertige, hochauflösende QR-Codes für alle Veranstaltungen, Zeltlager und Kanäle der SMJ Regio Wegweiser. Kostenlos als PNG herunterladen."
   noIndex={true}
 >
   <!-- Hero Section -->
@@ -190,14 +189,14 @@ for (const ev of sortedEvents) {
     <Container>
       <div class="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <Eyebrow label="Flyer- & Material-Hub" muted />
+          <Eyebrow label="Flyer- &amp; Material-Hub" muted />
           <h1 class="display display-xl mt-6 text-forest-950">
             QR-Codes für<br />
             <span class="text-orange">Flyer &amp; Events.</span>
           </h1>
           <p class="mt-6 max-w-2xl text-base leading-relaxed text-forest-950/80">
-            Generiere und lade offizielle, gestochen scharfe QR-Codes mit dem SMJ-Wegweiser-Logo herunter.
-            Perfekt vorbereitet für Flyer, Plakate, Social Media, Gruppenstunden und Anmeldezettel.
+            Lade druckfertige, gestochen scharfe QR-Codes für alle Veranstaltungen und Seiten herunter.
+            Ideal für Flyer, Plakate, Anmeldezettel und Social-Media-Posts.
           </p>
         </div>
 
@@ -207,7 +206,7 @@ for (const ev of sortedEvents) {
             <span>Druckfertige Qualität</span>
           </div>
           <p class="text-[0.72rem] leading-relaxed text-forest-950/70 max-w-xs">
-            Fehlerkorrektur Level H (30 % Redundanz) mit integriertem Emblem – scannt zuverlässig auf allen Smartphones.
+            Optimierte QR-Codes mit hohem Kontrast – scannen blitzschnell und zuverlässig auf allen Smartphones.
           </p>
         </div>
       </div>
@@ -228,12 +227,9 @@ for (const ev of sortedEvents) {
               <p class="font-mono text-xs text-paper/60">Gib einen beliebigen Link ein und erstelle sofort deinen Download-Code</p>
             </div>
           </div>
-          <span class="font-mono text-[0.65rem] uppercase tracking-widest text-orange border border-orange/30 px-3 py-1 bg-orange/5">
-            Live Tool
-          </span>
         </div>
 
-        <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_280px] xl:grid-cols-[1fr_320px] items-center">
+        <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] items-center">
           <!-- Inputs Column -->
           <div class="space-y-6">
             <div>
@@ -252,39 +248,6 @@ for (const ev of sortedEvents) {
               <p class="mt-2 font-mono text-[0.7rem] text-paper/50">
                 Tipp: Funktioniert mit jeder Unterseite von smj-wegweiser.de, WhatsApp-Gruppen-Links oder Anmeldeformularen.
               </p>
-            </div>
-
-            <!-- Custom Options Row -->
-            <div class="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label class="block font-mono text-[0.7rem] font-bold uppercase tracking-wider text-paper/70 mb-2">
-                  Design-Optionen
-                </label>
-                <div class="space-y-2">
-                  <label class="flex items-center gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      id="custom-logo-toggle"
-                      checked
-                      class="h-4 w-4 rounded accent-orange border-paper/30 bg-forest-900"
-                    />
-                    <span class="font-mono text-xs text-paper">Mit SMJ-Wegweiser Logo</span>
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label for="custom-color-select" class="block font-mono text-[0.7rem] font-bold uppercase tracking-wider text-paper/70 mb-2">
-                  Farbvariante
-                </label>
-                <select
-                  id="custom-color-select"
-                  class="w-full bg-forest-900 border border-paper/20 px-3 py-2 font-mono text-xs text-paper focus:border-orange focus:outline-none"
-                >
-                  <option value="classic">Klassisch Schwarz / Weiß (Druckoptimiert)</option>
-                  <option value="forest">SMJ Dunkelwald (#111713) / Weiß</option>
-                </select>
-              </div>
             </div>
 
             <!-- Action Buttons -->
@@ -316,13 +279,13 @@ for (const ev of sortedEvents) {
             </div>
           </div>
 
-          <!-- Preview Column -->
-          <div class="flex flex-col items-center justify-center p-6 bg-forest-900 border border-paper/15 text-center">
+          <!-- Preview Column (Strictly Contained) -->
+          <div class="flex flex-col items-center justify-center p-5 bg-forest-900 border border-paper/15 text-center overflow-hidden">
             <p class="mono-label text-[0.65rem] text-paper/50 mb-3">// LIVE VORSCHAU</p>
-            <div class="relative p-3 bg-white border-2 border-paper/30 shadow-xl inline-block">
-              <canvas id="custom-qr-canvas" class="w-48 h-48 sm:w-56 sm:h-56 block"></canvas>
+            <div class="w-48 h-48 max-w-full bg-white p-2.5 border-2 border-paper/30 shadow-xl flex items-center justify-center overflow-hidden rounded-sm">
+              <canvas id="custom-qr-canvas" class="w-full h-full block object-contain"></canvas>
             </div>
-            <p id="custom-preview-caption" class="mt-3 font-mono text-[0.65rem] text-orange truncate max-w-[220px]">
+            <p id="custom-preview-caption" class="mt-3 font-mono text-[0.65rem] text-orange truncate max-w-[200px]">
               https://smj-wegweiser.de/abenteuer/zeltlager-2026/
             </p>
           </div>
@@ -360,12 +323,12 @@ for (const ev of sortedEvents) {
         <!-- Counter -->
         <div class="flex items-center gap-3">
           <span id="qr-items-count" class="font-mono text-xs text-paper/60 whitespace-nowrap">
-            {items.length} Ziele verfügbar
+            {items.filter((i) => i.category === 'event').length} Veranstaltungen verfügbar
           </span>
         </div>
       </div>
 
-      <!-- Category Filter Pills -->
+      <!-- Category Filter Pills (Default Active: Veranstaltungen) -->
       <div class="mt-4 pt-4 border-t border-paper/10 flex items-center gap-2 overflow-x-auto pb-1 text-xs">
         <span class="font-mono text-[0.65rem] uppercase text-paper/50 tracking-wider mr-1 shrink-0 flex items-center gap-1">
           <SlidersHorizontal class="h-3 w-3 text-orange" />
@@ -373,17 +336,17 @@ for (const ev of sortedEvents) {
         </span>
         <button
           type="button"
-          data-category-filter="all"
+          data-category-filter="event"
           class="qr-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-orange text-forest-950 border border-orange cursor-pointer"
         >
-          Alle ({items.length})
+          Veranstaltungen ({items.filter((i) => i.category === 'event').length})
         </button>
         <button
           type="button"
-          data-category-filter="event"
+          data-category-filter="all"
           class="qr-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-forest-900 text-paper/70 border border-paper/20 hover:border-orange hover:text-paper cursor-pointer"
         >
-          Veranstaltungen ({items.filter((i) => i.category === 'event').length})
+          Alle ({items.length})
         </button>
         <button
           type="button"
@@ -426,9 +389,10 @@ for (const ev of sortedEvents) {
         {
           items.map((item) => {
             const searchTokens = `${item.title} ${item.subtitle || ''} ${item.categoryLabel} ${item.location || ''} ${item.dateStr || ''} ${item.targetUrl}`.toLowerCase()
+            const isInitialHidden = item.category !== 'event'
             return (
               <article
-                class="qr-card group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900/60 p-6 transition-all duration-300 hover:border-orange hover:bg-forest-900"
+                class={`qr-card group relative flex flex-col justify-between border-2 border-paper/15 bg-forest-900/60 p-6 transition-all duration-300 hover:border-orange hover:bg-forest-900 ${isInitialHidden ? 'hidden' : ''}`}
                 data-category={item.category}
                 data-search={searchTokens}
                 data-url={item.targetUrl}
@@ -478,21 +442,18 @@ for (const ev of sortedEvents) {
                   )}
                 </div>
 
-                <!-- Center QR Code Canvas Preview -->
+                <!-- Center QR Code Canvas Preview (Fixed Size Container) -->
                 <div class="my-6 flex flex-col items-center">
                   <div
-                    class="qr-preview-wrapper relative p-3 bg-white border border-paper/20 rounded-sm shadow-md transition-transform duration-300 group-hover:scale-102 cursor-pointer"
+                    class="qr-preview-wrapper w-44 h-44 max-w-full p-2.5 bg-white border border-paper/30 rounded-sm shadow-md transition-transform duration-300 group-hover:scale-105 cursor-pointer flex items-center justify-center overflow-hidden"
                     title="Klicken zum Vergrößern"
                     data-preview-trigger={item.id}
                   >
                     <canvas
                       data-qr-target={item.targetUrl}
                       data-qr-filename={item.filename}
-                      class="qr-item-canvas w-40 h-40 block"
+                      class="qr-item-canvas w-full h-full block object-contain"
                     ></canvas>
-                    <span class="absolute inset-0 bg-forest-950/0 hover:bg-forest-950/10 transition-colors flex items-center justify-center">
-                      <span class="sr-only">Vergrößern</span>
-                    </span>
                   </div>
 
                   <!-- Target URL Display -->
@@ -569,8 +530,8 @@ for (const ev of sortedEvents) {
       </div>
 
       <div class="my-6 flex justify-center">
-        <div class="p-4 bg-white border-4 border-paper shadow-2xl inline-block">
-          <canvas id="modal-qr-canvas" class="w-64 h-64 sm:w-80 sm:h-80 block"></canvas>
+        <div class="w-64 h-64 sm:w-72 sm:h-72 max-w-full p-3 bg-white border-4 border-paper shadow-2xl flex items-center justify-center overflow-hidden rounded-sm">
+          <canvas id="modal-qr-canvas" class="w-full h-full block object-contain"></canvas>
         </div>
       </div>
 
@@ -619,10 +580,9 @@ for (const ev of sortedEvents) {
       try {
         await renderQrToCanvas(canvas, url, {
           size: 512,
-          withLogo: true,
-          darkColor: '#111713',
+          darkColor: '#000000',
           lightColor: '#ffffff',
-          logoSrc: '/logo.svg',
+          margin: 2,
         })
       } catch (err) {
         console.error('Error rendering QR canvas:', err)
@@ -633,8 +593,6 @@ for (const ev of sortedEvents) {
   // Custom Generator Logic
   const customInput = document.getElementById('custom-url-input') as HTMLInputElement | null
   const customCanvas = document.getElementById('custom-qr-canvas') as HTMLCanvasElement | null
-  const customLogoToggle = document.getElementById('custom-logo-toggle') as HTMLInputElement | null
-  const customColorSelect = document.getElementById('custom-color-select') as HTMLSelectElement | null
   const customCaption = document.getElementById('custom-preview-caption')
   const customDownload1024 = document.getElementById('custom-download-1024')
   const customDownload2048 = document.getElementById('custom-download-2048')
@@ -646,17 +604,12 @@ for (const ev of sortedEvents) {
     const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
     if (customCaption) customCaption.textContent = text
 
-    const withLogo = customLogoToggle ? customLogoToggle.checked : true
-    const colorMode = customColorSelect ? customColorSelect.value : 'classic'
-    const darkColor = colorMode === 'forest' ? '#111713' : '#000000'
-
     try {
       await renderQrToCanvas(customCanvas, text, {
         size: 512,
-        withLogo,
-        darkColor,
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
     } catch (e) {
       console.error('Custom QR render failed', e)
@@ -664,23 +617,16 @@ for (const ev of sortedEvents) {
   }
 
   if (customInput) customInput.addEventListener('input', updateCustomQR)
-  if (customLogoToggle) customLogoToggle.addEventListener('change', updateCustomQR)
-  if (customColorSelect) customColorSelect.addEventListener('change', updateCustomQR)
 
-  if (customDownload1024 && customCanvas && customInput) {
+  if (customDownload1024 && customInput) {
     customDownload1024.addEventListener('click', async () => {
       const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
-      const withLogo = customLogoToggle ? customLogoToggle.checked : true
-      const colorMode = customColorSelect ? customColorSelect.value : 'classic'
-      const darkColor = colorMode === 'forest' ? '#111713' : '#000000'
-
       const offCanvas = document.createElement('canvas')
       await renderQrToCanvas(offCanvas, text, {
         size: 1024,
-        withLogo,
-        darkColor,
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
       downloadCanvasAsPng(offCanvas, 'qr-smj-custom-1024.png')
     })
@@ -689,17 +635,12 @@ for (const ev of sortedEvents) {
   if (customDownload2048 && customInput) {
     customDownload2048.addEventListener('click', async () => {
       const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
-      const withLogo = customLogoToggle ? customLogoToggle.checked : true
-      const colorMode = customColorSelect ? customColorSelect.value : 'classic'
-      const darkColor = colorMode === 'forest' ? '#111713' : '#000000'
-
       const offCanvas = document.createElement('canvas')
       await renderQrToCanvas(offCanvas, text, {
         size: 2048,
-        withLogo,
-        darkColor,
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
       downloadCanvasAsPng(offCanvas, 'qr-smj-custom-2048-hd.png')
     })
@@ -734,10 +675,9 @@ for (const ev of sortedEvents) {
       const offCanvas = document.createElement('canvas')
       await renderQrToCanvas(offCanvas, url, {
         size: 1024,
-        withLogo: true,
-        darkColor: '#111713',
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
       downloadCanvasAsPng(offCanvas, `${filename}.png`)
       return
@@ -752,10 +692,9 @@ for (const ev of sortedEvents) {
       const offCanvas = document.createElement('canvas')
       await renderQrToCanvas(offCanvas, url, {
         size: 2048,
-        withLogo: true,
-        darkColor: '#111713',
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
       downloadCanvasAsPng(offCanvas, `${filename}.png`)
       return
@@ -808,10 +747,9 @@ for (const ev of sortedEvents) {
 
     await renderQrToCanvas(modalCanvas, url, {
       size: 1024,
-      withLogo: true,
-      darkColor: '#111713',
+      darkColor: '#000000',
       lightColor: '#ffffff',
-      logoSrc: '/logo.svg',
+      margin: 2,
     })
 
     modal.showModal()
@@ -830,10 +768,9 @@ for (const ev of sortedEvents) {
       const offCanvas = document.createElement('canvas')
       await renderQrToCanvas(offCanvas, activeModalUrl, {
         size: 1024,
-        withLogo: true,
-        darkColor: '#111713',
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
       downloadCanvasAsPng(offCanvas, `${activeModalFilename}-1024.png`)
     })
@@ -845,10 +782,9 @@ for (const ev of sortedEvents) {
       const offCanvas = document.createElement('canvas')
       await renderQrToCanvas(offCanvas, activeModalUrl, {
         size: 2048,
-        withLogo: true,
-        darkColor: '#111713',
+        darkColor: '#000000',
         lightColor: '#ffffff',
-        logoSrc: '/logo.svg',
+        margin: 2,
       })
       downloadCanvasAsPng(offCanvas, `${activeModalFilename}-2048-hd.png`)
     })
@@ -881,7 +817,7 @@ for (const ev of sortedEvents) {
     })
   }
 
-  // Instant Live Search & Filter
+  // Instant Live Search & Filter (Default: Veranstaltungen)
   const searchInput = document.getElementById('qr-search-input') as HTMLInputElement | null
   const searchClear = document.getElementById('qr-search-clear')
   const filterBtns = document.querySelectorAll<HTMLButtonElement>('.qr-filter-btn')
@@ -890,7 +826,7 @@ for (const ev of sortedEvents) {
   const resetFilterBtn = document.getElementById('qr-reset-filter-btn')
   const cards = document.querySelectorAll<HTMLElement>('.qr-card')
 
-  let currentCategory = 'all'
+  let currentCategory = 'event'
   let searchQuery = ''
 
   function applyFilters() {
@@ -917,7 +853,8 @@ for (const ev of sortedEvents) {
     })
 
     if (itemsCountEl) {
-      itemsCountEl.textContent = `${visibleCount} ${visibleCount === 1 ? 'Ziel' : 'Ziele'} gefunden`
+      const label = currentCategory === 'event' ? 'Veranstaltungen' : currentCategory === 'camp' ? 'Zeltlager' : 'Ziele'
+      itemsCountEl.textContent = `${visibleCount} ${label} verfügbar`
     }
 
     if (noResultsEl) {
@@ -961,7 +898,7 @@ for (const ev of sortedEvents) {
       })
       btn.className =
         'qr-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-orange text-forest-950 border border-orange cursor-pointer'
-      currentCategory = btn.dataset.categoryFilter || 'all'
+      currentCategory = btn.dataset.categoryFilter || 'event'
       applyFilters()
     })
   })
@@ -970,9 +907,9 @@ for (const ev of sortedEvents) {
     resetFilterBtn.addEventListener('click', () => {
       searchInput.value = ''
       searchQuery = ''
-      currentCategory = 'all'
+      currentCategory = 'event'
       filterBtns.forEach((b) => {
-        if (b.dataset.categoryFilter === 'all') {
+        if (b.dataset.categoryFilter === 'event') {
           b.className =
             'qr-filter-btn px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider transition-colors shrink-0 bg-orange text-forest-950 border border-orange cursor-pointer'
         } else {
@@ -987,8 +924,10 @@ for (const ev of sortedEvents) {
   // Run on page load & view transitions
   initCardCanvases()
   updateCustomQR()
+  applyFilters()
   document.addEventListener('astro:page-load', () => {
     initCardCanvases()
     updateCustomQR()
+    applyFilters()
   })
 </script>
