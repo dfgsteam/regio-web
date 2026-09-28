@@ -13,7 +13,7 @@ $_SESSION['oauth2_state'] = $state;
 // Gewünschte Zieladresse nach erfolgreichem Login merken
 $returnTo = $_GET['return_to'] ?? '/toolbox/';
 // Erlaube nur sichere interne Weiterleitungen
-if (!preg_match('#^/(toolbox|flyer|social)#', $returnTo)) {
+if (!preg_match('#^/(toolbox|flyer|social|qrcode)#', $returnTo)) {
     $returnTo = '/toolbox/';
 }
 $_SESSION['oauth2_return_to'] = $returnTo;

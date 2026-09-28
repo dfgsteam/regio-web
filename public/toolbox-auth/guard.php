@@ -49,10 +49,16 @@ $rawPath = $_GET['path'] ?? $_SERVER['REQUEST_URI'] ?? '/toolbox/';
 $urlPath = parse_url($rawPath, PHP_URL_PATH);
 $cleanPath = ltrim(preg_replace('#/+#', '/', $urlPath), '/');
 
+// Falls Verzeichnis ohne Slash aufgerufen wird -> 301 Redirect für saubere URLs
+if (is_dir($docRoot . '/' . $cleanPath) && substr($urlPath, -1) !== '/') {
+    header('Location: ' . $urlPath . '/', true, 301);
+    exit;
+}
+
 // Kandidaten für Astro Static Output (.html oder Verzeichnis/index.html)
 $candidates = [
-    $docRoot . '/' . $cleanPath,
     $docRoot . '/' . rtrim($cleanPath, '/') . '/index.html',
+    $docRoot . '/' . $cleanPath,
     $docRoot . '/' . $cleanPath . '.html',
 ];
 
