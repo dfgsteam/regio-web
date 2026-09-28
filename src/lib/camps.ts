@@ -1,7 +1,42 @@
 import { getCollection } from 'astro:content'
 import type { CollectionEntry } from 'astro:content'
+import { eventProvider } from './events/provider'
+import { getRegistrationState } from './civicrm/registration'
+import type { RegistrationState } from './civicrm/registration'
 
 export type CampEntry = CollectionEntry<'camps'>
+
+export async function getCampRegistration(camp: CampEntry['data']): Promise<{
+  state: RegistrationState
+  url?: string
+  opensAt?: Date
+  deadline?: Date
+  closesAt: Date
+}> {
+  const events = await eventProvider.getEvents()
+  const linked = events.find((event) => event.category === 'camp' && event.start.getFullYear() === camp.year)
+  if (!camp.active || !camp.registration.enabled) {
+    return { state: 'unavailable', closesAt: camp.date.start }
+  }
+  if (linked?.civiEventId) {
+    return {
+      state: getRegistrationState(linked),
+      url: linked.registrationUrl,
+      opensAt: linked.registrationOpensAt,
+      deadline: linked.registrationDeadline,
+      closesAt: linked.registrationDeadline && linked.registrationDeadline < linked.start
+        ? linked.registrationDeadline : linked.start,
+    }
+  }
+
+  return {
+    state: isCampRegistrationOpen(camp) ? 'open' : 'closed',
+    url: camp.registration.url,
+    deadline: camp.registration.deadline,
+    closesAt: camp.registration.deadline && camp.registration.deadline.getTime() + 86_400_000 < camp.date.start.getTime()
+      ? new Date(camp.registration.deadline.getTime() + 86_400_000) : camp.date.start,
+  }
+}
 
 export function isCampRegistrationOpen(camp: CampEntry['data'], now = new Date()): boolean {
   if (!camp.active || !camp.registration.enabled || !camp.registration.url) return false

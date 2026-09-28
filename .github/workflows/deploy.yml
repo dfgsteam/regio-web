@@ -7,7 +7,8 @@ on:
   repository_dispatch:
     types: [calendar_update, rebuild]
   schedule:
-    - cron: '0 6 * * *'
+    # Registration capacity is cached in the static build; refresh it hourly.
+    - cron: '0 * * * *'
 
 permissions:
   contents: write
@@ -36,6 +37,12 @@ jobs:
 
       - name: Sync calendar events
         run: npm run sync:calendar
+
+      - name: Sync CiviCRM registrations
+        env:
+          CIVICRM_API_KEY: ${{ secrets.CIVICRM_API_KEY }}
+          CIVICRM_SITE_KEY: ${{ secrets.CIVICRM_SITE_KEY }}
+        run: npm run sync:civicrm
 
       - name: Typecheck
         run: npm run check

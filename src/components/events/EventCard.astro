@@ -1,6 +1,7 @@
 ---
 import { formatAgeRange, formatDateRange } from '../../lib/events'
 import type { Event } from '../../lib/events'
+import { getRegistrationState } from '../../lib/civicrm/registration'
 
 interface Props {
   event: Event
@@ -13,6 +14,7 @@ const isCamp = event.category === 'camp' || event.title.toLowerCase().includes('
 const isFeatured = featured || isCamp
 const eventYear = event.start.getFullYear()
 const isPast = event.end < new Date()
+const registrationState = getRegistrationState(event)
 
 // Past camps link to their specific year page /abenteuer/zeltlager-[year]/
 // Current camp links to /abenteuer/zeltlager/ (which is also reachable via /abenteuer/zeltlager-[year]/)
@@ -63,6 +65,6 @@ const age = formatAgeRange(event.ageMin, event.ageMax)
   </dl>
 
   <span class="mt-auto pt-6 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
-    {isCamp ? 'Zum Zeltlager-Erlebnis →' : isPast ? 'Rückblick ansehen →' : (event.registrationUrl ? 'Mehr Infos & Anmeldung →' : 'Ohne Anmeldung · Details →')}
+    {isCamp ? 'Zum Zeltlager-Erlebnis →' : isPast ? 'Rückblick ansehen →' : registrationState === 'full' ? 'Ausgebucht · Details →' : registrationState === 'upcoming' ? 'Anmeldung startet bald →' : registrationState === 'closed' ? 'Anmeldung geschlossen →' : registrationState === 'open' ? 'Mehr Infos & Anmeldung →' : 'Details ansehen →'}
   </span>
 </article>

@@ -3,16 +3,16 @@ import BaseLayout from './BaseLayout.astro'
 import Header from '../components/navigation/Header.astro'
 import Footer from '../components/navigation/Footer.astro'
 import type { CollectionEntry } from 'astro:content'
-import { isCampRegistrationOpen } from '../lib/camps'
+import { getCampRegistration } from '../lib/camps'
 
 interface Props {
   camp: CollectionEntry<'camps'>['data']
 }
 
 const { camp } = Astro.props
+const registration = await getCampRegistration(camp)
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '')
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString()
 
 const eventStructuredData = {
   '@context': 'https://schema.org',
@@ -29,14 +29,16 @@ const eventStructuredData = {
     '@type': 'Place',
     name: camp.location.name,
   },
-  offers: isCampRegistrationOpen(camp)
+  offers: registration.state === 'open' && registration.url
     ? {
         '@type': 'Offer',
-        url: camp.registration.url ?? canonicalUrl,
+        url: registration.url,
         availability: 'https://schema.org/InStock',
-        validFrom: camp.registration.deadline?.toISOString(),
+        validThrough: registration.deadline?.toISOString(),
       }
-    : undefined,
+    : registration.state === 'full'
+      ? { '@type': 'Offer', availability: 'https://schema.org/SoldOut' }
+      : undefined,
 }
 
 const faqStructuredData =

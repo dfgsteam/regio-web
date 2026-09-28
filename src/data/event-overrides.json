@@ -1,5 +1,5 @@
 {
-  "_comment": "Hier kannst du gezielt Eigenschaften einzelner Events überschreiben (z. B. Preis, Ansprechpartner, Packliste, Meldeschluss, Teaser). Schlüssel ist der Event-Slug oder die Google-Kalender-UID.",
+  "_comment": "Hier kannst du Eigenschaften einzelner Events überschreiben. Schlüssel ist der Event-Slug oder die Google-Kalender-UID. Wenn kein Civi-Anmeldelink im Kalender steht, kann civiEventId die eindeutige CiviCRM-Event-ID enthalten.",
   "zeltlager-2025": {
     "contact": {
       "name": "Christian Watterott & Jonathan Hunold",

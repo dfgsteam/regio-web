@@ -110,6 +110,7 @@ npm run dev
 | `npm run preview` | Lokale Vorschau des erstellten Produktions-Builds |
 | `npm run check` | Führt Astro- und TypeScript-Typprüfungen durch |
 | `npm run sync:calendar` | Synchronisiert externe Termine/Kalenderdaten |
+| `npm run sync:civicrm` | Holt Anmeldestart, Meldeschluss und Belegung über CiviCRM APIv4 |
 
 ---
 
@@ -176,9 +177,9 @@ Um einen Beitrag von der Website auszublenden (ohne die Datei löschen zu müsse
 
 ### 3. Termine & Events verwalten
 
-Die Website verfügt über ein zweistufiges Event-System:
-1. **Automatischer Sync (`scripts/sync-calendar.mjs`):** Gleicht Google Calendar / CiviCRM (`.ics`) ab und schreibt saubere Daten nach `src/data/events.json`.
-2. **Sonderregeln & Overrides (`src/data/event-overrides.json` & `src/data/event-defaults.json`):** Ermöglicht das gezielte Überschreiben, Erweitern oder Ausblenden von Terminen ohne den Kalender zu manipulieren.
+Google Calendar liefert Titel, Zeit und Ort über `scripts/sync-calendar.mjs` nach `src/data/events.json`.
+CiviCRM liefert Anmeldestart, Meldeschluss und Belegung über APIv4 nach `src/data/civi-registration.json`. Beide Datenquellen werden beim Build zusammengeführt. Die feste CiviCRM-Adresse ist `https://civi.smj-wegweiser.de`.
+Vorhandene Civi-Anmeldelinks im Kalender enthalten bereits die Event-ID. Ohne Link erfolgt eine Zuordnung nur bei eindeutig gleichem Titel und Veranstaltungstag. Bei abweichenden Namen lässt sich `civiEventId` in `src/data/event-overrides.json` setzen. Der statische Build aktualisiert die Belegung stündlich; CiviCRM entscheidet beim eigentlichen Absenden der Anmeldung über freie Plätze.
 
 ---
 
@@ -191,7 +192,7 @@ In [`src/data/event-overrides.json`](src/data/event-overrides.json) können beli
     "price": "35 €",
     "ageMin": 9,
     "ageMax": 14,
-    "registrationUrl": "https://anmeldung.smj-wegweiser.de/action-1",
+    "civiEventId": 60,
     "highlights": [
       "Großes Geländespiel im Wald",
       "Klettern & Pfadfinder-Techniken",
@@ -306,7 +307,7 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 ```text
 git push auf 'main'
    ↓
-Dependencies & Kalender-Sync
+Dependencies, Kalender-Sync & CiviCRM-Sync
    ↓
 Astro & TypeScript Check (0 Fehler)
    ↓
@@ -321,14 +322,15 @@ FTP-Upload auf dem Webspace
 
 ## 🔑 Umgebungsvariablen
 
-Für die lokale Entwicklung und Produktion (`.env`):
+Für den lokalen Sync gehören die Zugangsdaten in die ignorierte `.env.local`. Bei GitHub unter **Settings → Secrets and variables → Actions** `CIVICRM_API_KEY` als Repository Secret hinterlegen; `CIVICRM_SITE_KEY` nur, falls die AuthX-Konfiguration den Site-Key verlangt. Ohne API-Key bleibt der letzte Civi-Cache erhalten.
+
+Beispiel für `.env.local`:
 
 ```bash
 # Basis-URL
 SITE_URL=https://smj-wegweiser.de
 
-# CiviCRM Anbindung (Server-side)
-CIVICRM_BASE_URL=
+# CiviCRM APIv4 (nur beim Build)
 CIVICRM_API_KEY=
 CIVICRM_SITE_KEY=
 

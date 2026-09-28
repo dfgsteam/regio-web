@@ -26,7 +26,10 @@ export interface Event {
   packingList?: string[]
   image?: string
   registrationUrl?: string
+  civiEventId?: number
+  registrationOpensAt?: Date
   registrationDeadline?: Date
+  registrationStatus?: 'full' | 'unavailable'
   category: EventCategory
   contact?: EventContact
 }

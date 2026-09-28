@@ -1,20 +1,21 @@
 ---
-import { isCampRegistrationOpen, resolveCampForUrl } from '../../lib/camps'
+import { getCampRegistration, resolveCampForUrl } from '../../lib/camps'
 import Container from '../common/Container.astro'
 import Button from '../common/Button.astro'
 
 const camp = await resolveCampForUrl(Astro.url.pathname)
 if (!camp) return null
 
-const { registration, year, title } = camp.data
-const registrationOpen = isCampRegistrationOpen(camp.data)
+const { year, title } = camp.data
+const status = await getCampRegistration(camp.data)
+const registrationOpen = status.state === 'open' && Boolean(status.url)
 ---
 
 <section class="camp-bg py-20 sm:py-28">
   <Container class="text-center">
     <p class="eyebrow mb-5">Anmeldung Zeltlager {year}</p>
     <h2 class="display display-lg camp-fg">
-      {registrationOpen ? 'Du bist dabei?' : 'Anmeldung geschlossen'}
+      {registrationOpen ? 'Du bist dabei?' : status.state === 'full' ? 'Ausgebucht' : status.state === 'upcoming' ? 'Anmeldung startet bald' : 'Anmeldung geschlossen'}
     </h2>
 
     {registrationOpen ? (
@@ -22,19 +23,33 @@ const registrationOpen = isCampRegistrationOpen(camp.data)
         <p class="mx-auto mt-6 max-w-xl leading-relaxed camp-fg/75">
           {title} wartet auf dich. Sicher dir deinen Platz – die Plätze sind begrenzt und waren die letzten Jahre schnell voll.
         </p>
-        {registration.deadline && (
-          <p class="mono-label mt-6">Anmeldeschluss: {registration.deadline.toLocaleDateString('de-DE')}</p>
+        {status.deadline && (
+          <p class="mono-label mt-6">Anmeldeschluss: {status.deadline.toLocaleDateString('de-DE')}</p>
         )}
-        <div class="mt-10">
-          <Button href={registration.url} variant="camp" size="lg">
+        <div class="mt-10" data-camp-registration data-closes-at={status.closesAt.toISOString()}>
+          <Button href={status.url} variant="camp" size="lg">
             Jetzt anmelden
           </Button>
+          <p class="hidden camp-fg/75" data-camp-registration-closed>Die Anmeldung ist geschlossen.</p>
         </div>
       </>
     ) : (
       <p class="mx-auto mt-6 max-w-xl leading-relaxed camp-fg/75">
-        Die Anmeldung für {title} ist vorbei. Das nächste Abenteuer kommt bestimmt – halt dich auf der Startseite auf dem Laufenden.
+        {status.state === 'full'
+          ? `Für ${title} sind alle Plätze belegt.`
+          : status.state === 'upcoming' && status.opensAt
+            ? `Die Anmeldung startet am ${status.opensAt.toLocaleDateString('de-DE')}.`
+            : `Die Anmeldung für ${title} ist derzeit geschlossen.`}
       </p>
     )}
   </Container>
 </section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-camp-registration]').forEach((action) => {
+    const closesAt = action.dataset.closesAt
+    if (!closesAt || Date.now() < Date.parse(closesAt)) return
+    action.querySelector('a')?.remove()
+    action.querySelector('[data-camp-registration-closed]')?.classList.remove('hidden')
+  })
+</script>
