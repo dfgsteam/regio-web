@@ -5,7 +5,7 @@
  *
  * 1. Synchronizes ALL posts from Instagram Graph API (with pagination).
  * 2. Fetches all images from single posts and multi-image carousel albums.
- * 3. Downloads and stores optimized WebP photos under public/images/instagram/.
+ * 3. Stores WebP previews and MP4 videos locally for on-demand playback.
  * 4. Generates AI-assisted headlines (via Gemini API if GEMINI_API_KEY is set, or smart NLP heuristics).
  * 5. Creates MDX post pages in src/content/posts/.
  * 6. PRESERVES existing posts (never overwrites an already synced post).
@@ -23,6 +23,7 @@ const rootDir = path.resolve(__dirname, '..')
 
 const POSTS_DIR = path.join(rootDir, 'src', 'content', 'posts')
 const IMAGES_DIR = path.join(rootDir, 'public', 'images', 'instagram')
+const VIDEOS_DIR = path.join(rootDir, 'public', 'videos', 'instagram')
 const JSON_FILE = path.join(rootDir, 'src', 'data', 'instagram.json')
 
 // Automatically load .env or .env.local file
@@ -94,6 +95,32 @@ async function downloadImage(url, destPath) {
     console.warn(`[sync-instagram] Warnung: Download fehlgeschlagen für ${url}:`, err.message)
     return false
   }
+}
+
+async function downloadVideo(url, destPath) {
+  if (fs.existsSync(destPath)) return true
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+    const buffer = Buffer.from(await res.arrayBuffer())
+    if (buffer.toString('ascii', 4, 8) !== 'ftyp') throw new Error('Die Datei ist kein MP4-Video')
+    fs.mkdirSync(path.dirname(destPath), { recursive: true })
+    fs.writeFileSync(destPath, buffer)
+    return true
+  } catch (err) {
+    console.warn(`[sync-instagram] Warnung: Video-Download fehlgeschlagen für ${url}:`, err.message)
+    return false
+  }
+}
+
+function escapeHtmlAttribute(value) {
+  return String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+function mediaSources(media) {
+  return media.media_type === 'VIDEO'
+    ? { imageUrl: media.thumbnail_url, videoUrl: media.media_url }
+    : { imageUrl: media.media_url || media.thumbnail_url, videoUrl: null }
 }
 
 // AI Title Generator (Gemini API with smart fallback)
@@ -209,6 +236,7 @@ async function main() {
   console.log('[sync-instagram] 🔄 Starte Synchronisation aller Instagram-Posts...')
   fs.mkdirSync(POSTS_DIR, { recursive: true })
   fs.mkdirSync(IMAGES_DIR, { recursive: true })
+  fs.mkdirSync(VIDEOS_DIR, { recursive: true })
 
   try {
     const rawMedia = await fetchAllInstagramMedia()
@@ -236,38 +264,45 @@ async function main() {
       const rawTags = (caption.match(/#[a-zA-Z0-9_äöüÄÖÜß]+/g) || []).slice(0, 6)
       const cleanTags = rawTags.map(t => t.replace('#', ''))
 
-      // 1. Collect all image URLs for this post (handling carousels)
-      const imageUrls = []
+      // Keep carousel order so each video stays paired with its preview.
+      const mediaItems = []
       if (item.media_type === 'CAROUSEL_ALBUM') {
         const children = await fetchCarouselChildren(item.id)
         for (const child of children) {
-          const u = child.media_type === 'VIDEO' ? child.thumbnail_url : (child.media_url || child.thumbnail_url)
-          if (u) imageUrls.push(u)
+          mediaItems.push(mediaSources(child))
         }
       }
-      if (imageUrls.length === 0) {
-        const u = item.media_type === 'VIDEO' ? item.thumbnail_url : (item.media_url || item.thumbnail_url)
-        if (u) imageUrls.push(u)
+      if (mediaItems.length === 0) {
+        mediaItems.push(mediaSources(item))
       }
 
-      // 2. Download all images locally to public/images/instagram/
+      // 2. Download previews and videos without loading video bytes on page view.
       const localImagePaths = []
-      for (let i = 0; i < imageUrls.length; i++) {
-        const remoteUrl = imageUrls[i]
+      const localVideoPaths = []
+      for (let i = 0; i < mediaItems.length; i++) {
+        const { imageUrl, videoUrl } = mediaItems[i]
         const fileName = `${item.id}_${i}.webp`
         const localAbsPath = path.join(IMAGES_DIR, fileName)
         const localWebPath = `/images/instagram/${fileName}`
 
-        const ok = await downloadImage(remoteUrl, localAbsPath)
-        if (ok) {
+        const imageOk = imageUrl && await downloadImage(imageUrl, localAbsPath)
+        if (imageOk) {
           localImagePaths.push(localWebPath)
           downloadedImageCount++
         } else {
-          localImagePaths.push(remoteUrl) // fallback to remote URL
+          localImagePaths.push(imageUrl || '/placeholders/reel.svg')
         }
+
+        const videoFile = `${item.id}_${i}.mp4`
+        const localVideoFile = path.join(VIDEOS_DIR, videoFile)
+        const videoOk = videoUrl
+          ? await downloadVideo(videoUrl, localVideoFile)
+          : fs.existsSync(localVideoFile)
+        localVideoPaths.push(videoOk ? `/videos/instagram/${videoFile}` : null)
       }
 
       const mainImage = localImagePaths[0] || '/placeholders/story.svg'
+      const mainVideo = localVideoPaths[0]
 
       // Check if post already exists locally
       if (existingPosts.has(item.id)) {
@@ -276,7 +311,9 @@ async function main() {
         formattedPostsForJson.push({
           id: item.id,
           image: mainImage,
+          ...(mainVideo ? { video: mainVideo } : {}),
           images: localImagePaths,
+          alt: `Instagram-Beitrag der SMJ Regio Wegweiser vom ${dateFormatted}`,
           location: 'SMJ Regio Wegweiser',
           caption: caption.replace(/#[a-zA-Z0-9_äöüÄÖÜß]+/g, '').trim() || caption,
           date: dateFormatted,
@@ -301,10 +338,13 @@ async function main() {
       if (localImagePaths.length > 1) {
         galleryHtml = `\n### Weitere Eindrücke aus diesem Beitrag\n\n<div class="not-prose my-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">\n${localImagePaths
           .slice(1)
-          .map(
-            (img, idx) =>
-              `  <div class="overflow-hidden border-2 border-paper/15 bg-forest-900 aspect-[4/3]"><img src="${img}" alt="${title} Bild ${idx + 2}" class="h-full w-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" /></div>`
-          )
+          .map((img, idx) => {
+            const video = localVideoPaths[idx + 1]
+            const label = escapeHtmlAttribute(`${title} Bild ${idx + 2}`)
+            return video
+              ? `  <div class="overflow-hidden border-2 border-paper/15 bg-forest-900 aspect-[4/3]"><video controls playsinline preload="none" poster="${img}" aria-label="Video: ${label}" class="h-full w-full object-contain"><source src="${video}" type="video/mp4" />Dein Browser kann dieses Video nicht abspielen.</video></div>`
+              : `  <div class="overflow-hidden border-2 border-paper/15 bg-forest-900 aspect-[4/3]"><img src="${img}" alt="${label}" class="h-full w-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" /></div>`
+          })
           .join('\n')}\n</div>\n`
       }
 
@@ -317,7 +357,7 @@ image:
   src: "${mainImage}"
   alt: "${title.replace(/"/g, '\\"')}"
   ratio: "16:10"
-tags:
+${mainVideo ? `video:\n  src: "${mainVideo}"\n` : ''}tags:
 ${(cleanTags.length > 0 ? cleanTags : ['Instagram', 'SMJ Wegweiser']).map(t => `  - "${t}"`).join('\n')}
 draft: false
 instagramId: "${item.id}"
@@ -338,6 +378,7 @@ ${galleryHtml}
         id: item.id,
         title,
         image: mainImage,
+        ...(mainVideo ? { video: mainVideo } : {}),
         images: localImagePaths,
         alt: title,
         location: 'SMJ Regio Wegweiser',
@@ -363,6 +404,10 @@ ${galleryHtml}
         const matchingImages = fs.readdirSync(IMAGES_DIR).filter(f => f.startsWith(`${id}_`))
         for (const imgFile of matchingImages) {
           fs.unlinkSync(path.join(IMAGES_DIR, imgFile))
+        }
+        const matchingVideos = fs.readdirSync(VIDEOS_DIR).filter(f => f.startsWith(`${id}_`))
+        for (const videoFile of matchingVideos) {
+          fs.unlinkSync(path.join(VIDEOS_DIR, videoFile))
         }
         deletedCount++
       }

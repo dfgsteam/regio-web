@@ -78,15 +78,29 @@ const readingTimeMinutes = Math.max(1, Math.ceil(words / 200))
   <section class="bg-forest-950 py-16">
     <Container class="max-w-3xl">
       <figure class="mb-12 border-2 border-paper/15 overflow-hidden bg-forest-900">
-        <img
-          src={data.image.src}
-          alt={data.image.alt}
-          data-photo-viewer="true"
-          data-caption={data.title}
-          data-date={date}
-          data-link-url={data.instagramUrl}
-          class="aspect-[16/10] w-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-102"
-        />
+        {data.video ? (
+          <video
+            controls
+            playsinline
+            preload="none"
+            poster={data.image.src}
+            aria-label={`Video: ${data.image.alt}`}
+            class="aspect-[16/10] w-full bg-black object-contain"
+          >
+            <source src={data.video.src} type="video/mp4" />
+            Dein Browser kann dieses Video nicht abspielen.
+          </video>
+        ) : (
+          <img
+            src={data.image.src}
+            alt={data.image.alt}
+            data-photo-viewer="true"
+            data-caption={data.title}
+            data-date={date}
+            data-link-url={data.instagramUrl}
+            class="aspect-[16/10] w-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-102"
+          />
+        )}
       </figure>
 
       <article class="prose-rough">

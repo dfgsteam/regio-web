@@ -14,6 +14,7 @@ const posts = defineCollection({
       alt: z.string(),
       ratio: z.string().default('16:10'),
     }),
+    video: z.object({ src: z.string() }).optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     disabled: z.boolean().default(false),

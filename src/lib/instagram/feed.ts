@@ -3,6 +3,7 @@ import localPosts from '../../data/instagram.json'
 export interface InstagramPost {
   id: string
   image: string
+  video?: string
   alt: string
   location: string
   caption: string
