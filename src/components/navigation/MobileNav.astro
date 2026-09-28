@@ -18,6 +18,9 @@ const numbered = links.map((link, index) => ({ ...link, number: `0${index + 1}` 
   id="mobile-nav"
   class="texture-topo fixed inset-0 z-50 hidden bg-forest-950"
   aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menü"
 >
   <div class="flex h-full flex-col px-6 pb-8 pt-5">
     <div class="flex items-center justify-between">
@@ -25,7 +28,6 @@ const numbered = links.map((link, index) => ({ ...link, number: `0${index + 1}` 
       <button
         id="menu-close"
         class="flex items-center gap-2 border-2 border-paper/40 px-4 py-2.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.2em] text-paper transition-colors hover:border-orange hover:text-orange"
-        aria-expanded="false"
       >
         Schließen
         <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
@@ -70,42 +72,85 @@ const numbered = links.map((link, index) => ({ ...link, number: `0${index + 1}` 
 
   if (nav && openButton && closeButton) {
     const items = nav.querySelectorAll<HTMLElement>('.nav-item')
+    const background = [header, document.querySelector('main'), document.querySelector('footer')]
+      .filter((element): element is HTMLElement => element instanceof HTMLElement)
+    const previousInert = new Map<HTMLElement, boolean>()
+    const desktop = window.matchMedia('(min-width: 1024px)')
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let previousFocus: HTMLElement | null = null
+    let previousOverflow = ''
 
     const open = () => {
+      if (!nav.classList.contains('hidden')) return
+
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : openButton
+      previousOverflow = document.documentElement.style.overflow
       nav.classList.remove('hidden')
       nav.setAttribute('aria-hidden', 'false')
       openButton.setAttribute('aria-expanded', 'true')
-      closeButton.setAttribute('aria-expanded', 'true')
       header?.classList.add('menu-open')
       document.documentElement.style.overflow = 'hidden'
+      background.forEach((element) => {
+        previousInert.set(element, element.inert)
+        element.inert = true
+      })
       closeButton.focus()
 
-      items.forEach((item, index) => {
-        item.animate(
-          [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 350, delay: 60 * index, fill: 'forwards', easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
-        )
-      })
+      if (!reducedMotion.matches) {
+        items.forEach((item, index) => {
+          item.animate(
+            [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 350, delay: 60 * index, fill: 'forwards', easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+          )
+        })
+      }
     }
 
-    const close = () => {
+    const close = (focusTarget: HTMLElement | null = previousFocus) => {
+      if (nav.classList.contains('hidden')) return
+
+      openButton.setAttribute('aria-expanded', 'false')
+      header?.classList.remove('menu-open')
+      document.documentElement.style.overflow = previousOverflow
+      background.forEach((element) => {
+        element.inert = previousInert.get(element) ?? false
+      })
+      previousInert.clear()
+      focusTarget?.focus()
       nav.classList.add('hidden')
       nav.setAttribute('aria-hidden', 'true')
-      openButton.setAttribute('aria-expanded', 'false')
-      closeButton.setAttribute('aria-expanded', 'false')
-      header?.classList.remove('menu-open')
-      document.documentElement.style.overflow = ''
-      openButton.focus()
+      previousFocus = null
     }
 
     openButton.addEventListener('click', open)
-    closeButton.addEventListener('click', close)
+    closeButton.addEventListener('click', () => close())
     nav.addEventListener('click', (event) => {
       const target = (event.target as HTMLElement).closest('a')
       if (target) close()
     })
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') close()
+      if (nav.classList.contains('hidden')) return
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        close()
+      }
+      if (event.key !== 'Tab') return
+
+      const focusable = Array.from(nav.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (!first || !last) return
+
+      if (event.shiftKey && (document.activeElement === first || !nav.contains(document.activeElement))) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && (document.activeElement === last || !nav.contains(document.activeElement))) {
+        event.preventDefault()
+        first.focus()
+      }
+    })
+    desktop.addEventListener('change', (event) => {
+      if (event.matches) close(header?.querySelector('a') ?? null)
     })
   }
 </script>
