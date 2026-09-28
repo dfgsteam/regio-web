@@ -1,5 +1,5 @@
 ---
-import { Calendar, ExternalLink, QrCode } from '@lucide/astro'
+import { Calendar, ExternalLink, Lock } from '@lucide/astro'
 import Logo from '../common/Logo.astro'
 import HnldLogo from '../common/HnldLogo.astro'
 import BrandIcon from '../common/BrandIcon.astro'
@@ -20,7 +20,7 @@ const partnerLinks = [
   { label: 'Schönstatt Deutschland', href: 'https://www.schoenstatt.de/de/', external: true },
   { label: 'Schönstatt-Mannesjugend (SMJ)', href: 'https://www.smj-deutschland.de/', external: true },
   { label: 'Terminkalender abonnieren (iCal)', href: '/api/calendar.ics', external: false, icon: 'calendar' },
-  { label: 'QR-Codes für Flyer', href: '/qrcode/', external: false, icon: 'qrcode' },
+  { label: 'Intranet', href: 'https://auth.smj-wegweiser.de', external: true, icon: 'lock' },
   { label: 'Kontakt & Anlaufstelle', href: '/kontakt/', external: false },
 ]
 
@@ -161,7 +161,7 @@ const socialLinks = [
                   class="inline-flex items-center gap-1.5 text-paper/80 transition-colors hover:text-orange"
                 >
                   {link.icon === 'calendar' && <Calendar class="h-3.5 w-3.5 text-orange shrink-0" />}
-                  {link.icon === 'qrcode' && <QrCode class="h-3.5 w-3.5 text-orange shrink-0" />}
+                  {link.icon === 'lock' && <Lock class="h-3.5 w-3.5 text-orange shrink-0" />}
                   <span>{link.label}</span>
                   {link.external && <ExternalLink class="h-3 w-3 text-paper/40 shrink-0" />}
                 </a>
