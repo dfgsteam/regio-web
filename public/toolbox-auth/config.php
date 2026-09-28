@@ -24,10 +24,10 @@ return [
     'authentik_url' => getenv('AUTHENTIK_URL') ?: 'https://auth.smj-wegweiser.de',
 
     // 2. Client ID aus deinem Authentik OAuth2 Provider
-    'client_id'     => getenv('AUTHENTIK_CLIENT_ID') ?: 'HIER_AUTHENTIK_CLIENT_ID_EINTRAGEN',
+    'client_id'     => getenv('AUTHENTIK_CLIENT_ID') ?: 'OryiraVr4VMrXyUrmH2hmSCEzB6YibgJNSwuqwWz',
 
     // 3. Client Secret aus deinem Authentik OAuth2 Provider
-    'client_secret' => getenv('AUTHENTIK_CLIENT_SECRET') ?: 'HIER_AUTHENTIK_CLIENT_SECRET_EINTRAGEN',
+    'client_secret' => getenv('AUTHENTIK_CLIENT_SECRET') ?: 'ajqZpmoyBNBkyvr8ChOxlZ9X0XToMCUhqSCG2doV35tWGsJtLVhaFnqOMlCYFT4xlsk8uK1nInfUxQKz0ifk8VUic6Zd9Cgnwj4VMqn3xa28sDjdabHMbKY1qj0HFhzm',
 
     // 4. Redirect URI (muss exakt so in Authentik bei den Redirect URIs hinterlegt sein)
     'redirect_uri'  => $protocol . '://' . $host . '/toolbox-auth/callback.php',
@@ -35,7 +35,7 @@ return [
     // 5. Geheimer Schlüssel für die HMAC-SHA256 Signatur des Session-Cookies.
     // Dieser Schlüssel verhindert jedes Manipulieren oder Fälschen des Cookies.
     // Bitte vor dem Produktivgang durch eine lange zufällige Zeichenkette ersetzen!
-    'app_secret'    => getenv('TOOLBOX_APP_SECRET') ?: 'smj_wegweiser_secure_key_kryptografisch_signiert_v1_98f4e2b0',
+    'app_secret'    => getenv('TOOLBOX_APP_SECRET') ?: 'LW+§YH7Q&?7d@P&PDEVGLT9QwLKJ)QJJ4&KNa8=r:2WZxkq&p§#V%mN_3LCq3Q+L',
 
     // 6. Name und Gültigkeit des Cookies
     'cookie_name'   => 'smj_toolbox_session',
