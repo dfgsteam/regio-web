@@ -428,12 +428,7 @@ const eventStructuredData = {
 </ContentLayout>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-registration-action]').forEach((action) => {
-    const closesAt = action.dataset.closesAt
-    if (!closesAt || Date.now() < Date.parse(closesAt)) return
-    action.querySelector('a')?.remove()
-    action.querySelector('[data-registration-closed]')?.classList.remove('hidden')
-  })
+  import '../../scripts/registration-cutoff'
 </script>
 
 <script>

@@ -46,10 +46,5 @@ const registrationOpen = status.state === 'open' && Boolean(status.url)
 </section>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-camp-registration]').forEach((action) => {
-    const closesAt = action.dataset.closesAt
-    if (!closesAt || Date.now() < Date.parse(closesAt)) return
-    action.querySelector('a')?.remove()
-    action.querySelector('[data-camp-registration-closed]')?.classList.remove('hidden')
-  })
+  import '../../scripts/registration-cutoff'
 </script>

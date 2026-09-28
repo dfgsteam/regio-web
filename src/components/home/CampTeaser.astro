@@ -118,9 +118,5 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
 
 <script>
   import '../../scripts/animations/camp-unfold'
-
-  document.querySelectorAll<HTMLElement>('[data-camp-registration]').forEach((action) => {
-    const closesAt = action.dataset.closesAt
-    if (closesAt && Date.now() >= Date.parse(closesAt)) action.querySelector('a')?.remove()
-  })
+  import '../../scripts/registration-cutoff'
 </script>
