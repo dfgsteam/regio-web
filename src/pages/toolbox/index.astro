@@ -14,6 +14,7 @@ import {
   FileText,
   Smartphone,
   ArrowRight,
+  LogOut,
 } from '@lucide/astro'
 import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
@@ -190,15 +191,27 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   <!-- Hero Section -->
   <section class="border-b border-paper/20 bg-forest-950 py-12 sm:py-16">
     <Container>
-      <div class="max-w-3xl">
-        <Eyebrow label="// INTERNER BEREICH & MEDIEN-HUB" />
-        <h1 class="display display-lg text-paper mt-3 uppercase leading-[0.95]">
-          Leiter-Toolbox &amp;<br />
-          <span class="text-orange">Medien-Zentrale</span>
-        </h1>
-        <p class="mt-4 font-mono text-sm sm:text-base text-paper/80 leading-relaxed max-w-2xl">
-          Alle Materialien für deine Aktion an einem Ort: Druckfertige A4-Plakate, Instagram Stories (9:16), Feed Posts, gestochen scharfe QR-Codes und Textbausteine für WhatsApp.
-        </p>
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <div class="max-w-3xl">
+          <Eyebrow label="// INTERNER BEREICH & MEDIEN-HUB" />
+          <h1 class="display display-lg text-paper mt-3 uppercase leading-[0.95]">
+            Leiter-Toolbox &amp;<br />
+            <span class="text-orange">Medien-Zentrale</span>
+          </h1>
+          <p class="mt-4 font-mono text-sm sm:text-base text-paper/80 leading-relaxed max-w-2xl">
+            Alle Materialien für deine Aktion an einem Ort: Druckfertige A4-Plakate, Instagram Stories (9:16), Feed Posts, gestochen scharfe QR-Codes und Textbausteine für WhatsApp.
+          </p>
+        </div>
+        <div class="shrink-0 pt-2">
+          <a
+            href="/toolbox-auth/logout.php"
+            class="inline-flex items-center gap-2 px-3 py-2 border border-paper/20 bg-forest-900/80 hover:bg-forest-900 hover:border-paper/40 font-mono text-xs text-paper/70 hover:text-paper transition-colors rounded-xs"
+            title="Von der Leiter-Toolbox abmelden"
+          >
+            <LogOut class="w-3.5 h-3.5 text-orange" />
+            <span>Abmelden</span>
+          </a>
+        </div>
       </div>
 
       <!-- Quick Feature Highlights -->
