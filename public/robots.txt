@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /qrcode/
 
 # Keep in sync with the SITE_URL default in astro.config.mjs
 Sitemap: https://regio.hnld.de/sitemap-index.xml
