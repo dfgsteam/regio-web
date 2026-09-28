@@ -86,7 +86,7 @@ const flyerData = resolveFlyerData(id || 'custom', eventData, campData)
 
 // Generate Crisp SVG QR Code
 const qrSvg = await generateQrSvg(flyerData.targetUrl, { margin: 1, errorCorrectionLevel: 'M' })
-const pdfUrl = id && id !== 'custom' ? `/toolbox/flyers/${id}.pdf` : null
+const pdfUrl = id && id !== 'custom' ? `/toolbox/flyers/${id}.pdf?t=${Date.now()}` : null
 ---
 
 <BaseLayout

@@ -2,6 +2,8 @@ import { PDFDocument, StandardFonts, rgb, type PDFFont } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import QRCode from 'qrcode'
 import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 export interface ScheduleEventItem {
   title: string
@@ -30,6 +32,19 @@ function cleanText(text: string): string {
     .replace(/[➔➜➝→]/g, '->')
     .replace(/[↑▲]/g, '^')
     .replace(/[★☆]/g, '*')
+}
+
+function loadFontBuffer(filename: string): Buffer {
+  const possiblePaths = [
+    path.resolve(process.cwd(), 'src/assets/fonts', filename),
+    fileURLToPath(new URL(`../../assets/fonts/${filename}`, import.meta.url)),
+  ]
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      return fs.readFileSync(p)
+    }
+  }
+  throw new Error(`Font file not found: ${filename}`)
 }
 
 /**
@@ -64,26 +79,30 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
   let fontBody: PDFFont
 
   try {
-    fontDisplay = await doc.embedFont(fs.readFileSync('src/assets/fonts/Anton-Regular.ttf'))
-  } catch {
+    fontDisplay = await doc.embedFont(loadFontBuffer('Anton-Regular.ttf'))
+  } catch (err) {
+    console.error('[schedule-pdf] Failed to load Anton-Regular.ttf:', err)
     fontDisplay = await doc.embedFont(StandardFonts.HelveticaBold)
   }
 
   try {
-    fontHand = await doc.embedFont(fs.readFileSync('src/assets/fonts/Caveat-Bold.ttf'))
-  } catch {
+    fontHand = await doc.embedFont(loadFontBuffer('Caveat-Bold.ttf'))
+  } catch (err) {
+    console.error('[schedule-pdf] Failed to load Caveat-Bold.ttf:', err)
     fontHand = await doc.embedFont(StandardFonts.HelveticaBoldOblique)
   }
 
   try {
-    fontMono = await doc.embedFont(fs.readFileSync('src/assets/fonts/SpaceMono-Bold.ttf'))
-  } catch {
+    fontMono = await doc.embedFont(loadFontBuffer('SpaceMono-Bold.ttf'))
+  } catch (err) {
+    console.error('[schedule-pdf] Failed to load SpaceMono-Bold.ttf:', err)
     fontMono = await doc.embedFont(StandardFonts.CourierBold)
   }
 
   try {
-    fontBody = await doc.embedFont(fs.readFileSync('src/assets/fonts/Inter-Regular.ttf'))
-  } catch {
+    fontBody = await doc.embedFont(loadFontBuffer('Inter-Regular.ttf'))
+  } catch (err) {
+    console.error('[schedule-pdf] Failed to load Inter-Regular.ttf:', err)
     fontBody = await doc.embedFont(StandardFonts.Helvetica)
   }
 

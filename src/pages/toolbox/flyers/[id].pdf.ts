@@ -90,7 +90,9 @@ export const GET: APIRoute = async ({ params, props }) => {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="SMJ-Terminkarte-${id}.pdf"`,
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
     })
   }
@@ -104,7 +106,9 @@ export const GET: APIRoute = async ({ params, props }) => {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="SMJ-Flyer-${id}.pdf"`,
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
     },
   })
 }

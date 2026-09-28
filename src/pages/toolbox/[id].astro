@@ -108,7 +108,7 @@ if (campData) {
   ageStr = formatAgeRange(campData.data.age.min, campData.data.age.max) || 'Jungs von 9–14 Jahren'
   priceStr = campData.data.price || '189 €'
   targetUrl = `${BASE_DOMAIN}/abenteuer/zeltlager-${campData.data.year}/`
-  pdfUrl = `/toolbox/flyers/zeltlager-${campData.data.year}.pdf`
+  pdfUrl = `/toolbox/flyers/zeltlager-${campData.data.year}.pdf?t=${Date.now()}`
   flyerUrl = `/toolbox/flyer/zeltlager-${campData.data.year}/`
   socialUrl = `/toolbox/social/zeltlager-${campData.data.year}/`
   isFeatured = campData.data.active
@@ -128,7 +128,7 @@ if (campData) {
   ageStr = formatAgeRange(eventData.ageMin, eventData.ageMax) || 'Jungs von 9–14 Jahren'
   priceStr = eventData.price || 'Inkl. Verpflegung'
   targetUrl = `${BASE_DOMAIN}/abenteuer/${eventData.slug}/`
-  pdfUrl = `/toolbox/flyers/${eventData.slug}.pdf`
+  pdfUrl = `/toolbox/flyers/${eventData.slug}.pdf?t=${Date.now()}`
   flyerUrl = `/toolbox/flyer/${eventData.slug}/`
   socialUrl = `/toolbox/social/${eventData.slug}/`
   isFeatured = eventData.end >= new Date()
