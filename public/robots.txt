@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /toolbox/
-
-# Keep in sync with the SITE_URL default in astro.config.mjs
-Sitemap: https://regio.hnld.de/sitemap-index.xml
