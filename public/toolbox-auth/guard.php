@@ -1,110 +1,78 @@
 <?php
-/**
- * Authentik Kryptografischer PHP-Guard
- * Prüft bei jedem Aufruf von /toolbox/*, /flyer/* und /social/* die digitale Signatur.
- */
-
-// Konfiguration laden
+/** Serve only files below /toolbox/ after checking the signed session. */
 $config = require __DIR__ . '/config.php';
 
-// 1. Cookie auslesen und kryptografisch verifizieren
-$cookieName = $config['cookie_name'];
-$rawCookie = $_COOKIE[$cookieName] ?? null;
+// Apache preserves the original request URI across its internal rewrite.
+// A query parameter must never select a file on disk.
+$requestedUri = $_SERVER['REQUEST_URI'] ?? '';
+$urlPath = is_string($requestedUri) ? parse_url($requestedUri, PHP_URL_PATH) : false;
+if (!is_string($urlPath) || !preg_match('#^/toolbox(?:/|$)#', $urlPath)) {
+    http_response_code(404);
+    exit('Not Found');
+}
 
+$rawCookie = $_COOKIE[$config['cookie_name']] ?? null;
 $isAuthenticated = false;
-$userPayload = null;
-
-if ($rawCookie && strpos($rawCookie, '.') !== false) {
-    list($b64Payload, $signature) = explode('.', $rawCookie, 2);
-    
-    // Berechne erwartete HMAC-SHA256 Signatur
+if (is_string($rawCookie) && strpos($rawCookie, '.') !== false) {
+    [$b64Payload, $signature] = explode('.', $rawCookie, 2);
     $expectedSignature = hash_hmac('sha256', $b64Payload, $config['app_secret']);
-
-    // Timing-sicherer Vergleich zur Abwehr von Timing-Angriffen
     if (hash_equals($expectedSignature, $signature)) {
-        $decoded = json_decode(base64_decode($b64Payload), true);
-        if ($decoded && isset($decoded['exp']) && $decoded['exp'] > time()) {
-            $isAuthenticated = true;
-            $userPayload = $decoded;
-        }
+        $decoded = base64_decode($b64Payload, true);
+        $payload = $decoded !== false ? json_decode($decoded, true) : null;
+        $isAuthenticated = is_array($payload) &&
+            !empty($payload['sub']) &&
+            isset($payload['exp']) &&
+            is_int($payload['exp']) &&
+            $payload['exp'] > time();
     }
 }
 
-// 2. Nicht eingeloggt oder Signatur ungültig: Zum Login umleiten
 if (!$isAuthenticated) {
-    $requestedUri = $_GET['path'] ?? $_SERVER['REQUEST_URI'] ?? '/toolbox/';
-    // Endlosschleifen ausschließen
-    if (strpos($requestedUri, '/toolbox-auth/') !== false) {
-        $requestedUri = '/toolbox/';
-    }
-    
-    $loginUrl = '/toolbox-auth/login.php?return_to=' . urlencode($requestedUri);
-    header('Location: ' . $loginUrl, true, 302);
+    header('Cache-Control: no-store');
+    header('Location: /toolbox-auth/login.php?return_to=' . rawurlencode($requestedUri), true, 302);
     exit;
 }
 
-// 3. Eingeloggt: Zieldatei sicher ermitteln und ausliefern
 $docRoot = realpath(__DIR__ . '/..');
-$rawPath = $_GET['path'] ?? $_SERVER['REQUEST_URI'] ?? '/toolbox/';
-$urlPath = parse_url($rawPath, PHP_URL_PATH);
-$cleanPath = ltrim(preg_replace('#/+#', '/', $urlPath), '/');
+$toolboxRoot = $docRoot !== false ? realpath($docRoot . '/toolbox') : false;
+if ($toolboxRoot === false) {
+    http_response_code(503);
+    exit('Toolbox derzeit nicht verfügbar.');
+}
 
-// Falls Verzeichnis ohne Slash aufgerufen wird -> 301 Redirect für saubere URLs
+$cleanPath = ltrim(preg_replace('#/+#', '/', $urlPath), '/');
 if (is_dir($docRoot . '/' . $cleanPath) && substr($urlPath, -1) !== '/') {
     header('Location: ' . $urlPath . '/', true, 301);
     exit;
 }
 
-// Kandidaten für Astro Static Output (.html oder Verzeichnis/index.html)
 $candidates = [
     $docRoot . '/' . rtrim($cleanPath, '/') . '/index.html',
     $docRoot . '/' . $cleanPath,
     $docRoot . '/' . $cleanPath . '.html',
 ];
+$mimeTypes = [
+    'html' => 'text/html; charset=UTF-8',
+    'pdf' => 'application/pdf',
+    'png' => 'image/png',
+];
 
-$targetFile = null;
-foreach ($candidates as $cand) {
-    $real = realpath($cand);
-    // Verhindere Path Traversal: Datei muss existieren und strikt im docRoot liegen
-    if ($real && is_file($real) && strpos($real, $docRoot) === 0) {
-        $targetFile = $real;
-        break;
+foreach ($candidates as $candidate) {
+    $real = realpath($candidate);
+    if ($real === false || !is_file($real) || !str_starts_with($real, $toolboxRoot . DIRECTORY_SEPARATOR)) {
+        continue;
     }
-}
-
-// Wenn keine passende Datei gefunden wurde -> 404
-if (!$targetFile) {
-    http_response_code(404);
-    $errorPage = $docRoot . '/404.html';
-    if (is_file($errorPage)) {
-        include $errorPage;
-    } else {
-        echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>404 Not Found</title></head><body><h1>404 - Seite nicht gefunden</h1></body></html>';
+    $extension = strtolower(pathinfo($real, PATHINFO_EXTENSION));
+    if (!isset($mimeTypes[$extension])) {
+        continue;
     }
+    header('Content-Type: ' . $mimeTypes[$extension]);
+    header('Cache-Control: private, no-store');
+    header('X-Content-Type-Options: nosniff');
+    readfile($real);
     exit;
 }
 
-// MIME-Type festlegen
-$extension = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-$mimeTypes = [
-    'html' => 'text/html; charset=UTF-8',
-    'json' => 'application/json; charset=UTF-8',
-    'svg'  => 'image/svg+xml',
-    'png'  => 'image/png',
-    'jpg'  => 'image/jpeg',
-    'jpeg' => 'image/jpeg',
-    'webp' => 'image/webp',
-    'avif' => 'image/avif',
-    'css'  => 'text/css; charset=UTF-8',
-    'js'   => 'application/javascript; charset=UTF-8',
-    'ics'  => 'text/calendar; charset=UTF-8',
-    'txt'  => 'text/plain; charset=UTF-8',
-];
-
-$contentType = $mimeTypes[$extension] ?? 'text/html; charset=UTF-8';
-header('Content-Type: ' . $contentType);
-header('Cache-Control: private, no-cache, no-store, must-revalidate');
-
-// Datei direkt streamen
-readfile($targetFile);
-exit;
+http_response_code(404);
+header('Cache-Control: no-store');
+exit('Not Found');

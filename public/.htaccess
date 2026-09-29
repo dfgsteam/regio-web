@@ -40,7 +40,7 @@ AddCharset UTF-8 .html .css .js .json .xml .ics
 
   # Die gesamte /toolbox/* über guard.php absichern
   RewriteCond %{REQUEST_URI} ^/toolbox(/.*)?$ [NC]
-  RewriteRule ^toolbox(/.*)?$ /toolbox-auth/guard.php?path=%{REQUEST_URI} [QSA,L]
+  RewriteRule ^toolbox(/.*)?$ /toolbox-auth/guard.php [L]
 
   # Ensure trailing slash for directory routes (e.g. /ueber-uns -> /ueber-uns/)
   RewriteCond %{REQUEST_FILENAME} !-f
