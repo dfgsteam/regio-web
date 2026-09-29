@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro'
-import Logo from '../../../components/common/Logo.astro'
 import {
   ArrowLeft,
   Download,
@@ -11,16 +10,11 @@ import {
   Image as ImageIcon,
   SlidersHorizontal,
   FileText,
-  Calendar,
-  MapPin,
-  Users,
-  Banknote,
 } from '@lucide/astro'
 import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../../lib/events'
 import type { Event } from '../../../lib/events'
 import { getAllCamps } from '../../../lib/camps'
 import type { CampEntry } from '../../../lib/camps'
-import { generateQrSvg } from '../../../scripts/qrcode-renderer'
 
 const BASE_DOMAIN = 'https://smj-wegweiser.de'
 
@@ -79,58 +73,39 @@ export async function getStaticPaths() {
   return paths
 }
 
+const { id } = Astro.params
+const eventId = id || 'custom'
 const { eventData, campData } = Astro.props
 
 // Resolve Initial Fields
 let title = 'Aktion & Abenteuer der SMJ'
 let subtitle = 'Raus. Ins Abenteuer.'
-let categoryLabel = 'Aktion'
 let dateStr = 'Demnächst'
 let locationStr = 'Wiesental bei Thalwenden'
 let ageStr = 'Jungs von 9–14 Jahren'
 let priceStr = 'Auf Anfrage'
 let targetUrl = `${BASE_DOMAIN}/abenteuer/`
-let flyerUrl = '/toolbox/flyer/custom/'
-let highlights = ['Lagerfeuer & Nachtspiele', 'Gemeinschaft & Natur', 'Jugend leitet Jugend']
+let pdfUrl = '/toolbox/flyers/custom.pdf'
 
 if (campData) {
   title = campData.data.title
   subtitle = campData.data.motto || `Sommerzeltlager ${campData.data.year}`
-  categoryLabel = `Zeltlager ${campData.data.year}`
   dateStr = formatDateRange(campData.data.date.start, campData.data.date.end)
   locationStr = campData.data.location.name || 'Wiesental bei Thalwenden'
   ageStr = formatAgeRange(campData.data.age.min, campData.data.age.max) || 'Jungs von 9–14 Jahren'
   priceStr = campData.data.price || '189 €'
   targetUrl = `${BASE_DOMAIN}/abenteuer/zeltlager-${campData.data.year}/`
-  flyerUrl = `/toolbox/flyer/zeltlager-${campData.data.year}/`
-  highlights = [
-    '10 Tage Zeltlager & Lagerfeuer',
-    'Großes Geländespiel & Mottotage',
-    'Erfahrene Leiterrunde & Vollverpflegung',
-  ]
+  pdfUrl = `/toolbox/flyers/zeltlager-${campData.data.year}.pdf`
 } else if (eventData) {
   title = eventData.title
   subtitle = eventData.teaser || 'Ein Wochenende voller Action, Natur und starker Gemeinschaft.'
-  categoryLabel =
-    eventData.category === 'weekend'
-      ? 'Wochenende'
-      : eventData.category === 'camp'
-        ? 'Zeltlager'
-        : 'Sonderaktion'
   dateStr = formatDateRange(eventData.start, eventData.end)
   locationStr = eventData.location || 'Klause 2.0, Heiligenstadt'
   ageStr = formatAgeRange(eventData.ageMin, eventData.ageMax) || 'Jungs von 9–14 Jahren'
   priceStr = eventData.price || 'Inkl. Verpflegung'
   targetUrl = `${BASE_DOMAIN}/abenteuer/${eventData.slug}/`
-  flyerUrl = `/toolbox/flyer/${eventData.slug}/`
-
-  if (eventData.highlights && eventData.highlights.length > 0) {
-    highlights = eventData.highlights.slice(0, 3)
-  }
+  pdfUrl = `/toolbox/flyers/${eventData.slug}.pdf`
 }
-
-// Generate QR Code SVG for the preview
-const qrSvg = await generateQrSvg(targetUrl, { margin: 1, errorCorrectionLevel: 'M' })
 
 // Prepare ready-to-copy Instagram caption
 const initialCaption = `🏕️ ${title.toUpperCase()} // RAUS. INS ABENTEUER.
@@ -173,22 +148,24 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
       <div class="flex items-center gap-3">
         <a
-          href={flyerUrl}
+          href={pdfUrl}
           target="_blank"
+          rel="noopener noreferrer"
           class="hidden md:inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/80 hover:border-orange hover:text-orange transition-colors"
         >
           <FileText class="h-3.5 w-3.5 text-orange" />
-          <span>A4 Flyer</span>
+          <span>A4 Flyer (PDF) ↗</span>
         </a>
 
-        <button
-          type="button"
+        <a
           id="btn-download-social-png"
+          href={`/toolbox/social-images/${id}-story-dark.png`}
+          download={`smj-${id}-story.png`}
           class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 shadow-lg transition-all hover:bg-paper hover:border-paper cursor-pointer"
         >
           <Download class="h-4 w-4" />
           <span id="download-btn-text">Bild herunterladen (PNG)</span>
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -239,154 +216,29 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-8 items-start">
-        <!-- LEFT: Live Interactive Preview Container -->
+        <!-- LEFT: Live Interactive Preview Container displaying pre-rendered PNG -->
         <div class="flex flex-col items-center justify-center p-4 sm:p-8 bg-forest-900/60 border-2 border-paper/15 rounded-sm">
           <div class="w-full flex items-center justify-between font-mono text-xs text-paper/50 mb-4 px-2">
-            <span>LIVE VORSCHAU</span>
+            <span class="flex items-center gap-1.5 text-orange font-bold">
+              <span class="inline-block w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+              VORGERENDERTE GRAFIK (1:1 EXPORT)
+            </span>
             <span id="preview-dimensions-label">1080 × 1920 PX (INSTAGRAM STORY)</span>
           </div>
 
-          <!-- The Live Scaled Preview Frame -->
+          <!-- Scaled Preview Frame displaying the actual pre-rendered image -->
           <div
             id="preview-wrapper"
             class="relative w-full max-w-[420px] transition-all duration-300 bg-forest-950 border-2 border-paper/30 shadow-2xl overflow-hidden rounded-sm select-none"
             style="aspect-ratio: 9 / 16;"
           >
-            <!-- Inner Preview Design -->
-            <div id="preview-inner" class="relative w-full h-full p-6 sm:p-7 flex flex-col justify-between text-paper">
-              <!-- Decorative Border Corner Accents -->
-              <div class="pointer-events-none absolute inset-3 border border-paper/15">
-                <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-orange"></div>
-                <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-orange"></div>
-                <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-orange"></div>
-                <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-orange"></div>
-              </div>
-
-              <!-- Top Header Bar -->
-              <div class="relative z-10">
-                <div class="flex items-center justify-between gap-3 border-b border-paper/10 pb-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="h-9 w-9 shrink-0 flex items-center justify-center">
-                      <Logo variant="icon" size="sm" />
-                    </div>
-                    <div>
-                      <span class="block font-mono text-[0.55rem] font-bold uppercase tracking-[0.2em] text-orange leading-none">
-                        SMJ Regio
-                      </span>
-                      <span class="font-display text-lg uppercase tracking-wider text-paper leading-tight">
-                        Wegweiser
-                      </span>
-                    </div>
-                  </div>
-
-                  <span class="inline-block bg-orange px-2 py-0.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-forest-950 rounded-xs">
-                    {categoryLabel}
-                  </span>
-                </div>
-
-                <!-- Event Title & Subtitle -->
-                <div class="mt-5">
-                  <h2 id="live-title" class="font-display text-2xl sm:text-3xl uppercase tracking-tight text-paper leading-[1.05]">
-                    {title}
-                  </h2>
-                  <p id="live-subtitle" class="mt-1.5 font-hand text-xl sm:text-2xl text-orange font-bold leading-snug">
-                    // {subtitle}
-                  </p>
-                </div>
-
-                <!-- 4 Key Fact Cards -->
-                <div class="mt-4 grid grid-cols-2 gap-2 font-mono text-xs">
-                  <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
-                      <Calendar class="h-2.5 w-2.5 shrink-0" />
-                      <span>WANN?</span>
-                    </span>
-                    <span id="live-date" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
-                      {dateStr}
-                    </span>
-                  </div>
-                  <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
-                      <MapPin class="h-2.5 w-2.5 shrink-0" />
-                      <span>WO?</span>
-                    </span>
-                    <span id="live-location" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
-                      {locationStr}
-                    </span>
-                  </div>
-                  <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
-                      <Users class="h-2.5 w-2.5 shrink-0" />
-                      <span>WER?</span>
-                    </span>
-                    <span id="live-age" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
-                      {ageStr}
-                    </span>
-                  </div>
-                  <div class="border-l-2 border-orange bg-forest-900/90 p-2 border border-paper/10">
-                    <span class="text-[0.6rem] font-bold uppercase text-orange flex items-center gap-1">
-                      <Banknote class="h-2.5 w-2.5 shrink-0" />
-                      <span>BEITRAG</span>
-                    </span>
-                    <span id="live-price" class="text-[0.75rem] font-bold text-paper block leading-tight mt-0.5 truncate">
-                      {priceStr}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Highlights Section -->
-                <div id="live-highlights-container" class="mt-3 bg-forest-900/60 border border-orange/30 p-2.5 rounded-xs">
-                  <span class="font-mono text-[0.6rem] font-bold text-orange uppercase tracking-wider flex items-center gap-1 mb-1">
-                    <Sparkles class="h-3 w-3 shrink-0" />
-                    <span>WAS ERWARTET DICH?</span>
-                  </span>
-                  <p id="live-highlights-text" class="text-xs text-paper/80 leading-relaxed font-sans line-clamp-2">
-                    {highlights.join('  ·  ')}
-                  </p>
-                </div>
-              </div>
-
-              <!-- Bottom CTA & Sticker Zone -->
-              <div class="relative z-10 pt-4">
-                <!-- Story Link Sticker Area -->
-                <div
-                  id="live-sticker-box"
-                  class="border-2 border-dashed border-orange bg-orange/10 p-3 text-center rounded-sm transition-all"
-                >
-                  <span class="font-display text-base uppercase tracking-wide text-orange block">
-                    🔗 HIER LINK-STICKER PLATZIEREN
-                  </span>
-                  <span class="font-mono text-[0.65rem] text-paper/80 block mt-0.5">
-                    {targetUrl.replace(/^https?:\/\//, '')}
-                  </span>
-                </div>
-
-                <!-- QR Code Box (Alternative / Post format) -->
-                <div
-                  id="live-qr-box"
-                  class="hidden flex items-center justify-between gap-3 bg-forest-900 border border-orange p-2.5 rounded-sm"
-                >
-                  <div>
-                    <span class="font-display text-sm uppercase text-orange block">Online Anmelden!</span>
-                    <span class="font-mono text-[0.65rem] text-paper/70 block">QR-Code scannen:</span>
-                  </div>
-                  <div class="h-14 w-14 shrink-0 bg-white p-1 rounded-xs [&>svg]:h-full [&>svg]:w-full [&>svg]:block" set:html={qrSvg}></div>
-                </div>
-
-                <!-- Default Post CTA -->
-                <div
-                  id="live-post-cta"
-                  class="hidden bg-orange text-forest-950 p-2.5 text-center font-display text-sm uppercase tracking-wide rounded-sm font-bold"
-                >
-                  JETZT ANMELDEN · LINK IN DER BIO 👆
-                </div>
-
-                <!-- Motto Footer -->
-                <p class="mt-3 text-center font-mono text-[0.6rem] text-paper/50 uppercase tracking-widest">
-                  RAUS. INS ABENTEUER. · SMJ-WEGWEISER.DE
-                </p>
-              </div>
-            </div>
+            <img
+              id="social-preview-image"
+              src={`/toolbox/social-images/${id}-story-dark.png`}
+              alt="Social Media Vorlage"
+              class="w-full h-full object-contain block select-none"
+              loading="eager"
+            />
           </div>
         </div>
 
@@ -403,7 +255,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               <!-- Theme selector -->
               <div>
                 <label class="block text-paper/70 uppercase mb-2">Farbthema</label>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <button
                     type="button"
                     class="theme-btn active border-2 border-orange bg-forest-950 text-paper px-3 py-2 text-center uppercase tracking-wider font-bold cursor-pointer"
@@ -425,29 +277,18 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
                   >
                     Deep Black
                   </button>
+                  <button
+                    type="button"
+                    class="theme-btn border border-paper/20 bg-paper text-forest-950 px-3 py-2 text-center uppercase tracking-wider font-bold hover:border-orange cursor-pointer"
+                    data-theme="light"
+                  >
+                    Hell (Papier)
+                  </button>
                 </div>
               </div>
 
-              <!-- Toggles -->
-              <div class="pt-2 space-y-3 border-t border-paper/10">
-                <label class="flex items-center gap-2.5 text-paper cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id="toggle-sticker-box"
-                    checked
-                    class="h-4 w-4 rounded accent-orange cursor-pointer"
-                  />
-                  <span>Link-Sticker Rahmen anzeigen (Story)</span>
-                </label>
-
-                <label class="flex items-center gap-2.5 text-paper cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id="toggle-qr-code"
-                    class="h-4 w-4 rounded accent-orange cursor-pointer"
-                  />
-                  <span>QR-Code auf Grafik einblenden</span>
-                </label>
+              <div class="pt-2 text-paper/60 font-mono text-[0.7rem] border-t border-paper/10">
+                ✓ Gestochen scharf als SVG &amp; PNG vorgerendert mit QR-Code und Anmelde-Infos.
               </div>
             </div>
           </div>
@@ -489,59 +330,67 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               Wird direkt in voller 1080px Auflösung als PNG-Datei heruntergeladen.
             </p>
 
-            <button
-              type="button"
+            <a
               id="btn-download-social-png-big"
+              href={`/toolbox/social-images/${id}-story-dark.png`}
+              download={`smj-${id}-story-dark.png`}
               class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-xl"
             >
               <Download class="h-4 w-4" />
               <span>PNG Herunterladen (1080 px)</span>
-            </button>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </main>
-
-  <!-- Hidden Offscreen Canvas for Export -->
-  <canvas id="social-render-canvas" class="hidden"></canvas>
 </BaseLayout>
 
-<script>
-  import {
-    renderSocialToCanvas,
-    downloadSocialCanvasAsPng,
-    type SocialRenderOptions,
-  } from '../../../scripts/social-canvas'
+<script is:inline define:vars={{ eventId }}>
+  let currentFormat = 'story'
+  let currentTheme = 'dark'
 
-  // Data passed from Astro props
-  const eventState: SocialRenderOptions = {
-    format: 'story',
-    theme: 'dark',
-    title: document.getElementById('live-title')?.textContent?.trim() || 'Veranstaltung',
-    subtitle: document.getElementById('live-subtitle')?.textContent?.replace(/^\/\/\s*/, '').trim() || '',
-    categoryLabel: document.querySelector('.format-tab-btn')?.getAttribute('data-category') || 'Aktion',
-    dateStr: document.getElementById('live-date')?.textContent?.trim() || '',
-    locationStr: document.getElementById('live-location')?.textContent?.trim() || '',
-    ageStr: document.getElementById('live-age')?.textContent?.trim() || '',
-    priceStr: document.getElementById('live-price')?.textContent?.trim() || '',
-    highlights: document.getElementById('live-highlights-text')?.textContent?.split('  ·  ').map(s => s.trim()) || [],
-    targetUrl: window.location.href,
-    showQr: false,
-    showStickerBox: true,
-  }
-
+  const previewImg = document.getElementById('social-preview-image')
   const previewWrapper = document.getElementById('preview-wrapper')
   const previewDimensionsLabel = document.getElementById('preview-dimensions-label')
-  const liveStickerBox = document.getElementById('live-sticker-box')
-  const liveQrBox = document.getElementById('live-qr-box')
-  const livePostCta = document.getElementById('live-post-cta')
+  const btnDownloadBig = document.getElementById('btn-download-social-png-big')
+  const btnDownloadTop = document.getElementById('btn-download-social-png')
 
-  const toggleStickerBox = document.getElementById('toggle-sticker-box') as HTMLInputElement | null
-  const toggleQrCode = document.getElementById('toggle-qr-code') as HTMLInputElement | null
+  function updateImage() {
+    const imgUrl = `/toolbox/social-images/${eventId}-${currentFormat}-${currentTheme}.png`
+    const filename = `smj-${eventId}-${currentFormat}-${currentTheme}.png`
+
+    if (previewImg) {
+      previewImg.src = imgUrl
+    }
+    if (btnDownloadBig) {
+      btnDownloadBig.href = imgUrl
+      btnDownloadBig.download = filename
+    }
+    if (btnDownloadTop) {
+      btnDownloadTop.href = imgUrl
+      btnDownloadTop.download = filename
+    }
+
+    if (previewWrapper) {
+      if (currentFormat === 'story') {
+        previewWrapper.style.aspectRatio = '9 / 16'
+        previewWrapper.style.maxWidth = '420px'
+        if (previewDimensionsLabel) previewDimensionsLabel.textContent = '1080 × 1920 PX (INSTAGRAM STORY)'
+      } else if (currentFormat === 'post') {
+        previewWrapper.style.aspectRatio = '1 / 1'
+        previewWrapper.style.maxWidth = '480px'
+        if (previewDimensionsLabel) previewDimensionsLabel.textContent = '1080 × 1080 PX (FEED QUADRAT)'
+      } else if (currentFormat === 'portrait') {
+        previewWrapper.style.aspectRatio = '4 / 5'
+        previewWrapper.style.maxWidth = '450px'
+        if (previewDimensionsLabel) previewDimensionsLabel.textContent = '1080 × 1350 PX (FEED HOCHFORMAT)'
+      }
+    }
+  }
 
   // Format Tabs
-  const formatBtns = document.querySelectorAll<HTMLButtonElement>('.format-tab-btn')
+  const formatBtns = document.querySelectorAll('.format-tab-btn')
   formatBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       formatBtns.forEach((b) => {
@@ -551,14 +400,13 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
       btn.classList.add('active', 'bg-orange', 'text-forest-950')
       btn.classList.remove('text-paper/70')
 
-      const fmt = (btn.dataset.format || 'story') as 'story' | 'post' | 'portrait'
-      eventState.format = fmt
-      updatePreviewUI()
+      currentFormat = btn.dataset.format || 'story'
+      updateImage()
     })
   })
 
   // Theme Buttons
-  const themeBtns = document.querySelectorAll<HTMLButtonElement>('.theme-btn')
+  const themeBtns = document.querySelectorAll('.theme-btn')
   themeBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       themeBtns.forEach((b) => {
@@ -568,85 +416,14 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
       btn.classList.add('active', 'border-2', 'border-orange')
       btn.classList.remove('border', 'border-paper/20')
 
-      const th = (btn.dataset.theme || 'dark') as 'dark' | 'orange' | 'black'
-      eventState.theme = th
-      updatePreviewUI()
+      currentTheme = btn.dataset.theme || 'dark'
+      updateImage()
     })
   })
 
-  // Checkboxes
-  if (toggleStickerBox) {
-    toggleStickerBox.addEventListener('change', () => {
-      eventState.showStickerBox = toggleStickerBox.checked
-      updatePreviewUI()
-    })
-  }
-
-  if (toggleQrCode) {
-    toggleQrCode.addEventListener('change', () => {
-      eventState.showQr = toggleQrCode.checked
-      updatePreviewUI()
-    })
-  }
-
-  function updatePreviewUI() {
-    if (!previewWrapper) return
-
-    // Update Aspect Ratio
-    if (eventState.format === 'story') {
-      previewWrapper.style.aspectRatio = '9 / 16'
-      previewWrapper.style.maxWidth = '420px'
-      if (previewDimensionsLabel) previewDimensionsLabel.textContent = '1080 × 1920 PX (INSTAGRAM STORY)'
-    } else if (eventState.format === 'post') {
-      previewWrapper.style.aspectRatio = '1 / 1'
-      previewWrapper.style.maxWidth = '480px'
-      if (previewDimensionsLabel) previewDimensionsLabel.textContent = '1080 × 1080 PX (FEED QUADRAT)'
-    } else if (eventState.format === 'portrait') {
-      previewWrapper.style.aspectRatio = '4 / 5'
-      previewWrapper.style.maxWidth = '450px'
-      if (previewDimensionsLabel) previewDimensionsLabel.textContent = '1080 × 1350 PX (FEED HOCHFORMAT)'
-    }
-
-    // Theme Background
-    if (eventState.theme === 'orange') {
-      previewWrapper.style.backgroundColor = '#1a0c07'
-    } else if (eventState.theme === 'black') {
-      previewWrapper.style.backgroundColor = '#050705'
-    } else {
-      previewWrapper.style.backgroundColor = '#111713'
-    }
-
-    // Sticker vs QR vs Post CTA
-    if (eventState.format === 'story') {
-      if (eventState.showStickerBox) {
-        liveStickerBox?.classList.remove('hidden')
-        liveQrBox?.classList.add('hidden')
-        livePostCta?.classList.add('hidden')
-      } else if (eventState.showQr) {
-        liveStickerBox?.classList.add('hidden')
-        liveQrBox?.classList.remove('hidden')
-        livePostCta?.classList.add('hidden')
-      } else {
-        liveStickerBox?.classList.add('hidden')
-        liveQrBox?.classList.add('hidden')
-        livePostCta?.classList.remove('hidden')
-      }
-    } else {
-      // Post or Portrait
-      liveStickerBox?.classList.add('hidden')
-      if (eventState.showQr) {
-        liveQrBox?.classList.remove('hidden')
-        livePostCta?.classList.add('hidden')
-      } else {
-        liveQrBox?.classList.add('hidden')
-        livePostCta?.classList.remove('hidden')
-      }
-    }
-  }
-
   // Copy Caption Logic
   const copyBtn = document.getElementById('btn-copy-caption')
-  const captionTextarea = document.getElementById('caption-textarea') as HTMLTextAreaElement | null
+  const captionTextarea = document.getElementById('caption-textarea')
   const copyLabel = document.getElementById('copy-caption-label')
 
   if (copyBtn && captionTextarea && copyLabel) {
@@ -662,29 +439,4 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
       }
     })
   }
-
-  // Download PNG Canvas logic
-  const downloadBtnTop = document.getElementById('btn-download-social-png')
-  const downloadBtnBig = document.getElementById('btn-download-social-png-big')
-  const offscreenCanvas = document.getElementById('social-render-canvas') as HTMLCanvasElement | null
-
-  async function triggerDownload() {
-    if (!offscreenCanvas) return
-    const origText = downloadBtnTop?.querySelector('span')?.textContent || 'Bild herunterladen (PNG)'
-    if (downloadBtnTop) downloadBtnTop.querySelector('span')!.textContent = 'Generiere...'
-
-    try {
-      await renderSocialToCanvas(offscreenCanvas, eventState)
-      const slug = window.location.pathname.split('/').filter(Boolean).pop() || 'smj'
-      const filename = `smj-${eventState.format}-${slug}.png`
-      await downloadSocialCanvasAsPng(offscreenCanvas, filename)
-    } catch (err) {
-      console.error('Render social error', err)
-    } finally {
-      if (downloadBtnTop) downloadBtnTop.querySelector('span')!.textContent = origText
-    }
-  }
-
-  if (downloadBtnTop) downloadBtnTop.addEventListener('click', triggerDownload)
-  if (downloadBtnBig) downloadBtnBig.addEventListener('click', triggerDownload)
 </script>
