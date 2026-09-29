@@ -8,7 +8,7 @@ export const GET: APIRoute = ({ site }) => {
   const url = (path: string) => new URL(path, site).toString()
   const content = `# SMJ Regio Wegweiser
 
-> Die SMJ Regio Wegweiser ist die Schönstatt-Mannesjugend in der Region Wegweiser. Sie organisiert Zeltlager, Wochenenden und weitere Aktionen für Jungen; das Zeltlager richtet sich vor allem an 9- bis 14-Jährige.
+> > Die SMJ Regio Wegweiser ist Diözese Wegweiser der Schönstatt-Mannesjugend. Sie organisiert Zeltlager, Wochenenden und weitere Aktionen für Jungen und Jugentliche; das Zeltlager richtet sich vor allem an 9- bis 14-Jährige.
 
 Diese Website enthält Informationen für Teilnehmer, Eltern und Interessierte. Veranstaltungstermine, Anmeldelinks und freie Plätze können sich ändern. Für diese Angaben ist immer die jeweilige Veranstaltungsseite maßgeblich. Die interne Leiter-Toolbox gehört nicht zu den öffentlichen Informationen.
 
