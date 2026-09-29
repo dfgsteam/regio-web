@@ -61,7 +61,7 @@ jobs:
           AUTHENTIK_CLIENT_ID: ${{ secrets.AUTHENTIK_CLIENT_ID }}
           AUTHENTIK_CLIENT_SECRET: ${{ secrets.AUTHENTIK_CLIENT_SECRET }}
           TOOLBOX_APP_SECRET: ${{ secrets.TOOLBOX_APP_SECRET }}
-          TOOLBOX_ALLOWED_GROUPS: ${{ vars.TOOLBOX_ALLOWED_GROUPS }}
+          TOOLBOX_ALLOWED_GROUPS: ${{ secrets.TOOLBOX_ALLOWED_GROUPS || vars.TOOLBOX_ALLOWED_GROUPS }}
           AUTHENTIK_URL: ${{ vars.AUTHENTIK_URL }}
         run: npm run build:toolbox-config
 
