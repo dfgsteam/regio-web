@@ -139,8 +139,7 @@ for (const camp of sortedCamps) {
     categoryLabel: `Zeltlager ${camp.data.year}`,
     targetUrl: `${BASE_DOMAIN}/abenteuer/zeltlager-${camp.data.year}/`,
     toolboxUrl: `/toolbox/zeltlager-${camp.data.year}/`,
-    pdfUrl: `/toolbox/flyers/zeltlager-${camp.data.year}.pdf?t=${Date.now()}`,
-    flyerUrl: `/toolbox/flyer/zeltlager-${camp.data.year}/`,
+    pdfUrl: `/toolbox/flyers/zeltlager-${camp.data.year}.pdf`,
     socialUrl: `/toolbox/social/zeltlager-${camp.data.year}/`,
     dateStr: formatDateRange(camp.data.date.start, camp.data.date.end),
     location: camp.data.location.name,
@@ -169,8 +168,7 @@ for (const ev of sortedEvents) {
     categoryLabel: isWeekend ? 'Wochenende' : isSpecial ? 'Sonderaktion' : 'Veranstaltung',
     targetUrl: `${BASE_DOMAIN}/abenteuer/${ev.slug}/`,
     toolboxUrl: `/toolbox/${ev.slug}/`,
-    pdfUrl: `/toolbox/flyers/${ev.slug}.pdf?t=${Date.now()}`,
-    flyerUrl: `/toolbox/flyer/${ev.slug}/`,
+    pdfUrl: `/toolbox/flyers/${ev.slug}.pdf`,
     socialUrl: `/toolbox/social/${ev.slug}/`,
     dateStr: formatDateRange(ev.start, ev.end),
     location: ev.location,
@@ -518,7 +516,6 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 data-filename={item.filename}
                 data-toolbox-url={item.toolboxUrl || ''}
                 data-pdf-url={item.pdfUrl || ''}
-                data-flyer-url={item.flyerUrl || ''}
                 data-social-url={item.socialUrl || ''}
               >
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -628,7 +625,6 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                       data-filename={item.filename}
                       data-toolbox-url={item.toolboxUrl || ''}
                       data-pdf-url={item.pdfUrl || ''}
-                      data-flyer-url={item.flyerUrl || ''}
                       data-social-url={item.socialUrl || ''}
                       title="QR-Code anzeigen & herunterladen"
                     >
@@ -683,13 +679,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         </a>
         <a
           id="modal-flyer-link"
-          href="/toolbox/flyer/custom/?download=1"
+          href="/toolbox/flyers/custom.pdf"
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
         >
           <FileText class="h-4 w-4 text-orange" />
-          <span>Flyer (PDF)</span>
+          <span>Flyer (PDF) ↗</span>
         </a>
         <a
           id="modal-social-link"
@@ -847,7 +843,6 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         trigger.dataset.title || card?.dataset.title || '',
         trigger.dataset.filename || card?.dataset.filename || '',
         trigger.dataset.toolboxUrl || card?.dataset.toolboxUrl || '',
-        trigger.dataset.flyerUrl || card?.dataset.flyerUrl || '',
         trigger.dataset.socialUrl || card?.dataset.socialUrl || '',
         trigger.dataset.pdfUrl || card?.dataset.pdfUrl || '',
       )
@@ -870,7 +865,6 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     title: string,
     filename: string,
     toolboxUrl?: string,
-    flyerUrl?: string,
     socialUrl?: string,
     pdfUrl?: string,
   ) {
@@ -891,13 +885,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     }
 
     if (modalFlyerLink) {
-      if (pdfUrl) {
-        modalFlyerLink.href = pdfUrl
-      } else if (flyerUrl) {
-        modalFlyerLink.href = flyerUrl.includes('?') ? `${flyerUrl}&download=1` : `${flyerUrl}?download=1`
-      } else {
-        modalFlyerLink.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&download=1`
-      }
+      modalFlyerLink.href = pdfUrl || '/toolbox/flyers/custom.pdf'
     }
 
     if (modalSocialLink) {

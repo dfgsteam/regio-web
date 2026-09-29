@@ -93,8 +93,7 @@ let locationStr = 'Wiesental bei Thalwenden'
 let ageStr = 'Jungs von 9–14 Jahren'
 let priceStr = 'Auf Anfrage'
 let targetUrl = `${BASE_DOMAIN}/abenteuer/`
-let pdfUrl = ''
-let flyerUrl = '/toolbox/flyer/custom/'
+let pdfUrl = '/toolbox/flyers/custom.pdf'
 let socialUrl = '/toolbox/social/custom/'
 let isFeatured = true
 
@@ -108,8 +107,7 @@ if (campData) {
   ageStr = formatAgeRange(campData.data.age.min, campData.data.age.max) || 'Jungs von 9–14 Jahren'
   priceStr = campData.data.price || '189 €'
   targetUrl = `${BASE_DOMAIN}/abenteuer/zeltlager-${campData.data.year}/`
-  pdfUrl = `/toolbox/flyers/zeltlager-${campData.data.year}.pdf?t=${Date.now()}`
-  flyerUrl = `/toolbox/flyer/zeltlager-${campData.data.year}/`
+  pdfUrl = `/toolbox/flyers/zeltlager-${campData.data.year}.pdf`
   socialUrl = `/toolbox/social/zeltlager-${campData.data.year}/`
   isFeatured = campData.data.active
 } else if (eventData) {
@@ -128,8 +126,7 @@ if (campData) {
   ageStr = formatAgeRange(eventData.ageMin, eventData.ageMax) || 'Jungs von 9–14 Jahren'
   priceStr = eventData.price || 'Inkl. Verpflegung'
   targetUrl = `${BASE_DOMAIN}/abenteuer/${eventData.slug}/`
-  pdfUrl = `/toolbox/flyers/${eventData.slug}.pdf?t=${Date.now()}`
-  flyerUrl = `/toolbox/flyer/${eventData.slug}/`
+  pdfUrl = `/toolbox/flyers/${eventData.slug}.pdf`
   socialUrl = `/toolbox/social/${eventData.slug}/`
   isFeatured = eventData.end >= new Date()
 }
@@ -304,9 +301,9 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
             </div>
           </div>
 
-          <div class="pt-2 flex flex-col gap-2">
+          <div class="pt-2">
             <a
-              href={pdfUrl || flyerUrl}
+              href={pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
@@ -314,16 +311,6 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               <FileText class="h-4 w-4" />
               <span>A4 Flyer als PDF öffnen (.pdf) ↗</span>
             </a>
-            {flyerUrl && (
-              <a
-                href={flyerUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="w-full inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-900/60 px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider text-paper/70 hover:border-orange hover:text-orange transition-colors"
-              >
-                <span>Druckansicht im Browser</span>
-              </a>
-            )}
           </div>
         </div>
 
