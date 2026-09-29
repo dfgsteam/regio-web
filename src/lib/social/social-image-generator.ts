@@ -1,5 +1,28 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import sharp from 'sharp'
 import type { ScheduleEventItem } from '../pdf/schedule-pdf'
+
+let whiteLogoInnerCache: string | null = null
+let darkLogoInnerCache: string | null = null
+
+function getLogoInner(isDark: boolean): string {
+  if (isDark && whiteLogoInnerCache) return whiteLogoInnerCache
+  if (!isDark && darkLogoInnerCache) return darkLogoInnerCache
+
+  const fileName = isDark ? 'logo_wegweiser_white.svg' : 'logo_wegweiser_dark.svg'
+  const filePath = path.resolve(process.cwd(), 'public', fileName)
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8')
+    const match = raw.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i)
+    const inner = match?.[1] ? match[1].trim() : ''
+    if (isDark) whiteLogoInnerCache = inner
+    else darkLogoInnerCache = inner
+    return inner
+  } catch {
+    return ''
+  }
+}
 
 function escapeXml(unsafe: string | null | undefined): string {
   if (!unsafe) return ''
@@ -180,6 +203,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
   const isLight = options.theme === 'light'
   const isOrange = options.theme === 'orange'
   const isBlack = options.theme === 'black'
+  const logoInner = getLogoInner(!isLight)
 
   // Colors
   const bgColor = isLight ? '#F5EFE1' : isBlack ? '#050706' : isOrange ? '#1a0c07' : '#111713'
@@ -260,6 +284,13 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
 
     <!-- Background -->
     <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+
+    <!-- Background Watermark Logo -->
+    <g transform="translate(${options.format === 'story' ? '560, 480' : options.format === 'portrait' ? '580, 320' : '600, 240'}) rotate(12) scale(${options.format === 'story' ? '2.8' : '2.3'})" opacity="${isLight ? '0.06' : '0.07'}">
+      <svg width="328" height="288" viewBox="0 0 328 288">
+        ${logoInner}
+      </svg>
+    </g>
     
     <!-- Outer Framing Border -->
     ${
@@ -281,7 +312,10 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
 
     <!-- Header Bar -->
     <g transform="translate(96, ${options.format === 'story' ? 210 : 95})">
-      <text x="0" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">
+        ${logoInner}
+      </svg>
+      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
       <rect x="${width - 192 - 180}" y="-26" width="180" height="38" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="4"/>
       <text x="${width - 192 - 90}" y="-1" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${catEsc}</text>
     </g>
@@ -353,6 +387,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
   const width = 1080
   const height = options.format === 'story' ? 1920 : 1080
   const isLight = options.theme === 'light'
+  const logoInner = getLogoInner(!isLight)
 
   const bgColor = isLight ? '#F5EFE1' : '#111713'
   const cardBg = isLight ? '#FFFFFF' : '#182019'
@@ -373,6 +408,13 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
 
     <!-- Background -->
     <rect width="100%" height="100%" fill="url(#slideBgGrad)"/>
+
+    <!-- Background Watermark Logo -->
+    <g transform="translate(${options.format === 'story' ? '560, 480' : '600, 240'}) rotate(12) scale(${options.format === 'story' ? '2.8' : '2.3'})" opacity="${isLight ? '0.06' : '0.07'}">
+      <svg width="328" height="288" viewBox="0 0 328 288">
+        ${logoInner}
+      </svg>
+    </g>
     
     <!-- Outer Framing Border -->
     ${
@@ -394,7 +436,10 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
 
     <!-- Header Bar -->
     <g transform="translate(96, ${options.format === 'story' ? 210 : 95})">
-      <text x="0" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">
+        ${logoInner}
+      </svg>
+      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
       <rect x="${width - 192 - 180}" y="-26" width="180" height="38" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="4"/>
       <text x="${width - 192 - 90}" y="-1" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">TEIL ${options.slideIndex + 1} / ${options.totalSlides}</text>
     </g>
