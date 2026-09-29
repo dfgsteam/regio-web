@@ -1,47 +1,36 @@
 <?php
-/**
- * Authentik Konfiguration für SMJ Regio Wegweiser (Netcup Webhosting)
- * 
- * Trage hier deine Authentik-Daten ein.
- * Du findest diese in Authentik unter Applications -> Providers -> [Dein OAuth2 Provider].
- */
-
-// Direkten Webzugriff auf die Config-Datei sperren
+/** Runtime settings for the PHP host; the Astro build does not load these. */
 if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'config.php') {
     http_response_code(403);
-    die('Access Denied');
+    exit('Access Denied');
 }
 
-// Prüfe auf HTTPS (auch hinter Reverse-Proxies wie bei Netcup/Plesk)
-$isHttps = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] == 1)) ||
-           (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-$protocol = $isHttps ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'smj-wegweiser.de';
+$clientId = trim((string) getenv('AUTHENTIK_CLIENT_ID'));
+$clientSecret = (string) getenv('AUTHENTIK_CLIENT_SECRET');
+$appSecret = (string) getenv('TOOLBOX_APP_SECRET');
+$redirectUri = trim((string) getenv('TOOLBOX_REDIRECT_URI'));
+$allowedGroups = array_values(array_filter(array_map(
+    'trim',
+    explode(',', (string) getenv('TOOLBOX_ALLOWED_GROUPS'))
+)));
+
+// An incomplete configuration must keep the toolbox locked.
+if ($clientId === '' || $clientSecret === '' || strlen($appSecret) < 32 ||
+    !preg_match('#^https://[^/]+/toolbox-auth/callback\.php$#', $redirectUri) ||
+    $allowedGroups === []) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    header('Cache-Control: no-store');
+    exit('Toolbox derzeit nicht verfügbar.');
+}
 
 return [
-    // 1. Deine Authentik Basis-URL (ohne Slash am Ende)
-    // Beispiel: 'https://auth.smj-wegweiser.de' oder 'https://authentik.deine-domain.de'
-    'authentik_url' => getenv('AUTHENTIK_URL') ?: 'https://auth.smj-wegweiser.de',
-
-    // 2. Client ID aus deinem Authentik OAuth2 Provider
-    'client_id'     => getenv('AUTHENTIK_CLIENT_ID') ?: 'OryiraVr4VMrXyUrmH2hmSCEzB6YibgJNSwuqwWz',
-
-    // 3. Client Secret aus deinem Authentik OAuth2 Provider
-    'client_secret' => getenv('AUTHENTIK_CLIENT_SECRET') ?: 'ajqZpmoyBNBkyvr8ChOxlZ9X0XToMCUhqSCG2doV35tWGsJtLVhaFnqOMlCYFT4xlsk8uK1nInfUxQKz0ifk8VUic6Zd9Cgnwj4VMqn3xa28sDjdabHMbKY1qj0HFhzm',
-
-    // 4. Redirect URI (muss exakt so in Authentik bei den Redirect URIs hinterlegt sein)
-    'redirect_uri'  => $protocol . '://' . $host . '/toolbox-auth/callback.php',
-
-    // 5. Geheimer Schlüssel für die HMAC-SHA256 Signatur des Session-Cookies.
-    // Dieser Schlüssel verhindert jedes Manipulieren oder Fälschen des Cookies.
-    // Bitte vor dem Produktivgang durch eine lange zufällige Zeichenkette ersetzen!
-    'app_secret'    => getenv('TOOLBOX_APP_SECRET') ?: 'LW+§YH7Q&?7d@P&PDEVGLT9QwLKJ)QJJ4&KNa8=r:2WZxkq&p§#V%mN_3LCq3Q+L',
-
-    // 6. Name und Gültigkeit des Cookies
-    'cookie_name'   => 'smj_toolbox_session',
-    'cookie_expire' => 30 * 86400, // 30 Tage gültig
-
-    // 7. Optionale Gruppenbeschränkung (leer = alle authentifizierten Benutzer erlaubt)
-    // Beispiel: ['Leiter', 'authentik Admins']
-    'allowed_groups'=> [],
+    'authentik_url' => rtrim((string) (getenv('AUTHENTIK_URL') ?: 'https://auth.smj-wegweiser.de'), '/'),
+    'client_id' => $clientId,
+    'client_secret' => $clientSecret,
+    'redirect_uri' => $redirectUri,
+    'app_secret' => $appSecret,
+    'cookie_name' => 'smj_toolbox_session',
+    'cookie_expire' => 8 * 3600,
+    'allowed_groups' => $allowedGroups,
 ];
