@@ -298,15 +298,15 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 
 ### Leiter-Toolbox absichern
 
-Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. PHP benötigt auf dem **Webserver** `AUTHENTIK_CLIENT_ID`, `AUTHENTIK_CLIENT_SECRET`, `TOOLBOX_APP_SECRET` (mindestens 32 Zeichen), `TOOLBOX_REDIRECT_URI` und `TOOLBOX_ALLOWED_GROUPS` (kommagetrennte Authentik-Gruppennamen). `AUTHENTIK_URL` ist optional. Die Werte kommen aus der PHP-Umgebung oder aus einer serverseitigen `.env`: bevorzugt **eine Ebene oberhalb** des Webroots, alternativ im Webroot neben `toolbox-auth/`. Umgebungsvariablen haben Vorrang. Eine lokale `.env` oder GitHub-Actions-Secrets werden nicht automatisch auf den Webserver übertragen. Fehlt eine Pflichtangabe, bleibt die Anmeldung gesperrt.
+Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. Beim Deployment erzeugt GitHub Actions aus den hinterlegten Secrets und Variablen `toolbox-auth/generated-config.php` im Build-Verzeichnis und lädt sie mit den übrigen Dateien hoch. `TOOLBOX_REDIRECT_URI` wird aus `SITE_URL` berechnet. Eine separate Server-`.env` wird nicht gelesen und ist nicht erforderlich. Fehlt ein Pflichtwert, bricht das Deployment vor dem Upload ab; ohne erzeugte Konfiguration bleibt die Toolbox gesperrt.
 
-Liegt `.env` im Webroot, muss Apache die mitgelieferte `.htaccess` ausführen und direkten Zugriff auf `.env` verweigern. Nach der Bereitstellung `/toolbox-auth/login.php` aufrufen: Bei gültiger Konfiguration erfolgt eine Weiterleitung zu Authentik; andernfalls HTTP 503. Die PHP-Änderung wird erst nach dem nächsten Deployment wirksam.
+Die erzeugte PHP-Konfiguration enthält Geheimnisse und darf nicht ins Repository oder als öffentliches Build-Artefakt gelangen. Apache muss die mitgelieferte `.htaccess` ausführen; sie sperrt direkten Zugriff auf Konfigurationsdateien. Nach der Bereitstellung `/toolbox-auth/login.php` aufrufen: Bei gültiger Konfiguration erfolgt eine Weiterleitung zu Authentik; andernfalls HTTP 503. Eine früher manuell hochgeladene `.env` auf dem Server wird nicht mehr benötigt und sollte entfernt werden.
 
 Der Authentik-Provider muss die erlaubten Gruppen im `groups`-Feld der Userinfo-Antwort liefern. Nach dem Einrichten den Zugriff ohne Cookie auf eine Toolbox-Seite, eine PDF-Datei und ein Social-Bild prüfen: Jede Anfrage muss zum Login führen. Auch das produktive Hosting muss `.htaccess` und PHP tatsächlich ausführen; ein reiner Static-Host schützt diese Dateien nicht.
 
 Da frühere Versionen Zugangsdaten und einen Cookie-Schlüssel im Repository enthielten, **Authentik-Client-Secret und Toolbox-App-Secret vor der nächsten Freischaltung rotieren**. Bereits ausgestellte Toolbox-Cookies werden mit dem neuen Schlüssel ungültig.
 
-Das öffentliche Repository darf keine gebauten Toolbox-Dateien veröffentlichen. Der frühere `prod`-Branch enthält solche Dateien und muss entfernt werden; die Änderung am Deploy-Workflow löscht bereits veröffentlichte Inhalte nicht.
+Das öffentliche Repository darf keine gebauten Toolbox-Dateien veröffentlichen. Der frühere `prod`-Branch mit solchen Dateien wurde entfernt; externe Kopien bereits veröffentlichter Inhalte werden dadurch nicht gelöscht.
 
 - **Kein Cookie-Banner notwendig:** Die Seite setzt weder Tracking- noch Marketing-Cookies und lädt keine Drittanbieter-Skripte nach.
 - **100 % Self-Hosted Fonts:** Keine Google-Fonts-Serververbindungen (DSGVO-konform).
@@ -327,6 +327,8 @@ Astro & TypeScript Check (0 Fehler)
    ↓
 Astro Build
    ↓
+Toolbox-PHP-Konfiguration aus GitHub Secrets erzeugen
+   ↓
 Verschlüsselter FTPS-Upload auf dem Webspace
 ```
 
@@ -334,30 +336,35 @@ Verschlüsselter FTPS-Upload auf dem Webspace
 
 ## 🔑 Umgebungsvariablen
 
-Für den lokalen Sync gehören die Zugangsdaten in die ignorierte `.env.local`. Bei GitHub unter **Settings → Secrets and variables → Actions** `CIVICRM_API_KEY` als Repository Secret hinterlegen; `CIVICRM_SITE_KEY` nur, falls die AuthX-Konfiguration den Site-Key verlangt. Ohne API-Key bleibt der letzte Civi-Cache erhalten.
+GitHub Actions erzeugt die statischen Seiten und die PHP-Konfiguration und lädt beides per FTPS hoch. Auf dem Webserver muss keine `.env` gepflegt werden. Die Werte bleiben in GitHub Secrets und Variablen; nur die zum PHP-Betrieb benötigten Werte werden in die geschützte PHP-Konfigurationsdatei eingebaut.
 
-Während der Umstellung bleiben Kalenderlinks zum alten CiviCRM aktiv, wenn sich ein Event noch nicht eindeutig über Titel und Datum im neuen CiviCRM finden lässt. Alte und neue Event-IDs werden nicht gleichgesetzt. Nach Abschaltung des Altsystems `CIVICRM_LEGACY_LINKS_ENABLED=false` lokal in `.env` und bei GitHub als Actions-Variable setzen. Dann werden nicht zugeordnete alte Anmeldelinks ausgeblendet.
+### GitHub Actions: Build und Deployment
 
-Beispiel für `.env.local`:
+Unter **Repository → Settings → Secrets and variables → Actions** eintragen:
 
-```bash
-# Basis-URL
-SITE_URL=https://smj-wegweiser.de
+| Bereich | Name | Verwendung |
+| --- | --- | --- |
+| **Secret** | `FTP_PASSWORD` | FTPS-Upload; ohne Passwort wird der Upload übersprungen. |
+| **Secret** | `CIVICRM_API_KEY` | Anmeldedaten beim Build synchronisieren; ohne Key bleibt der vorhandene Cache erhalten. |
+| **Secret**, falls benötigt | `CIVICRM_SITE_KEY` | Nur wenn CiviCRM AuthX einen Site-Key verlangt. |
+| **Secret** | `AUTHENTIK_CLIENT_ID` | Client-ID für den Toolbox-Login. |
+| **Secret** | `AUTHENTIK_CLIENT_SECRET` | Client-Secret für den Toolbox-Login. |
+| **Secret** | `TOOLBOX_APP_SECRET` | Mindestens 32 zufällige Zeichen für signierte Toolbox-Sitzungen. |
+| **Variable** | `SITE_URL` | Canonical-Links, Sitemap und QR-Ziele; ohne Wert `https://smj-wegweiser.de`. |
+| **Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen, mehrere durch Komma getrennt. Ohne Gruppe kein Deployment. |
+| **Variable** | `CIVICRM_LEGACY_LINKS_ENABLED` | Nach Abschaltung des alten CiviCRM auf `false` setzen; sonst bleiben nicht zugeordnete alte Anmeldelinks aktiv. |
+| **Variable**, optional | `AUTHENTIK_URL` | Authentik-Basis-URL; ohne Wert `https://auth.smj-wegweiser.de`. |
+| **Variable**, optional | `FTP_SERVER_DIR` | Zielordner für den FTPS-Upload; ohne Wert das konfigurierte FTP-Startverzeichnis. |
+| **Variable**, optional | `CALENDAR_ICS_URL` | Anderer Kalender-Feed; ohne Wert wird der hinterlegte Google-Kalender genutzt. |
+| **Variablen**, optional | `PUBLIC_MATOMO_URL`, `PUBLIC_MATOMO_SITE_ID` | Andere Matomo-Instanz oder Site-ID; ohne Werte gelten die Standardwerte im Code. |
 
-# CiviCRM APIv4 (nur beim Build)
-CIVICRM_API_KEY=
-CIVICRM_SITE_KEY=
+Für lokale Builds und Syncs dient [`.env.example`](.env.example) als Vorlage für eine ignorierte `.env` oder `.env.local` im Projektroot. `INSTAGRAM_ACCESS_TOKEN` und `GEMINI_API_KEY` werden nur für einen **manuellen** `npm run sync:instagram` gebraucht; dieser Schritt läuft nicht im Deploy-Workflow. Die lokale `.env` gehört nicht auf den Webserver.
 
-# E-Mail Transport für Kontaktanfragen
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_USER=kontakt@smj-wegweiser.de
-MAIL_PASSWORD=secret
-MAIL_FROM=no-reply@smj-wegweiser.de
-MAIL_TO=kontakt@smj-wegweiser.de
-```
+### Webserver: PHP-Laufzeit
 
-`SITE_URL` bestimmt die kanonische Website-URL und die Ziel-Domain für automatisch erzeugte QR-Codes, Flyer und Terminkarten. Lokal in `.env` oder `.env.local` setzen. Der GitHub-Build verwendet die Actions-Variable `SITE_URL` unter **Settings → Secrets and variables → Actions → Variables**; ohne Variable nutzt er `https://smj-wegweiser.de`.
+Auf dem Webserver müssen PHP und Apache-Rewrites aktiv sein. Der Deploy-Workflow liefert `.htaccess`, `toolbox-auth/config.php` und die erzeugte `toolbox-auth/generated-config.php`. Letztere wird **nur auf dem GitHub-Runner erstellt**, nicht im Repository gespeichert. Öffentliche HTTP-Anfragen dürfen sie nicht als Quelltext ausgeben.
+
+Die PHP-Formulare für Kontakt und Newsletter nutzen ohne zusätzliche Konfiguration die im Code hinterlegten Mailadressen und PHP `mail()`. Optional können `MAIL_TO` und `MAIL_FROM` weiterhin in der PHP-Serverumgebung gesetzt werden; `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER` und `MAIL_PASSWORD` werden aktuell nicht verwendet.
 
 ---
 

@@ -11,6 +11,7 @@
     "start": "astro dev",
     "preview": "astro preview",
     "build": "astro build",
+    "build:toolbox-config": "node scripts/build-toolbox-config.mjs",
     "sync:calendar": "node scripts/sync-calendar.mjs",
     "sync:civicrm": "node scripts/sync-civicrm.mjs",
     "sync:instagram": "node scripts/sync-instagram.mjs",
