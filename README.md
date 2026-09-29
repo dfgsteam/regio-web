@@ -304,6 +304,8 @@ Der Authentik-Provider muss die erlaubten Gruppen im `groups`-Feld der Userinfo-
 
 Da frühere Versionen Zugangsdaten und einen Cookie-Schlüssel im Repository enthielten, **Authentik-Client-Secret und Toolbox-App-Secret vor der nächsten Freischaltung rotieren**. Bereits ausgestellte Toolbox-Cookies werden mit dem neuen Schlüssel ungültig.
 
+Das öffentliche Repository darf keine gebauten Toolbox-Dateien veröffentlichen. Der frühere `prod`-Branch enthält solche Dateien und muss entfernt werden; die Änderung am Deploy-Workflow löscht bereits veröffentlichte Inhalte nicht.
+
 - **Kein Cookie-Banner notwendig:** Die Seite setzt weder Tracking- noch Marketing-Cookies und lädt keine Drittanbieter-Skripte nach.
 - **100 % Self-Hosted Fonts:** Keine Google-Fonts-Serververbindungen (DSGVO-konform).
 - **Kontaktformular:** Server-Endpunkt mit Spam-Schutz und serverseitiger Validierung.
@@ -323,9 +325,7 @@ Astro & TypeScript Check (0 Fehler)
    ↓
 Astro Build
    ↓
-Deploy auf 'prod'-Branch
-   ↓
-FTP-Upload auf dem Webspace
+Verschlüsselter FTPS-Upload auf dem Webspace
 ```
 
 ---
