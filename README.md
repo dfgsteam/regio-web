@@ -298,7 +298,9 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 
 ### Leiter-Toolbox absichern
 
-Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. PHP benötigt auf dem **Webserver** die Umgebungsvariablen `AUTHENTIK_CLIENT_ID`, `AUTHENTIK_CLIENT_SECRET`, `TOOLBOX_APP_SECRET` (mindestens 32 Zeichen), `TOOLBOX_REDIRECT_URI` und `TOOLBOX_ALLOWED_GROUPS` (kommagetrennte Authentik-Gruppennamen). `AUTHENTIK_URL` ist optional. Ein lokales `.env` oder GitHub-Actions-Secrets werden von den ausgelieferten PHP-Dateien nicht automatisch geladen. Fehlt eine Pflichtangabe, bleibt die Anmeldung gesperrt.
+Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. PHP benötigt auf dem **Webserver** `AUTHENTIK_CLIENT_ID`, `AUTHENTIK_CLIENT_SECRET`, `TOOLBOX_APP_SECRET` (mindestens 32 Zeichen), `TOOLBOX_REDIRECT_URI` und `TOOLBOX_ALLOWED_GROUPS` (kommagetrennte Authentik-Gruppennamen). `AUTHENTIK_URL` ist optional. Die Werte kommen aus der PHP-Umgebung oder aus einer serverseitigen `.env`: bevorzugt **eine Ebene oberhalb** des Webroots, alternativ im Webroot neben `toolbox-auth/`. Umgebungsvariablen haben Vorrang. Eine lokale `.env` oder GitHub-Actions-Secrets werden nicht automatisch auf den Webserver übertragen. Fehlt eine Pflichtangabe, bleibt die Anmeldung gesperrt.
+
+Liegt `.env` im Webroot, muss Apache die mitgelieferte `.htaccess` ausführen und direkten Zugriff auf `.env` verweigern. Nach der Bereitstellung `/toolbox-auth/login.php` aufrufen: Bei gültiger Konfiguration erfolgt eine Weiterleitung zu Authentik; andernfalls HTTP 503. Die PHP-Änderung wird erst nach dem nächsten Deployment wirksam.
 
 Der Authentik-Provider muss die erlaubten Gruppen im `groups`-Feld der Userinfo-Antwort liefern. Nach dem Einrichten den Zugriff ohne Cookie auf eine Toolbox-Seite, eine PDF-Datei und ein Social-Bild prüfen: Jede Anfrage muss zum Login führen. Auch das produktive Hosting muss `.htaccess` und PHP tatsächlich ausführen; ein reiner Static-Host schützt diese Dateien nicht.
 
