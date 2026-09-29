@@ -72,7 +72,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ vars.FTP_SERVER_DIR != '' && format('{0}/', vars.FTP_SERVER_DIR) || './' }}
           local-dir: ./dist/
-          protocol: ftp
+          protocol: ftps
+          security: strict
           port: 21
           timeout: 60000
 
