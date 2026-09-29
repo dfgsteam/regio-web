@@ -2,9 +2,11 @@ import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
+import { loadEnv } from 'vite'
 import { eventProvider, getSlugVariants } from './src/lib/events'
 
-const siteUrl = process.env.SITE_URL || 'https://regio.hnld.de'
+const envSiteUrl = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), 'SITE_URL').SITE_URL
+const siteUrl = process.env.SITE_URL || envSiteUrl || 'https://regio.hnld.de'
 
 // Precompute canonical event slugs once at config load so the sitemap
 // filter can stay synchronous (the integration rejects async filters).

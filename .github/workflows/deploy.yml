@@ -23,7 +23,7 @@ jobs:
     env:
       FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       CIVICRM_LEGACY_LINKS_ENABLED: ${{ vars.CIVICRM_LEGACY_LINKS_ENABLED }}
-      PUBLIC_QR_BASE_URL: ${{ vars.PUBLIC_QR_BASE_URL }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://smj-wegweiser.de' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
