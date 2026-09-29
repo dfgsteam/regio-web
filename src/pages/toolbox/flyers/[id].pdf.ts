@@ -30,7 +30,18 @@ export async function getStaticPaths() {
         params: { id: key },
         props: {
           slug: key,
-          scheduleOptions: preset,
+          scheduleOptions: { ...preset, theme: 'light' },
+        },
+      })
+    }
+    const darkKey = `${key}-dark`
+    if (!seen.has(darkKey)) {
+      seen.add(darkKey)
+      paths.push({
+        params: { id: darkKey },
+        props: {
+          slug: darkKey,
+          scheduleOptions: { ...preset, theme: 'dark' },
         },
       })
     }
@@ -67,6 +78,14 @@ export async function getStaticPaths() {
     paths.push({
       params: { id: 'zeltlager' },
       props: { slug: 'zeltlager', campData: camps[0] },
+    })
+  }
+
+  if (!seen.has('custom')) {
+    seen.add('custom')
+    paths.push({
+      params: { id: 'custom' },
+      props: { slug: 'custom' },
     })
   }
 

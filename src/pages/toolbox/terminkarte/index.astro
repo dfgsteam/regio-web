@@ -1,12 +1,10 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro'
-import Logo from '../../../components/common/Logo.astro'
 import {
   ArrowLeft,
   Calendar,
   Download,
   Copy,
-  Printer,
   Smartphone,
   ExternalLink,
   MessageSquare,
@@ -19,17 +17,9 @@ import { buildSchedulePresets } from '../../../lib/pdf/schedule-pdf'
 
 const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
 const presets = buildSchedulePresets(events, camps)
-const initialPresetKey = 'terminkarte'
-const initialPreset = presets[initialPresetKey] ?? presets['terminkarte-2026'] ?? {
-  periodTitle: 'Kommende Termine',
-  periodSubtitle: 'Die nächsten Monate im Überblick',
-  events: [],
-  targetUrl: 'https://smj-wegweiser.de/abenteuer/',
-}
 
-// Prepare all events JSON for client-side filtering and rendering
-const allEventsJson = JSON.stringify(
-  [
+const scheduleData = {
+  allEvents: [
     ...camps.map((c) => ({
       id: `camp-${c.data.year}`,
       title: `${c.data.title}${c.data.motto ? ` – ${c.data.motto}` : ''}`,
@@ -51,9 +41,8 @@ const allEventsJson = JSON.stringify(
       category: e.category || 'event',
     })),
   ].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()),
-)
-
-const presetsJson = JSON.stringify(presets)
+  presets,
+}
 ---
 
 <BaseLayout
@@ -176,7 +165,7 @@ const presetsJson = JSON.stringify(presets)
             data-tab="pdf"
           >
             <FileText class="h-4 w-4" />
-            <span>DIN A6 Taschenkarte (PDF &amp; Druck)</span>
+            <span>DIN A6 Taschenkarte (PDF)</span>
           </button>
           <button
             type="button"
@@ -203,128 +192,67 @@ const presetsJson = JSON.stringify(presets)
               <h3 class="font-display text-lg text-paper uppercase">Kompakte DIN A6 Taschenkarte (105 × 148 mm)</h3>
               <p class="font-sans text-xs text-paper/70">
                 Optimiert als Handzettel zum Verteilen, für Schaukästen oder als Beilage im Brief. 
-                Erzeugt bei vielen Terminen automatisch Folgeseiten mit QR-Code zum Kalender.
+                Erzeugt bei vielen Terminen automatisch gleichmäßig verteilte Folgeseiten.
               </p>
             </div>
-            <div class="flex items-center gap-3">
-              <button
-                type="button"
-                id="client-pdf-btn"
+            
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- A6 Theme Toggle -->
+              <div class="flex items-center gap-1.5 bg-forest-950 p-1 border border-paper/20 rounded-xs">
+                <span class="font-mono text-[0.65rem] text-paper/60 uppercase px-1">Design:</span>
+                <button
+                  type="button"
+                  class="a6-theme-btn active px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs transition-all"
+                  data-theme="light"
+                >
+                  Hell (Druck)
+                </button>
+                <button
+                  type="button"
+                  class="a6-theme-btn px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60 transition-all"
+                  data-theme="dark"
+                >
+                  Dunkel
+                </button>
+              </div>
+
+              <a
+                id="client-pdf-open-btn"
+                href="/toolbox/flyers/terminkarte.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="inline-flex items-center gap-1.5 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md"
               >
-                <Download class="h-4 w-4" />
-                <span>PDF herunterladen (.pdf)</span>
-              </button>
-              <button
-                type="button"
-                id="print-a6-btn"
+                <FileText class="h-4 w-4" />
+                <span>PDF öffnen (.pdf) ↗</span>
+              </a>
+              <a
+                id="client-pdf-btn"
+                href="/toolbox/flyers/terminkarte.pdf"
+                download="terminkarte.pdf"
                 class="inline-flex items-center gap-1.5 border border-paper/30 bg-forest-900 px-3 py-2 font-mono text-xs uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-all cursor-pointer"
               >
-                <Printer class="h-3.5 w-3.5" />
-                <span>Drucken</span>
-              </button>
+                <Download class="h-3.5 w-3.5" />
+                <span>Download</span>
+              </a>
             </div>
           </div>
 
-          <!-- A6 Visual Preview Container -->
-          <div class="flex flex-wrap justify-center gap-8 py-6 bg-forest-900/40 p-4 sm:p-8 border border-paper/10 rounded-sm">
-            
-            <!-- Page 1 Preview (DIN A6 aspect ratio: 105 x 148 mm) -->
-            <div
-              id="a6-preview-page-1"
-              class="bg-paper text-forest-950 p-4 shadow-2xl relative flex flex-col justify-between border-2 border-forest-950"
-              style="width: 105mm; height: 148mm; max-height: 148mm; box-sizing: border-box; overflow: hidden;"
-            >
-              <div>
-                <!-- A6 Header -->
-                <div class="flex items-center justify-between border-b-2 border-forest-950 pb-2 mb-2">
-                  <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 flex items-center justify-center p-0.5 border border-forest-950 bg-forest-950 text-paper">
-                      <Logo size="sm" tone="dark" />
-                    </div>
-                    <div>
-                      <span class="block font-mono text-[0.55rem] font-bold text-orange uppercase tracking-wider">SMJ Regio Wegweiser</span>
-                      <span class="block font-mono text-[0.45rem] text-forest-950/70 uppercase">Mannesjugend</span>
-                    </div>
-                  </div>
-                  <span class="bg-forest-950 text-paper px-2 py-0.5 font-mono text-[0.5rem] font-bold uppercase">
-                    Kalender
-                  </span>
-                </div>
-
-                <!-- A6 Title -->
-                <div class="mb-2">
-                  <span class="block font-mono text-[0.55rem] font-bold text-orange uppercase">// RAUS. INS ABENTEUER.</span>
-                  <h2 id="a6-preview-title" class="font-display text-xl uppercase tracking-tight text-forest-950 leading-tight">
-                    {initialPreset.periodTitle}
-                  </h2>
-                  <p id="a6-preview-subtitle" class="font-hand text-xs text-forest-950/80 font-bold">
-                    // {initialPreset.periodSubtitle}
-                  </p>
-                </div>
-
-                <!-- A6 Events List -->
-                <div id="a6-preview-events" class="space-y-1.5 text-xs">
-                  <!-- Rendered dynamically via JavaScript -->
-                </div>
-              </div>
-
-              <!-- A6 Bottom QR & Web Box -->
-              <div class="border border-forest-950 bg-white p-2 mt-2 flex items-center justify-between gap-3">
-                <div class="space-y-0.5 flex-1">
-                  <span class="inline-block bg-orange text-forest-950 font-mono text-[0.45rem] font-bold uppercase px-1 py-0.2">
-                    Online &bull; Anmeldung
-                  </span>
-                  <p class="font-display text-[0.7rem] uppercase text-forest-950 leading-tight">
-                    Alle Infos &amp; Kalender-Abo:
-                  </p>
-                  <p class="font-mono text-[0.55rem] font-bold text-orange">
-                    smj-wegweiser.de/abenteuer/
-                  </p>
-                  <p class="font-mono text-[0.45rem] text-forest-950/60">
-                    Abo: /api/calendar.ics
-                  </p>
-                </div>
-                <div class="w-12 h-12 border border-forest-950 bg-white p-0.5 flex items-center justify-center shrink-0">
-                  <div id="a6-preview-qr" class="w-full h-full flex items-center justify-center"></div>
-                </div>
-              </div>
+          <!-- A6 Visual Preview Container: Embedded Pre-rendered PDF -->
+          <div class="flex flex-col items-center justify-center p-4 sm:p-8 bg-forest-900/40 border border-paper/10 rounded-sm">
+            <div class="w-full max-w-[700px] flex items-center justify-between font-mono text-xs text-paper/50 mb-3 px-1">
+              <span class="flex items-center gap-1.5 text-orange font-bold">
+                <span class="inline-block w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+                VORGERENDERTE PDF (ORIGINAL DRUCKDATEI)
+              </span>
+              <span>DIN A6 (105 × 148 MM)</span>
             </div>
-
-            <!-- Page 2 Preview (Shown if > 5 events) -->
-            <div
-              id="a6-preview-page-2"
-              class="hidden bg-paper text-forest-950 p-4 shadow-2xl flex flex-col justify-between border-2 border-forest-950"
-              style="width: 105mm; height: 148mm; max-height: 148mm; box-sizing: border-box; overflow: hidden;"
-            >
-              <div>
-                <div class="flex items-center justify-between border-b-2 border-forest-950 pb-2 mb-2">
-                  <span class="font-mono text-[0.55rem] font-bold text-orange uppercase">SMJ Regio Wegweiser &bull; Termine</span>
-                  <span class="font-mono text-[0.5rem] text-forest-950/70 uppercase">Seite 2 / 2</span>
-                </div>
-                <div id="a6-preview-events-page-2" class="space-y-2 text-xs">
-                  <!-- Rendered dynamically -->
-                </div>
-              </div>
-
-              <div class="border border-forest-950 bg-white p-2 mt-2 flex items-center justify-between gap-3">
-                <div class="space-y-0.5 flex-1">
-                  <span class="inline-block bg-orange text-forest-950 font-mono text-[0.45rem] font-bold uppercase px-1 py-0.2">
-                    Wegweiser Online
-                  </span>
-                  <p class="font-display text-[0.7rem] uppercase text-forest-950 leading-tight">
-                    Kamera ans Handy halten &amp; Plätze sichern!
-                  </p>
-                  <p class="font-mono text-[0.55rem] font-bold text-orange">
-                    smj-wegweiser.de/abenteuer/
-                  </p>
-                </div>
-                <div class="w-12 h-12 border border-forest-950 bg-white p-0.5 flex items-center justify-center shrink-0">
-                  <div id="a6-preview-qr-page-2" class="w-full h-full flex items-center justify-center"></div>
-                </div>
-              </div>
-            </div>
-
+            <iframe
+              id="a6-pdf-preview-frame"
+              src="/toolbox/flyers/terminkarte.pdf#toolbar=0"
+              class="w-full max-w-[700px] h-[550px] sm:h-[750px] rounded-xs border-2 border-paper/20 shadow-2xl bg-paper"
+              title="DIN A6 Taschenkarte PDF Vorschau"
+            ></iframe>
           </div>
         </div>
 
@@ -338,87 +266,122 @@ const presetsJson = JSON.stringify(presets)
               </p>
             </div>
 
-            <!-- Format Toggle -->
-            <div class="flex items-center gap-2">
-              <span class="font-mono text-xs text-paper/60 uppercase">Format:</span>
-              <button
-                type="button"
-                class="social-format-btn active px-3 py-1 font-mono text-xs font-bold uppercase border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs"
-                data-format="post"
-              >
-                Post 1:1
-              </button>
-              <button
-                type="button"
-                class="social-format-btn px-3 py-1 font-mono text-xs font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60"
-                data-format="portrait"
-              >
-                Portrait 4:5
-              </button>
-              <button
-                type="button"
-                class="social-format-btn px-3 py-1 font-mono text-xs font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60"
-                data-format="story"
-              >
-                Story 9:16
-              </button>
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Design Theme Switcher -->
+              <div class="flex items-center gap-1.5 bg-forest-950 p-1 border border-paper/20 rounded-xs">
+                <span class="font-mono text-[0.65rem] text-paper/60 uppercase px-1">Design:</span>
+                <button
+                  type="button"
+                  class="social-theme-btn active px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs transition-all"
+                  data-theme="dark"
+                >
+                  Dunkel
+                </button>
+                <button
+                  type="button"
+                  class="social-theme-btn px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60 transition-all"
+                  data-theme="light"
+                >
+                  Hell (Papier)
+                </button>
+              </div>
+
+              <!-- Format Toggle -->
+              <div class="flex items-center gap-1.5 bg-forest-950 p-1 border border-paper/20 rounded-xs">
+                <span class="font-mono text-[0.65rem] text-paper/60 uppercase px-1">Format:</span>
+                <button
+                  type="button"
+                  class="social-format-btn active px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs transition-all"
+                  data-format="post"
+                >
+                  Post 1:1
+                </button>
+                <button
+                  type="button"
+                  class="social-format-btn px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase border border-paper/20 text-paper/80 hover:border-paper cursor-pointer rounded-xs bg-forest-900/60 transition-all"
+                  data-format="story"
+                >
+                  Story 9:16
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Carousel Slides Grid -->
+          <!-- Carousel Slides Grid: Displaying pre-rendered PNGs -->
           <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             
             <!-- Slide 1 Card -->
-            <div class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
+            <div id="slide-card-0" class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
               <div class="flex items-center justify-between border-b border-paper/10 pb-2">
-                <span class="font-mono text-xs font-bold uppercase text-orange">Slide 1 &bull; Termine Teil 1</span>
-                <button
-                  type="button"
-                  class="download-slide-btn inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950"
-                  data-slide="0"
+                <span id="slide-title-0" class="font-mono text-xs font-bold uppercase text-orange">Slide 1 &bull; Termine</span>
+                <a
+                  id="slide-download-0"
+                  href="/toolbox/social-images/terminkarte-slide-0-post-dark.png"
+                  download="smj-terminkarte-slide-1-post-dark.png"
+                  class="inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950 transition-colors"
                 >
                   <Download class="h-3 w-3" />
                   <span>Download .PNG</span>
-                </button>
+                </a>
               </div>
               <div class="aspect-square bg-forest-950 border border-paper/20 p-2 flex items-center justify-center overflow-hidden">
-                <canvas id="canvas-slide-0" class="w-full h-full object-contain"></canvas>
+                <img
+                  id="slide-img-0"
+                  src="/toolbox/social-images/terminkarte-slide-0-post-dark.png"
+                  alt="Slide 1"
+                  class="w-full h-full object-contain select-none"
+                  loading="lazy"
+                />
               </div>
             </div>
 
             <!-- Slide 2 Card -->
-            <div class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
+            <div id="slide-card-1" class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
               <div class="flex items-center justify-between border-b border-paper/10 pb-2">
-                <span class="font-mono text-xs font-bold uppercase text-orange">Slide 2 &bull; Termine Teil 2</span>
-                <button
-                  type="button"
-                  class="download-slide-btn inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950"
-                  data-slide="1"
+                <span id="slide-title-1" class="font-mono text-xs font-bold uppercase text-orange">Slide 2 &bull; Termine Teil 2</span>
+                <a
+                  id="slide-download-1"
+                  href="/toolbox/social-images/terminkarte-slide-1-post-dark.png"
+                  download="smj-terminkarte-slide-2-post-dark.png"
+                  class="inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950 transition-colors"
                 >
                   <Download class="h-3 w-3" />
                   <span>Download .PNG</span>
-                </button>
+                </a>
               </div>
               <div class="aspect-square bg-forest-950 border border-paper/20 p-2 flex items-center justify-center overflow-hidden">
-                <canvas id="canvas-slide-1" class="w-full h-full object-contain"></canvas>
+                <img
+                  id="slide-img-1"
+                  src="/toolbox/social-images/terminkarte-slide-1-post-dark.png"
+                  alt="Slide 2"
+                  class="w-full h-full object-contain select-none"
+                  loading="lazy"
+                />
               </div>
             </div>
 
             <!-- Slide 3 / Final Card -->
-            <div class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
+            <div id="slide-card-2" class="border border-paper/20 bg-forest-900/80 p-4 rounded-xs space-y-3">
               <div class="flex items-center justify-between border-b border-paper/10 pb-2">
-                <span class="font-mono text-xs font-bold uppercase text-orange">Slide 3 &bull; Abschluss &amp; QR</span>
-                <button
-                  type="button"
-                  class="download-slide-btn inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950"
-                  data-slide="2"
+                <span id="slide-title-2" class="font-mono text-xs font-bold uppercase text-orange">Slide 3 &bull; Abschluss &amp; QR</span>
+                <a
+                  id="slide-download-2"
+                  href="/toolbox/social-images/terminkarte-slide-2-post-dark.png"
+                  download="smj-terminkarte-slide-3-post-dark.png"
+                  class="inline-flex items-center gap-1 font-mono text-[0.65rem] text-paper/80 hover:text-orange cursor-pointer border border-paper/20 px-2 py-1 bg-forest-950 transition-colors"
                 >
                   <Download class="h-3 w-3" />
                   <span>Download .PNG</span>
-                </button>
+                </a>
               </div>
               <div class="aspect-square bg-forest-950 border border-paper/20 p-2 flex items-center justify-center overflow-hidden">
-                <canvas id="canvas-slide-2" class="w-full h-full object-contain"></canvas>
+                <img
+                  id="slide-img-2"
+                  src="/toolbox/social-images/terminkarte-slide-2-post-dark.png"
+                  alt="Slide 3"
+                  class="w-full h-full object-contain select-none"
+                  loading="lazy"
+                />
               </div>
             </div>
 
@@ -494,28 +457,18 @@ const presetsJson = JSON.stringify(presets)
   </main>
 </BaseLayout>
 
-<script is:inline define:vars={{ allEventsJson, presetsJson }}>
-  window.__SCHEDULE_EVENTS__ = JSON.parse(allEventsJson)
-  window.__SCHEDULE_PRESETS__ = JSON.parse(presetsJson)
-</script>
-
-<script>
-  import { generateQrSvg } from '../../../scripts/qrcode-renderer'
-  import { openOrDownloadClientSchedulePdf } from '../../../scripts/client-schedule-pdf'
-  import {
-    renderScheduleSlideToCanvas,
-    downloadCanvasPng,
-  } from '../../../scripts/schedule-social-canvas'
-
-  const allEvents = (window as any).__SCHEDULE_EVENTS__ || []
-  const presets = (window as any).__SCHEDULE_PRESETS__ || {}
+<script is:inline define:vars={{ scheduleData }}>
+  const allEvents = scheduleData.allEvents || []
+  const presets = scheduleData.presets || {}
 
   let activePresetKey = 'terminkarte'
-  let activeSocialFormat: 'post' | 'portrait' | 'story' = 'post'
+  let activeSocialFormat = 'post'
+  let activeSocialTheme = 'dark'
+  let activeA6Theme = 'light'
 
   // Tab switching
-  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tab-btn')
-  const tabPanes = document.querySelectorAll<HTMLDivElement>('.tab-pane')
+  const tabBtns = document.querySelectorAll('.tab-btn')
+  const tabPanes = document.querySelectorAll('.tab-pane')
 
   tabBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -528,17 +481,13 @@ const presetsJson = JSON.stringify(presets)
       btn.classList.remove('text-paper/60', 'border-transparent')
 
       tabPanes.forEach((pane) => pane.classList.add('hidden'))
-      const activePane = document.getElementById(`tab-content-${targetTab}`)
+      const activePane = document.getElementById('tab-content-' + targetTab)
       if (activePane) activePane.classList.remove('hidden')
-
-      if (targetTab === 'social') {
-        renderAllSocialSlides()
-      }
     })
   })
 
   // Preset switching
-  const presetBtns = document.querySelectorAll<HTMLButtonElement>('.period-preset-btn')
+  const presetBtns = document.querySelectorAll('.period-preset-btn')
   presetBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       presetBtns.forEach((b) => {
@@ -553,8 +502,40 @@ const presetsJson = JSON.stringify(presets)
     })
   })
 
+  // Theme switching for A6
+  const a6ThemeBtns = document.querySelectorAll('.a6-theme-btn')
+  a6ThemeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      a6ThemeBtns.forEach((b) => {
+        b.classList.remove('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+        b.classList.add('border', 'border-paper/20', 'text-paper/80')
+      })
+      btn.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+      btn.classList.remove('border', 'border-paper/20', 'text-paper/80')
+
+      activeA6Theme = btn.getAttribute('data-theme') || 'light'
+      updateA6Pdf()
+    })
+  })
+
+  // Theme switching for Social
+  const socialThemeBtns = document.querySelectorAll('.social-theme-btn')
+  socialThemeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      socialThemeBtns.forEach((b) => {
+        b.classList.remove('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+        b.classList.add('border', 'border-paper/20', 'text-paper/80')
+      })
+      btn.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
+      btn.classList.remove('border', 'border-paper/20', 'text-paper/80')
+
+      activeSocialTheme = btn.getAttribute('data-theme') || 'dark'
+      updateSocialSlides()
+    })
+  })
+
   // Format switching for Social
-  const formatBtns = document.querySelectorAll<HTMLButtonElement>('.social-format-btn')
+  const formatBtns = document.querySelectorAll('.social-format-btn')
   formatBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       formatBtns.forEach((b) => {
@@ -564,8 +545,8 @@ const presetsJson = JSON.stringify(presets)
       btn.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
       btn.classList.remove('border', 'border-paper/20', 'text-paper/80')
 
-      activeSocialFormat = (btn.getAttribute('data-format') || 'post') as 'post' | 'portrait' | 'story'
-      renderAllSocialSlides()
+      activeSocialFormat = btn.getAttribute('data-format') || 'post'
+      updateSocialSlides()
     })
   })
 
@@ -581,196 +562,151 @@ const presetsJson = JSON.stringify(presets)
     )
   }
 
-  // Update UI Elements
-  async function updateStudioUI() {
+  function updateA6Pdf() {
+    const isDark = activeA6Theme === 'dark'
+    const pdfKey = isDark ? activePresetKey + '-dark' : activePresetKey
+    const pdfUrl = '/toolbox/flyers/' + pdfKey + '.pdf'
+
+    const frame = document.getElementById('a6-pdf-preview-frame')
+    if (frame) frame.src = pdfUrl + '#toolbar=0'
+
+    const openBtn = document.getElementById('client-pdf-open-btn')
+    if (openBtn) openBtn.href = pdfUrl
+
+    const dlBtn = document.getElementById('client-pdf-btn')
+    if (dlBtn) {
+      dlBtn.href = pdfUrl
+      dlBtn.download = pdfKey + '.pdf'
+    }
+  }
+
+  function updateSocialSlides() {
+    const data = getActivePresetData()
+    const eventsList = data.events || []
+    const totalSlides = eventsList.length <= 4 ? 2 : 3
+
+    const card2 = document.getElementById('slide-card-2')
+    const title0 = document.getElementById('slide-title-0')
+    const title1 = document.getElementById('slide-title-1')
+    const title2 = document.getElementById('slide-title-2')
+
+    const img0 = document.getElementById('slide-img-0')
+    const dl0 = document.getElementById('slide-download-0')
+    const img1 = document.getElementById('slide-img-1')
+    const dl1 = document.getElementById('slide-download-1')
+    const img2 = document.getElementById('slide-img-2')
+    const dl2 = document.getElementById('slide-download-2')
+
+    const src0 = '/toolbox/social-images/' + activePresetKey + '-slide-0-' + activeSocialFormat + '-' + activeSocialTheme + '.png'
+    const src1 = '/toolbox/social-images/' + activePresetKey + '-slide-1-' + activeSocialFormat + '-' + activeSocialTheme + '.png'
+    const src2 = '/toolbox/social-images/' + activePresetKey + '-slide-2-' + activeSocialFormat + '-' + activeSocialTheme + '.png'
+
+    if (img0) img0.src = src0
+    if (dl0) {
+      dl0.href = src0
+      dl0.download = 'smj-' + activePresetKey + '-slide-1-' + activeSocialFormat + '-' + activeSocialTheme + '.png'
+    }
+
+    if (img1) img1.src = src1
+    if (dl1) {
+      dl1.href = src1
+      dl1.download = 'smj-' + activePresetKey + '-slide-2-' + activeSocialFormat + '-' + activeSocialTheme + '.png'
+    }
+
+    if (totalSlides === 2) {
+      if (title0) title0.textContent = 'Slide 1 · Termine'
+      if (title1) title1.textContent = 'Slide 2 · Anmeldung & QR'
+      if (card2) card2.classList.add('hidden')
+    } else {
+      if (title0) title0.textContent = 'Slide 1 · Termine (Teil 1)'
+      if (title1) title1.textContent = 'Slide 2 · Termine (Teil 2)'
+      if (title2) title2.textContent = 'Slide 3 · Abschluss & QR'
+      if (card2) card2.classList.remove('hidden')
+
+      if (img2) img2.src = src2
+      if (dl2) {
+        dl2.href = src2
+        dl2.download = 'smj-' + activePresetKey + '-slide-3-' + activeSocialFormat + '-' + activeSocialTheme + '.png'
+      }
+    }
+  }
+
+  function updateStudioUI() {
     const data = getActivePresetData()
     const eventsList = data.events || []
 
-    // Update count & server link
     const countEl = document.getElementById('period-events-count')
     if (countEl) countEl.textContent = String(eventsList.length)
 
-    const serverLinkEl = document.getElementById('server-pdf-link') as HTMLAnchorElement | null
-    if (serverLinkEl) {
-      serverLinkEl.href = `/toolbox/flyers/${activePresetKey}.pdf`
-    }
-
-    // Update A6 Preview Page 1
-    const titleEl = document.getElementById('a6-preview-title')
-    if (titleEl) titleEl.textContent = data.periodTitle
-
-    const subEl = document.getElementById('a6-preview-subtitle')
-    if (subEl) subEl.textContent = data.periodSubtitle ? `// ${data.periodSubtitle}` : ''
-
-    const p1Container = document.getElementById('a6-preview-events')
-    const p2Container = document.getElementById('a6-preview-events-page-2')
-    const page2El = document.getElementById('a6-preview-page-2')
-
-    const p1Events = eventsList.length <= 5 ? eventsList : eventsList.slice(0, 5)
-    const p2Events = eventsList.length > 5 ? eventsList.slice(5) : []
-
-    if (p1Container) {
-      p1Container.innerHTML = p1Events
-        .map(
-          (e: any) => `
-        <div class="border-l-2 border-orange pl-2 py-0.5">
-          <span class="block font-mono text-[0.55rem] font-bold text-orange">${e.dateStr.toUpperCase()}</span>
-          <span class="block font-bold text-[0.65rem] text-forest-950 uppercase truncate">${e.title}</span>
-          <span class="block font-sans text-[0.5rem] text-forest-950/70 truncate">${[e.location, e.ageGroup].filter(Boolean).join(' · ')}</span>
-        </div>
-      `,
-        )
-        .join('')
-    }
-
-    if (p2Events.length > 0 && page2El && p2Container) {
-      page2El.classList.remove('hidden')
-      p2Container.innerHTML = p2Events
-        .map(
-          (e: any) => `
-        <div class="border-l-2 border-orange pl-2 py-0.5">
-          <span class="block font-mono text-[0.55rem] font-bold text-orange">${e.dateStr.toUpperCase()}</span>
-          <span class="block font-bold text-[0.65rem] text-forest-950 uppercase truncate">${e.title}</span>
-          <span class="block font-sans text-[0.5rem] text-forest-950/70 truncate">${[e.location, e.ageGroup].filter(Boolean).join(' · ')}</span>
-        </div>
-      `,
-        )
-        .join('')
-    } else if (page2El) {
-      page2El.classList.add('hidden')
-    }
-
-    // QR Codes
-    const qrSvg = await generateQrSvg(data.targetUrl || 'https://smj-wegweiser.de/abenteuer/', {
-      margin: 0,
-      errorCorrectionLevel: 'M',
-    })
-    const qr1 = document.getElementById('a6-preview-qr')
-    if (qr1) qr1.innerHTML = qrSvg
-    const qr2 = document.getElementById('a6-preview-qr-page-2')
-    if (qr2) qr2.innerHTML = qrSvg
-
-    // Update WhatsApp Template
+    updateA6Pdf()
+    updateSocialSlides()
     updateWhatsAppTemplate(data)
-
-    // Update Instagram Caption
     updateInstagramCaption(data)
-
-    // Render Canvas Slides
-    renderAllSocialSlides()
   }
 
-  function updateWhatsAppTemplate(data: any) {
+  function updateWhatsAppTemplate(data) {
     const eventsList = data.events || []
     const lines = [
-      `🏕️ *TERMINE DER SMJ REGIO WEGWEISER*`,
-      `_Raus. Ins Abenteuer._`,
-      ``,
-      `Hier ist die aktuelle Terminübersicht für *${data.periodTitle}*:`,
-      ``,
+      '🏕️ *TERMINE DER SMJ REGIO WEGWEISER*',
+      '_Raus. Ins Abenteuer._',
+      '',
+      'Hier ist die aktuelle Terminübersicht für *' + data.periodTitle + '*:',
+      '',
     ]
 
     for (const ev of eventsList) {
       const isCamp = ev.category === 'camp' || ev.title.toLowerCase().includes('zeltlager')
       const icon = isCamp ? '⛺' : '🔥'
-      lines.push(`${icon} *${ev.title}*`)
-      lines.push(`📅 ${ev.dateStr}`)
-      if (ev.location) lines.push(`📍 ${ev.location}`)
-      if (ev.ageGroup) lines.push(`👥 ${ev.ageGroup}`)
-      lines.push(``)
+      lines.push(icon + ' *' + ev.title + '*')
+      lines.push('📅 ' + ev.dateStr)
+      if (ev.location) lines.push('📍 ' + ev.location)
+      if (ev.ageGroup) lines.push('👥 ' + ev.ageGroup)
+      lines.push('')
     }
 
-    lines.push(`📲 *Alle Infos, Packlisten & Online-Anmeldung:*`)
-    lines.push(`👉 https://smj-wegweiser.de/abenteuer/`)
-    lines.push(``)
-    lines.push(`📅 *Kalender abonnieren (Google / Apple / Outlook):*`)
-    lines.push(`👉 https://smj-wegweiser.de/api/calendar.ics`)
+    lines.push('📲 *Alle Infos, Packlisten & Online-Anmeldung:*')
+    lines.push('👉 https://smj-wegweiser.de/abenteuer/')
+    lines.push('')
+    lines.push('📅 *Kalender abonnieren (Google / Apple / Outlook):*')
+    lines.push('👉 https://smj-wegweiser.de/api/calendar.ics')
 
     const fullText = lines.join('\n')
-    const textarea = document.getElementById('whatsapp-text-area') as HTMLTextAreaElement | null
+    const textarea = document.getElementById('whatsapp-text-area')
     if (textarea) textarea.value = fullText
 
-    const shareBtn = document.getElementById('share-whatsapp-btn') as HTMLAnchorElement | null
+    const shareBtn = document.getElementById('share-whatsapp-btn')
     if (shareBtn) {
-      shareBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`
+      shareBtn.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(fullText)
     }
   }
 
-  function updateInstagramCaption(data: any) {
+  function updateInstagramCaption(data) {
     const eventsList = data.events || []
     const lines = [
-      `RAUS. INS ABENTEUER. 🏕️🔥`,
-      ``,
-      `Hier sind alle Termine & Aktionen für ${data.periodTitle}:`,
-      ``,
+      'RAUS. INS ABENTEUER. 🏕️🔥',
+      '',
+      'Hier sind alle Termine & Aktionen für ' + data.periodTitle + ':',
+      '',
     ]
 
     for (const ev of eventsList) {
-      lines.push(`• ${ev.dateStr}: ${ev.title}`)
+      lines.push('• ' + ev.dateStr + ': ' + ev.title)
     }
 
-    lines.push(``)
-    lines.push(`👉 Alle Infos, Packlisten und die Online-Anmeldung findest du über den Link in unserer Bio oder unter smj-wegweiser.de/abenteuer/!`)
-    lines.push(``)
-    lines.push(`#smjwegweiser #zeltlager #abenteuer #jugend #draussen #schoenstatt #jugendleiter #outdoor #thueringen #eichsfeld`)
+    lines.push('')
+    lines.push('👉 Alle Infos, Packlisten und die Online-Anmeldung findest du über den Link in unserer Bio oder unter smj-wegweiser.de/abenteuer/!')
+    lines.push('')
+    lines.push('#smjwegweiser #zeltlager #abenteuer #jugend #draussen #schoenstatt #jugendleiter #outdoor #thueringen #eichsfeld')
 
-    const captionArea = document.getElementById('instagram-caption-area') as HTMLTextAreaElement | null
+    const captionArea = document.getElementById('instagram-caption-area')
     if (captionArea) captionArea.value = lines.join('\n')
-  }
-
-  async function renderAllSocialSlides() {
-    const data = getActivePresetData()
-    const eventsList = data.events || []
-
-    const slide1Events = eventsList.slice(0, 4)
-    const slide2Events = eventsList.slice(4, 8)
-
-    const c0 = document.getElementById('canvas-slide-0') as HTMLCanvasElement | null
-    const c1 = document.getElementById('canvas-slide-1') as HTMLCanvasElement | null
-    const c2 = document.getElementById('canvas-slide-2') as HTMLCanvasElement | null
-
-    if (c0) {
-      await renderScheduleSlideToCanvas(c0, {
-        format: activeSocialFormat,
-        periodTitle: data.periodTitle,
-        periodSubtitle: data.periodSubtitle,
-        slideIndex: 0,
-        totalSlides: 3,
-        events: slide1Events,
-        targetUrl: data.targetUrl,
-      })
-    }
-
-    if (c1) {
-      await renderScheduleSlideToCanvas(c1, {
-        format: activeSocialFormat,
-        periodTitle: data.periodTitle,
-        periodSubtitle: 'Weitere Termine',
-        slideIndex: 1,
-        totalSlides: 3,
-        events: slide2Events.length > 0 ? slide2Events : slide1Events,
-        targetUrl: data.targetUrl,
-      })
-    }
-
-    if (c2) {
-      await renderScheduleSlideToCanvas(c2, {
-        format: activeSocialFormat,
-        periodTitle: 'Jetzt Anmelden',
-        periodSubtitle: 'smj-wegweiser.de/abenteuer/',
-        slideIndex: 2,
-        totalSlides: 3,
-        events: [],
-        targetUrl: data.targetUrl,
-      })
-    }
   }
 
   // Copy buttons
   const copyWaBtn = document.getElementById('copy-whatsapp-btn')
   if (copyWaBtn) {
     copyWaBtn.addEventListener('click', () => {
-      const textarea = document.getElementById('whatsapp-text-area') as HTMLTextAreaElement | null
+      const textarea = document.getElementById('whatsapp-text-area')
       if (textarea) {
         navigator.clipboard.writeText(textarea.value)
         const textSpan = document.getElementById('copy-whatsapp-text')
@@ -785,7 +721,7 @@ const presetsJson = JSON.stringify(presets)
   const copyCapBtn = document.getElementById('copy-caption-btn')
   if (copyCapBtn) {
     copyCapBtn.addEventListener('click', () => {
-      const captionArea = document.getElementById('instagram-caption-area') as HTMLTextAreaElement | null
+      const captionArea = document.getElementById('instagram-caption-area')
       if (captionArea) {
         navigator.clipboard.writeText(captionArea.value)
         const textSpan = document.getElementById('copy-caption-text')
@@ -794,35 +730,6 @@ const presetsJson = JSON.stringify(presets)
           if (textSpan) textSpan.textContent = 'Caption kopieren'
         }, 2500)
       }
-    })
-  }
-
-  // Download slide buttons
-  const downloadSlideBtns = document.querySelectorAll<HTMLButtonElement>('.download-slide-btn')
-  downloadSlideBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const slideIdx = parseInt(btn.getAttribute('data-slide') || '0', 10)
-      const canvas = document.getElementById(`canvas-slide-${slideIdx}`) as HTMLCanvasElement | null
-      if (canvas) {
-        downloadCanvasPng(canvas, `SMJ-Termine-Slide-${slideIdx + 1}`)
-      }
-    })
-  })
-
-  // Client PDF Generation / Download
-  const clientPdfBtn = document.getElementById('client-pdf-btn')
-  if (clientPdfBtn) {
-    clientPdfBtn.addEventListener('click', async () => {
-      const data = getActivePresetData()
-      await openOrDownloadClientSchedulePdf(data, 'download')
-    })
-  }
-
-  // Print button
-  const printA6Btn = document.getElementById('print-a6-btn')
-  if (printA6Btn) {
-    printA6Btn.addEventListener('click', () => {
-      window.print()
     })
   }
 
