@@ -296,6 +296,14 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 
 ## 🔒 Datenschutz & Rechtliches
 
+### Leiter-Toolbox absichern
+
+Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. PHP benötigt auf dem **Webserver** die Umgebungsvariablen `AUTHENTIK_CLIENT_ID`, `AUTHENTIK_CLIENT_SECRET`, `TOOLBOX_APP_SECRET` (mindestens 32 Zeichen), `TOOLBOX_REDIRECT_URI` und `TOOLBOX_ALLOWED_GROUPS` (kommagetrennte Authentik-Gruppennamen). `AUTHENTIK_URL` ist optional. Ein lokales `.env` oder GitHub-Actions-Secrets werden von den ausgelieferten PHP-Dateien nicht automatisch geladen. Fehlt eine Pflichtangabe, bleibt die Anmeldung gesperrt.
+
+Der Authentik-Provider muss die erlaubten Gruppen im `groups`-Feld der Userinfo-Antwort liefern. Nach dem Einrichten den Zugriff ohne Cookie auf eine Toolbox-Seite, eine PDF-Datei und ein Social-Bild prüfen: Jede Anfrage muss zum Login führen. Auch das produktive Hosting muss `.htaccess` und PHP tatsächlich ausführen; ein reiner Static-Host schützt diese Dateien nicht.
+
+Da frühere Versionen Zugangsdaten und einen Cookie-Schlüssel im Repository enthielten, **Authentik-Client-Secret und Toolbox-App-Secret vor der nächsten Freischaltung rotieren**. Bereits ausgestellte Toolbox-Cookies werden mit dem neuen Schlüssel ungültig.
+
 - **Kein Cookie-Banner notwendig:** Die Seite setzt weder Tracking- noch Marketing-Cookies und lädt keine Drittanbieter-Skripte nach.
 - **100 % Self-Hosted Fonts:** Keine Google-Fonts-Serververbindungen (DSGVO-konform).
 - **Kontaktformular:** Server-Endpunkt mit Spam-Schutz und serverseitiger Validierung.
