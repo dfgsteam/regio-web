@@ -1,57 +1,58 @@
 {
   "weekend": {
     "categoryLabel": "Aktionswochenende",
-    "subtitle": "Ein Wochenende voller Action, Natur und starker Gemeinschaft",
-    "description": "Wenn die Tage kurz sind oder der Winter ruft, wird es Zeit für echte Abenteuer! In der Klause 2.0 in Heiligenstadt verbringen wir ein Wochenende voller Geländespiele, Action im Wald, Kochen mit der Küchencrew und gemütlichen Abenden am Kamin. Raus aus dem Alltag, 100% handyfrei – rein ins Erlebnis!",
+    "subtitle": "Ein Wochenende voller Spaß, Action und echter Zeit unter Jungs",
+    "description": "Ein Wochenende voller Spaß und echter Zeit unter Jungs! In der Klause 2.0 in Heiligenstadt erwarten dich packende Geländespiele im Freien, coole gemeinsame Aktionen (wie Schwimmbad oder Kino), spannende Bildungs-Inputs und jede Menge gute Laune. 100% handyfreie Zeit – kochen muss keiner, dafür sorgt unsere eigene Küchencrew!",
     "highlights": [
       {
-        "title": "Spannende Aktionen & Geländespiele",
-        "desc": "Mutproben, Taktikspiele und Abenteuer draußen in der Natur rund um die Klause."
+        "title": "Geländespiele & Wald-Action",
+        "desc": "Natur, Taktikspiele und packende Abenteuer draußen rund um die Klause 2.0."
       },
       {
-        "title": "Gemeinsames Kochen & Küchencrew",
-        "desc": "Zusammen schnippeln, braten und am großen Tisch essen – wie echte Pfadfinder."
+        "title": "Coole Aktionen & Ausflüge",
+        "desc": "Gemeinsame Highlights wie Schwimmbad, Kinoabend oder Hallensport – Spaß garantiert!"
       },
       {
-        "title": "Kaminfeuer & Gemeinschaft",
-        "desc": "Spannende Geschichten, Spiele, Gesang und echte Freundschaften fürs Leben."
+        "title": "Zeit unter Jungs & Handyfrei",
+        "desc": "Echte Freunde finden, spannende Bildungs-Inputs und 100% handyfreie Zeit."
       }
     ],
     "packingList": [
-      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Persönliche Kleidung, Hausschuhe & Kulturbeutel",
       "Wetterfeste Kleidung & feste Schuhe für draußen",
-      "Schlafsack oder Bettwäsche & Laken (Leihgebühr vor Ort)",
+      "Badesachen (Badehose & Handtuch für Ausflüge)",
+      "Schlafsack oder Bettwäsche & Laken",
       "Taschenlampe oder Kopflampe",
-      "Krankenkassenkarte & Impfausweis"
+      "Krankenkassenkarte"
     ],
-    "notes": "Bring gerne deinen besten Freund mit – gemeinsam macht es doppelt so viel Spaß!"
+    "notes": "100% handyfreie Zeit, Vollverpflegung durch unsere Küchencrew (keiner muss kochen) und Betreuung: Jugend leitet Jugend."
   },
   "sterntreffen": {
     "categoryLabel": "Sterntreffen",
-    "subtitle": "Das offizielle Zeltlager-Nachtreffen in der Klause 2.0",
-    "description": "Das große Wiedersehen der Zeltgemeinschaft! Drei Tage voller Lagerfeuer-Feeling, Geländespiele rund um die Klause und die schönsten Zeltlagerfotos auf der Großleinwand. Wir kochen zusammen, lassen die Geschichten des Sommers aufleben und starten gemeinsam ins neue SMJ-Jahr.",
+    "subtitle": "Das Zeltlager Revue passieren lassen & Wiedersehen der Gemeinschaft",
+    "description": "Das große Wiedersehen der Zeltgemeinschaft! Drei Tage in der Klause 2.0, um den vergangenen Zeltlagersommer Revue passieren zu lassen: die schönsten Zeltlagerfotos und Videos auf der Großleinwand, Wiedersehen mit Zeltgruppe und Leitern, packende Geländespiele und Zeit unter Freunden. 100% handyfrei und rundum versorgt durch die Küchencrew!",
     "highlights": [
       {
-        "title": "Großes Wiedersehen",
-        "desc": "Wiedersehen mit deiner Zeltgruppe, den Gruppenleitern und alten Freunden."
+        "title": "Zeltlager-Revue & Fotoshow",
+        "desc": "Die besten Bilder, Videos und Geschichten des Zeltlagers noch einmal auf der Großleinwand feiern."
       },
       {
-        "title": "Lagerfotos & Geschichten",
-        "desc": "Die besten Momente des Zeltlagers noch einmal auf der Leinwand erleben."
+        "title": "Großes Wiedersehen mit Allen",
+        "desc": "Wiedersehen mit deiner Zeltgemeinschaft, den Gruppenleitern und Freunden fürs Leben."
       },
       {
-        "title": "Geländespiele & Mutproben",
-        "desc": "Action und Herausforderungen im Wald rund um die Klause 2.0."
+        "title": "Geländespiele & Gemeinschaft",
+        "desc": "Packende Aktionen draußen im Freien und 100% handyfreie Zeit unter Jungs."
       }
     ],
     "packingList": [
-      "Persönliche Sachen, Hausschuhe & Kulturbeutel",
+      "Persönliche Kleidung, Hausschuhe & Kulturbeutel",
       "Wetterfeste Kleidung & feste Schuhe für draußen",
       "Schlafsack oder Bettwäsche & Laken",
       "Taschenlampe oder Kopflampe",
       "Krankenkassenkarte"
     ],
-    "notes": "Offen für alle Teilnehmer des vergangenen Zeltlagers und alle interessierten Jungs!"
+    "notes": "Offen für alle Zeltlager-Teilnehmer und alle interessierten Jungs – Vollverpflegung durch die Küchencrew."
   },
   "camp": {
     "categoryLabel": "Sommerzeltlager",
@@ -83,7 +84,7 @@
   "general": {
     "categoryLabel": "Aktion & Abenteuer",
     "subtitle": "Raus ins Abenteuer – mit der SMJ Regio Wegweiser",
-    "description": "Gemeinschaft erleben, Neues wagen und draußen sein! Bei unseren Aktionen erwarten dich spannende Spiele, handwerkliche Projekte, echte Freundschaften und erfahrene Gruppenleiter. Komm vorbei und sei dabei!",
+    "description": "Gemeinschaft erleben, Neues wagen und draußen sein! Bei unseren Aktionen erwarten dich spannende Spiele, Ausflüge, echte Freundschaften und erfahrene Gruppenleiter. Komm vorbei und sei dabei!",
     "highlights": [
       {
         "title": "Echte Gemeinschaft",
