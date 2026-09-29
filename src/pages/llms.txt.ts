@@ -25,6 +25,7 @@ Diese Website enthält Informationen für Teilnehmer, Eltern und Interessierte. 
 - [Abenteuer und aktuelle Termine](${url('/abenteuer/')}): Veranstaltungen mit Details und Anmeldestatus.
 - [Zeltlager](${url('/abenteuer/zeltlager/')}): Informationen zum jährlich wechselnden Zeltlager.
 - [Aktuelles](${url('/aktuelles/')}): Berichte und Rückblicke.
+- [RSS-Feed Aktuelles](${url('/rss.xml')}): Die neuesten veröffentlichten Beiträge.
 - [Galerie](${url('/galerie/')}): Fotos und Eindrücke.
 
 ## Weitere Informationen

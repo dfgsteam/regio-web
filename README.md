@@ -175,6 +175,8 @@ Um einen Beitrag von der Website auszublenden (ohne die Datei löschen zu müsse
 
 *Sobald einer dieser Werte gesetzt ist, wird der Post beim Build automatisch von der Startseite, aus der Übersicht (`/aktuelles/`) und aus allen Feeds entfernt.*
 
+Die 20 neuesten veröffentlichten Beiträge stehen außerdem unter `/rss.xml` als RSS-Feed bereit. Der Feed wird beim Build aktualisiert und ist im Seitenkopf sowie im Footer verlinkt.
+
 ### 3. Termine & Events verwalten
 
 Google Calendar liefert Titel, Zeit und Ort über `scripts/sync-calendar.mjs` nach `src/data/events.json`.
