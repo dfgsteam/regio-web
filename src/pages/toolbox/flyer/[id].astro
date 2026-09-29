@@ -184,76 +184,74 @@ const pdfUrl = id && id !== 'custom' ? `/toolbox/flyers/${id}.pdf?t=${Date.now()
             <Compass class="h-4 w-4" />
             <span>RAUS. INS ABENTEUER.</span>
           </div>
-          <h1 class="font-display text-4xl sm:text-5xl uppercase tracking-tight text-forest-950 leading-[0.95]">
+          <h1 class="font-display text-5xl sm:text-6xl uppercase tracking-tight text-forest-950 leading-[0.9]">
             {flyerData.title}
           </h1>
           {flyerData.subtitle && (
-            <p class="mt-1.5 font-hand text-xl text-orange font-bold">
+            <p class="mt-2 font-hand text-2xl text-orange font-bold leading-tight">
               // {flyerData.subtitle}
             </p>
           )}
         </section>
 
         <!-- Key Facts Grid (Dark Cards for High Contrast) -->
-        <section class="my-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-2.5">
-            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
-              <Calendar class="h-3.5 w-3.5" />
+        <section class="my-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3 shadow-xs">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.7rem] font-bold uppercase">
+              <Calendar class="h-4 w-4" />
               <span>Wann</span>
             </div>
-            <p class="font-mono text-xs font-bold leading-tight">{flyerData.dateStr}</p>
+            <p class="font-mono text-sm font-bold leading-tight">{flyerData.dateStr}</p>
           </div>
 
-          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-2.5">
-            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
-              <MapPin class="h-3.5 w-3.5" />
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3 shadow-xs">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.7rem] font-bold uppercase">
+              <MapPin class="h-4 w-4" />
               <span>Wo</span>
             </div>
-            <p class="font-mono text-xs font-bold leading-tight">{flyerData.locationStr}</p>
+            <p class="font-mono text-sm font-bold leading-tight truncate">{flyerData.locationStr}</p>
           </div>
 
-          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-2.5">
-            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
-              <Users class="h-3.5 w-3.5" />
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3 shadow-xs">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.7rem] font-bold uppercase">
+              <Users class="h-4 w-4" />
               <span>Wer</span>
             </div>
-            <p class="font-mono text-xs font-bold leading-tight">{flyerData.ageStr}</p>
+            <p class="font-mono text-sm font-bold leading-tight">{flyerData.ageStr}</p>
           </div>
 
-          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-2.5">
-            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.65rem] font-bold uppercase">
-              <Banknote class="h-3.5 w-3.5" />
+          <div class="border-2 border-forest-950 bg-forest-950 text-paper p-3 shadow-xs">
+            <div class="flex items-center gap-1.5 text-orange mb-1 font-mono text-[0.7rem] font-bold uppercase">
+              <Banknote class="h-4 w-4" />
               <span>Beitrag</span>
             </div>
-            <p class="font-mono text-xs font-bold leading-tight">{flyerData.priceStr}</p>
+            <p class="font-mono text-sm font-bold leading-tight">{flyerData.priceStr}</p>
           </div>
         </section>
 
-        <!-- Description Section (Das erwartet dich) -->
-        {flyerData.description && (
-          <section class="my-3">
-            <h2 class="font-mono text-[0.7rem] font-bold uppercase tracking-widest text-forest-950/80 mb-1.5 border-b-2 border-forest-950/20 pb-0.5">
-              Das erwartet dich bei dieser Aktion:
-            </h2>
-            <p class="font-sans text-xs text-forest-950 leading-relaxed max-w-3xl">
-              {flyerData.description}
-            </p>
-          </section>
-        )}
+        <!-- Adventure Hook / Poster Claim (Blickfang statt Textwüste) -->
+        <section class="my-4 pt-1">
+          <p class="font-display text-base uppercase tracking-wider text-orange leading-tight">
+            DRECK AN DEN SCHUHEN. RAUCH IN DEN KLAMOTTEN. GESCHICHTEN IM KOPF.
+          </p>
+          <p class="mt-1.5 font-sans text-sm text-forest-950 leading-relaxed max-w-3xl">
+            {flyerData.description ? flyerData.description.split(/[.!?]/)[0] + '.' : 'Gemeinschaft erleben, Neues wagen und draußen sein! Freu dich auf ein echtes Abenteuer mit Freunden, Lagerfeuer und erfahrenen Gruppenleitern.'}
+          </p>
+        </section>
 
         <!-- Highlights & Program Points -->
-        <section class="my-3">
-          <h2 class="font-mono text-[0.7rem] font-bold uppercase tracking-widest text-forest-950/80 mb-2 border-b-2 border-forest-950/20 pb-0.5">
-            Programm-Highlights:
+        <section class="my-4">
+          <h2 class="font-mono text-xs font-bold uppercase tracking-widest text-forest-950 mb-2.5 border-b border-forest-950/20 pb-1">
+            Das erwartet dich bei dieser Aktion:
           </h2>
-          <div class="space-y-2">
-            {flyerData.highlights.map((h) => (
-              <div class="flex items-start gap-2.5 border-l-4 border-orange pl-2.5 py-0.5">
+          <div class="space-y-3">
+            {flyerData.highlights.slice(0, 3).map((h) => (
+              <div class="flex items-start gap-3 border-l-4 border-orange pl-3 py-0.5">
                 <div>
-                  <h3 class="font-display text-base uppercase text-forest-950 tracking-wide leading-tight">
+                  <h3 class="font-display text-lg uppercase text-forest-950 tracking-wide leading-tight">
                     {h.title}
                   </h3>
-                  <p class="font-sans text-[0.7rem] text-forest-950/80 leading-snug">
+                  <p class="font-sans text-xs text-forest-950/80 leading-snug">
                     {h.desc}
                   </p>
                 </div>
@@ -261,68 +259,61 @@ const pdfUrl = id && id !== 'custom' ? `/toolbox/flyers/${id}.pdf?t=${Date.now()
             ))}
           </div>
         </section>
-
-        <!-- Packing List / Was du brauchst -->
-        {flyerData.packingList && flyerData.packingList.length > 0 && (
-          <section class="my-3">
-            <h2 class="font-mono text-[0.7rem] font-bold uppercase tracking-widest text-forest-950/80 mb-1.5 border-b-2 border-forest-950/20 pb-0.5">
-              Was du brauchst (Packliste &amp; Infos):
-            </h2>
-            <div class="grid grid-cols-2 gap-x-4 gap-y-1 font-sans text-[0.7rem] text-forest-950">
-              {flyerData.packingList.slice(0, 6).map((item) => (
-                <div class="flex items-center gap-1.5">
-                  <CircleCheck class="h-3 w-3 text-orange shrink-0" />
-                  <span class="truncate">{item}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
 
-      <!-- Bottom Registration & QR Code Call-to-Action with Contact Box -->
+      <!-- Bottom Registration & QR Code Call-to-Action Hero Box -->
       <div>
-        <section class="border-2 border-forest-950 bg-white p-4 my-2 flex items-center justify-between gap-6 relative overflow-hidden shadow-sm">
+        <section class="border-2 border-forest-950 bg-white p-5 my-2 flex items-center justify-between gap-6 relative overflow-hidden shadow-sm">
           <div class="space-y-2 flex-1">
-            <span class="inline-block bg-orange text-forest-950 font-mono text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5">
+            <span class="inline-block bg-orange text-forest-950 font-mono text-[0.7rem] font-bold uppercase tracking-wider px-2.5 py-0.5">
               Online-Anmeldung &amp; Infos
             </span>
-            <h3 class="font-display text-2xl uppercase tracking-tight text-forest-950">
-              Jetzt anmelden &amp; Plätze sichern!
+            <h3 class="font-display text-3xl uppercase tracking-tight text-forest-950">
+              Bist du bereit? Jetzt dabei sein!
             </h3>
-            <p class="font-sans text-xs text-forest-950/80 max-w-md">
-              Kamera ans Handy halten oder Link im Browser öffnen. Dort gibt es die offizielle Anmeldung, Packliste und alle Details für deine Eltern.
+            <p class="font-sans text-xs text-forest-950/80">
+              Kamera ans Handy halten oder Link im Browser öffnen:
             </p>
-            <p class="font-mono text-xs font-bold text-orange flex items-center gap-1.5">
-              <ExternalLink class="h-3.5 w-3.5" />
+            <p class="font-mono text-sm font-bold text-orange flex items-center gap-1.5">
+              <ExternalLink class="h-4 w-4" />
               <span id="flyer-url-display">{flyerData.shortUrl}</span>
             </p>
+
+            <div class="space-y-1 pt-1 text-xs font-sans text-forest-950">
+              <p class="flex items-center gap-1.5">
+                <CircleCheck class="h-3.5 w-3.5 text-orange shrink-0" />
+                <span>Alle Details, Ablaufzeiten &amp; Packliste online</span>
+              </p>
+              <p class="flex items-center gap-1.5">
+                <CircleCheck class="h-3.5 w-3.5 text-orange shrink-0" />
+                <span>Einfache Online-Anmeldung für dich &amp; deine Eltern</span>
+              </p>
+              <p class="flex items-center gap-1.5">
+                <CircleCheck class="h-3.5 w-3.5 text-orange shrink-0" />
+                <span>Verlässliche Betreuung: Jugend leitet Jugend</span>
+              </p>
+            </div>
 
             <!-- Direct Contact Person Information (Unmodified from Event Sync) -->
             {flyerData.contact && (flyerData.contact.name || flyerData.contact.email || flyerData.contact.phone) && (
               <div class="pt-2 mt-2 border-t border-forest-950/20">
-                <p class="font-mono text-[0.65rem] font-bold uppercase text-orange mb-1">
-                  Fragen zur Aktion? Dein Ansprechpartner:
-                </p>
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-forest-950">
+                  <span class="text-orange font-bold text-[0.7rem] uppercase">Fragen?</span>
                   {flyerData.contact.name && (
                     <div class="flex items-center gap-1 font-bold">
-                      <UserCheck class="h-3 w-3 text-forest-950/60" />
+                      <UserCheck class="h-3.5 w-3.5 text-forest-950/60" />
                       <span>{flyerData.contact.name}</span>
-                      {flyerData.contact.role && (
-                        <span class="text-forest-950/60 font-normal">({flyerData.contact.role})</span>
-                      )}
                     </div>
                   )}
                   {flyerData.contact.phone && (
                     <div class="flex items-center gap-1 text-forest-950/80">
-                      <Phone class="h-3 w-3 text-orange" />
+                      <Phone class="h-3.5 w-3.5 text-orange" />
                       <span>{flyerData.contact.phone}</span>
                     </div>
                   )}
                   {flyerData.contact.email && (
                     <div class="flex items-center gap-1 text-forest-950/80">
-                      <Mail class="h-3 w-3 text-orange" />
+                      <Mail class="h-3.5 w-3.5 text-orange" />
                       <span>{flyerData.contact.email}</span>
                     </div>
                   )}
@@ -331,21 +322,24 @@ const pdfUrl = id && id !== 'custom' ? `/toolbox/flyers/${id}.pdf?t=${Date.now()
             )}
           </div>
 
-          <!-- Large Scannable QR Code -->
+          <!-- Giant Scannable QR Code -->
           <div class="shrink-0 flex flex-col items-center">
-            <div class="border-2 border-forest-950 bg-white p-2 shadow-sm">
-              <div id="flyer-qr-container" class="w-28 h-28 flex items-center justify-center" set:html={qrSvg}></div>
+            <div class="border-2 border-forest-950 bg-white p-2.5 shadow-sm">
+              <div id="flyer-qr-container" class="w-32 h-32 flex items-center justify-center" set:html={qrSvg}></div>
             </div>
-            <span class="font-mono text-[0.6rem] font-bold tracking-widest text-forest-950 mt-1 uppercase">
+            <span class="font-mono text-xs font-bold tracking-widest text-forest-950 mt-1.5 uppercase">
               Hier scannen &uarr;
+            </span>
+            <span class="font-mono text-[0.65rem] font-bold tracking-wider text-orange uppercase">
+              Direkt zur Anmeldung
             </span>
           </div>
         </section>
 
         <!-- Footer Notice -->
-        <footer class="mt-2 pt-2 border-t border-forest-950/20 flex justify-between items-center font-mono text-[0.55rem] text-forest-950/60">
+        <footer class="mt-2 pt-2 border-t border-forest-950/20 flex justify-between items-center font-mono text-[0.6rem] text-forest-950/60">
           <span>SMJ Regio Wegweiser &bull; Jugend leitet Jugend &bull; Katholische Schönstatt-Mannesjugend</span>
-          <span>Druckfertiger Aushang &bull; Stand: {new Date().getFullYear()}</span>
+          <span>Werbeplakat &amp; Aushang &bull; Stand: {new Date().getFullYear()}</span>
         </footer>
       </div>
 
