@@ -23,8 +23,8 @@ import type { Event } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
 import type { CampEntry } from '../../lib/camps'
 import { generateQrSvg } from '../../scripts/qrcode-renderer'
+import { QR_BASE_URL as BASE_DOMAIN } from '../../lib/qr-url'
 
-const BASE_DOMAIN = 'https://smj-wegweiser.de'
 
 export async function getStaticPaths() {
   const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
@@ -497,6 +497,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
 <script>
   import { downloadQrPng } from '../../scripts/qrcode-renderer'
+  import { QR_BASE_URL } from '../../lib/qr-url'
 
   // Copy WhatsApp
   const btnCopyWhatsapp = document.getElementById('btn-copy-whatsapp')
@@ -562,7 +563,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
   if (btnDl1024) {
     btnDl1024.addEventListener('click', async () => {
-      const url = btnDl1024.dataset.url || 'https://smj-wegweiser.de/'
+      const url = btnDl1024.dataset.url || `${QR_BASE_URL}/`
       const slug = window.location.pathname.split('/').filter(Boolean).pop() || 'event'
       await downloadQrPng(url, `qr-smj-${slug}-1024.png`, 1024)
     })
@@ -570,7 +571,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
   if (btnDl2048) {
     btnDl2048.addEventListener('click', async () => {
-      const url = btnDl2048.dataset.url || 'https://smj-wegweiser.de/'
+      const url = btnDl2048.dataset.url || `${QR_BASE_URL}/`
       const slug = window.location.pathname.split('/').filter(Boolean).pop() || 'event'
       await downloadQrPng(url, `qr-smj-${slug}-2048-hd.png`, 2048)
     })

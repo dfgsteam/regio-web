@@ -5,7 +5,7 @@ import type { CampEntry } from '../camps'
 import { formatDateRange, formatAgeRange } from '../events'
 import flyerTemplates from '../../data/flyer-templates.json'
 
-const BASE_DOMAIN = 'https://smj-wegweiser.de'
+import { QR_BASE_URL as BASE_DOMAIN } from '../qr-url'
 
 export interface FlyerHighlight {
   title: string

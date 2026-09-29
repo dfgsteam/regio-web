@@ -341,6 +341,7 @@ Beispiel für `.env.local`:
 ```bash
 # Basis-URL
 SITE_URL=https://smj-wegweiser.de
+PUBLIC_QR_BASE_URL=https://smj-wegweiser.de
 
 # CiviCRM APIv4 (nur beim Build)
 CIVICRM_API_KEY=
@@ -354,6 +355,8 @@ MAIL_PASSWORD=secret
 MAIL_FROM=no-reply@smj-wegweiser.de
 MAIL_TO=kontakt@smj-wegweiser.de
 ```
+
+`PUBLIC_QR_BASE_URL` bestimmt die Ziel-Domain für automatisch erzeugte QR-Codes, Flyer und Terminkarten. Lokal in `.env` oder `.env.local` setzen; für den GitHub-Build als Actions-Variable unter **Settings → Secrets and variables → Actions → Variables** hinterlegen. Ohne Wert wird `https://smj-wegweiser.de` verwendet. `SITE_URL` bleibt unabhängig davon die kanonische Website-URL.
 
 ---
 

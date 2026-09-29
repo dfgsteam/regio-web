@@ -4,6 +4,7 @@ import QRCode from 'qrcode'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { QR_BASE_URL } from '../qr-url'
 
 export interface ScheduleEventItem {
   title: string
@@ -117,7 +118,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
   }
 
   // Generate QR code for targetUrl (Always black-on-white for reliable phone scanning)
-  const targetUrl = options.targetUrl || 'https://smj-wegweiser.de/abenteuer/'
+  const targetUrl = options.targetUrl || `${QR_BASE_URL}/abenteuer/`
   const qrPngBuffer = await QRCode.toBuffer(targetUrl, {
     margin: 1,
     width: 400,
@@ -531,7 +532,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
 
       innerY -= 9
 
-      page.drawText('smj-wegweiser.de/api/calendar.ics', {
+      page.drawText(cleanText((options.calendarUrl || `${QR_BASE_URL}/api/calendar.ics`).replace(/^https?:\/\//, '')), {
         x: innerX,
         y: innerY,
         size: 5.5,
@@ -693,7 +694,7 @@ export function buildSchedulePresets(events: any[], camps: any[]): Record<string
       periodTitle: 'Kommende Termine',
       periodSubtitle: 'Die naechsten Monate im Ueberblick',
       events: upcomingEvents.length > 0 ? upcomingEvents : events2026.slice(0, 6),
-      targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+      targetUrl: `${QR_BASE_URL}/abenteuer/`,
     },
     'terminkarte-2026': {
       id: 'terminkarte-2026',
@@ -701,7 +702,7 @@ export function buildSchedulePresets(events: any[], camps: any[]): Record<string
       periodTitle: 'Jahreskalender 2026',
       periodSubtitle: 'Alle Aktionen und Zeltlager im Jahr 2026',
       events: events2026,
-      targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+      targetUrl: `${QR_BASE_URL}/abenteuer/`,
     },
     'terminkarte-2027': {
       id: 'terminkarte-2027',
@@ -709,7 +710,7 @@ export function buildSchedulePresets(events: any[], camps: any[]): Record<string
       periodTitle: 'Jahreskalender 2027',
       periodSubtitle: 'Vorschau auf die Aktionen und Zeltlager 2027',
       events: events2027,
-      targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+      targetUrl: `${QR_BASE_URL}/abenteuer/`,
     },
     'terminkarte-h1-2026': {
       id: 'terminkarte-h1-2026',
@@ -717,7 +718,7 @@ export function buildSchedulePresets(events: any[], camps: any[]): Record<string
       periodTitle: '1. Halbjahr 2026',
       periodSubtitle: 'Aktionen von Januar bis Juni 2026',
       events: eventsH12026,
-      targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+      targetUrl: `${QR_BASE_URL}/abenteuer/`,
     },
     'terminkarte-h2-2026': {
       id: 'terminkarte-h2-2026',
@@ -725,7 +726,7 @@ export function buildSchedulePresets(events: any[], camps: any[]): Record<string
       periodTitle: '2. Halbjahr 2026',
       periodSubtitle: 'Sommerzeltlager & Aktionen Juli bis Dezember 2026',
       events: eventsH22026,
-      targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+      targetUrl: `${QR_BASE_URL}/abenteuer/`,
     },
   }
 }

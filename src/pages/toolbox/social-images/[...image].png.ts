@@ -10,7 +10,7 @@ import {
   type ScheduleSlideSocialOptions,
 } from '../../../lib/social/social-image-generator'
 
-const BASE_DOMAIN = 'https://smj-wegweiser.de'
+import { QR_BASE_URL as BASE_DOMAIN } from '../../../lib/qr-url'
 
 export async function getStaticPaths() {
   const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])

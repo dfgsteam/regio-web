@@ -14,6 +14,7 @@ import {
 import { eventProvider, formatDateRange, formatAgeRange } from '../../../lib/events'
 import { getAllCamps } from '../../../lib/camps'
 import { buildSchedulePresets } from '../../../lib/pdf/schedule-pdf'
+import { QR_BASE_URL } from '../../../lib/qr-url'
 
 const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
 const presets = buildSchedulePresets(events, camps)
@@ -105,7 +106,7 @@ const scheduleData = {
 
           <div class="border border-paper/20 bg-forest-900/60 p-3 rounded-xs text-right hidden sm:block">
             <span class="block font-mono text-[0.65rem] uppercase text-paper/50">Direktes Kalender-Abo</span>
-            <span class="block font-mono text-xs text-orange font-bold">smj-wegweiser.de/api/calendar.ics</span>
+            <span class="block font-mono text-xs text-orange font-bold">{QR_BASE_URL.replace(/^https?:\/\//, '')}/api/calendar.ics</span>
           </div>
         </div>
 
@@ -457,7 +458,7 @@ const scheduleData = {
   </main>
 </BaseLayout>
 
-<script is:inline define:vars={{ scheduleData }}>
+<script is:inline define:vars={{ scheduleData, qrBaseUrl: QR_BASE_URL }}>
   const allEvents = scheduleData.allEvents || []
   const presets = scheduleData.presets || {}
 
@@ -557,7 +558,7 @@ const scheduleData = {
         periodTitle: 'Kommende Termine',
         periodSubtitle: 'Die nächsten Monate im Überblick',
         events: allEvents.slice(0, 6),
-        targetUrl: 'https://smj-wegweiser.de/abenteuer/',
+        targetUrl: qrBaseUrl + '/abenteuer/',
       }
     )
   }
@@ -665,10 +666,10 @@ const scheduleData = {
     }
 
     lines.push('📲 *Alle Infos, Packlisten & Online-Anmeldung:*')
-    lines.push('👉 https://smj-wegweiser.de/abenteuer/')
+    lines.push('👉 ' + qrBaseUrl + '/abenteuer/')
     lines.push('')
     lines.push('📅 *Kalender abonnieren (Google / Apple / Outlook):*')
-    lines.push('👉 https://smj-wegweiser.de/api/calendar.ics')
+    lines.push('👉 ' + qrBaseUrl + '/api/calendar.ics')
 
     const fullText = lines.join('\n')
     const textarea = document.getElementById('whatsapp-text-area')
@@ -694,7 +695,7 @@ const scheduleData = {
     }
 
     lines.push('')
-    lines.push('👉 Alle Infos, Packlisten und die Online-Anmeldung findest du über den Link in unserer Bio oder unter smj-wegweiser.de/abenteuer/!')
+    lines.push('👉 Alle Infos, Packlisten und die Online-Anmeldung findest du über den Link in unserer Bio oder unter ' + qrBaseUrl.replace(/^https?:\/\//, '') + '/abenteuer/!')
     lines.push('')
     lines.push('#smjwegweiser #zeltlager #abenteuer #jugend #draussen #schoenstatt #jugendleiter #outdoor #thueringen #eichsfeld')
 

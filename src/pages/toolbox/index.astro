@@ -26,8 +26,8 @@ import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
 import { formatDateRange, formatAgeRange } from '../../lib/events'
 import { generateQrSvg } from '../../scripts/qrcode-renderer'
+import { QR_BASE_URL as BASE_DOMAIN } from '../../lib/qr-url'
 
-const BASE_DOMAIN = 'https://smj-wegweiser.de'
 const now = new Date()
 
 // 1. Fetch Events - Chronological ascending (next upcoming first)
@@ -193,7 +193,7 @@ const items: ToolboxItem[] = await Promise.all(
 )
 
 // Initial custom SVG for the generator tool preview
-const initialCustomUrl = 'https://smj-wegweiser.de/abenteuer/zeltlager-2026/'
+const initialCustomUrl = `${BASE_DOMAIN}/abenteuer/zeltlager-2026/`
 const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, errorCorrectionLevel: 'M' })
 ---
 
@@ -305,7 +305,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                   type="text"
                   id="custom-url-input"
                   value={initialCustomUrl}
-                  placeholder="https://smj-wegweiser.de/..."
+                  placeholder={`${BASE_DOMAIN}/...`}
                   class="w-full bg-forest-900 border-2 border-paper/20 px-4 py-3 font-mono text-sm text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
                 />
               </div>
@@ -716,6 +716,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 <script>
   import { generateQrSvg, downloadQrPng } from '../../scripts/qrcode-renderer'
   import { openOrDownloadClientFlyerPdf } from '../../scripts/client-flyer-pdf'
+  import { QR_BASE_URL } from '../../lib/qr-url'
 
   let activeModalUrl = ''
   let activeModalFilename = 'qr-smj-code'
@@ -734,7 +735,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 
   if (customPdfBtn && customInput) {
     customPdfBtn.addEventListener('click', async () => {
-      const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+      const text = customInput.value.trim() || `${QR_BASE_URL}/`
       customPdfBtn.disabled = true
       const origText = customPdfBtn.innerHTML
       customPdfBtn.innerHTML = '<span>Generiere PDF...</span>'
@@ -759,7 +760,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 
   async function updateCustomQR() {
     if (!customInput || !customPreview) return
-    const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+    const text = customInput.value.trim() || `${QR_BASE_URL}/`
     if (customCaption) customCaption.textContent = text
     if (customFlyerBtn) {
       customFlyerBtn.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(text)}&download=1`
@@ -780,14 +781,14 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
 
   if (customDownload1024 && customInput) {
     customDownload1024.addEventListener('click', async () => {
-      const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+      const text = customInput.value.trim() || `${QR_BASE_URL}/`
       await downloadQrPng(text, 'qr-smj-custom-1024.png', 1024)
     })
   }
 
   if (customDownload2048 && customInput) {
     customDownload2048.addEventListener('click', async () => {
-      const text = customInput.value.trim() || 'https://smj-wegweiser.de/'
+      const text = customInput.value.trim() || `${QR_BASE_URL}/`
       await downloadQrPng(text, 'qr-smj-custom-2048-hd.png', 2048)
     })
   }
