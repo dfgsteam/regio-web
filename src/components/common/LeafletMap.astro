@@ -120,7 +120,7 @@ const mapId = `leaflet-map-${Math.random().toString(36).substring(2, 9)}`
     font-family: inherit;
   }
 
-  /* CartoDB Voyager / Dark tiles styling */
+  /* Keep the standard OpenStreetMap tiles in the site's darker palette. */
   .leaflet-tile-pane {
     filter: brightness(0.9) contrast(1.1) saturate(0.85);
   }
@@ -157,10 +157,6 @@ const mapId = `leaflet-map-${Math.random().toString(36).substring(2, 9)}`
     border: 1px solid #FF5A1F !important;
   }
 
-  .leaflet-attribution-flag {
-    display: none !important;
-  }
-
   .leaflet-control-attribution {
     background: rgba(17, 23, 19, 0.85) !important;
     color: rgba(241, 235, 221, 0.6) !important;
@@ -195,11 +191,9 @@ const mapId = `leaflet-map-${Math.random().toString(36).substring(2, 9)}`
         zoomControl: true,
       })
 
-      // OpenStreetMap / CartoDB Voyager tiles (0 cookies, fast CDN, highly detailed)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
         maxZoom: 19,
-        subdomains: 'abcd',
       }).addTo(map)
 
       // Custom Adventure Marker Icon (Orange Pin with Radar Glow)
