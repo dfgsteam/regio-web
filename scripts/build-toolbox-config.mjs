@@ -32,7 +32,10 @@ if (rawAllowedGroups.startsWith('[') || rawAllowedGroups.endsWith(']')) {
 }
 const allowedGroups = rawAllowedGroups.split(',').map((group) => group.trim()).filter(Boolean)
 if (allowedGroups.length === 0) {
-  throw new Error('TOOLBOX_ALLOWED_GROUPS muss mindestens einen Authentik-Gruppennamen enthalten.')
+  throw new Error('TOOLBOX_ALLOWED_GROUPS muss mindestens einen Authentik-Gruppennamen oder * enthalten.')
+}
+if (allowedGroups.includes('*') && allowedGroups.length !== 1) {
+  throw new Error('TOOLBOX_ALLOWED_GROUPS: * muss allein stehen, wenn alle Authentik-Nutzer zugelassen werden sollen.')
 }
 
 const settings = {

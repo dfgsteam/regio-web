@@ -298,7 +298,7 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 
 ### Leiter-Toolbox absichern
 
-Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. Beim Deployment erzeugt GitHub Actions aus den hinterlegten Secrets und Variablen `toolbox-auth/generated-config.php` im Build-Verzeichnis und lädt sie mit den übrigen Dateien hoch. `TOOLBOX_REDIRECT_URI` wird aus `SITE_URL` berechnet. Eine separate Server-`.env` wird nicht gelesen und ist nicht erforderlich. Fehlt ein Pflichtwert, bricht das Deployment vor dem Upload ab; ohne erzeugte Konfiguration bleibt die Toolbox gesperrt.
+Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. Beim Deployment erzeugt GitHub Actions aus den hinterlegten Secrets und Variablen `toolbox-auth/generated-config.php` im Build-Verzeichnis und lädt sie mit den übrigen Dateien hoch. `TOOLBOX_REDIRECT_URI` wird aus `SITE_URL` berechnet. Eine separate Server-`.env` wird nicht gelesen und ist nicht erforderlich. Fehlt ein Pflichtwert, bricht das Deployment vor dem Upload ab; ohne erzeugte Konfiguration bleibt die Toolbox gesperrt. Mit `TOOLBOX_ALLOWED_GROUPS=*` erhält jeder Benutzer Zugang, der sich bei der konfigurierten Authentik-Anwendung erfolgreich anmeldet. Ohne Anmeldung bleibt die Toolbox geschützt.
 
 Die erzeugte PHP-Konfiguration enthält Geheimnisse und darf nicht ins Repository oder als öffentliches Build-Artefakt gelangen. Apache muss die mitgelieferte `.htaccess` ausführen; sie sperrt direkten Zugriff auf Konfigurationsdateien. Nach der Bereitstellung `/toolbox-auth/login.php` aufrufen: Bei gültiger Konfiguration erfolgt eine Weiterleitung zu Authentik; andernfalls HTTP 503. Eine früher manuell hochgeladene `.env` auf dem Server wird nicht mehr benötigt und sollte entfernt werden.
 
@@ -351,7 +351,7 @@ Unter **Repository → Settings → Secrets and variables → Actions** eintrage
 | **Secret** | `AUTHENTIK_CLIENT_SECRET` | Client-Secret für den Toolbox-Login. |
 | **Secret** | `TOOLBOX_APP_SECRET` | Mindestens 32 zufällige Zeichen für signierte Toolbox-Sitzungen. |
 | **Variable** | `SITE_URL` | Canonical-Links, Sitemap und QR-Ziele; ohne Wert `https://smj-wegweiser.de`. |
-| **Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen **ohne eckige Klammern**, mehrere durch Komma getrennt. Beispiel: `Gruppenleiter`. `[]` ist keine gültige Freigabe. |
+| **Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen **ohne eckige Klammern**, mehrere durch Komma getrennt, z. B. `smj`; oder `*` für alle angemeldeten Authentik-Nutzer. `[]` ist keine gültige Freigabe. |
 | **Variable** | `CIVICRM_LEGACY_LINKS_ENABLED` | Nach Abschaltung des alten CiviCRM auf `false` setzen; sonst bleiben nicht zugeordnete alte Anmeldelinks aktiv. |
 | **Variable**, optional | `AUTHENTIK_URL` | Authentik-Basis-URL; ohne Wert `https://auth.smj-wegweiser.de`. |
 | **Variable**, optional | `FTP_SERVER_DIR` | Zielordner für den FTPS-Upload; ohne Wert das konfigurierte FTP-Startverzeichnis. |

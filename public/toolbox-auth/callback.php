@@ -104,16 +104,17 @@ if (!is_array($userInfo) || empty($userInfo['sub'])) {
     exit('Ungültiges Benutzerprofil von Authentik.');
 }
 
-// 5. Only explicitly allowed leader groups may use the toolbox.
+// 5. A wildcard allows every Authentik user who completed this OAuth login.
 $userGroups = $userInfo['groups'] ?? [];
 $userGroups = is_array($userGroups) ? array_filter($userGroups, 'is_string') : [];
-$hasAccess = count(array_intersect($config['allowed_groups'], $userGroups)) > 0;
+$hasAccess = in_array('*', $config['allowed_groups'], true) ||
+    count(array_intersect($config['allowed_groups'], $userGroups)) > 0;
 if (!$hasAccess) {
     http_response_code(403);
     echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Zugriff verweigert</title></head>';
     echo '<body style="font-family:sans-serif;padding:2rem;background:#182019;color:#F1EBDD;">';
     echo '<h2>Zugriff verweigert</h2>';
-    echo '<p>Dein Authentik-Benutzerkonto ist leider nicht in der Gruppe der berechtigten Leiter.</p>';
+    echo '<p>Dein Authentik-Benutzerkonto ist für die Toolbox nicht freigegeben.</p>';
     echo '<p><a href="/" style="color:#FF5A1F;">Zurück zur Startseite</a></p></body></html>';
     exit;
 }
