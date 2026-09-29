@@ -6,10 +6,11 @@ interface Props {
 }
 
 const { meta, rotate = '1.5deg', class: className } = Astro.props
+const positionClass = /\b(?:absolute|fixed|sticky)\b/.test(className ?? '') ? '' : 'relative'
 ---
 
 <figure
-  class:list={['field-note stamp-element relative max-w-sm border border-paper/20 bg-forest-900/90 p-4 shadow-xl backdrop-blur-sm', className]}
+  class:list={['field-note stamp-element max-w-sm border border-paper/20 bg-forest-900/90 p-4 shadow-xl backdrop-blur-sm', positionClass, className]}
   data-rotate={rotate}
   data-stamp="true"
   style={`transform: rotate(${rotate});`}

@@ -22,7 +22,7 @@ import BrandIcon from '../../components/common/BrandIcon.astro'
   </section>
 
   <section class="bg-forest-950 py-20">
-    <Container class="grid gap-16 lg:grid-cols-[1.3fr_1fr]">
+    <Container class="grid grid-cols-[minmax(0,1fr)] gap-16 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
       <div>
         <h2 class="display display-md text-paper">Nachricht schreiben</h2>
         <p class="mono-label mt-4">Antwort in der Regel innerhalb weniger Tage.</p>
@@ -209,7 +209,7 @@ import BrandIcon from '../../components/common/BrandIcon.astro'
   <!-- Standorte & Karte Section -->
   <section class="border-t border-paper/10 bg-forest-900 py-20">
     <Container>
-      <div class="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+      <div class="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center">
         <div>
           <Eyebrow label="Standorte & Anfahrt" />
           <h2 class="display display-md mt-4 text-paper">

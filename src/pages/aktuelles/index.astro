@@ -134,7 +134,7 @@ const yearCounts = years.reduce((acc, y) => {
           const searchKeywords = `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${postYear}`.toLowerCase()
           return (
             <article
-              class="post-card group grid gap-8 border border-paper/10 bg-forest-900/40 p-6 transition-all hover:border-paper/25 sm:p-8 lg:grid-cols-[380px_1fr]"
+              class="post-card group grid grid-cols-[minmax(0,1fr)] gap-8 border border-paper/10 bg-forest-900/40 p-6 transition-all hover:border-paper/25 sm:p-8 lg:grid-cols-[380px_minmax(0,1fr)]"
               data-year={postYear}
               data-date={post.data.publishedAt.getTime()}
               data-title={post.data.title.toLowerCase()}

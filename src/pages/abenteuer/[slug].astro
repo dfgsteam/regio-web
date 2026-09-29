@@ -197,9 +197,9 @@ const eventStructuredData = {
 
   <!-- Main Content & Details Grid -->
   <section class="bg-forest-950 py-16 sm:py-24">
-    <Container class="grid gap-14 lg:grid-cols-[1.5fr_1fr] items-start">
+    <Container class="grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] items-start">
       <!-- Left Column: Story, Highlights, Info & Google Maps -->
-      <div class="space-y-14">
+      <div class="min-w-0 space-y-14">
         {event.description && (
           <div>
             <h2 class="display display-sm text-paper mb-6">

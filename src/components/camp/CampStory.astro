@@ -8,7 +8,7 @@ if (!camp) return null
 const { motto, story } = camp.data
 ---
 
-<section class="camp-bg py-16 sm:py-24">
+<section class="camp-bg overflow-x-clip py-16 sm:py-24">
   <div class="mx-auto grid w-full max-w-6xl items-start gap-12 px-5 sm:px-8 lg:grid-cols-[1.2fr_1fr]">
     <div>
       <p class="eyebrow mb-4">Die Geschichte</p>
@@ -19,7 +19,7 @@ const { motto, story } = camp.data
         </div>
       )}
     </div>
-    <FieldNote meta="FIELD NOTE 01" rotate="2deg" class="justify-self-start lg:mt-10">
+    <FieldNote meta="FIELD NOTE 01" rotate="2deg" class="w-[calc(100%-1rem)] justify-self-start lg:mt-10 lg:w-auto">
       Zehn Tage, die anders sind als alles davor.
     </FieldNote>
   </div>

@@ -59,17 +59,17 @@ const ratioClasses = {
 const mapId = `leaflet-map-${Math.random().toString(36).substring(2, 9)}`
 ---
 
-<div class={`leaflet-map-wrapper relative overflow-hidden border-2 border-paper/20 bg-forest-950 shadow-2xl ${className}`}>
+<div class={`leaflet-map-wrapper relative min-w-0 max-w-full overflow-hidden border-2 border-paper/20 bg-forest-950 shadow-2xl ${className}`}>
   <!-- Map Header Bar -->
   <div class="relative z-20 flex flex-wrap items-center justify-between gap-3 border-b border-paper/10 bg-forest-950/95 px-4 py-2.5 backdrop-blur-md">
-    <div class="flex items-center gap-2">
+    <div class="flex min-w-0 items-center gap-2">
       <span class="inline-block h-2 w-2 rounded-full bg-orange animate-pulse" />
-      <span class="font-mono text-[0.7rem] font-bold uppercase tracking-[0.2em] text-orange">
+      <span class="min-w-0 break-words font-mono text-[0.7rem] font-bold uppercase tracking-[0.2em] text-orange">
         // {title}
       </span>
     </div>
-    <div class="flex items-center gap-2">
-      <span class="stamp-distressed font-mono text-[0.62rem] border-paper/30 text-paper/80 px-2 py-0.5 uppercase tracking-wider">
+    <div class="flex min-w-0 flex-wrap items-center gap-2">
+      <span class="stamp-distressed min-w-0 break-words font-mono text-[0.62rem] border-paper/30 text-paper/80 px-2 py-0.5 uppercase tracking-wider">
         {coordinates}
       </span>
       <a
@@ -102,7 +102,7 @@ const mapId = `leaflet-map-${Math.random().toString(36).substring(2, 9)}`
       <MapPin class="h-3.5 w-3.5 text-orange shrink-0" />
       <span class="truncate">{address || title}</span>
     </div>
-    <div class="flex items-center gap-2 text-[0.65rem]">
+    <div class="flex flex-wrap items-center gap-2 text-[0.65rem]">
       <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" class="hover:text-orange transition-colors">Google Maps</a>
       <span>·</span>
       <a href={appleMapsUrl} target="_blank" rel="noopener noreferrer" class="hover:text-orange transition-colors">Apple Maps</a>
