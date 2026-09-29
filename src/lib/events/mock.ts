@@ -88,12 +88,11 @@ export const mockEvents: Event[] = [
     price: '35 € (inkl. Vollverpflegung, Übernachtung & Material)',
     teaser: 'Raus aus dem Alltag, rein ins Erlebnis: Ein winterliches Wochenende voller Action, Spaß und echter Gemeinschaft.',
     description:
-      'Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft in der Klause 2.0 in Heiligenstadt!\n\nZusammen erleben wir spannende Aktionen, lustige Spiele, gemeinsames Kochen, gemütliche Abende und jede Menge Abenteuer. Raus aus dem Alltag, rein ins Erlebnis – genau der richtige Neustart ins neue Jahr.\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht’s noch mehr Spaß!',
+      'Wenn die Feiertage vorbei sind und der Winter richtig angekommen ist, wird es Zeit für etwas, worauf man sich freuen kann: ein Wochenende voller Action, Spaß und echter Gemeinschaft in der Klause 2.0 in Heiligenstadt!\n\nZusammen erleben wir spannende Geländespiele im Wald, coole gemeinsame Aktionen (wie Schwimmbad oder Kino), lehrreiche Bildungs-Inputs und jede Menge Spaß unter Jungs. 100% handyfrei – und kochen muss keiner, dafür sorgt unsere eigene Küchencrew!\n\nP.S.: Bring gern einen Freund mit – gemeinsam macht’s noch mehr Spaß!',
     highlights: [
       'Spannende Aktionen & Geländespiele im Wald',
-      'Gemeinsames Kochen & Küchencrew',
-      'Gemütliche Abende am Kamin & Lagerfeuer',
-      '100% handyfreie Zeit – echte Gemeinschaft',
+      'Coole Ausflüge & Highlights (z. B. Schwimmbad, Kino)',
+      'Zeit unter Jungs, Bildungs-Inputs & 100% handyfrei',
     ],
     packingList: [
       'Persönliche Sachen, Hausschuhe & Kulturbeutel',

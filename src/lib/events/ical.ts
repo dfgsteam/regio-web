@@ -137,9 +137,8 @@ function transformVEvent(raw: Record<string, string>): Event | null {
     contactEmail = 'vinzenz.hupe@smj-wegweiser.de'
     highlights = [
       'Spannende Aktionen & Geländespiele im Wald',
-      'Gemeinsames Kochen & Küchencrew',
-      'Gemütliche Abende am Kamin & Lagerfeuer',
-      '100% handyfreie Zeit – echte Gemeinschaft',
+      'Coole Ausflüge & Highlights (z. B. Schwimmbad, Kino)',
+      'Zeit unter Jungs, Bildungs-Inputs & 100% handyfrei',
     ]
     packingList = [
       'Persönliche Sachen, Hausschuhe & Kulturbeutel',
