@@ -351,7 +351,7 @@ Unter **Repository → Settings → Secrets and variables → Actions** eintrage
 | **Secret** | `AUTHENTIK_CLIENT_SECRET` | Client-Secret für den Toolbox-Login. |
 | **Secret** | `TOOLBOX_APP_SECRET` | Mindestens 32 zufällige Zeichen für signierte Toolbox-Sitzungen. |
 | **Variable** | `SITE_URL` | Canonical-Links, Sitemap und QR-Ziele; ohne Wert `https://smj-wegweiser.de`. |
-| **Secret oder Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen, mehrere durch Komma getrennt. Ein vorhandenes Secret hat Vorrang vor einer Variable. Ohne Gruppe kein Deployment. |
+| **Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen **ohne eckige Klammern**, mehrere durch Komma getrennt. Beispiel: `Gruppenleiter`. `[]` ist keine gültige Freigabe. |
 | **Variable** | `CIVICRM_LEGACY_LINKS_ENABLED` | Nach Abschaltung des alten CiviCRM auf `false` setzen; sonst bleiben nicht zugeordnete alte Anmeldelinks aktiv. |
 | **Variable**, optional | `AUTHENTIK_URL` | Authentik-Basis-URL; ohne Wert `https://auth.smj-wegweiser.de`. |
 | **Variable**, optional | `FTP_SERVER_DIR` | Zielordner für den FTPS-Upload; ohne Wert das konfigurierte FTP-Startverzeichnis. |

@@ -26,7 +26,11 @@ if (Buffer.byteLength(appSecret, 'utf8') < 32) {
   throw new Error('TOOLBOX_APP_SECRET muss mindestens 32 Zeichen lang sein.')
 }
 
-const allowedGroups = process.env.TOOLBOX_ALLOWED_GROUPS.split(',').map((group) => group.trim()).filter(Boolean)
+const rawAllowedGroups = process.env.TOOLBOX_ALLOWED_GROUPS.trim()
+if (rawAllowedGroups.startsWith('[') || rawAllowedGroups.endsWith(']')) {
+  throw new Error('TOOLBOX_ALLOWED_GROUPS erwartet Gruppennamen ohne Klammern, z. B. Gruppenleiter. [] erlaubt niemanden.')
+}
+const allowedGroups = rawAllowedGroups.split(',').map((group) => group.trim()).filter(Boolean)
 if (allowedGroups.length === 0) {
   throw new Error('TOOLBOX_ALLOWED_GROUPS muss mindestens einen Authentik-Gruppennamen enthalten.')
 }
