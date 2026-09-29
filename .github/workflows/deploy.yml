@@ -55,7 +55,7 @@ jobs:
         if: ${{ env.FTP_PASSWORD != '' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: hosting233865.ae9ed.netcup.net
+          server: ae9ed.netcup.net
           username: github-hnld-regio
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ vars.FTP_SERVER_DIR != '' && format('{0}/', vars.FTP_SERVER_DIR) || './' }}
