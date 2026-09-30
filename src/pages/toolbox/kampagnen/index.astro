@@ -31,6 +31,7 @@ import { generateCampaignEmailHtml } from '../../../lib/civicrm/email-template'
 import { generateCampaignSmsText } from '../../../lib/civicrm/sms-template'
 import type { CampaignEventData, CiviRecipient } from '../../../lib/civicrm/types'
 import { QR_BASE_URL } from '../../../lib/qr-url'
+import { splitFact } from '../../../lib/campaigns/split-fact'
 
 const [events, camps, groups] = await Promise.all([
   eventProvider.getEvents(),
@@ -81,6 +82,11 @@ const initialRecipients = groupRecipientsMap[initialGroup.id] || []
 // Pre-generate initial Email & SMS drafts
 const initialEmailHtml = generateCampaignEmailHtml(initialEvent)
 const initialSms = generateCampaignSmsText(initialEvent)
+
+
+const [initDate1, initDate2] = splitFact('WANN', initialEvent.dateStr)
+const [initLoc1, initLoc2] = splitFact('WO', initialEvent.locationStr)
+const [initAge1, initAge2] = splitFact('WER', initialEvent.ageStr)
 
 // Serializable data bundle for client interactivity
 const clientData = {
@@ -809,23 +815,25 @@ const clientData = {
                   </p>
                 </div>
 
-                <!-- Fact Card Box -->
-                <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2.5 rounded-xs grid grid-cols-4 gap-2 mb-3 font-mono text-[7px]">
-                  <div>
-                    <div class="text-[#FF5A1F] font-bold">WANN</div>
-                    <div id="preview-fact-date" class="font-['Impact'] text-[9px] text-[#111713]">{initialEvent.dateStr}</div>
+                <!-- Fact Cards: 3 Boxen, 2-zeilig wie beim Plakat -->
+                <div class="grid grid-cols-3 gap-2.5 mb-3.5 font-mono">
+                  <!-- WANN -->
+                  <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                    <div class="text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">WANN</div>
+                    <div id="preview-fact-date-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase">{initDate1}</div>
+                    <div id="preview-fact-date-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold">{initDate2}</div>
                   </div>
-                  <div>
-                    <div class="text-[#FF5A1F] font-bold">WO</div>
-                    <div id="preview-fact-loc" class="font-['Impact'] text-[9px] text-[#111713] truncate">{initialEvent.locationStr}</div>
+                  <!-- WO -->
+                  <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                    <div class="text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">WO</div>
+                    <div id="preview-fact-loc-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase truncate">{initLoc1}</div>
+                    <div id="preview-fact-loc-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold truncate">{initLoc2}</div>
                   </div>
-                  <div>
-                    <div class="text-[#FF5A1F] font-bold">WER</div>
-                    <div id="preview-fact-age" class="font-['Impact'] text-[9px] text-[#111713]">{initialEvent.ageStr}</div>
-                  </div>
-                  <div>
-                    <div class="text-[#FF5A1F] font-bold">BEITRAG</div>
-                    <div id="preview-fact-price" class="font-['Impact'] text-[9px] text-[#111713]">{initialEvent.priceStr}</div>
+                  <!-- WER -->
+                  <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                    <div class="text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">WER</div>
+                    <div id="preview-fact-age-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase">{initAge1}</div>
+                    <div id="preview-fact-age-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold">{initAge2}</div>
                   </div>
                 </div>
 
@@ -1149,10 +1157,12 @@ const clientData = {
   const previewAddrCity = document.getElementById('preview-addr-city')
   const previewSubject = document.getElementById('preview-subject')
   const previewSalutation = document.getElementById('preview-salutation')
-  const previewFactDate = document.getElementById('preview-fact-date')
-  const previewFactLoc = document.getElementById('preview-fact-loc')
-  const previewFactAge = document.getElementById('preview-fact-age')
-  const previewFactPrice = document.getElementById('preview-fact-price')
+  const previewFactDate1 = document.getElementById('preview-fact-date-1')
+  const previewFactDate2 = document.getElementById('preview-fact-date-2')
+  const previewFactLoc1 = document.getElementById('preview-fact-loc-1')
+  const previewFactLoc2 = document.getElementById('preview-fact-loc-2')
+  const previewFactAge1 = document.getElementById('preview-fact-age-1')
+  const previewFactAge2 = document.getElementById('preview-fact-age-2')
 
   const recipientList = document.getElementById('recipient-list')
 
@@ -1270,6 +1280,54 @@ const clientData = {
     })
   }
 
+  function splitFact(label, rawVal) {
+    const v = (rawVal || '').trim()
+    const u = v.toUpperCase().replace(/[–—]/g, '-')
+
+    if (label === 'WANN') {
+      const m = u.match(/^([0-9.\s-]+)\s+([A-ZÄÖÜ]+\.?\s*[0-9]*)$/)
+      if (m && m[1] && m[2]) return [m[1].trim(), m[2].trim()]
+      const parts = u.split(/\s+/)
+      if (parts.length >= 3) {
+        const p1 = parts.slice(0, parts.length - 2).join(' ')
+        const p2 = parts.slice(-2).join(' ')
+        return [p1, p2]
+      }
+    }
+
+    if (label === 'WO') {
+      if (u.includes(',')) {
+        const p = u.split(',')
+        if (p[0] && p[1]) {
+          const l1 = p[0].replace(/ZELTPLATZ\s+/i, '').trim()
+          const l2 = p[1].trim()
+          return [l1, l2]
+        }
+      }
+      if (u.includes(' BEI ')) {
+        const p = u.split(' BEI ')
+        if (p[0] && p[1]) {
+          return [p[0].trim(), p[1].trim()]
+        }
+      }
+    }
+
+    if (label === 'WER') {
+      const m = u.match(/([0-9]+\s*[-]\s*[0-9]+)/)
+      if (m && m[1]) {
+        return [m[1].replace(/\s+/g, ' ') + ' JAHRE', 'FÜR JUNGS']
+      }
+      if (u.includes('AB ')) {
+        return [u, 'FÜR JUGENDLICHE']
+      }
+    }
+
+    const words = u.split(/\s+/)
+    if (words.length <= 1) return [u, '']
+    const mid = Math.ceil(words.length / 2)
+    return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')]
+  }
+
   // Update Event Logic
   function updateEvent(eventId) {
     currentEvent = clientData.events.find((e) => e.id === eventId) || clientData.events[0]
@@ -1283,12 +1341,19 @@ const clientData = {
     if (btnDownloadSingle) btnDownloadSingle.href = `/toolbox/briefe/${currentEvent.id}-muster.pdf`
     if (btnDownloadBatch) btnDownloadBatch.href = `/toolbox/briefe/${currentEvent.id}-batch.pdf`
 
-    // Letter Preview
+    // Letter Preview (3 Boxen, 2-zeilig wie beim Plakat)
     if (previewSubject) previewSubject.textContent = `DEIN NÄCHSTES ABENTEUER: ${currentEvent.title}`
-    if (previewFactDate) previewFactDate.textContent = currentEvent.dateStr
-    if (previewFactLoc) previewFactLoc.textContent = currentEvent.locationStr
-    if (previewFactAge) previewFactAge.textContent = currentEvent.ageStr
-    if (previewFactPrice) previewFactPrice.textContent = currentEvent.priceStr
+    const [d1, d2] = splitFact('WANN', currentEvent.dateStr)
+    if (previewFactDate1) previewFactDate1.textContent = d1
+    if (previewFactDate2) previewFactDate2.textContent = d2
+
+    const [l1, l2] = splitFact('WO', currentEvent.locationStr)
+    if (previewFactLoc1) previewFactLoc1.textContent = l1
+    if (previewFactLoc2) previewFactLoc2.textContent = l2
+
+    const [a1, a2] = splitFact('WER', currentEvent.ageStr)
+    if (previewFactAge1) previewFactAge1.textContent = a1
+    if (previewFactAge2) previewFactAge2.textContent = a2
 
     // SMS Text
     const shortUrl = currentEvent.registrationUrl.replace(/^https?:\/\//, '')

@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { CiviRecipient, CampaignEventData } from '../civicrm/types'
+import { splitFact } from '../campaigns/split-fact'
 
 function cleanText(text: string): string {
   return text
@@ -328,53 +329,80 @@ export async function appendLetterPage(
     curY -= 15
   }
 
-  // 9. Fact Box (Wann, Wo, Wer, Beitrag)
-  curY -= 10
-  const boxHeight = 68
-  page.drawRectangle({
-    x: leftMargin,
-    y: curY - boxHeight,
-    width: textWidth,
-    height: boxHeight,
-    color: colorBoxBg,
-    borderColor: colorBorder,
-    borderWidth: 1,
-  })
-  page.drawRectangle({
-    x: leftMargin,
-    y: curY - boxHeight,
-    width: 6,
-    height: boxHeight,
-    color: colorOrange,
-  })
 
-  const colWidth = (textWidth - 20) / 4
-  const facts = [
+  // 9. Fact Cards (3 separate boxes, 2-line layout like Plakat)
+  curY -= 10
+  const factGap = 12
+  const boxW = (textWidth - 2 * factGap) / 3
+  const boxH = 56
+
+  const factItems = [
     { label: 'WANN', value: event.dateStr },
     { label: 'WO', value: event.locationStr },
     { label: 'WER', value: event.ageStr },
-    { label: 'BEITRAG', value: event.priceStr },
   ]
 
-  facts.forEach((f, idx) => {
-    const fx = leftMargin + 16 + idx * colWidth
+  factItems.forEach((f, idx) => {
+    const bx = leftMargin + idx * (boxW + factGap)
+
+    // Box background
+    page.drawRectangle({
+      x: bx,
+      y: curY - boxH,
+      width: boxW,
+      height: boxH,
+      color: colorBoxBg,
+      borderColor: colorBorder,
+      borderWidth: 1,
+    })
+
+    // Orange left accent stripe
+    page.drawRectangle({
+      x: bx,
+      y: curY - boxH,
+      width: 4,
+      height: boxH,
+      color: colorOrange,
+    })
+
+    // Orange label
     page.drawText(f.label, {
-      x: fx,
-      y: curY - 22,
-      size: 9,
+      x: bx + 10,
+      y: curY - 15,
+      size: 8,
       font: fonts.fontMono,
       color: colorOrange,
     })
-    page.drawText(cleanText(f.value), {
-      x: fx,
-      y: curY - 42,
-      size: 11,
+
+    const [line1, line2] = splitFact(f.label, f.value)
+
+    // Line 1: Larger bold text
+    let l1Size = 12
+    if (line1.length > 12) l1Size = 10.5
+    if (line1.length > 16) l1Size = 9.5
+    page.drawText(cleanText(line1), {
+      x: bx + 10,
+      y: curY - 31,
+      size: l1Size,
       font: fonts.fontAnton,
       color: colorForest,
     })
+
+    // Line 2: Sub-info
+    if (line2) {
+      let l2Size = 8
+      if (line2.length > 14) l2Size = 7.2
+      page.drawText(cleanText(line2), {
+        x: bx + 10,
+        y: curY - 45,
+        size: l2Size,
+        font: fonts.fontInter,
+        color: colorMuted,
+      })
+    }
   })
 
-  curY -= boxHeight + 22
+  curY -= boxH + 20
 
   // 10. QR-Code & Direct Registration CTA
   const qrBoxHeight = 84
