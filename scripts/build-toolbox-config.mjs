@@ -50,19 +50,6 @@ const settings = {
   CIVICRM_SITE_KEY: process.env.CIVICRM_SITE_KEY || '',
 }
 
-const webDir = (process.env.FTP_SERVER_DIR || '.').trim().replace(/\/+$/, '') || '.'
-const privateDir = (process.env.FTP_PRIVATE_DIR || '').trim().replace(/\/+$/, '')
-if (!privateDir || !/^[A-Za-z0-9._/-]+$/.test(webDir) || !/^[A-Za-z0-9._/-]+$/.test(privateDir)) {
-  throw new Error('FTP_PRIVATE_DIR fehlt oder die FTP-Verzeichnisse enthalten unzulässige Zeichen.')
-}
-if (path.posix.isAbsolute(webDir) !== path.posix.isAbsolute(privateDir)) {
-  throw new Error('FTP_SERVER_DIR und FTP_PRIVATE_DIR müssen beide relativ oder beide absolut sein.')
-}
-const privateFromWeb = path.posix.relative(webDir, privateDir)
-if (privateFromWeb !== '..' && !privateFromWeb.startsWith('../')) {
-  throw new Error('FTP_PRIVATE_DIR muss außerhalb des öffentlichen FTP_SERVER_DIR liegen.')
-}
-
 const publicOutput = path.resolve('dist/toolbox-auth/generated-config.php')
 const privateOutput = path.resolve('dist-private/generated-config.php')
 if (!fs.existsSync(path.dirname(publicOutput))) {
@@ -81,14 +68,13 @@ return json_decode(base64_decode('${encoded}'), true, 512, JSON_THROW_ON_ERROR);
 `
 fs.writeFileSync(privateOutput, privatePhp, { mode: 0o600 })
 
-const relativeConfigPath = path.posix.relative(path.posix.join(webDir, 'toolbox-auth'), path.posix.join(privateDir, 'generated-config.php'))
 const publicPhp = `<?php
 // Generated locator only. Secrets are outside the public web directory.
 if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'generated-config.php') {
     http_response_code(403);
     exit('Access Denied');
 }
-$privateConfig = __DIR__ . '/${relativeConfigPath}';
+$privateConfig = dirname(__DIR__, 2) . '/private/generated-config.php';
 return is_file($privateConfig) ? require $privateConfig : [];
 `
 fs.writeFileSync(publicOutput, publicPhp, { mode: 0o644 })

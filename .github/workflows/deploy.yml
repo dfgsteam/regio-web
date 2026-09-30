@@ -65,8 +65,6 @@ jobs:
           AUTHENTIK_URL: ${{ vars.AUTHENTIK_URL }}
           CIVICRM_API_KEY: ${{ secrets.CIVICRM_API_KEY }}
           CIVICRM_SITE_KEY: ${{ secrets.CIVICRM_SITE_KEY }}
-          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR || '.' }}
-          FTP_PRIVATE_DIR: ${{ vars.FTP_PRIVATE_DIR }}
         run: npm run build:toolbox-config
 
       - name: Upload private Toolbox config outside web root
@@ -76,7 +74,7 @@ jobs:
           server: ae9ed.netcup.net
           username: github-hnld-regio
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ format('{0}/', vars.FTP_PRIVATE_DIR) }}
+          server-dir: ./private/
           local-dir: ./dist-private/
           protocol: ftps
           security: strict
@@ -90,7 +88,7 @@ jobs:
           server: ae9ed.netcup.net
           username: github-hnld-regio
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ vars.FTP_SERVER_DIR != '' && format('{0}/', vars.FTP_SERVER_DIR) || './' }}
+          server-dir: ./public/
           local-dir: ./dist/
           protocol: ftps
           security: strict
