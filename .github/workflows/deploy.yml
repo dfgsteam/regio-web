@@ -100,7 +100,23 @@ jobs:
           timeout: 60000
 
       - name: Upload to FTP
+        id: public_upload_first
         if: ${{ env.FTP_PASSWORD != '' }}
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ae9ed.netcup.net
+          username: github-hnld-regio
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./public/
+          local-dir: ./dist/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Retry public upload after FTPS disconnect
+        if: ${{ env.FTP_PASSWORD != '' && steps.public_upload_first.outcome == 'failure' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ae9ed.netcup.net
