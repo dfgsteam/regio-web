@@ -131,6 +131,8 @@ jobs:
 
       - name: Verify Toolbox protection on webspace
         if: ${{ env.FTP_PASSWORD != '' }}
+        env:
+          DEPLOY_HTTP_BASIC_AUTH: ${{ secrets.DEPLOY_HTTP_BASIC_AUTH }}
         run: node scripts/check-toolbox-deploy.mjs
 
       - name: Warn when FTP password is missing

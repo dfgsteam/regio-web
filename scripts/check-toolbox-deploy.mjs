@@ -1,12 +1,27 @@
 #!/usr/bin/env node
 
 const site = new URL(process.env.SITE_URL || 'https://smj-wegweiser.de')
+let basicAuthHeader
 
-const homepage = await fetch(site, {
-  method: 'HEAD',
-  redirect: 'manual',
-  signal: AbortSignal.timeout(15000),
-})
+async function request(path) {
+  return fetch(new URL(path, site), {
+    method: 'HEAD',
+    headers: basicAuthHeader ? { Authorization: basicAuthHeader } : {},
+    redirect: 'manual',
+    signal: AbortSignal.timeout(15000),
+  })
+}
+
+let homepage = await request('/')
+if (homepage.status === 401 && /^Basic\b/i.test(homepage.headers.get('www-authenticate') || '')) {
+  const credentials = process.env.DEPLOY_HTTP_BASIC_AUTH
+  if (!credentials) {
+    console.log(`::warning::${site.origin} verlangt HTTP-Basisauthentifizierung. Toolbox-Schutz ohne DEPLOY_HTTP_BASIC_AUTH nicht prüfbar.`)
+    process.exit(0)
+  }
+  basicAuthHeader = `Basic ${Buffer.from(credentials).toString('base64')}`
+  homepage = await request('/')
+}
 if (homepage.headers.get('link')?.includes('/wp-json/')) {
   console.log(`::warning::${site.origin} liefert noch WordPress aus. Toolbox-Schutz erst nach Umschaltung der Domain prüfbar.`)
   process.exit(0)
@@ -16,11 +31,7 @@ if (homepage.status !== 200) {
 }
 
 async function expectStatus(path, expected) {
-  const response = await fetch(new URL(path, site), {
-    method: 'HEAD',
-    redirect: 'manual',
-    signal: AbortSignal.timeout(15000),
-  })
+  const response = await request(path)
   if (response.status !== expected) {
     throw new Error(`${path}: HTTP ${response.status} statt ${expected}`)
   }
@@ -28,11 +39,7 @@ async function expectStatus(path, expected) {
 }
 
 async function expectHidden(path) {
-  const response = await fetch(new URL(path, site), {
-    method: 'HEAD',
-    redirect: 'manual',
-    signal: AbortSignal.timeout(15000),
-  })
+  const response = await request(path)
   if (response.status !== 403 && response.status !== 404) {
     throw new Error(`${path}: HTTP ${response.status} statt 403 oder 404`)
   }

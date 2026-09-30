@@ -355,6 +355,7 @@ Unter **Repository → Settings → Secrets and variables → Actions** eintrage
 | **Secret** | `AUTHENTIK_CLIENT_ID` | Client-ID für den Toolbox-Login. |
 | **Secret** | `AUTHENTIK_CLIENT_SECRET` | Client-Secret für den Toolbox-Login. |
 | **Secret** | `TOOLBOX_APP_SECRET` | Mindestens 32 zufällige Zeichen für signierte Toolbox-Sitzungen. |
+| **Secret**, optional | `DEPLOY_HTTP_BASIC_AUTH` | `Benutzername:Passwort` für die abschließenden HTTP-Schutztests, solange `SITE_URL` durch Basic Auth geschützt ist. Ohne Wert meldet der Workflow eine Warnung und verschiebt nur diese Tests. |
 | **Variable** | `SITE_URL` | Canonical-Links, Sitemap und QR-Ziele; ohne Wert `https://smj-wegweiser.de`. |
 | **Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen **ohne eckige Klammern**, mehrere durch Komma getrennt, z. B. `smj`; oder `*` für alle angemeldeten Authentik-Nutzer. `[]` ist keine gültige Freigabe. |
 | **Variable** | `CIVICRM_LEGACY_LINKS_ENABLED` | Nach Abschaltung des alten CiviCRM auf `false` setzen; sonst bleiben nicht zugeordnete alte Anmeldelinks aktiv. |
@@ -366,7 +367,7 @@ Für lokale Builds und Syncs dient [`.env.example`](.env.example) als Vorlage f�
 
 ### Webserver: PHP-Laufzeit
 
-Auf dem Webserver müssen PHP 8+, die PHP-Erweiterung cURL, PHP-Sessions und Apache-Rewrites (`mod_rewrite`, `AllowOverride`) aktiv sein. Der Deploy-Workflow lädt zuerst die Toolbox-Dateien und Konfiguration nach `private/` und danach die Website nach `public/`. Im neuen `public/` liegen keine Toolbox-HTML-, PDF- oder Grafikdateien. Alte Toolbox-Dateien im bisherigen Webverzeichnis müssen nach der Umstellung entfernt werden. Danach prüft der Workflow per HEAD-Anfrage, dass `/toolbox-auth/generated-config.php` HTTP 403 liefert, die Toolbox-API ohne Sitzung HTTP 401 und `/toolbox/` eine Login-Weiterleitung. Solange `SITE_URL` noch WordPress ausliefert, meldet der Workflow stattdessen eine Warnung und verschiebt diese HTTP-Prüfung bis zur Domain-Umschaltung. `private/` darf keine URL und keinen Web-Alias haben; die tatsächliche Ordnerzuordnung muss auf dem Webspace einmalig geprüft werden.
+Auf dem Webserver müssen PHP 8+, die PHP-Erweiterung cURL, PHP-Sessions und Apache-Rewrites (`mod_rewrite`, `AllowOverride`) aktiv sein. Der Deploy-Workflow lädt zuerst die Toolbox-Dateien und Konfiguration nach `private/` und danach die Website nach `public/`. Im neuen `public/` liegen keine Toolbox-HTML-, PDF- oder Grafikdateien. Alte Toolbox-Dateien im bisherigen Webverzeichnis müssen nach der Umstellung entfernt werden. Danach prüft der Workflow per HEAD-Anfrage, dass `/toolbox-auth/generated-config.php` HTTP 403 liefert, die Toolbox-API ohne Sitzung HTTP 401 und `/toolbox/` eine Login-Weiterleitung. Solange `SITE_URL` noch WordPress ausliefert oder durch Basic Auth gesperrt ist, meldet der Workflow ohne passende Zugangsdaten eine Warnung und verschiebt diese HTTP-Prüfung. `private/` darf keine URL und keinen Web-Alias haben; die tatsächliche Ordnerzuordnung muss auf dem Webspace einmalig geprüft werden.
 
 Die PHP-Formulare für Kontakt und Newsletter nutzen ohne zusätzliche Konfiguration die im Code hinterlegten Mailadressen und PHP `mail()`. Optional können `MAIL_TO` und `MAIL_FROM` weiterhin in der PHP-Serverumgebung gesetzt werden; `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER` und `MAIL_PASSWORD` werden aktuell nicht verwendet.
 
