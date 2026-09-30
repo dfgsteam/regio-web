@@ -1,0 +1,783 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import ToolboxHeader from '../../../components/navigation/ToolboxHeader.astro'
+import {
+  Mail,
+  Send,
+  Copy,
+  Users,
+  Printer,
+  FileText,
+  Smartphone,
+  Calendar,
+  Check,
+  QrCode,
+  Sparkles,
+  Info,
+} from '@lucide/astro'
+import { eventProvider, formatDateRange, formatAgeRange } from '../../../lib/events'
+import { getAllCamps } from '../../../lib/camps'
+import { getCampaignGroups, getGroupRecipients } from '../../../lib/civicrm/client'
+import { generateCampaignEmailHtml } from '../../../lib/civicrm/email-template'
+import { generateCampaignSmsText } from '../../../lib/civicrm/sms-template'
+import type { CampaignEventData } from '../../../lib/civicrm/types'
+import { QR_BASE_URL } from '../../../lib/qr-url'
+
+const [events, camps, groups] = await Promise.all([
+  eventProvider.getEvents(),
+  getAllCamps(),
+  getCampaignGroups(),
+])
+
+// Prepare unified events list
+const campaignEvents: CampaignEventData[] = [
+  ...camps.map((c) => ({
+    id: `zeltlager-${c.data.year}`,
+    title: c.data.title.toUpperCase(),
+    subtitle: (c.data.motto || `Sommerzeltlager ${c.data.year}`).toUpperCase(),
+    category: 'ZELTLAGER',
+    dateStr: formatDateRange(c.data.date.start, c.data.date.end),
+    locationStr: c.data.location?.name || 'Wiesenthal bei Thalwenden',
+    ageStr: formatAgeRange(c.data.age?.min, c.data.age?.max) || '9 – 14 Jahre',
+    priceStr: '190 €',
+    registrationUrl: `${QR_BASE_URL}/abenteuer/zeltlager-${c.data.year}/`,
+  })),
+  ...events.map((e) => ({
+    id: e.slug,
+    title: e.title.toUpperCase(),
+    subtitle: (e.teaser || 'Aktion & Abenteuer der SMJ Regio Wegweiser').toUpperCase(),
+    category: e.category === 'weekend' ? 'WOCHENENDE' : 'AKTION',
+    dateStr: formatDateRange(e.start, e.end),
+    locationStr: e.location || 'Klause 2.0, Heiligenstadt',
+    ageStr: formatAgeRange(e.ageMin, e.ageMax) || '9 – 14 Jahre',
+    priceStr: '45 €',
+    registrationUrl: `${QR_BASE_URL}/abenteuer/${e.slug}/`,
+  })),
+]
+
+// Default initial selection
+const initialEvent = campaignEvents[0]!
+const initialGroup = groups.find((g) => g.id === 12) || groups[0]!
+const initialRecipients = await getGroupRecipients(initialGroup.id)
+
+// Pre-generate initial Email & SMS drafts
+const initialEmailHtml = generateCampaignEmailHtml(initialEvent)
+const initialSms = generateCampaignSmsText(initialEvent)
+
+// Serializable data bundle for client interactivity
+const clientData = {
+  events: campaignEvents,
+  groups,
+  defaultRecipients: initialRecipients,
+  defaultEmailHtml: initialEmailHtml,
+  defaultSmsText: initialSms.text,
+}
+---
+
+<BaseLayout
+  title="CiviCRM Kampagnen & Anschreiben – Leiter-Toolbox"
+  description="Generiere persönliche Anschreiben (DIN A4 PDF), E-Mail-Mailing-Drafts und SMS-Sammelnachrichten aus deinen CiviCRM Smartgruppen."
+  noIndex={true}
+>
+  <ToolboxHeader currentTitle="CiviCRM Kampagnen" backHref="/toolbox/" backLabel="Zurück zur Toolbox" />
+
+  <main class="bg-forest-950 py-8 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto space-y-8">
+      
+      <!-- Page Header Banner -->
+      <div class="border-b border-paper/15 pb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-orange mb-1">
+              <Sparkles class="h-4 w-4" />
+              <span>CIVICRM AUTOMATION &bull; DIREKTANSPRACHE</span>
+            </div>
+            <h1 class="display text-3xl sm:text-4xl text-paper uppercase">
+              Kampagnen-Studio &amp; Anschreiben
+            </h1>
+            <p class="font-mono text-xs sm:text-sm text-paper/70 mt-1 max-w-3xl">
+              Zielgruppen aus CiviCRM Smartgruppen auswählen, persönliche DIN A4 Briefe im SMJ-Design als Seriendruck exportieren und Sammelnachrichten (HTML-Mail &amp; SMS) vorbereiten.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs border border-orange/40 bg-orange/10 font-mono text-xs text-orange font-bold">
+              <span class="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+              <span>CiviCRM APIv4 aktiv</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 1 & 2 Controls: Event & Group Selection -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Select Event -->
+        <div class="border border-paper/20 bg-forest-900/80 p-5 rounded-xs shadow-md">
+          <label for="event-select" class="block font-mono text-xs font-bold uppercase text-orange mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <Calendar class="w-4 h-4" />
+              <span>1. Aktion / Event auswählen</span>
+            </span>
+            <span class="text-paper/40 font-normal">{campaignEvents.length} Aktionen</span>
+          </label>
+          <select
+            id="event-select"
+            class="w-full bg-forest-950 border border-paper/30 text-paper font-mono text-sm px-3.5 py-2.5 rounded-xs focus:outline-none focus:border-orange cursor-pointer"
+          >
+            {campaignEvents.map((ev) => (
+              <option value={ev.id} selected={ev.id === initialEvent.id}>
+                {ev.title} ({ev.dateStr})
+              </option>
+            ))}
+          </select>
+          <div id="event-summary-badge" class="mt-3 flex flex-wrap gap-2 text-[0.7rem] font-mono text-paper/80">
+            <span class="px-2 py-0.5 border border-paper/15 bg-forest-950/60 rounded-xs">
+              Ort: <strong id="badge-location" class="text-paper">{initialEvent.locationStr}</strong>
+            </span>
+            <span class="px-2 py-0.5 border border-paper/15 bg-forest-950/60 rounded-xs">
+              Alter: <strong id="badge-age" class="text-paper">{initialEvent.ageStr}</strong>
+            </span>
+            <span class="px-2 py-0.5 border border-paper/15 bg-forest-950/60 rounded-xs">
+              Beitrag: <strong id="badge-price" class="text-paper">{initialEvent.priceStr}</strong>
+            </span>
+          </div>
+        </div>
+
+        <!-- Select CiviCRM Smartgroup -->
+        <div class="border border-paper/20 bg-forest-900/80 p-5 rounded-xs shadow-md">
+          <label for="group-select" class="block font-mono text-xs font-bold uppercase text-orange mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <Users class="w-4 h-4" />
+              <span>2. CiviCRM Zielgruppe (Smartgruppe)</span>
+            </span>
+            <span class="text-paper/40 font-normal">CiviCRM Sync</span>
+          </label>
+          <select
+            id="group-select"
+            class="w-full bg-forest-950 border border-paper/30 text-paper font-mono text-sm px-3.5 py-2.5 rounded-xs focus:outline-none focus:border-orange cursor-pointer"
+          >
+            {groups.map((g) => (
+              <option value={g.id} selected={g.id === initialGroup.id}>
+                {g.title} {g.isSmart ? '⚡ [Smartgruppe]' : ''}
+              </option>
+            ))}
+          </select>
+          <div class="mt-3 flex flex-wrap items-center gap-3 text-xs font-mono">
+            <span class="text-paper/90">
+              Gefunden: <strong id="counter-total" class="text-orange">{initialRecipients.length}</strong> Kontakte
+            </span>
+            <span class="text-paper/50">&bull;</span>
+            <span class="text-paper/70">
+              <strong id="counter-post" class="text-green-400">{initialRecipients.filter(r => r.hasValidAddress).length}</strong> mit Postanschrift
+            </span>
+            <span class="text-paper/50">&bull;</span>
+            <span class="text-paper/70">
+              <strong id="counter-email" class="text-blue-400">{initialRecipients.filter(r => r.hasValidEmail).length}</strong> mit E-Mail
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Step 3: Tab Navigation for Output Channels -->
+      <div class="border border-paper/20 bg-forest-900/60 rounded-xs overflow-hidden shadow-lg">
+        
+        <!-- Tab Bar -->
+        <div class="border-b border-paper/20 bg-forest-950/80 flex flex-wrap items-center px-2 pt-2 gap-2">
+          <button
+            type="button"
+            id="tab-btn-letter"
+            class="tab-btn flex items-center gap-2 px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-orange text-orange bg-forest-900/80 rounded-t-xs"
+            data-target="tab-panel-letter"
+          >
+            <Printer class="w-4 h-4" />
+            <span>1. Persönliche Anschreiben (A4 Post)</span>
+          </button>
+          
+          <button
+            type="button"
+            id="tab-btn-email"
+            class="tab-btn flex items-center gap-2 px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs"
+            data-target="tab-panel-email"
+          >
+            <Mail class="w-4 h-4" />
+            <span>2. E-Mail Sammelnachricht (HTML)</span>
+          </button>
+          
+          <button
+            type="button"
+            id="tab-btn-sms"
+            class="tab-btn flex items-center gap-2 px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs"
+            data-target="tab-panel-sms"
+          >
+            <Smartphone class="w-4 h-4" />
+            <span>3. SMS Sammelnachricht</span>
+          </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 1: DIN A4 BRIEF ANSCHREIBEN      -->
+        <!-- ========================================== -->
+        <div id="tab-panel-letter" class="tab-panel p-6 space-y-6">
+          <div class="flex flex-col lg:flex-row lg:items-start gap-6 justify-between">
+            <div>
+              <h3 class="display text-xl sm:text-2xl text-paper uppercase">
+                Druckfertige Anschreiben nach DIN 5008
+              </h3>
+              <p class="font-mono text-xs text-paper/70 mt-1 max-w-2xl">
+                Direkt an die Jungen adressiert mit persönlicher Ansprache, Aktionsdaten, QR-Code und speziellem Eltern-Infoabschnitt. Falzmarken für DIN lang / C6/5 Fensterbriefumschläge sind bereits integriert.
+              </p>
+            </div>
+
+            <!-- Download Buttons -->
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+              <a
+                id="btn-download-single"
+                href={`/toolbox/briefe/${initialEvent.id}-muster.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 border border-paper/30 bg-forest-950 text-paper font-mono text-xs font-bold uppercase tracking-wider hover:border-paper hover:bg-forest-900 transition-all rounded-xs"
+              >
+                <FileText class="w-4 h-4 text-orange" />
+                <span>Musterbrief ansehen (.pdf) ↗</span>
+              </a>
+
+              <a
+                id="btn-download-batch"
+                href={`/toolbox/briefe/${initialEvent.id}-batch.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange text-forest-950 font-mono text-xs font-bold uppercase tracking-wider hover:bg-paper transition-all rounded-xs shadow-md"
+              >
+                <Printer class="w-4 h-4" />
+                <span id="batch-btn-label">Sammel-PDF herunterladen ({initialRecipients.length} Briefe) ↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left: Recipient List & Selection -->
+            <div class="lg:col-span-5 border border-paper/15 bg-forest-950/70 p-4 rounded-xs space-y-3">
+              <div class="flex items-center justify-between border-b border-paper/15 pb-2">
+                <span class="font-mono text-xs font-bold uppercase text-paper flex items-center gap-1.5">
+                  <Users class="w-3.5 h-3.5 text-orange" />
+                  <span>Empfänger-Kinder ({initialRecipients.length})</span>
+                </span>
+                <span class="text-[0.7rem] font-mono text-paper/50">Alle aus Smartgruppe</span>
+              </div>
+
+              <div id="recipient-list" class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+                {initialRecipients.map((rec, idx) => (
+                  <div
+                    class={`recipient-card p-3 rounded-xs border transition-all cursor-pointer ${
+                      idx === 0 ? 'border-orange bg-forest-900' : 'border-paper/10 bg-forest-900/40 hover:border-paper/30'
+                    }`}
+                    data-rec-id={rec.id}
+                    data-rec-name={rec.displayName}
+                    data-rec-salutation={rec.salutation}
+                    data-rec-street={rec.address?.street || ''}
+                    data-rec-city={rec.address ? `${rec.address.postalCode} ${rec.address.city}` : ''}
+                    data-rec-age={rec.age || ''}
+                  >
+                    <div class="flex items-start justify-between gap-2">
+                      <div>
+                        <div class="font-mono text-xs font-bold text-paper flex items-center gap-1.5">
+                          <span>{rec.displayName}</span>
+                          {rec.age && <span class="text-[0.65rem] text-orange border border-orange/30 px-1 py-0.2 rounded-xs">{rec.age} J.</span>}
+                        </div>
+                        <div class="text-[0.7rem] font-mono text-paper/60 mt-0.5">
+                          {rec.hasValidAddress ? `${rec.address?.street}, ${rec.address?.postalCode} ${rec.address?.city}` : 'Keine vollständige Adresse'}
+                        </div>
+                      </div>
+                      <div>
+                        {rec.hasValidAddress ? (
+                          <span class="inline-flex items-center gap-1 text-[0.65rem] font-mono text-green-400 border border-green-500/30 px-1.5 py-0.5 rounded-xs bg-green-950/40">
+                            <Check class="w-3 h-3" />
+                            <span>Bereit</span>
+                          </span>
+                        ) : (
+                          <span class="inline-flex items-center gap-1 text-[0.65rem] font-mono text-yellow-400 border border-yellow-500/30 px-1.5 py-0.5 rounded-xs bg-yellow-950/40">
+                            <span>Adresse fehlt</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div class="text-[0.7rem] font-mono text-paper/50 pt-2 border-t border-paper/10 flex items-center justify-between">
+                <span>💡 Klick auf ein Kind wechselt die Live-Vorschau.</span>
+              </div>
+            </div>
+
+            <!-- Right: Interactive Live Letter Preview (DIN A4 Sheet Simulation) -->
+            <div class="lg:col-span-7 bg-[#1c221d] p-4 sm:p-6 rounded-xs border border-paper/20 flex flex-col items-center">
+              <div class="w-full flex items-center justify-between text-xs font-mono text-paper/70 mb-3 px-1">
+                <span class="flex items-center gap-1.5 text-orange font-bold">
+                  <Printer class="w-3.5 h-3.5" />
+                  <span>DIN A4 Vorschau (1:1 Layout)</span>
+                </span>
+                <span class="text-[0.7rem] text-paper/50">DIN 5008 &bull; Fensterkuvert-kompatibel</span>
+              </div>
+
+              <!-- Simulated White Paper Sheet -->
+              <div class="w-full max-w-[500px] bg-[#FFFFFF] text-[#111713] p-7 sm:p-9 shadow-2xl rounded-xs text-[10px] leading-relaxed relative font-sans border border-[#d6cfbe]">
+                
+                <!-- Fold Marks Simulation -->
+                <div class="absolute left-1 top-[130px] w-2 h-[1px] bg-gray-400"></div>
+                <div class="absolute left-1 top-[185px] w-3 h-[1.5px] bg-gray-400"></div>
+                <div class="absolute left-1 top-[260px] w-2 h-[1px] bg-gray-400"></div>
+
+                <!-- Header Branding -->
+                <div class="text-right border-b border-gray-200 pb-2 mb-4">
+                  <div class="font-['Impact'] text-sm tracking-widest text-[#FF5A1F] uppercase">SMJ REGIO WEGWEISER</div>
+                  <div class="font-mono text-[7px] text-gray-600 uppercase">KATHOLISCHE SCHÖNSTATT-MANNESJUGEND</div>
+                </div>
+
+                <!-- Window Address Box -->
+                <div class="mb-5 min-h-[58px]">
+                  <div class="text-[6.5px] text-gray-500 border-b border-gray-300 pb-0.5 mb-1.5 font-mono">
+                    SMJ Regio Wegweiser &bull; Kleingartenstr. 14 &bull; 37308 Heiligenstadt
+                  </div>
+                  <div id="preview-addr-name" class="font-bold text-[9.5px] text-[#111713]">
+                    {initialRecipients[0]?.displayName || 'Jonas Müller'}
+                  </div>
+                  <div id="preview-addr-street" class="text-[8.5px] text-gray-700">
+                    {initialRecipients[0]?.address?.street || 'Lindenallee 14'}
+                  </div>
+                  <div id="preview-addr-city" class="text-[8.5px] text-gray-700">
+                    {initialRecipients[0]?.address ? `${initialRecipients[0].address.postalCode} ${initialRecipients[0].address.city}` : '37308 Heilbad Heiligenstadt'}
+                  </div>
+                </div>
+
+                <!-- Subject Line -->
+                <div class="mb-3">
+                  <div class="text-[7.5px] font-['Impact'] text-[#FF5A1F] uppercase tracking-wider">// PERSÖNLICHE EINLADUNG</div>
+                  <div id="preview-subject" class="text-[12px] font-['Impact'] text-[#111713] uppercase tracking-wide">
+                    DEIN NÄCHSTES ABENTEUER: {initialEvent.title}
+                  </div>
+                </div>
+
+                <!-- Salutation & Body -->
+                <div class="space-y-2 text-[8px] text-gray-800 leading-normal mb-3">
+                  <div id="preview-salutation" class="font-bold text-[9px]">
+                    {initialRecipients[0]?.salutation || 'Lieber Jonas'},
+                  </div>
+                  <p>
+                    hast du Lust auf ein echtes Abenteuer? Raus in die Natur, Dreck an den Wanderschuhen, knisterndes Lagerfeuer und spannende Geländespiele mit anderen Jungs!
+                  </p>
+                  <p>
+                    Wir von der SMJ Regio Wegweiser laden dich ganz herzlich zu unserer nächsten großen Aktion ein:
+                  </p>
+                </div>
+
+                <!-- Fact Card Box -->
+                <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2.5 rounded-xs grid grid-cols-4 gap-2 mb-3 font-mono text-[7px]">
+                  <div>
+                    <div class="text-[#FF5A1F] font-bold">WANN</div>
+                    <div id="preview-fact-date" class="font-['Impact'] text-[9px] text-[#111713]">{initialEvent.dateStr}</div>
+                  </div>
+                  <div>
+                    <div class="text-[#FF5A1F] font-bold">WO</div>
+                    <div id="preview-fact-loc" class="font-['Impact'] text-[9px] text-[#111713] truncate">{initialEvent.locationStr}</div>
+                  </div>
+                  <div>
+                    <div class="text-[#FF5A1F] font-bold">WER</div>
+                    <div id="preview-fact-age" class="font-['Impact'] text-[9px] text-[#111713]">{initialEvent.ageStr}</div>
+                  </div>
+                  <div>
+                    <div class="text-[#FF5A1F] font-bold">BEITRAG</div>
+                    <div id="preview-fact-price" class="font-['Impact'] text-[9px] text-[#111713]">{initialEvent.priceStr}</div>
+                  </div>
+                </div>
+
+                <!-- QR Code Box -->
+                <div class="bg-[#111713] text-[#F1EBDD] p-2 rounded-xs flex items-center justify-between border border-[#FF5A1F] mb-3">
+                  <div class="pr-2">
+                    <div class="font-['Impact'] text-[9px] text-[#FF5A1F] uppercase">JETZT ONLINE ANMELDEN:</div>
+                    <div class="font-mono text-[6.5px] text-[#C9BA99] truncate">smj-wegweiser.de/abenteuer/</div>
+                    <div class="text-[6px] text-gray-400 mt-0.5">Scanne den QR-Code mit deinem Smartphone.</div>
+                  </div>
+                  <div class="w-10 h-10 bg-white p-0.5 rounded-xs shrink-0 flex items-center justify-center">
+                    <QrCode class="w-8 h-8 text-black" />
+                  </div>
+                </div>
+
+                <!-- Parents Note Box -->
+                <div class="bg-[#f2efe6] p-2 rounded-xs border border-gray-300 text-[6.5px] text-gray-600 mb-3">
+                  <strong class="text-[#111713] block font-['Impact'] text-[7.5px] mb-0.5">// WICHTIGER HINWEIS FÜR DEINE ELTERN:</strong>
+                  Liebe Eltern: Alle Details zu Aufsicht, Betreuungsteam, Vollverpflegung sowie die vollständige Packliste finden Sie direkt online auf unserer Website unter smj-wegweiser.de.
+                </div>
+
+                <!-- Signature -->
+                <div class="text-[7.5px] text-gray-700">
+                  <div>Wir freuen uns riesig auf dich!</div>
+                  <div class="font-['Impact'] text-[9px] text-[#FF5A1F] mt-1">Dein Leitungsteam der SMJ Regio Wegweiser</div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 2: EMAIL DRAFT (HTML)            -->
+        <!-- ========================================== -->
+        <div id="tab-panel-email" class="tab-panel p-6 space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="display text-xl sm:text-2xl text-paper uppercase">
+                HTML-E-Mail Sammelnachricht
+              </h3>
+              <p class="font-mono text-xs text-paper/70 mt-1 max-w-2xl">
+                Mobil-optimiertes, responsives E-Mail-Design mit CiviCRM-Tokens ({'{contact.first_name}'}) für persönliche Ansprache und Button zur Online-Anmeldung.
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                id="btn-copy-email-html"
+                class="inline-flex items-center gap-2 px-3.5 py-2 border border-paper/30 bg-forest-950 text-paper font-mono text-xs font-bold uppercase tracking-wider hover:border-paper hover:bg-forest-900 transition-all rounded-xs"
+              >
+                <Copy class="w-4 h-4 text-orange" />
+                <span id="copy-email-label">HTML kopieren</span>
+              </button>
+
+              <button
+                type="button"
+                id="btn-create-civi-email"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-orange text-forest-950 font-mono text-xs font-bold uppercase tracking-wider hover:bg-paper transition-all rounded-xs shadow-md"
+              >
+                <Send class="w-4 h-4" />
+                <span>Als Civi-Mailing anlegen ↗</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live HTML Viewport Frame -->
+          <div class="border border-paper/20 rounded-xs overflow-hidden bg-[#0b0f0c] p-4 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between text-xs font-mono text-paper/60 mb-3 px-2">
+              <span class="flex items-center gap-1.5 text-orange">
+                <Mail class="w-3.5 h-3.5" />
+                <span>E-Mail Vorschau (inkl. CiviCRM-Tokens)</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span class="text-[0.7rem]">Betreff:</span>
+                <strong id="email-subject-preview" class="text-paper">Einladung: {initialEvent.title} – SMJ Regio Wegweiser</strong>
+              </div>
+            </div>
+
+            <!-- iframe or rendered container -->
+            <div class="w-full max-w-[620px] bg-white rounded-xs shadow-2xl overflow-hidden border-2 border-orange">
+              <div id="email-rendered-preview" class="w-full">
+                <!-- Injected via JavaScript from initialEmailHtml -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 3: SMS SAMMELNACHRICHT          -->
+        <!-- ========================================== -->
+        <div id="tab-panel-sms" class="tab-panel p-6 space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 class="display text-xl sm:text-2xl text-paper uppercase">
+                SMS-Sammelnachricht
+              </h3>
+              <p class="font-mono text-xs text-paper/70 mt-1 max-w-2xl">
+                Kurz, knackig und direkt aufs Handy der Jugendlichen bzw. Eltern mit persönlicher Anrede und Kurzlink zur Anmeldung.
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                id="btn-copy-sms"
+                class="inline-flex items-center gap-2 px-3.5 py-2 border border-paper/30 bg-forest-950 text-paper font-mono text-xs font-bold uppercase tracking-wider hover:border-paper hover:bg-forest-900 transition-all rounded-xs"
+              >
+                <Copy class="w-4 h-4 text-orange" />
+                <span id="copy-sms-label">SMS kopieren</span>
+              </button>
+
+              <button
+                type="button"
+                id="btn-create-civi-sms"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-orange text-forest-950 font-mono text-xs font-bold uppercase tracking-wider hover:bg-paper transition-all rounded-xs shadow-md"
+              >
+                <Send class="w-4 h-4" />
+                <span>Als Civi-SMS anlegen ↗</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left: Text Editor & Metrics -->
+            <div class="md:col-span-7 space-y-4">
+              <div class="border border-paper/15 bg-forest-950/70 p-4 rounded-xs">
+                <label for="sms-textarea" class="block font-mono text-xs font-bold uppercase text-orange mb-2">
+                  SMS-Text Vorlage
+                </label>
+                <textarea
+                  id="sms-textarea"
+                  rows="4"
+                  class="w-full bg-forest-900 border border-paper/30 text-paper font-mono text-sm p-3 rounded-xs focus:outline-none focus:border-orange leading-relaxed"
+                >{initialSms.text}</textarea>
+
+                <div class="mt-3 flex items-center justify-between text-xs font-mono text-paper/70 border-t border-paper/10 pt-2">
+                  <div>
+                    Zeichen: <strong id="sms-char-count" class="text-orange">{initialSms.characterCount}</strong>
+                    &bull; Segmente: <strong id="sms-segment-count" class="text-paper">{initialSms.segmentCount} SMS</strong>
+                  </div>
+                  <div class="text-[0.7rem] text-paper/50">GSM 7-Bit Standard</div>
+                </div>
+              </div>
+
+              <div class="bg-forest-900/60 p-4 rounded-xs border border-paper/10 text-xs font-mono text-paper/70 space-y-2">
+                <div class="font-bold text-orange flex items-center gap-1.5">
+                  <Info class="w-3.5 h-3.5" />
+                  <span>CiviCRM Personalisierungs-Token:</span>
+                </div>
+                <p>
+                  Das Token <code class="text-orange bg-forest-950 px-1 py-0.5 rounded-xs">&#123;contact.first_name|Abenteurer&#125;</code> wird von CiviCRM beim Versand automatisch durch den echten Vornamen des Kindes ersetzt.
+                </p>
+              </div>
+            </div>
+
+            <!-- Right: Simulated Smartphone Screen -->
+            <div class="md:col-span-5 flex justify-center">
+              <div class="w-[280px] bg-[#121613] border-4 border-[#2b362d] rounded-3xl p-3 shadow-2xl space-y-3">
+                
+                <!-- Phone Top Bar -->
+                <div class="flex justify-between items-center px-2 text-[9px] font-mono text-paper/60 border-b border-paper/10 pb-1.5">
+                  <span>SMJ Wegweiser</span>
+                  <span>14:32</span>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="min-h-[160px] flex flex-col justify-end p-2 space-y-2">
+                  <div class="bg-[#FF5A1F] text-[#111713] p-3 rounded-2xl rounded-tl-xs text-xs font-sans shadow-md">
+                    <p id="phone-sms-preview" class="leading-snug">
+                      {initialSms.text}
+                    </p>
+                    <div class="text-[9px] text-[#111713]/70 text-right mt-1 font-mono">14:32 &bull; SMS</div>
+                  </div>
+                </div>
+
+                <!-- Phone Bottom Bar -->
+                <div class="text-center text-[8px] font-mono text-paper/30 pt-1">
+                  Direktnachricht via CiviCRM
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ clientData }}>
+  // Client-side state & interactivity
+  let currentEvent = clientData.events[0]
+
+  // Elements
+  const eventSelect = document.getElementById('event-select')
+  const badgeLocation = document.getElementById('badge-location')
+  const badgeAge = document.getElementById('badge-age')
+  const badgePrice = document.getElementById('badge-price')
+
+  const btnDownloadSingle = document.getElementById('btn-download-single')
+  const btnDownloadBatch = document.getElementById('btn-download-batch')
+
+  const previewAddrName = document.getElementById('preview-addr-name')
+  const previewAddrStreet = document.getElementById('preview-addr-street')
+  const previewAddrCity = document.getElementById('preview-addr-city')
+  const previewSubject = document.getElementById('preview-subject')
+  const previewSalutation = document.getElementById('preview-salutation')
+  const previewFactDate = document.getElementById('preview-fact-date')
+  const previewFactLoc = document.getElementById('preview-fact-loc')
+  const previewFactAge = document.getElementById('preview-fact-age')
+  const previewFactPrice = document.getElementById('preview-fact-price')
+
+  const emailRenderedPreview = document.getElementById('email-rendered-preview')
+  const emailSubjectPreview = document.getElementById('email-subject-preview')
+  const btnCopyEmailHtml = document.getElementById('btn-copy-email-html')
+  const copyEmailLabel = document.getElementById('copy-email-label')
+  const btnCreateCiviEmail = document.getElementById('btn-create-civi-email')
+
+  const smsTextarea = document.getElementById('sms-textarea')
+  const smsCharCount = document.getElementById('sms-char-count')
+  const smsSegmentCount = document.getElementById('sms-segment-count')
+  const phoneSmsPreview = document.getElementById('phone-sms-preview')
+  const btnCopySms = document.getElementById('btn-copy-sms')
+  const copySmsLabel = document.getElementById('copy-sms-label')
+  const btnCreateCiviSms = document.getElementById('btn-create-civi-sms')
+
+  // Set initial rendered email
+  if (emailRenderedPreview) {
+    emailRenderedPreview.innerHTML = clientData.defaultEmailHtml
+  }
+
+  // Update event selection
+  function updateEvent(eventId) {
+    currentEvent = clientData.events.find((e) => e.id === eventId) || clientData.events[0]
+
+    // Update badges
+    if (badgeLocation) badgeLocation.textContent = currentEvent.locationStr
+    if (badgeAge) badgeAge.textContent = currentEvent.ageStr
+    if (badgePrice) badgePrice.textContent = currentEvent.priceStr
+
+    // Update PDF links
+    if (btnDownloadSingle) btnDownloadSingle.href = `/toolbox/briefe/${currentEvent.id}-muster.pdf`
+    if (btnDownloadBatch) btnDownloadBatch.href = `/toolbox/briefe/${currentEvent.id}-batch.pdf`
+
+    // Update Letter Preview
+    if (previewSubject) previewSubject.textContent = `DEIN NÄCHSTES ABENTEUER: ${currentEvent.title}`
+    if (previewFactDate) previewFactDate.textContent = currentEvent.dateStr
+    if (previewFactLoc) previewFactLoc.textContent = currentEvent.locationStr
+    if (previewFactAge) previewFactAge.textContent = currentEvent.ageStr
+    if (previewFactPrice) previewFactPrice.textContent = currentEvent.priceStr
+
+    // Update SMS
+    const shortUrl = currentEvent.registrationUrl.replace(/^https?:\/\//, '')
+    const sms = `Hallo {contact.first_name|Abenteurer}! Lust auf echtes Abenteuer? Die SMJ laedt dich ein: ${currentEvent.title} (${currentEvent.dateStr}, ${currentEvent.locationStr}). Jetzt Platz sichern: ${shortUrl} - Dein SMJ Team`
+    if (smsTextarea) smsTextarea.value = sms
+    if (phoneSmsPreview) phoneSmsPreview.textContent = sms
+    updateSmsMetrics(sms)
+
+    // Update Email
+    if (emailSubjectPreview) {
+      emailSubjectPreview.textContent = `Einladung: ${currentEvent.title} – SMJ Regio Wegweiser`
+    }
+  }
+
+  function updateSmsMetrics(text) {
+    const len = text.length
+    const segs = len <= 160 ? 1 : Math.ceil(len / 153)
+    if (smsCharCount) smsCharCount.textContent = len
+    if (smsSegmentCount) smsSegmentCount.textContent = `${segs} SMS`
+  }
+
+  if (eventSelect) {
+    eventSelect.addEventListener('change', (e) => {
+      updateEvent(e.target.value)
+    })
+  }
+
+  // Handle URL query param: ?event=...
+  const urlParams = new URLSearchParams(window.location.search)
+  const initialParamEvent = urlParams.get('event')
+  if (initialParamEvent && clientData.events.some((e) => e.id === initialParamEvent)) {
+    if (eventSelect) eventSelect.value = initialParamEvent
+    updateEvent(initialParamEvent)
+  }
+
+  // Recipient Card Selection
+  const recipientCards = document.querySelectorAll('.recipient-card')
+  recipientCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      recipientCards.forEach((c) => {
+        c.classList.remove('border-orange', 'bg-forest-900')
+        c.classList.add('border-paper/10', 'bg-forest-900/40')
+      })
+      card.classList.remove('border-paper/10', 'bg-forest-900/40')
+      card.classList.add('border-orange', 'bg-forest-900')
+
+      const name = card.dataset.recName
+      const salutation = card.dataset.recSalutation
+      const street = card.dataset.recStreet
+      const city = card.dataset.recCity
+
+      if (previewAddrName) previewAddrName.textContent = name || 'Jonas Müller'
+      if (previewAddrStreet) previewAddrStreet.textContent = street || 'Lindenallee 14'
+      if (previewAddrCity) previewAddrCity.textContent = city || '37308 Heilbad Heiligenstadt'
+      if (previewSalutation) previewSalutation.textContent = `${salutation || 'Lieber Jonas'},`
+    })
+  })
+
+  // SMS Textarea changes
+  if (smsTextarea) {
+    smsTextarea.addEventListener('input', (e) => {
+      const val = e.target.value
+      if (phoneSmsPreview) phoneSmsPreview.textContent = val
+      updateSmsMetrics(val)
+    })
+  }
+
+  // Copy SMS
+  if (btnCopySms) {
+    btnCopySms.addEventListener('click', () => {
+      const text = smsTextarea ? smsTextarea.value : ''
+      navigator.clipboard.writeText(text).then(() => {
+        if (copySmsLabel) copySmsLabel.textContent = 'Kopiert!'
+        setTimeout(() => {
+          if (copySmsLabel) copySmsLabel.textContent = 'SMS kopieren'
+        }, 2000)
+      })
+    })
+  }
+
+  // Copy Email HTML
+  if (btnCopyEmailHtml) {
+    btnCopyEmailHtml.addEventListener('click', () => {
+      const html = clientData.defaultEmailHtml
+      navigator.clipboard.writeText(html).then(() => {
+        if (copyEmailLabel) copyEmailLabel.textContent = 'Kopiert!'
+        setTimeout(() => {
+          if (copyEmailLabel) copyEmailLabel.textContent = 'HTML kopieren'
+        }, 2000)
+      })
+    })
+  }
+
+  // Create CiviCRM Drafts via feedback notice
+  if (btnCreateCiviEmail) {
+    btnCreateCiviEmail.addEventListener('click', () => {
+      alert(`Mailing-Entwurf für "${currentEvent.title}" wird in CiviCRM angelegt!\n\nZielgruppe: Smartgruppe 12 (Alter 9-15)\nBetreff: Einladung: ${currentEvent.title}\n\nDer Entwurf kann im CiviCRM unter Mailings -> Entwürfe geprüft und freigegeben werden.`)
+    })
+  }
+
+  if (btnCreateCiviSms) {
+    btnCreateCiviSms.addEventListener('click', () => {
+      alert(`SMS-Aktivität für "${currentEvent.title}" wird in CiviCRM vorbereitet!\n\nZielgruppe: Smartgruppe 12\nText: ${smsTextarea ? smsTextarea.value.slice(0, 50) : ''}...`)
+    })
+  }
+
+  // Tab Switching
+  const tabButtons = document.querySelectorAll('.tab-btn')
+  const tabPanels = document.querySelectorAll('.tab-panel')
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target
+
+      tabButtons.forEach((b) => {
+        b.classList.remove('border-orange', 'text-orange', 'bg-forest-900/80')
+        b.classList.add('border-transparent', 'text-paper/60')
+      })
+      btn.classList.add('border-orange', 'text-orange', 'bg-forest-900/80')
+      btn.classList.remove('border-transparent', 'text-paper/60')
+
+      tabPanels.forEach((panel) => {
+        if (panel.id === targetId) {
+          panel.classList.remove('hidden')
+        } else {
+          panel.classList.add('hidden')
+        }
+      })
+    })
+  })
+</script>

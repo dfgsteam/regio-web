@@ -17,6 +17,8 @@ import {
   MapPin,
   Users,
   Banknote,
+  Mail,
+  Printer,
 } from '@lucide/astro'
 import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../lib/events'
 import type { Event } from '../../lib/events'
@@ -130,6 +132,8 @@ if (campData) {
   socialUrl = `/toolbox/social/${eventData.slug}/`
   isFeatured = eventData.end >= new Date()
 }
+
+const eventSlug = campData ? `zeltlager-${campData.data.year}` : eventData ? eventData.slug : 'custom'
 
 // Generate QR Code SVG and HD previews
 const qrSvg = await generateQrSvg(targetUrl, { margin: 1, errorCorrectionLevel: 'M' })
@@ -422,6 +426,37 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
               <Copy class="h-3 w-3" />
               <span id="copy-link-label">Ziel-URL kopieren</span>
             </button>
+          </div>
+        </div>
+
+        <!-- CARD 4: CiviCRM Kampagne & Anschreiben -->
+        <div class="border-2 border-orange/50 bg-forest-950 p-6 flex flex-col justify-between rounded-sm shadow-xl relative overflow-hidden group hover:border-orange transition-colors col-span-1 lg:col-span-3 bg-gradient-to-r from-forest-950 via-forest-900/90 to-forest-950">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-mono text-[0.65rem] font-bold uppercase tracking-widest text-orange flex items-center gap-1.5">
+                  <Mail class="h-3.5 w-3.5" />
+                  <span>CIVICRM DIREKTANSPRACHE</span>
+                </span>
+                <span class="font-mono text-[0.65rem] text-paper/50">&bull; Smartgruppen</span>
+              </div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper">
+                Persönliche Anschreiben &amp; CiviCRM Kampagne
+              </h2>
+              <p class="font-mono text-xs text-paper/70 mt-1 max-w-2xl">
+                Erstelle personalisierte DIN A4 Briefe für alle Kinder aus deinen CiviCRM Smartgruppen (druckfertiges Seriendruck-PDF) sowie Entwürfe für HTML-E-Mails und SMS-Sammelnachrichten.
+              </p>
+            </div>
+
+            <div class="shrink-0">
+              <a
+                href={`/toolbox/kampagnen/?event=${eventSlug}`}
+                class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-lg"
+              >
+                <Printer class="h-4 w-4" />
+                <span>Kampagne &amp; Briefe öffnen &rarr;</span>
+              </a>
+            </div>
           </div>
         </div>
 

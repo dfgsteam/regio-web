@@ -21,6 +21,7 @@ import {
   Clock,
   Folder,
   MessageSquare,
+  Mail,
 } from '@lucide/astro'
 import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
@@ -231,7 +232,17 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       </div>
 
       <!-- Quick Feature Highlights -->
-      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5 font-mono text-xs text-paper/70">
+      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 font-mono text-xs text-paper/70">
+        <a href="/toolbox/kampagnen/" class="border-2 border-orange/60 bg-forest-900/90 p-3 rounded-xs hover:border-orange hover:bg-forest-900 transition-all block group">
+          <div class="flex items-center justify-between text-orange font-bold text-sm">
+            <div class="flex items-center gap-1.5">
+              <Mail class="h-4 w-4 shrink-0" />
+              <span>KAMPAGNEN</span>
+            </div>
+            <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+          </div>
+          <span class="text-[0.7rem] text-paper/70 block mt-0.5">Briefe, Mail &amp; SMS</span>
+        </a>
         <a href="/toolbox/terminkarte/" class="border-2 border-orange/50 bg-forest-900/90 p-3 rounded-xs hover:border-orange hover:bg-forest-900 transition-all block group">
           <div class="flex items-center justify-between text-orange font-bold text-sm">
             <div class="flex items-center gap-1.5">
