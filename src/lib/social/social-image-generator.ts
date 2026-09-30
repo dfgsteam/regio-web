@@ -242,6 +242,91 @@ function renderEventFactCards(rawFacts: { label: string; value: string }[], isLi
     .join('')
 }
 
+interface BrandHeaderOptions {
+  format: 'story' | 'post' | 'portrait' | 'whatsapp' | 'post-slide-1' | 'post-slide-2'
+  theme: 'dark' | 'light' | 'orange' | 'black'
+  categoryLabel?: string
+  secondBadge?: string
+  isWhatsApp?: boolean
+}
+
+function renderBrandHeader(options: BrandHeaderOptions): string {
+  const isStory = options.format === 'story'
+  const isLight = options.theme === 'light'
+  const isBlack = options.theme === 'black'
+  const isOrange = options.theme === 'orange'
+  const isWhatsApp = Boolean(options.isWhatsApp)
+
+  // Emblem Patch Dimensions
+  const badgeW = isStory ? 104 : 84
+  const badgeH = isStory ? 92 : 74
+  const iconW = isStory ? 84 : 68
+  const iconH = isStory ? 74 : 60
+  const yPos = isStory ? 200 : 85
+
+  // Typography Dimensions
+  const titleSize = isStory ? 35 : 28
+  const eyebrowSize = isStory ? 14 : 12
+  const rightBadgeH = isStory ? 48 : 40
+  const rightBadgeFontSize = isStory ? 22 : 18
+
+  // Colors
+  const badgeBg = isLight ? '#111713' : isBlack ? '#000000' : isOrange ? '#1a0c07' : '#182019'
+  const badgeStroke = isWhatsApp ? '#25D366' : isLight ? '#111713' : '#FF5A1F'
+  const textPrimary = isLight ? '#111713' : '#F1EBDD'
+  const accentColor = isWhatsApp ? '#25D366' : '#FF5A1F'
+  const logoInner = getLogoInner(true) // Always crisp white vector inside the dark badge!
+
+  const categoryLabel = options.categoryLabel || 'AKTION'
+  const badgeOffset = options.secondBadge ? 280 : isWhatsApp ? 270 : 180
+
+  return `
+  <!-- Premium Brand Header Bar -->
+  <g transform="translate(96, ${yPos})">
+    <!-- Emblem Patch / Logo Stamp -->
+    <g transform="translate(0, ${isStory ? -14 : -10})">
+      <rect x="0" y="0" width="${badgeW}" height="${badgeH}" fill="${badgeBg}" stroke="${badgeStroke}" stroke-width="2.5" rx="10"/>
+      <g transform="translate(${(badgeW - iconW) / 2}, ${(badgeH - iconH) / 2})">
+        <svg width="${iconW}" height="${iconH}" viewBox="0 0 328 288">${logoInner}</svg>
+      </g>
+    </g>
+
+    <!-- Two-Tier Brand Lockup -->
+    <g transform="translate(${badgeW + 20}, ${isStory ? 24 : 18})">
+      <text x="0" y="0" fill="${accentColor}" font-size="${eyebrowSize}" font-family="sans-serif" font-weight="bold" letter-spacing="2.5">SCHÖNSTATT-MANNESJUGEND</text>
+      <text x="0" y="${isStory ? 36 : 28}" fill="${textPrimary}" font-size="${titleSize}" font-family="Impact, sans-serif" letter-spacing="2">SMJ REGIO WEGWEISER</text>
+    </g>
+
+    <!-- Badges Right -->
+    <g transform="translate(${888 - badgeOffset}, ${isStory ? 8 : 6})">
+      ${
+        isWhatsApp
+          ? `
+        <rect x="0" y="0" width="270" height="${rightBadgeH}" fill="${isLight ? '#e7f7ed' : '#0d2b1a'}" stroke="#25D366" stroke-width="2" rx="6"/>
+        <text x="135" y="${isStory ? 32 : 26}" fill="#25D366" font-size="${rightBadgeFontSize}" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">WHATSAPP COMMUNITY</text>
+          `
+          : `
+        <rect x="0" y="0" width="${options.secondBadge ? 140 : 180}" height="${rightBadgeH}" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="6"/>
+        <text x="${(options.secondBadge ? 140 : 180) / 2}" y="${isStory ? 32 : 26}" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="${rightBadgeFontSize}" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">${escapeXml(categoryLabel.toUpperCase())}</text>
+        `
+      }
+
+      ${
+        options.secondBadge
+          ? `
+        <rect x="150" y="0" width="120" height="${rightBadgeH}" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="#FF5A1F" stroke-width="2" rx="6"/>
+        <text x="210" y="${isStory ? 32 : 26}" fill="#FF5A1F" font-size="${rightBadgeFontSize - 1}" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">${escapeXml(options.secondBadge.toUpperCase())}</text>
+          `
+          : ''
+      }
+    </g>
+
+    <!-- Bottom Separator Rule -->
+    <line x1="0" y1="${isStory ? 104 : 84}" x2="888" y2="${isStory ? 104 : 84}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="2" stroke-opacity="${isLight ? '0.15' : '0.18'}"/>
+  </g>
+  `
+}
+
 /**
  * Instagram Post - Slide 1: Clean, Fact-driven Cover + Swipe Indicator
  */
@@ -292,25 +377,12 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
     <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
 
-    <!-- Header Bar -->
-    <g transform="translate(96, 95)">
-      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">${logoInner}</svg>
-      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      
-      <!-- Badges Right -->
-      <g transform="translate(${width - 192 - 270}, -26)">
-        <rect x="0" y="0" width="140" height="38" fill="#FF5A1F" rx="4"/>
-        <text x="70" y="25" fill="#111713" font-size="19" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${escapeXml(options.categoryLabel.toUpperCase())}</text>
-
-        <rect x="150" y="0" width="120" height="38" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="#FF5A1F" stroke-width="1.5" rx="4"/>
-        <text x="210" y="25" fill="#FF5A1F" font-size="18" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">SLIDE 1/2</text>
-      </g>
-    </g>
+    ${renderBrandHeader({ format: 'post', theme: options.theme, categoryLabel: options.categoryLabel, secondBadge: 'Slide 1/2' })}
 
     <!-- Title Block (No subtitle) -->
-    <g transform="translate(96, 180)">
-      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
-      <text x="0" y="86" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+    <g transform="translate(96, 198)">
+      <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
+      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- 4 Key Fact Cards (2x2) -->
@@ -393,30 +465,17 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
     <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
 
-    <!-- Header Bar -->
-    <g transform="translate(96, 95)">
-      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">${logoInner}</svg>
-      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      
-      <!-- Badges Right -->
-      <g transform="translate(${width - 192 - 270}, -26)">
-        <rect x="0" y="0" width="140" height="38" fill="#FF5A1F" rx="4"/>
-        <text x="70" y="25" fill="#111713" font-size="19" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${escapeXml(options.categoryLabel.toUpperCase())}</text>
-
-        <rect x="150" y="0" width="120" height="38" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="#FF5A1F" stroke-width="1.5" rx="4"/>
-        <text x="210" y="25" fill="#FF5A1F" font-size="18" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">SLIDE 2/2</text>
-      </g>
-    </g>
+    ${renderBrandHeader({ format: 'post', theme: options.theme, categoryLabel: options.categoryLabel, secondBadge: 'Slide 2/2' })}
 
     <!-- Title Block -->
-    <g transform="translate(96, 175)">
-      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// JETZT ONLINE ANMELDEN</text>
-      <text x="0" y="80" fill="${textPrimary}" font-size="76" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+    <g transform="translate(96, 198)">
+      <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="Impact, sans-serif" letter-spacing="3">// JETZT ONLINE ANMELDEN</text>
+      <text x="0" y="74" fill="${textPrimary}" font-size="76" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- Big Centerpiece QR-Code & CTA Card -->
-    <g transform="translate(96, 290)">
-      <rect x="0" y="0" width="888" height="660" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="16"/>
+    <g transform="translate(96, 305)">
+      <rect x="0" y="0" width="888" height="645" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="16"/>
 
       <!-- Large QR-Code Frame (Centered: (888 - 360) / 2 = 264) -->
       <g transform="translate(264, 40)">
@@ -502,22 +561,12 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
     <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#25D366" stroke-width="7"/>
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#25D366" stroke-width="7"/>
 
-    <!-- Header Bar -->
-    <g transform="translate(96, 95)">
-      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">${logoInner}</svg>
-      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      
-      <!-- WhatsApp Badge Right -->
-      <g transform="translate(${width - 192 - 290}, -26)">
-        <rect x="0" y="0" width="290" height="38" fill="${isLight ? '#e7f7ed' : '#0d2b1a'}" stroke="#25D366" stroke-width="2" rx="6"/>
-        <text x="145" y="25" fill="#25D366" font-size="18" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="2">WHATSAPP COMMUNITY</text>
-      </g>
-    </g>
+    ${renderBrandHeader({ format: 'post', theme: options.theme, isWhatsApp: true })}
 
     <!-- Title Block (No subtitle) -->
-    <g transform="translate(96, 180)">
-      <text x="0" y="0" fill="#25D366" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
-      <text x="0" y="86" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+    <g transform="translate(96, 198)">
+      <text x="0" y="0" fill="#25D366" font-size="26" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
+      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- 4 Key Fact Cards (2x2) -->
@@ -589,7 +638,6 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
   const factCardH = options.format === 'story' ? 170 : options.format === 'portrait' ? 155 : 155
 
   const { mainTitle, subTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
-  const catEsc = escapeXml(options.categoryLabel.toUpperCase())
 
   // Dynamic eye-catching title size (Impact condensed font)
   const maxTitleSize = options.format === 'story' ? 108 : options.format === 'portrait' ? 96 : 92
@@ -682,33 +730,10 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
     <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
 
-    <!-- Header Bar -->
-    ${
-      options.format === 'story'
-        ? `
-    <g transform="translate(96, 210)">
-      <svg x="0" y="-58" width="96" height="84" viewBox="0 0 328 288">
-        ${logoInner}
-      </svg>
-      <text x="116" y="0" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      <rect x="${width - 192 - 200}" y="-42" width="200" height="48" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="6"/>
-      <text x="${width - 192 - 100}" y="-9" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">${catEsc}</text>
-    </g>
-        `
-        : `
-    <g transform="translate(96, 95)">
-      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">
-        ${logoInner}
-      </svg>
-      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      <rect x="${width - 192 - 180}" y="-26" width="180" height="38" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="4"/>
-      <text x="${width - 192 - 90}" y="-1" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${catEsc}</text>
-    </g>
-        `
-    }
+    ${renderBrandHeader({ format: options.format, theme: options.theme, categoryLabel: options.categoryLabel })}
 
     <!-- Main Title Block (Giant Eye-Catcher) -->
-    <g transform="translate(96, ${options.format === 'story' ? 310 : options.format === 'portrait' ? 175 : 160})">
+    <g transform="translate(96, ${options.format === 'story' ? 340 : options.format === 'portrait' ? 185 : 185})">
       <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="Impact, sans-serif" letter-spacing="2">// RAUS. INS ABENTEUER.</text>
       <text x="0" y="${options.format === 'story' ? 95 : options.format === 'portrait' ? 88 : 86}" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
       <text x="0" y="${options.format === 'story' ? 158 : options.format === 'portrait' ? 144 : 142}" fill="#FF5A1F" font-size="${subFontSize}" font-family="Impact, sans-serif" letter-spacing="1.5">// ${escapeXml(subTitle)}</text>
@@ -816,36 +841,13 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
     <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
 
-    <!-- Header Bar -->
-    ${
-      options.format === 'story'
-        ? `
-    <g transform="translate(96, 210)">
-      <svg x="0" y="-58" width="96" height="84" viewBox="0 0 328 288">
-        ${logoInner}
-      </svg>
-      <text x="116" y="0" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      <rect x="${width - 192 - 200}" y="-42" width="200" height="48" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="6"/>
-      <text x="${width - 192 - 100}" y="-9" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">TEIL ${options.slideIndex + 1} / ${options.totalSlides}</text>
-    </g>
-        `
-        : `
-    <g transform="translate(96, 95)">
-      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">
-        ${logoInner}
-      </svg>
-      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
-      <rect x="${width - 192 - 180}" y="-26" width="180" height="38" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="4"/>
-      <text x="${width - 192 - 90}" y="-1" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">TEIL ${options.slideIndex + 1} / ${options.totalSlides}</text>
-    </g>
-        `
-    }
+    ${renderBrandHeader({ format: options.format, theme: options.theme, categoryLabel: `Teil ${options.slideIndex + 1} / ${options.totalSlides}` })}
 
     ${
       !isLastSlide
         ? `
     <!-- Title Section -->
-    <g transform="translate(96, ${options.format === 'story' ? 310 : 165})">
+    <g transform="translate(96, ${options.format === 'story' ? 340 : 185})">
       <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="Impact, sans-serif" letter-spacing="2">// TERMINE &amp; AKTIONEN</text>
       <text x="0" y="${options.format === 'story' ? 88 : 74}" fill="${textPrimary}" font-size="${options.format === 'story' ? 84 : 70}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(options.periodTitle.toUpperCase())}</text>
       <text x="0" y="${options.format === 'story' ? 148 : 126}" fill="#FF5A1F" font-size="${options.format === 'story' ? 36 : 30}" font-family="Impact, sans-serif" letter-spacing="1.5">// ${escapeXml((options.periodSubtitle || 'ALLE AKTIONEN IM ÜBERBLICK').toUpperCase())}</text>
