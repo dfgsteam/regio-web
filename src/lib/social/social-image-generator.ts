@@ -139,7 +139,7 @@ function parseTitleAndSubtitle(title: string, rawSubtitle?: string, location?: s
   }
 
   if (
-    sub.length > 45 ||
+    sub.length > 35 ||
     sub.includes('Feiertage vorbei') ||
     sub.includes('Herzliche Einladung') ||
     sub.includes('Schönstatt-Mannesjugend') ||
@@ -228,7 +228,7 @@ function renderEventFactCards(rawFacts: { label: string; value: string }[], isLi
 }
 
 /**
- * Instagram Post - Slide 1: Catchy Cover with Claim & Carousel Swipe prompt
+ * Instagram Post - Slide 1: Clean, Fact-driven Cover (like WhatsApp, no artificial quotes) + Swipe Indicator
  */
 async function generatePostSlide1Svg(options: EventSocialOptions): Promise<string> {
   const width = 1080
@@ -239,17 +239,21 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
   const bgColor = isLight ? '#F5EFE1' : '#111713'
   const cardBg = isLight ? '#FFFFFF' : '#182019'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
-  const textMuted = isLight ? '#4A524A' : '#C9BA99'
 
-  const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
+  const { mainTitle, subTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
 
-  let subText = options.subtitle || ''
-  if (!subText || subText.toLowerCase().includes('abenteuer')) {
-    subText = `${options.categoryLabel} • ${options.locationStr}`
-  }
+  const rawFacts = [
+    { label: 'WANN', value: options.dateStr },
+    { label: 'WO', value: options.locationStr },
+    { label: 'WER', value: options.ageStr },
+    { label: 'BEITRAG', value: options.priceStr },
+  ]
+  const factsSvg = renderEventFactCards(rawFacts, isLight, 135)
+
+  const subText = subTitle || `${options.categoryLabel} • ${options.locationStr}`
 
   const computedTitleSize = Math.floor(860 / (mainTitle.length * 0.54))
-  const titleFontSize = Math.max(54, Math.min(88, computedTitleSize))
+  const titleFontSize = Math.max(54, Math.min(84, computedTitleSize))
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -290,65 +294,42 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
       </g>
     </g>
 
-    <!-- Main Title Block (Huge & Catchy) -->
+    <!-- Title Block -->
     <g transform="translate(96, 175)">
-      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// RAUS. INS ABENTEUER.</text>
-      <text x="0" y="92" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
-      <text x="0" y="152" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="2">// ${escapeXml(subText.toUpperCase())}</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
+      <text x="0" y="86" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="146" fill="#FF5A1F" font-size="32" font-family="Impact, sans-serif" letter-spacing="2">// ${escapeXml(subText.toUpperCase())}</text>
     </g>
 
-    <!-- Central Catchy Adventure Card -->
-    <g transform="translate(96, 365)">
-      <rect x="0" y="0" width="888" height="320" fill="${cardBg}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="2.5" rx="14"/>
-      <rect x="0" y="0" width="14" height="320" fill="#FF5A1F" rx="6"/>
-
-      <!-- Claim in Quotes -->
-      <text x="44" y="62" fill="#FF5A1F" font-size="22" font-family="Impact, sans-serif" letter-spacing="2">// DEIN NÄCHSTER EINSATZ:</text>
-      
-      <text x="44" y="122" fill="${textPrimary}" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">DRECK AN DEN SCHUHEN.</text>
-      <text x="44" y="170" fill="${textPrimary}" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">RAUCH IN DEN KLAMOTTEN.</text>
-      <text x="44" y="218" fill="#FF5A1F" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">GESCHICHTEN IM KOPF.</text>
-
-      <!-- 3 Visual Badges at the bottom of the card -->
-      <g transform="translate(44, 250)">
-        <rect x="0" y="0" width="240" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="#FF5A1F" stroke-width="1.5" rx="6"/>
-        <text x="120" y="28" fill="${textPrimary}" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">🔥 LAGERFEUER &amp; ACTION</text>
-
-        <rect x="255" y="0" width="240" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="#FF5A1F" stroke-width="1.5" rx="6"/>
-        <text x="375" y="28" fill="${textPrimary}" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">🌲 100% IN DER NATUR</text>
-
-        <rect x="510" y="0" width="280" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="#FF5A1F" stroke-width="1.5" rx="6"/>
-        <text x="650" y="28" fill="#FF5A1F" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">⚔️ JUGEND LEITET JUGEND</text>
-      </g>
+    <!-- 4 Key Fact Cards (2x2) -->
+    <g transform="translate(96, 360)">
+      ${factsSvg}
     </g>
 
-    <!-- Quick Date & Location Strip -->
-    <g transform="translate(96, 715)">
-      <rect x="0" y="0" width="888" height="80" fill="${isLight ? '#FFFFFF' : '#111713'}" stroke="#FF5A1F" stroke-width="2" rx="10"/>
-      <svg x="26" y="24" width="28" height="28" viewBox="0 0 24 24">
-        <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <text x="68" y="52" fill="${textPrimary}" font-size="28" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(options.dateStr.toUpperCase())}</text>
-      
-      <circle cx="530" cy="40" r="4" fill="#FF5A1F"/>
-
-      <svg x="555" y="24" width="28" height="28" viewBox="0 0 24 24">
-        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" fill="none" stroke="#FF5A1F" stroke-width="2.5"/>
-      </svg>
-      <text x="595" y="52" fill="${textMuted}" font-size="22" font-family="sans-serif" font-weight="bold">${escapeXml(options.locationStr.toUpperCase())}</text>
+    <!-- Highlights 3-Pills -->
+    <g transform="translate(96, 680)">
+      <rect x="0" y="0" width="888" height="65" fill="${cardBg}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="1.5" rx="8"/>
+      <text x="444" y="42" fill="${textPrimary}" font-size="22" font-family="sans-serif" font-weight="bold" text-anchor="middle">
+        🔥 Lagerfeuer &amp; Action • 🌲 100% Natur • ⚔️ Jugend leitet Jugend
+      </text>
     </g>
 
     <!-- Bottom Carousel Swipe Bar -->
-    <g transform="translate(96, 825)">
-      <rect x="0" y="0" width="888" height="145" fill="#FF5A1F" rx="12"/>
+    <g transform="translate(96, 770)">
+      <rect x="0" y="0" width="888" height="150" fill="#FF5A1F" rx="14"/>
       
-      <text x="36" y="58" fill="#111713" font-size="30" font-family="Impact, sans-serif" letter-spacing="1">WISCHE NACH RECHTS FÜR ALLE FAKTEN &amp; ANMELDUNG</text>
-      <text x="36" y="100" fill="#111713" font-size="20" font-family="sans-serif" font-weight="bold">Auf Slide 2: Teilnahmebeitrag, Zielgruppe &amp; direkter QR-Code!</text>
+      <g transform="translate(36, 28)">
+        <rect x="0" y="0" width="280" height="34" fill="#111713" rx="4"/>
+        <text x="140" y="24" fill="#FF5A1F" font-size="19" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">WISCHE WEITER ZU SLIDE 2</text>
+        
+        <text x="0" y="74" fill="#111713" font-size="34" font-family="Impact, sans-serif" letter-spacing="1">DIREKTER QR-CODE ZUR ANMELDUNG</text>
+        <text x="0" y="106" fill="#111713" font-size="20" font-family="sans-serif" font-weight="bold">Auf der nächsten Seite einfach mit der Kamera scannen &amp; anmelden!</text>
+      </g>
 
-      <!-- Carousel indicator & Arrow circle -->
-      <g transform="translate(${888 - 36 - 75}, 35)">
+      <!-- Carousel arrow circle -->
+      <g transform="translate(${888 - 40 - 75}, 38)">
         <circle cx="38" cy="38" r="38" fill="#111713"/>
-        <path d="M26 38 L50 38 M40 28 L50 38 L40 48" fill="none" stroke="#FF5A1F" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M26 38 L50 38 M40 28 L50 38 L40 48" fill="none" stroke="#FF5A1F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
 
@@ -358,7 +339,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
 }
 
 /**
- * Instagram Post - Slide 2: Facts & Crisp QR Code
+ * Instagram Post - Slide 2: Dominant Centered QR-Code & Bio Link Callout
  */
 async function generatePostSlide2Svg(options: EventSocialOptions): Promise<string> {
   const width = 1080
@@ -373,18 +354,10 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
 
   const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
 
-  const rawFacts = [
-    { label: 'WANN', value: options.dateStr },
-    { label: 'WO', value: options.locationStr },
-    { label: 'WER', value: options.ageStr },
-    { label: 'BEITRAG', value: options.priceStr },
-  ]
-  const factsSvg = renderEventFactCards(rawFacts, isLight, 130)
-
-  // Generate crisp QR Code
+  // Generate large high-res crisp QR Code
   const qrDataUrl = await QRCode.toDataURL(options.targetUrl, {
     margin: 1,
-    width: 220,
+    width: 320,
     color: {
       dark: '#111713',
       light: '#FFFFFF',
@@ -432,47 +405,41 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
 
     <!-- Title Block -->
     <g transform="translate(96, 175)">
-      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// DIE FAKTEN IM ÜBERBLICK</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// JETZT ONLINE ANMELDEN</text>
       <text x="0" y="80" fill="${textPrimary}" font-size="76" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
-    <!-- 4 Key Fact Cards (2x2) -->
-    <g transform="translate(96, 305)">
-      ${factsSvg}
-    </g>
+    <!-- Big Centerpiece QR-Code & CTA Card -->
+    <g transform="translate(96, 290)">
+      <rect x="0" y="0" width="888" height="660" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="16"/>
 
-    <!-- Registration QR-Code Box -->
-    <g transform="translate(96, 625)">
-      <rect x="0" y="0" width="888" height="340" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="14"/>
-      
-      <!-- White QR Frame -->
-      <g transform="translate(36, 40)">
-        <rect x="0" y="0" width="260" height="260" fill="#FFFFFF" stroke="#ded8c8" stroke-width="2" rx="12"/>
-        <image x="20" y="20" width="220" height="220" href="${qrDataUrl}"/>
+      <!-- Large QR-Code Frame (Centered: (888 - 360) / 2 = 264) -->
+      <g transform="translate(264, 40)">
+        <rect x="0" y="0" width="360" height="360" fill="#FFFFFF" stroke="#ded8c8" stroke-width="3" rx="16"/>
+        <image x="20" y="20" width="320" height="320" href="${qrDataUrl}"/>
       </g>
 
-      <!-- Text Beside QR Code -->
-      <g transform="translate(330, 46)">
-        <rect x="0" y="0" width="260" height="42" fill="#FF5A1F" rx="4"/>
-        <text x="130" y="28" fill="#111713" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">JETZT ONLINE ANMELDEN</text>
-
-        <text x="0" y="105" fill="${textPrimary}" font-size="44" font-family="Impact, sans-serif" letter-spacing="1.5">QR-CODE SCANNEN</text>
-        <text x="0" y="150" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="1">ODER LINK IN DER BIO TIPPEN!</text>
-
-        <text x="0" y="196" fill="${textMuted}" font-size="20" font-family="sans-serif" font-weight="bold">Öffne deine Kamera &amp; scanne den Code für</text>
-        <text x="0" y="226" fill="${textMuted}" font-size="20" font-family="sans-serif" font-weight="bold">die offizielle Anmeldung &amp; alle Infos.</text>
-
-        <!-- Direct Link URL pill -->
-        <g transform="translate(0, 252)">
-          <rect x="0" y="0" width="510" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="1.5" rx="6"/>
-          <!-- Chain Link Icon -->
-          <svg x="16" y="11" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-          </svg>
-          <text x="46" y="28" fill="#FF5A1F" font-size="19" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(options.targetUrl.replace(/^https?:\/\//, ''))}</text>
-        </g>
+      <!-- CTA Headlines below QR Code -->
+      <g transform="translate(444, 440)" text-anchor="middle">
+        <text x="0" y="0" fill="${textPrimary}" font-size="44" font-family="Impact, sans-serif" letter-spacing="1.5">QR-CODE MIT DER KAMERA SCANNEN</text>
+        <text x="0" y="42" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="1">ODER LINK IN DER BIO ANKLICKEN!</text>
       </g>
+
+      <!-- Direct Link Pill (Centered: (888 - 600) / 2 = 144) -->
+      <g transform="translate(144, 522)">
+        <rect x="0" y="0" width="600" height="52" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="2" rx="8"/>
+        <!-- Link Icon -->
+        <svg x="24" y="14" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        <text x="64" y="34" fill="#FF5A1F" font-size="22" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(options.targetUrl.replace(/^https?:\/\//, ''))}</text>
+      </g>
+
+      <!-- Instructional Subline -->
+      <text x="444" y="618" fill="${textMuted}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">
+        Kamera-App öffnen • Auf den Code halten • Link antippen &amp; Platz sichern
+      </text>
     </g>
 
     <!-- Footer Copyright -->
@@ -493,7 +460,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
   const cardBg = isLight ? '#FFFFFF' : '#182019'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
 
-  const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
+  const { mainTitle, subTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
 
   const rawFacts = [
     { label: 'WANN', value: options.dateStr },
@@ -503,10 +470,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
   ]
   const factsSvg = renderEventFactCards(rawFacts, isLight, 135)
 
-  let subText = options.subtitle || ''
-  if (!subText || subText.toLowerCase().includes('abenteuer')) {
-    subText = `${options.categoryLabel} • ${options.locationStr}`
-  }
+  const subText = subTitle || `${options.categoryLabel} • ${options.locationStr}`
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
