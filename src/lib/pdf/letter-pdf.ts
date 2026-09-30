@@ -114,7 +114,7 @@ export async function appendLetterPage(
         y: pageHeight / 2 - 105,
         width: 240,
         height: 210,
-        opacity: 0.04,
+        opacity: 0.08,
       })
     } catch (e) {
       console.warn('[letter-pdf] Failed to embed watermark:', e)
@@ -171,7 +171,7 @@ export async function appendLetterPage(
     font: fonts.fontAnton,
     color: colorOrange,
   })
-  const subBrand = 'KATHOLISCHE SCHÖNSTATT-MANNESJUGEND'
+  const subBrand = 'SCHÖNSTATT-MANNESJUGEND'
   page.drawText(subBrand, {
     x: headerRight - fonts.fontMono.widthOfTextAtSize(subBrand, 7.5),
     y: pageHeight - 60,
@@ -184,7 +184,7 @@ export async function appendLetterPage(
   // 45mm from top = 127.56 pt
   const leftMargin = 56.7 // 20mm from left
   const senderLineY = pageHeight - 128
-  const senderLineText = 'SMJ Regio Wegweiser • Pater-Kentenich-Weg 3 • Klause 2.0 • 37308 Heilbad Heiligenstadt'
+  const senderLineText = 'Regio Wegweiser • Pater-Kentenich-Weg 3 • 37308 Heiligenstadt'
   page.drawText(senderLineText, {
     x: leftMargin,
     y: senderLineY,
@@ -240,14 +240,14 @@ export async function appendLetterPage(
     font: fonts.fontAnton,
     color: colorForest,
   })
-  page.drawText('Pater-Kentenich-Weg 3', {
+  page.drawText('Klause 2.0', {
     x: infoX,
     y: infoY - 12,
     size: 8,
     font: fonts.fontInter,
     color: colorForest,
   })
-  page.drawText('Klause 2.0', {
+  page.drawText('Pater-Kentenich-Weg 3', {
     x: infoX,
     y: infoY - 22,
     size: 8,
@@ -261,26 +261,26 @@ export async function appendLetterPage(
     font: fonts.fontInter,
     color: colorForest,
   })
+  page.drawText('smj-wegweiser.de', {
+    x: infoX,
+    y: infoY - 42,
+    size: 8,
+    font: fonts.fontInter,
+    color: colorForest,
+  })
   page.drawText('Datum: ' + today, {
     x: infoX,
-    y: infoY - 46,
+    y: infoY - 60,
     size: 8,
     font: fonts.fontInter,
     color: colorMuted,
-  })
-  page.drawText('Web: smj-wegweiser.de', {
-    x: infoX,
-    y: infoY - 57,
-    size: 8,
-    font: fonts.fontMono,
-    color: colorOrange,
   })
 
   // 6. Subject Line (Betreffzeile) at ~280 pt from top
   const subjectY = pageHeight - 275
   page.drawText('// PERSÖNLICHE EINLADUNG', {
     x: leftMargin,
-    y: subjectY + 16,
+    y: subjectY + 26,
     size: 11,
     font: fonts.fontAnton,
     color: colorOrange,
@@ -496,7 +496,7 @@ export async function appendLetterPage(
     thickness: 0.5,
     color: colorBorder,
   })
-  page.drawText('SMJ Regio Wegweiser • Pater-Kentenich-Weg 3 (Klause 2.0) • 37308 Heilbad Heiligenstadt • smj-wegweiser.de', {
+  page.drawText('SMJ Regio Wegweiser • Klause 2.0 • Pater-Kentenich-Weg 3 • 37308 Heilbad Heiligenstadt • smj-wegweiser.de', {
     x: leftMargin,
     y: footerY,
     size: 7.5,

@@ -22,6 +22,8 @@ import {
   Folder,
   MessageSquare,
   Mail,
+  Layers,
+  LayoutGrid,
 } from '@lucide/astro'
 import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
@@ -50,9 +52,12 @@ export interface ToolboxItem {
   pdfUrl?: string
   flyerUrl?: string
   socialUrl?: string
+  letterUrl?: string
+  campaignUrl?: string
   dateStr?: string
   location?: string
   ageGroup?: string
+  price?: string
   filename: string
   badgeColor: string
   isFeatured?: boolean
@@ -142,9 +147,12 @@ for (const camp of sortedCamps) {
     toolboxUrl: `/toolbox/zeltlager-${camp.data.year}/`,
     pdfUrl: `/toolbox/flyers/zeltlager-${camp.data.year}.pdf`,
     socialUrl: `/toolbox/social/zeltlager-${camp.data.year}/`,
+    letterUrl: `/toolbox/briefe/zeltlager-${camp.data.year}-muster.pdf`,
+    campaignUrl: `/toolbox/kampagnen/?event=zeltlager-${camp.data.year}`,
     dateStr: formatDateRange(camp.data.date.start, camp.data.date.end),
     location: camp.data.location.name,
     ageGroup: formatAgeRange(camp.data.age.min, camp.data.age.max) || undefined,
+    price: (camp.data as any).price || '190 €',
     filename: `qr-smj-zeltlager-${camp.data.year}`,
     badgeColor: 'border-orange bg-orange text-forest-950 font-bold',
     isFeatured: !isPast && camp.data.active,
@@ -171,9 +179,12 @@ for (const ev of sortedEvents) {
     toolboxUrl: `/toolbox/${ev.slug}/`,
     pdfUrl: `/toolbox/flyers/${ev.slug}.pdf`,
     socialUrl: `/toolbox/social/${ev.slug}/`,
+    letterUrl: `/toolbox/briefe/${ev.slug}-muster.pdf`,
+    campaignUrl: `/toolbox/kampagnen/?event=${ev.slug}`,
     dateStr: formatDateRange(ev.start, ev.end),
     location: ev.location,
     ageGroup: ageFormatted || undefined,
+    price: ev.price ? ev.price : (isWeekend ? 'Inkl. Verpflegung' : undefined),
     filename: `qr-smj-event-${ev.slug}`,
     badgeColor: isWeekend
       ? 'border-orange/60 text-orange bg-orange/10'
@@ -203,203 +214,145 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   description="Zentrale Medien- und Vorlagen-Toolbox für das Leitungsteam: DIN A4 Flyer, Instagram Stories, QR-Codes und Textbausteine."
   noIndex={true}
 >
-  <ToolboxHeader currentTitle="Medien-Zentrale" backHref="/" backLabel="Zurück zur Website" />
+  <ToolboxHeader currentTitle="Übersicht" backHref="/" backLabel="Zur Website" activeNav="dashboard" />
 
-  <!-- Hero Section -->
-  <section class="border-b border-paper/20 bg-forest-950 py-12 sm:py-16">
+  <!-- Hero Header Section -->
+  <section class="border-b border-paper/20 bg-forest-950 py-10 sm:py-14">
     <Container>
-      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div class="max-w-3xl">
-          <Eyebrow label="// INTERNER BEREICH & MEDIEN-HUB" />
-          <h1 class="display display-lg text-paper mt-3 uppercase leading-[0.95]">
-            Leiter-Toolbox &amp;<br />
-            <span class="text-orange">Medien-Zentrale</span>
+          <Eyebrow label="// INTERNER LEITERBEREICH" />
+          <h1 class="display display-lg text-paper mt-2 uppercase leading-[0.92]">
+            Medien- &amp; Kampagnen-<br />
+            <span class="text-orange">Zentrale</span>
           </h1>
-          <p class="mt-4 font-mono text-sm sm:text-base text-paper/80 leading-relaxed max-w-2xl">
-            Alle Materialien für deine Aktion an einem Ort: Druckfertige A4-Plakate, Instagram Stories (9:16), Feed Posts, gestochen scharfe QR-Codes und Textbausteine für WhatsApp.
+          <p class="mt-3 font-mono text-xs sm:text-sm text-paper/75 leading-relaxed max-w-2xl">
+            Alle Werkzeuge für deine Aktion übersichtlich gegliedert: Serienbriefe aus CiviCRM, Terminkarten, druckfertige A4-Plakate, Social Media Stories und QR-Codes.
           </p>
         </div>
-        <div class="shrink-0 pt-2">
+
+        <div class="flex items-center gap-2 shrink-0">
           <a
-            href="/toolbox-auth/logout.php"
-            class="inline-flex items-center gap-2 px-3 py-2 border border-paper/20 bg-forest-900/80 hover:bg-forest-900 hover:border-paper/40 font-mono text-xs text-paper/70 hover:text-paper transition-colors rounded-xs"
-            title="Von der Leiter-Toolbox abmelden"
+            href="#aktionen"
+            class="px-3.5 py-2 bg-forest-900 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs hover:border-orange hover:text-orange transition-colors"
           >
-            <LogOut class="w-3.5 h-3.5 text-orange" />
-            <span>Abmelden</span>
+            Zu den Aktionen ↓
           </a>
         </div>
       </div>
 
-      <!-- Quick Feature Highlights -->
-      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 font-mono text-xs text-paper/70">
-        <a href="/toolbox/kampagnen/" class="border-2 border-orange/60 bg-forest-900/90 p-3 rounded-xs hover:border-orange hover:bg-forest-900 transition-all block group">
-          <div class="flex items-center justify-between text-orange font-bold text-sm">
-            <div class="flex items-center gap-1.5">
-              <Mail class="h-4 w-4 shrink-0" />
-              <span>KAMPAGNEN</span>
-            </div>
-            <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-          </div>
-          <span class="text-[0.7rem] text-paper/70 block mt-0.5">Briefe, Mail &amp; SMS</span>
-        </a>
-        <a href="/toolbox/terminkarte/" class="border-2 border-orange/50 bg-forest-900/90 p-3 rounded-xs hover:border-orange hover:bg-forest-900 transition-all block group">
-          <div class="flex items-center justify-between text-orange font-bold text-sm">
-            <div class="flex items-center gap-1.5">
-              <Calendar class="h-4 w-4 shrink-0" />
-              <span>TERMINKARTE</span>
-            </div>
-            <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-          </div>
-          <span class="text-[0.7rem] text-paper/70 block mt-0.5">A6 PDF, Insta &amp; WhatsApp</span>
-        </a>
-        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
-            <FileText class="h-4 w-4 shrink-0" />
-            <span>A4 FLYER</span>
-          </div>
-          <span class="text-[0.7rem] text-paper/60 block mt-0.5">Druck &amp; Schaukasten</span>
-        </div>
-        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
-            <Smartphone class="h-4 w-4 shrink-0" />
-            <span>SOCIAL 9:16</span>
-          </div>
-          <span class="text-[0.7rem] text-paper/60 block mt-0.5">Story &amp; Feed Studio</span>
-        </div>
-        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
-            <QrCode class="h-4 w-4 shrink-0" />
-            <span>QR HD 2048</span>
-          </div>
-          <span class="text-[0.7rem] text-paper/60 block mt-0.5">Vektor &amp; PNG</span>
-        </div>
-        <div class="border border-paper/15 bg-forest-900/80 p-3 rounded-xs">
-          <div class="flex items-center gap-1.5 text-orange font-bold text-sm">
-            <MessageSquare class="h-4 w-4 shrink-0" />
-            <span>WHATSAPP</span>
-          </div>
-          <span class="text-[0.7rem] text-paper/60 block mt-0.5">1-Klick Textbausteine</span>
-        </div>
-      </div>
-    </Container>
-  </section>
-
-  <!-- Live Custom Link Generator -->
-  <section class="border-b border-paper/20 bg-forest-950 py-10">
-    <Container>
-      <div class="border-2 border-orange/40 bg-forest-900/80 p-6 sm:p-8 rounded-sm shadow-xl relative overflow-hidden">
-        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-paper/15 pb-4">
-          <div class="flex items-center gap-3">
-            <div class="h-10 w-10 shrink-0 bg-orange/10 border border-orange flex items-center justify-center text-orange">
-              <Sparkles class="h-5 w-5" />
-            </div>
-            <div>
-              <h2 class="display text-xl sm:text-2xl text-paper uppercase">Individueller Generator</h2>
-              <p class="font-mono text-xs text-paper/60">Beliebigen Link eingeben und sofort A4-Flyer, Social-Media-Grafiken oder QR-Code erstellen</p>
-            </div>
-          </div>
-          <span class="font-mono text-[0.65rem] uppercase tracking-widest text-orange border border-orange/30 px-3 py-1 bg-orange/5">
-            Live Tool
-          </span>
-        </div>
-
-        <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] items-center">
-          <!-- Inputs Column -->
-          <div class="space-y-6">
-            <div>
-              <label for="custom-url-input" class="block font-mono text-xs font-bold uppercase tracking-wider text-paper mb-2">
-                Ziel-URL oder Text
-              </label>
-              <div class="relative">
-                <input
-                  type="text"
-                  id="custom-url-input"
-                  value={initialCustomUrl}
-                  placeholder={`${BASE_DOMAIN}/...`}
-                  class="w-full bg-forest-900 border-2 border-paper/20 px-4 py-3 font-mono text-sm text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
-                />
+      <!-- 3 Primary Studio Cards (Aufgeräumte Arbeitsbereiche) -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- 1. Kampagnen-Studio -->
+        <a
+          href="/toolbox/kampagnen/"
+          class="group border-2 border-orange/60 bg-forest-900/90 p-5 rounded-xs hover:border-orange hover:bg-forest-900 transition-all flex flex-col justify-between shadow-lg relative overflow-hidden"
+        >
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-xs bg-orange/15 border border-orange flex items-center justify-center text-orange group-hover:scale-105 transition-transform">
+                <Mail class="w-5 h-5" />
               </div>
-              <p class="mt-2 font-mono text-[0.7rem] text-paper/50">
-                Tipp: Funktioniert mit jeder Unterseite von smj-wegweiser.de, WhatsApp-Gruppen-Links oder Anmeldeformularen.
+              <span class="font-mono text-[0.65rem] uppercase tracking-wider text-orange border border-orange/40 px-2 py-0.5 bg-orange/10 font-bold">
+                CiviCRM Sync
+              </span>
+            </div>
+            <div>
+              <h2 class="display text-xl sm:text-2xl text-paper uppercase group-hover:text-orange transition-colors">
+                Kampagnen &amp; Briefe
+              </h2>
+              <p class="font-mono text-xs text-paper/70 mt-1 leading-relaxed">
+                Persönliche DIN A4 Postbriefe mit Falzmarken für CiviCRM Smartgruppen drucken, HTML-Mailings und SMS vorbereiten.
               </p>
             </div>
+          </div>
 
-            <!-- Action Buttons -->
-            <div class="pt-2 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                id="custom-pdf-btn"
-                class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg"
-              >
-                <FileText class="h-4 w-4" />
-                <span>A4 Flyer (PDF)</span>
-              </button>
-              <a
-                id="custom-social-btn"
-                href={`/toolbox/social/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
-                target="_blank"
-                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
-              >
-                <Smartphone class="h-4 w-4 text-orange" />
-                <span>Story &amp; Post</span>
-              </a>
-              <button
-                type="button"
-                id="custom-download-1024"
-                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
-              >
-                <Download class="h-4 w-4" />
-                <span>PNG (1024 px)</span>
-              </button>
-              <button
-                type="button"
-                id="custom-download-2048"
-                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer"
-              >
-                <Download class="h-4 w-4 text-orange" />
-                <span>Print HD</span>
-              </button>
-              <button
-                type="button"
-                id="custom-copy-btn"
-                class="inline-flex items-center gap-2 border border-paper/20 bg-forest-900/60 px-4 py-3 font-mono text-xs uppercase tracking-wider text-paper/80 transition-all hover:border-paper hover:text-paper cursor-pointer"
-              >
-                <Copy class="h-3.5 w-3.5" />
-                <span id="custom-copy-text">Link</span>
-              </button>
+          <div class="mt-5 pt-3 border-t border-paper/15 flex items-center justify-between font-mono text-xs text-orange font-bold uppercase">
+            <span>Studio öffnen</span>
+            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </div>
+        </a>
+
+        <!-- 2. Terminkarten-Studio -->
+        <a
+          href="/toolbox/terminkarte/"
+          class="group border border-paper/20 bg-forest-900/70 p-5 rounded-xs hover:border-orange hover:bg-forest-900 transition-all flex flex-col justify-between shadow-md relative overflow-hidden"
+        >
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-xs bg-forest-950 border border-paper/30 flex items-center justify-center text-orange group-hover:scale-105 transition-transform">
+                <Calendar class="w-5 h-5" />
+              </div>
+              <span class="font-mono text-[0.65rem] uppercase tracking-wider text-paper/60 border border-paper/20 px-2 py-0.5 bg-forest-950 font-bold">
+                Jahresprogramm
+              </span>
+            </div>
+            <div>
+              <h2 class="display text-xl sm:text-2xl text-paper uppercase group-hover:text-orange transition-colors">
+                Terminkarte
+              </h2>
+              <p class="font-mono text-xs text-paper/70 mt-1 leading-relaxed">
+                Kompakte A6 Taschenkalender als PDF zum Falten, Instagram-Karussells und WhatsApp-Listen für das ganze Jahr.
+              </p>
             </div>
           </div>
 
-          <!-- Preview Column -->
-          <div class="flex flex-col items-center justify-center p-5 bg-forest-900 border border-paper/15 text-center">
-            <p class="mono-label text-[0.65rem] text-paper/50 mb-3">// LIVE VORSCHAU</p>
-            <div class="w-44 h-44 max-w-full p-2.5 bg-white border-2 border-paper/30 shadow-xl flex items-center justify-center rounded-sm">
-              <div id="custom-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={initialCustomSvg} />
-            </div>
-            <p id="custom-preview-caption" class="mt-3 font-mono text-[0.65rem] text-orange truncate max-w-[200px]">
-              {initialCustomUrl}
-            </p>
+          <div class="mt-5 pt-3 border-t border-paper/15 flex items-center justify-between font-mono text-xs text-paper/80 font-bold uppercase group-hover:text-orange transition-colors">
+            <span>Designer öffnen</span>
+            <span class="group-hover:translate-x-1 transition-transform">&rarr;</span>
           </div>
-        </div>
+        </a>
+
+        <!-- 3. Schnell-Generator -->
+        <a
+          href="#generator"
+          class="group border border-paper/20 bg-forest-900/70 p-5 rounded-xs hover:border-orange hover:bg-forest-900 transition-all flex flex-col justify-between shadow-md relative overflow-hidden"
+        >
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="w-10 h-10 rounded-xs bg-forest-950 border border-paper/30 flex items-center justify-center text-orange group-hover:scale-105 transition-transform">
+                <Sparkles class="w-5 h-5" />
+              </div>
+              <span class="font-mono text-[0.65rem] uppercase tracking-wider text-paper/60 border border-paper/20 px-2 py-0.5 bg-forest-950 font-bold">
+                Live Generator
+              </span>
+            </div>
+            <div>
+              <h2 class="display text-xl sm:text-2xl text-paper uppercase group-hover:text-orange transition-colors">
+                Link- &amp; QR-Generator
+              </h2>
+              <p class="font-mono text-xs text-paper/70 mt-1 leading-relaxed">
+                Beliebige Links eingeben und sofort druckfertige A4-Plakate, Story-Grafiken oder gestochen scharfe QR-Codes erstellen.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-3 border-t border-paper/15 flex items-center justify-between font-mono text-xs text-paper/80 font-bold uppercase group-hover:text-orange transition-colors">
+            <span>Zum Generator</span>
+            <span class="group-hover:translate-y-0.5 transition-transform">&darr;</span>
+          </div>
+        </a>
+
       </div>
     </Container>
   </section>
 
   <!-- Filter & Search Bar Section -->
-  <section class="border-b border-paper/15 bg-forest-900/90 py-8 sticky top-0 z-40 backdrop-blur-md">
+  <section id="aktionen" class="border-b border-paper/15 bg-forest-900/90 py-5 sticky top-[73px] z-40 backdrop-blur-md shadow-sm">
     <Container>
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        
         <!-- Search Input -->
-        <div class="relative flex-1 max-w-lg">
+        <div class="relative flex-1 max-w-md">
           <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-paper/40">
             <Search class="h-4 w-4" />
           </div>
           <input
             type="text"
             id="qr-search-input"
-            placeholder="Veranstaltung, Zeltlager oder Stichwort suchen..."
-            class="w-full bg-forest-950 border border-paper/20 pl-10 pr-10 py-2.5 font-mono text-xs text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors"
+            placeholder="Aktion, Zeltlager oder Ort suchen..."
+            class="w-full bg-forest-950 border border-paper/20 pl-10 pr-10 py-2.5 font-mono text-xs text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors rounded-xs"
           />
           <button
             type="button"
@@ -415,31 +368,31 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
         <div class="flex flex-wrap items-center gap-1.5 font-mono text-xs">
           <button
             type="button"
-            class="qr-filter-btn px-3 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer"
-            data-filter="all"
-          >
-            Alle
-          </button>
-          <button
-            type="button"
-            class="qr-filter-btn active px-3 py-1.5 uppercase font-bold tracking-wider transition-all border-2 border-orange bg-orange text-forest-950 cursor-pointer"
+            class="qr-filter-btn active px-3.5 py-1.5 uppercase font-bold tracking-wider transition-all border-2 border-orange bg-orange text-forest-950 cursor-pointer rounded-xs"
             data-filter="event"
           >
             Veranstaltungen
           </button>
           <button
             type="button"
-            class="qr-filter-btn px-3 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer"
+            class="qr-filter-btn px-3.5 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer rounded-xs"
             data-filter="camp"
           >
             Zeltlager
           </button>
           <button
             type="button"
-            class="qr-filter-btn px-3 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer"
+            class="qr-filter-btn px-3.5 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer rounded-xs"
             data-filter="channel"
           >
             Kanäle &amp; Links
+          </button>
+          <button
+            type="button"
+            class="qr-filter-btn px-3.5 py-1.5 uppercase font-bold tracking-wider transition-all border border-paper/20 text-paper/70 hover:border-paper hover:text-paper cursor-pointer rounded-xs"
+            data-filter="all"
+          >
+            Alle ({items.length})
           </button>
         </div>
       </div>
@@ -447,40 +400,13 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   </section>
 
   <!-- Items Grid Section -->
-  <section class="py-12 bg-forest-950">
+  <section class="py-10 bg-forest-950 min-h-[600px]">
     <Container>
-      <!-- Terminkarte Callout Banner -->
-      <div class="mb-8 border-2 border-orange/40 bg-gradient-to-r from-forest-900 via-forest-900/90 to-forest-950 p-4 sm:p-5 rounded-xs flex flex-wrap items-center justify-between gap-4 shadow-lg">
-        <div class="flex items-center gap-3.5">
-          <div class="h-11 w-11 shrink-0 bg-orange/15 border-2 border-orange flex items-center justify-center text-orange rounded-xs">
-            <Calendar class="h-5 w-5" />
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="font-display text-lg sm:text-xl text-paper uppercase leading-tight">
-                Terminkarte &amp; Sammel-Flyer
-              </h3>
-              <span class="font-mono text-[0.6rem] uppercase tracking-wider text-orange border border-orange/40 px-1.5 py-0.5 bg-orange/10 font-bold">
-                Neu
-              </span>
-            </div>
-            <p class="font-sans text-xs text-paper/70 mt-0.5">
-              Erstelle ausstehende Termine für beliebige Zeiträume als <strong>DIN A6 Taschenkalender (PDF)</strong>, <strong>Instagram-Karussell</strong> &amp; <strong>WhatsApp-Nachricht</strong>.
-            </p>
-          </div>
-        </div>
-        <a
-          href="/toolbox/terminkarte/"
-          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-md shrink-0 rounded-xs"
-        >
-          <span>Terminkarte öffnen &rarr;</span>
-        </a>
-      </div>
-
-      <!-- Results Count Bar -->
+      
+      <!-- Results Count & Past Toggle Bar -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-paper/10 pb-4 mb-6">
         <div class="flex flex-wrap items-center gap-3">
-          <span id="qr-items-count" class="font-mono text-xs text-paper/70 font-bold">
+          <span id="qr-items-count" class="font-mono text-xs text-paper/80 font-bold">
             Zeige Veranstaltungen
           </span>
           <button
@@ -493,32 +419,32 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           </button>
         </div>
         <span class="font-mono text-[0.7rem] text-paper/40 hidden sm:inline">
-          Klick auf „QR-Code“ öffnet die Großansicht &amp; HD-Download
+          💡 Direktzugriff auf Briefe, Flyer &amp; Social Media für jede Aktion
         </span>
       </div>
 
       <!-- No Results State -->
-      <div id="qr-no-results" class="hidden py-16 text-center border-2 border-dashed border-paper/20 bg-forest-900/40 p-8 my-8">
+      <div id="qr-no-results" class="hidden py-16 text-center border-2 border-dashed border-paper/20 bg-forest-900/40 p-8 my-8 rounded-xs">
         <p class="font-display text-2xl uppercase text-paper/70">Keine Inhalte gefunden</p>
         <p class="font-mono text-xs text-paper/50 mt-2">Versuche es mit einem anderen Suchbegriff oder setze den Filter zurück.</p>
         <button
           type="button"
           id="qr-reset-filter-btn"
-          class="mt-6 inline-flex items-center gap-2 border border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
+          class="mt-6 inline-flex items-center gap-2 border border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer rounded-xs"
         >
           Filter zurücksetzen
         </button>
       </div>
 
-      <!-- List Overview -->
-      <div id="qr-items-list" class="flex flex-col gap-3">
+      <!-- Clean Structured List of Actions -->
+      <div id="qr-items-list" class="space-y-4">
         {
           items.map((item) => {
             const searchTokens = `${item.title} ${item.subtitle || ''} ${item.categoryLabel} ${item.location || ''} ${item.dateStr || ''} ${item.targetUrl}`.toLowerCase()
             const isInitialHidden = item.category !== 'event' || item.isPast
             return (
               <article
-                class={`qr-card group relative border border-paper/15 bg-forest-900/70 p-4 sm:p-5 transition-all duration-200 hover:border-orange hover:bg-forest-900 rounded-xs shadow-sm ${item.isPast ? 'opacity-70' : ''} ${isInitialHidden ? 'hidden' : ''}`}
+                class={`qr-card group border border-paper/15 bg-forest-900/60 p-4 sm:p-5 transition-all duration-200 hover:border-paper/40 hover:bg-forest-900/80 rounded-xs shadow-sm ${item.isPast ? 'opacity-65' : ''} ${isInitialHidden ? 'hidden' : ''}`}
                 data-category={item.category}
                 data-search={searchTokens}
                 data-past={item.isPast ? 'true' : 'false'}
@@ -529,117 +455,158 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                 data-pdf-url={item.pdfUrl || ''}
                 data-social-url={item.socialUrl || ''}
               >
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  <!-- Main Info Section (no QR preview thumbnail!) -->
-                  <div class="min-w-0 flex-1">
-                    <!-- Badges & Date Header Line -->
-                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
-                      <span class={`inline-block border px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider ${item.badgeColor}`}>
-                        {item.categoryLabel}
+                <!-- Top Row: Badges & Date -->
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-paper/10 pb-2.5 mb-3">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class={`inline-block border px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider rounded-xs ${item.badgeColor}`}>
+                      {item.categoryLabel}
+                    </span>
+                    {item.isFeatured && (
+                      <span class="inline-flex items-center gap-1.5 font-mono text-[0.65rem] font-bold text-orange">
+                        <span class="h-1.5 w-1.5 rounded-full bg-orange animate-pulse"></span>
+                        Aktiv
                       </span>
-                      {item.isFeatured && (
-                        <span class="inline-flex items-center gap-1.5 font-mono text-[0.65rem] font-bold text-orange">
-                          <span class="h-1.5 w-1.5 rounded-full bg-orange animate-pulse"></span>
-                          Aktiv
-                        </span>
-                      )}
-                      {item.isPast && (
-                        <span class="inline-flex items-center font-mono text-[0.65rem] text-paper/40 border border-paper/10 px-1.5 py-0.5">
-                          Vergangen
-                        </span>
-                      )}
-                      {item.dateStr ? (
-                        <span class="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-paper/90 border-l border-paper/15 pl-2">
-                          <Calendar class="h-3 w-3 text-orange shrink-0" />
-                          <span>{item.dateStr}</span>
-                        </span>
-                      ) : (
-                        <span class="font-mono text-[0.68rem] text-paper/40 border-l border-paper/15 pl-2">
-                          Dauerhafter Link
-                        </span>
-                      )}
-                    </div>
-
-                    <!-- Title -->
-                    <h3 class="display text-lg sm:text-xl text-paper group-hover:text-orange transition-colors leading-tight truncate">
-                      {item.toolboxUrl ? (
-                        <a href={item.toolboxUrl} class="hover:underline">
-                          {item.title}
-                        </a>
-                      ) : (
-                        item.title
-                      )}
-                    </h3>
-
-                    <!-- Subtitle -->
-                    {item.subtitle && (
-                      <p class="mt-0.5 text-xs text-paper/70 line-clamp-1">
-                        {item.subtitle}
-                      </p>
                     )}
-
-                    <!-- Meta Details Line -->
-                    <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[0.72rem] text-paper/60">
-                      {item.location && (
-                        <span class="inline-flex items-center gap-1 text-paper/70">
-                          <MapPin class="h-3 w-3 text-paper/40 shrink-0" />
-                          <span class="truncate max-w-[220px]">{item.location}</span>
-                        </span>
-                      )}
-                      {item.ageGroup && (
-                        <span class="inline-flex items-center gap-1 text-paper/70">
-                          <Users class="h-3 w-3 text-paper/40 shrink-0" />
-                          <span>{item.ageGroup}</span>
-                        </span>
-                      )}
-                      <a
-                        href={item.targetUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center gap-1 text-orange hover:underline truncate max-w-[200px] sm:max-w-xs"
-                        title={item.targetUrl}
-                      >
-                        <span class="truncate">{item.targetUrl.replace(/^https?:\/\//, '')}</span>
-                        <ExternalLink class="h-2.5 w-2.5 shrink-0" />
-                      </a>
-                    </div>
+                    {item.isPast && (
+                      <span class="inline-flex items-center font-mono text-[0.65rem] text-paper/40 border border-paper/10 px-1.5 py-0.5 rounded-xs">
+                        Archiv
+                      </span>
+                    )}
                   </div>
 
-                  <!-- Right Section: Exactly TWO Buttons -->
-                  <div class="flex items-center gap-2.5 shrink-0 pt-3 lg:pt-0 border-t border-paper/10 lg:border-t-0">
-                    {item.toolboxUrl ? (
+                  {item.dateStr && (
+                    <div class="font-mono text-xs font-bold text-orange flex items-center gap-1.5">
+                      <Calendar class="h-3.5 w-3.5" />
+                      <span>{item.dateStr}</span>
+                    </div>
+                  )}
+                </div>
+
+                <!-- Middle Row: Title & Meta Info -->
+                <div class="space-y-1">
+                  <h3 class="display text-xl sm:text-2xl text-paper uppercase group-hover:text-orange transition-colors">
+                    {item.title}
+                  </h3>
+
+                  {item.subtitle && (
+                    <p class="font-mono text-xs text-paper/70 line-clamp-1">
+                      {item.subtitle}
+                    </p>
+                  )}
+
+                  <div class="pt-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-paper/60">
+                    {item.location && (
+                      <span class="flex items-center gap-1">
+                        <MapPin class="h-3.5 w-3.5 text-paper/40 shrink-0" />
+                        <span>{item.location}</span>
+                      </span>
+                    )}
+                    {item.ageGroup && (
+                      <span class="flex items-center gap-1">
+                        <Users class="h-3.5 w-3.5 text-paper/40 shrink-0" />
+                        <span>{item.ageGroup}</span>
+                      </span>
+                    )}
+                    {item.price && (
+                      <span class="text-orange font-bold">
+                        {item.price}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <!-- Bottom Row: Unified Modular Action Toolbar -->
+                <div class="mt-4 pt-3 border-t border-paper/10 flex flex-wrap items-center justify-between gap-2.5">
+                  <div class="flex flex-wrap items-center gap-2">
+                    
+                    {/* Primary Kampagnen Studio Link */}
+                    {item.campaignUrl ? (
+                      <a
+                        href={item.campaignUrl}
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange text-forest-950 font-mono text-xs font-bold uppercase rounded-xs hover:bg-paper transition-colors shadow-sm"
+                        title="Kampagnen-Studio mit CiviCRM Smartgruppen öffnen"
+                      >
+                        <Mail class="w-3.5 h-3.5" />
+                        <span>Kampagnen-Studio ↗</span>
+                      </a>
+                    ) : item.toolboxUrl ? (
                       <a
                         href={item.toolboxUrl}
-                        class="inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-sm shrink-0"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange text-forest-950 font-mono text-xs font-bold uppercase rounded-xs hover:bg-paper transition-colors shadow-sm"
                       >
-                        <Folder class="h-3.5 w-3.5" />
-                        <span>Materialien &amp; Vorlagen</span>
-                        <ArrowRight class="h-3.5 w-3.5" />
+                        <Folder class="w-3.5 h-3.5" />
+                        <span>Vorlagen öffnen ↗</span>
                       </a>
-                    ) : (
+                    ) : null}
+
+                    {/* DIN A4 Musterbrief PDF */}
+                    {item.letterUrl && (
+                      <a
+                        href={item.letterUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs hover:border-paper hover:bg-forest-900 transition-colors"
+                        title="Druckfertiger personalisierter DIN 5008 Postbrief"
+                      >
+                        <FileText class="w-3.5 h-3.5 text-orange" />
+                        <span>Brief (PDF) ↗</span>
+                      </a>
+                    )}
+
+                    {/* A4 Flyer PDF */}
+                    {item.pdfUrl && (
+                      <a
+                        href={item.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs hover:border-paper hover:bg-forest-900 transition-colors"
+                        title="Druckfertiger A4/A5 Aushang"
+                      >
+                        <FileText class="w-3.5 h-3.5 text-orange" />
+                        <span>Flyer (PDF) ↗</span>
+                      </a>
+                    )}
+
+                    {/* Social Media 9:16 */}
+                    {item.socialUrl && (
+                      <a
+                        href={item.socialUrl}
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs hover:border-paper hover:bg-forest-900 transition-colors"
+                        title="Instagram Storys & Feed Posts"
+                      >
+                        <Smartphone class="w-3.5 h-3.5 text-orange" />
+                        <span>Social (9:16) ↗</span>
+                      </a>
+                    )}
+
+                    {/* External Link for Channels */}
+                    {!item.campaignUrl && !item.pdfUrl && (
                       <a
                         href={item.targetUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 border border-paper/30 bg-forest-900 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-all cursor-pointer shadow-sm shrink-0"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs hover:border-paper hover:bg-forest-900 transition-colors"
                       >
-                        <ExternalLink class="h-3.5 w-3.5" />
-                        <span>Zur Website</span>
+                        <ExternalLink class="w-3.5 h-3.5 text-orange" />
+                        <span>Link öffnen ↗</span>
                       </a>
                     )}
+                  </div>
 
+                  {/* QR Code Action Button */}
+                  <div class="flex items-center gap-2">
                     <button
                       type="button"
-                      class="qr-trigger-btn inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-950 px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-paper/85 hover:border-orange hover:text-orange transition-colors cursor-pointer shrink-0"
+                      class="qr-trigger-btn inline-flex items-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/25 text-paper/80 font-mono text-xs uppercase hover:text-orange hover:border-orange rounded-xs transition-colors cursor-pointer"
                       data-url={item.targetUrl}
                       data-title={item.title}
                       data-filename={item.filename}
                       data-toolbox-url={item.toolboxUrl || ''}
                       data-pdf-url={item.pdfUrl || ''}
                       data-social-url={item.socialUrl || ''}
-                      title="QR-Code anzeigen & herunterladen"
+                      title="QR-Code in HD herunterladen & kopieren"
                     >
-                      <QrCode class="h-3.5 w-3.5 text-orange" />
+                      <QrCode class="w-3.5 h-3.5 text-orange" />
                       <span>QR-Code</span>
                     </button>
                   </div>
@@ -652,12 +619,113 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
     </Container>
   </section>
 
-  <!-- Large Modal Preview -->
+  <!-- Live Custom Link Generator Section -->
+  <section id="generator" class="border-t border-paper/20 bg-forest-900/60 py-12 sm:py-16">
+    <Container>
+      <div class="border-2 border-orange/40 bg-forest-900 p-6 sm:p-8 rounded-xs shadow-xl relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-paper/15 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 shrink-0 bg-orange/15 border border-orange flex items-center justify-center text-orange rounded-xs">
+              <Sparkles class="h-5 w-5" />
+            </div>
+            <div>
+              <h2 class="display text-xl sm:text-2xl text-paper uppercase">Individueller Link- &amp; QR-Generator</h2>
+              <p class="font-mono text-xs text-paper/60">Beliebigen Link eingeben und sofort A4-Flyer, Social-Media-Grafiken oder QR-Codes generieren</p>
+            </div>
+          </div>
+          <span class="font-mono text-[0.65rem] uppercase tracking-widest text-orange border border-orange/30 px-3 py-1 bg-orange/5 rounded-xs">
+            Live Tool
+          </span>
+        </div>
+
+        <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_260px] xl:grid-cols-[1fr_300px] items-center">
+          <!-- Inputs Column -->
+          <div class="space-y-6">
+            <div>
+              <label for="custom-url-input" class="block font-mono text-xs font-bold uppercase tracking-wider text-paper mb-2">
+                Ziel-URL oder Text eingeben
+              </label>
+              <div class="relative">
+                <input
+                  type="text"
+                  id="custom-url-input"
+                  value={initialCustomUrl}
+                  placeholder={`${BASE_DOMAIN}/...`}
+                  class="w-full bg-forest-950 border-2 border-paper/20 px-4 py-3 font-mono text-sm text-paper placeholder:text-paper/40 focus:border-orange focus:outline-none transition-colors rounded-xs"
+                />
+              </div>
+              <p class="mt-2 font-mono text-[0.7rem] text-paper/50">
+                Tipp: Funktioniert mit jeder Unterseite von smj-wegweiser.de, WhatsApp-Gruppen-Links oder Anmeldeformularen.
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                id="custom-pdf-btn"
+                class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 transition-all hover:bg-paper hover:border-paper cursor-pointer shadow-lg rounded-xs"
+              >
+                <FileText class="h-4 w-4" />
+                <span>A4 Flyer (PDF)</span>
+              </button>
+              <a
+                id="custom-social-btn"
+                href={`/toolbox/social/custom/?url=${encodeURIComponent(initialCustomUrl)}`}
+                target="_blank"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-950 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer rounded-xs"
+              >
+                <Smartphone class="h-4 w-4 text-orange" />
+                <span>Story &amp; Post</span>
+              </a>
+              <button
+                type="button"
+                id="custom-download-1024"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-950 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer rounded-xs"
+              >
+                <Download class="h-4 w-4" />
+                <span>PNG (1024 px)</span>
+              </button>
+              <button
+                type="button"
+                id="custom-download-2048"
+                class="inline-flex items-center gap-2 border border-paper/30 bg-forest-950 px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-paper transition-all hover:border-orange hover:text-orange cursor-pointer rounded-xs"
+              >
+                <Download class="h-4 w-4 text-orange" />
+                <span>Print HD</span>
+              </button>
+              <button
+                type="button"
+                id="custom-copy-btn"
+                class="inline-flex items-center gap-2 border border-paper/20 bg-forest-950 px-4 py-3 font-mono text-xs uppercase tracking-wider text-paper/80 transition-all hover:border-paper hover:text-paper cursor-pointer rounded-xs"
+              >
+                <Copy class="h-3.5 w-3.5" />
+                <span id="custom-copy-text">Link</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Preview Column -->
+          <div class="flex flex-col items-center justify-center p-5 bg-forest-950 border border-paper/15 text-center rounded-xs">
+            <p class="mono-label text-[0.65rem] text-paper/50 mb-3">// LIVE VORSCHAU</p>
+            <div class="w-44 h-44 max-w-full p-2.5 bg-white border-2 border-paper/30 shadow-xl flex items-center justify-center rounded-xs">
+              <div id="custom-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block" set:html={initialCustomSvg} />
+            </div>
+            <p id="custom-preview-caption" class="mt-3 font-mono text-[0.65rem] text-orange truncate max-w-[200px]">
+              {initialCustomUrl}
+            </p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Large Modal Preview for QR Downloads -->
   <dialog
     id="qr-modal"
     class="backdrop:bg-forest-950/90 bg-transparent p-4 sm:p-6 max-w-xl w-full m-auto open:flex flex-col items-center justify-center"
   >
-    <div class="relative w-full border-2 border-orange bg-forest-950 p-6 sm:p-8 shadow-2xl text-paper">
+    <div class="relative w-full border-2 border-orange bg-forest-950 p-6 sm:p-8 shadow-2xl text-paper rounded-xs">
       <button
         id="qr-modal-close"
         type="button"
@@ -668,75 +736,77 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       </button>
 
       <div class="text-center">
-        <span class="mono-label text-[0.65rem] text-orange">// MEDIEN- &amp; QR-VORSCHAU</span>
-        <h3 id="modal-title" class="display display-md text-paper mt-1">Materialien</h3>
-        <p id="modal-url" class="font-mono text-xs text-paper/60 mt-1 truncate max-w-md mx-auto"></p>
+        <p class="mono-label text-xs text-orange mb-1">// QR-CODE VORSCHAU &amp; DOWNLOAD</p>
+        <h3 id="modal-title" class="display text-2xl uppercase tracking-wide text-paper">
+          Titel
+        </h3>
+        <p id="modal-url" class="font-mono text-xs text-paper/60 truncate mt-1 max-w-md mx-auto">
+          https://...
+        </p>
       </div>
 
+      <!-- Preview Frame -->
       <div class="my-6 flex justify-center">
-        <div class="w-64 h-64 sm:w-72 sm:h-72 max-w-full p-3 bg-white border-4 border-paper shadow-2xl flex items-center justify-center rounded-sm">
+        <div class="w-56 h-56 p-3 bg-white border-4 border-paper/40 shadow-2xl flex items-center justify-center rounded-xs">
           <div id="modal-qr-preview" class="w-full h-full [&>svg]:w-full [&>svg]:h-full [&>svg]:block"></div>
         </div>
       </div>
 
+      <!-- Action Buttons -->
       <div class="flex flex-wrap items-center justify-center gap-3">
-        <a
-          id="modal-toolbox-link"
-          href="/toolbox/custom/"
-          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-colors cursor-pointer"
-        >
-          <Folder class="h-4 w-4" />
-          <span>Alle Materialien</span>
-        </a>
-        <a
-          id="modal-flyer-link"
-          href="/toolbox/flyers/custom.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
-        >
-          <FileText class="h-4 w-4 text-orange" />
-          <span>Flyer (PDF) ↗</span>
-        </a>
-        <a
-          id="modal-social-link"
-          href="/toolbox/social/custom/"
-          target="_blank"
-          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
-        >
-          <Smartphone class="h-4 w-4 text-orange" />
-          <span>Social Studio</span>
-        </a>
         <button
           type="button"
           id="modal-download-1024"
-          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-colors cursor-pointer"
+          class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer rounded-xs"
         >
-          <Download class="h-4 w-4 text-orange" />
-          <span>PNG 1024px</span>
+          <Download class="h-4 w-4" />
+          <span>PNG herunterladen (1024 px)</span>
         </button>
+
+        <a
+          id="modal-toolbox-link"
+          href="#"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-all cursor-pointer rounded-xs"
+        >
+          <Folder class="h-4 w-4 text-orange" />
+          <span>Vorlagen-Ordner öffnen</span>
+        </a>
+
+        <a
+          id="modal-flyer-link"
+          href="#"
+          target="_blank"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-all cursor-pointer rounded-xs"
+        >
+          <FileText class="h-4 w-4 text-orange" />
+          <span>A4 Flyer (PDF)</span>
+        </a>
+
+        <a
+          id="modal-social-link"
+          href="#"
+          target="_blank"
+          class="inline-flex items-center gap-2 border border-paper/30 bg-forest-900 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:border-orange hover:text-orange transition-all cursor-pointer rounded-xs"
+        >
+          <Smartphone class="h-4 w-4 text-orange" />
+          <span>Story &amp; Post</span>
+        </a>
       </div>
     </div>
   </dialog>
-
-  <footer class="border-t border-paper/15 bg-forest-950 py-8 px-4 font-mono text-xs text-paper/50 text-center">
-    <p>SMJ Regio Wegweiser &bull; Interner Bereich &bull; Nur für Gruppenleiter &amp; Mitarbeiter</p>
-  </footer>
 </BaseLayout>
 
 <script>
-  import { generateQrSvg, downloadQrPng } from '../../scripts/qrcode-renderer'
-  import { openOrDownloadClientFlyerPdf } from '../../scripts/client-flyer-pdf'
+  import { downloadQrPng, generateQrSvg } from '../../scripts/qrcode-renderer'
   import { QR_BASE_URL } from '../../lib/qr-url'
 
   let activeModalUrl = ''
-  let activeModalFilename = 'qr-smj-code'
+  let activeModalFilename = ''
 
-  // Custom Generator Logic
+  // Custom QR live generator
   const customInput = document.getElementById('custom-url-input') as HTMLInputElement | null
   const customPreview = document.getElementById('custom-qr-preview')
   const customCaption = document.getElementById('custom-preview-caption')
-  const customFlyerBtn = document.getElementById('custom-flyer-btn') as HTMLAnchorElement | null
   const customPdfBtn = document.getElementById('custom-pdf-btn') as HTMLButtonElement | null
   const customSocialBtn = document.getElementById('custom-social-btn') as HTMLAnchorElement | null
   const customDownload1024 = document.getElementById('custom-download-1024')
@@ -744,51 +814,36 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
   const customCopyBtn = document.getElementById('custom-copy-btn')
   const customCopyText = document.getElementById('custom-copy-text')
 
-  if (customPdfBtn && customInput) {
-    customPdfBtn.addEventListener('click', async () => {
-      const text = customInput.value.trim() || `${QR_BASE_URL}/`
-      customPdfBtn.disabled = true
-      const origText = customPdfBtn.innerHTML
-      customPdfBtn.innerHTML = '<span>Generiere PDF...</span>'
-      try {
-        await openOrDownloadClientFlyerPdf(
-          {
-            title: 'Aktion der SMJ',
-            targetUrl: text,
-            dateStr: 'Jetzt anmelden',
-            locationStr: 'Infos & Anmeldung online',
-          },
-          'open'
-        )
-      } catch (err) {
-        console.error('Custom PDF generation failed', err)
-      } finally {
-        customPdfBtn.disabled = false
-        customPdfBtn.innerHTML = origText
-      }
-    })
-  }
+  let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  async function updateCustomQR() {
+  async function updateCustomQr() {
     if (!customInput || !customPreview) return
     const text = customInput.value.trim() || `${QR_BASE_URL}/`
-    if (customCaption) customCaption.textContent = text
-    if (customFlyerBtn) {
-      customFlyerBtn.href = `/toolbox/flyer/custom/?url=${encodeURIComponent(text)}&download=1`
-    }
-    if (customSocialBtn) {
-      customSocialBtn.href = `/toolbox/social/custom/?url=${encodeURIComponent(text)}`
-    }
-
     try {
       const svg = await generateQrSvg(text, { margin: 2, errorCorrectionLevel: 'M' })
       customPreview.innerHTML = svg
-    } catch (e) {
-      console.error('Custom QR render failed', e)
+      if (customCaption) customCaption.textContent = text
+      if (customSocialBtn) {
+        customSocialBtn.href = `/toolbox/social/custom/?url=${encodeURIComponent(text)}`
+      }
+    } catch (err) {
+      console.error('Failed to generate preview', err)
     }
   }
 
-  if (customInput) customInput.addEventListener('input', updateCustomQR)
+  if (customInput) {
+    customInput.addEventListener('input', () => {
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(updateCustomQr, 120)
+    })
+  }
+
+  if (customPdfBtn && customInput) {
+    customPdfBtn.addEventListener('click', () => {
+      const text = customInput.value.trim() || `${QR_BASE_URL}/`
+      window.open(`/toolbox/flyers/custom.pdf?url=${encodeURIComponent(text)}`, '_blank')
+    })
+  }
 
   if (customDownload1024 && customInput) {
     customDownload1024.addEventListener('click', async () => {
@@ -1038,7 +1093,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
       if (searchClear) searchClear.classList.add('hidden')
 
       filterBtns.forEach((b) => {
-        if (b.dataset.filter === 'all') {
+        if (b.dataset.filter === 'event') {
           b.classList.add('active', 'border-2', 'border-orange', 'bg-orange', 'text-forest-950')
           b.classList.remove('border-paper/20', 'text-paper/70')
         } else {
@@ -1046,7 +1101,7 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
           b.classList.add('border-paper/20', 'text-paper/70')
         }
       })
-      activeFilter = 'all'
+      activeFilter = 'event'
       applyFilterAndSearch()
     })
   }

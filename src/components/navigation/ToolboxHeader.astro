@@ -1,54 +1,89 @@
 ---
 import Logo from '../common/Logo.astro'
-import { ArrowLeft, LogOut } from '@lucide/astro'
+import { ArrowLeft, LogOut, LayoutDashboard, Mail, Calendar, Sparkles } from '@lucide/astro'
 
 interface Props {
   backHref?: string
   backLabel?: string
   currentTitle?: string
+  activeNav?: 'dashboard' | 'kampagnen' | 'terminkarte' | 'generator'
 }
 
 const {
   backHref = '/',
-  backLabel = 'Zurück zur Website',
+  backLabel = 'Zur Website',
   currentTitle = 'Medien-Zentrale',
+  activeNav,
 } = Astro.props
+
+const navItems = [
+  { id: 'dashboard', label: 'Übersicht', href: '/toolbox/', icon: LayoutDashboard },
+  { id: 'kampagnen', label: 'CiviCRM Kampagnen', href: '/toolbox/kampagnen/', icon: Mail },
+  { id: 'terminkarte', label: 'Terminkarte', href: '/toolbox/terminkarte/', icon: Calendar },
+  { id: 'generator', label: 'Generator', href: '/toolbox/#generator', icon: Sparkles },
+]
 ---
 
-<header class="border-b border-paper/20 bg-forest-950 px-4 py-3 sm:px-8">
-  <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
-    <div class="flex items-center gap-3.5">
-      <a href="/" class="flex items-center gap-2 group" title="Zur Website-Startseite">
-        <Logo size="sm" tone="light" />
-      </a>
-      <span class="text-paper/20 hidden sm:inline">|</span>
-      <a href="/toolbox/" class="flex items-center gap-2">
-        <span class="inline-block border border-orange/50 bg-orange/10 px-2 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-orange">
-          Leiter-Toolbox
-        </span>
-        <span class="hidden md:inline font-mono text-xs text-paper/70 font-bold uppercase tracking-wide">
-          // {currentTitle}
-        </span>
-      </a>
-    </div>
+<header class="border-b border-paper/20 bg-forest-950 sticky top-0 z-50 shadow-md">
+  <!-- Top bar -->
+  <div class="border-b border-paper/10 px-4 py-2.5 sm:px-6">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-2 group" title="Zur Website-Startseite">
+          <Logo size="sm" tone="light" />
+        </a>
+        <span class="text-paper/20 hidden sm:inline">/</span>
+        <a href="/toolbox/" class="flex items-center gap-2">
+          <span class="inline-block border border-orange/50 bg-orange/10 px-2 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-orange">
+            Leiter-Toolbox
+          </span>
+          <span class="hidden md:inline font-mono text-xs text-paper/70 font-bold uppercase tracking-wide">
+            // {currentTitle}
+          </span>
+        </a>
+      </div>
 
-    <div class="flex items-center gap-3">
-      <a
-        href={backHref}
-        class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/80 hover:border-paper/40 hover:text-paper transition-colors rounded-xs"
-      >
-        <ArrowLeft class="h-3.5 w-3.5 text-orange" />
-        <span class="hidden sm:inline">{backLabel}</span>
-        <span class="sm:hidden">Zurück</span>
-      </a>
-      <a
-        href="/toolbox-auth/logout.php"
-        class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-1.5 font-mono text-xs text-paper/70 hover:border-orange hover:text-orange transition-colors rounded-xs"
-        title="Von der Leiter-Toolbox abmelden"
-      >
-        <LogOut class="h-3.5 w-3.5 text-orange" />
-        <span class="hidden sm:inline">Abmelden</span>
-      </a>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a
+          href={backHref}
+          class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-xs text-paper/80 hover:border-paper/40 hover:text-paper transition-colors rounded-xs"
+        >
+          <ArrowLeft class="h-3.5 w-3.5 text-orange" />
+          <span class="hidden sm:inline">{backLabel}</span>
+          <span class="sm:hidden">Website</span>
+        </a>
+        <a
+          href="/toolbox-auth/logout.php"
+          class="inline-flex items-center gap-1.5 border border-paper/20 bg-forest-900 px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-xs text-paper/70 hover:border-orange hover:text-orange transition-colors rounded-xs"
+          title="Von der Leiter-Toolbox abmelden"
+        >
+          <LogOut class="h-3.5 w-3.5 text-orange" />
+          <span class="hidden sm:inline">Abmelden</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbox App Navigation Tabs -->
+  <div class="px-4 sm:px-6 bg-forest-900/60 overflow-x-auto scrollbar-none">
+    <div class="mx-auto max-w-7xl flex items-center gap-1 sm:gap-2">
+      {navItems.map((item) => {
+        const Icon = item.icon
+        const isActive = activeNav ? activeNav === item.id : (item.id === 'dashboard' && Astro.url.pathname === '/toolbox/')
+        return (
+          <a
+            href={item.href}
+            class={`flex items-center gap-2 px-3 sm:px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider border-b-2 transition-all whitespace-nowrap ${
+              isActive
+                ? 'border-orange text-orange bg-forest-950/80 shadow-sm'
+                : 'border-transparent text-paper/60 hover:text-paper hover:bg-forest-950/40'
+            }`}
+          >
+            <Icon class="h-3.5 w-3.5 shrink-0" />
+            <span>{item.label}</span>
+          </a>
+        )
+      })}
     </div>
   </div>
 </header>
