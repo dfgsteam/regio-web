@@ -65,7 +65,23 @@ jobs:
           AUTHENTIK_URL: ${{ vars.AUTHENTIK_URL }}
           CIVICRM_API_KEY: ${{ secrets.CIVICRM_API_KEY }}
           CIVICRM_SITE_KEY: ${{ secrets.CIVICRM_SITE_KEY }}
+          FTP_SERVER_DIR: ${{ vars.FTP_SERVER_DIR || '.' }}
+          FTP_PRIVATE_DIR: ${{ vars.FTP_PRIVATE_DIR }}
         run: npm run build:toolbox-config
+
+      - name: Upload private Toolbox config outside web root
+        if: ${{ env.FTP_PASSWORD != '' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ae9ed.netcup.net
+          username: github-hnld-regio
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ format('{0}/', vars.FTP_PRIVATE_DIR) }}
+          local-dir: ./dist-private/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
 
       - name: Upload to FTP
         if: ${{ env.FTP_PASSWORD != '' }}
