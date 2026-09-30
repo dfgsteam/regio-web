@@ -16,4 +16,5 @@ async function expectStatus(path, expected) {
 
 await expectStatus('/toolbox-auth/generated-config.php', 403)
 await expectStatus('/toolbox-auth/civicrm-api.php?action=groups', 401)
+await expectStatus('/toolbox-auth/civicrm-api.php?action=contacts&group_id=12', 401)
 await expectStatus('/toolbox/', 302)
