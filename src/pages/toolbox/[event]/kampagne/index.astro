@@ -749,14 +749,14 @@ const clientData = {
                   class="post-slide-btn active flex-1 py-1.5 px-2 text-center font-bold uppercase rounded-xs transition-all cursor-pointer bg-orange text-forest-950 shadow-sm"
                   data-slide="1"
                 >
-                  Slide 1: Cover (Catchy)
+                  Slide 1: Fakten
                 </button>
                 <button
                   type="button"
                   class="post-slide-btn flex-1 py-1.5 px-2 text-center font-bold uppercase rounded-xs transition-all cursor-pointer text-paper/70 hover:text-paper"
                   data-slide="2"
                 >
-                  Slide 2: Fakten &amp; QR-Code
+                  Slide 2: Großer QR-Code
                 </button>
               </div>
 
@@ -1739,10 +1739,11 @@ const clientData = {
       activeSocialFormat = activeSocialPostSlide === 1 ? 'post-slide-1' : 'post-slide-2'
     }
 
-    const imgUrl = `/toolbox/social-images/${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
-    if (socialPreviewImage) socialPreviewImage.src = imgUrl
+    const cleanUrl = `/toolbox/social-images/${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
+    const previewUrl = `${cleanUrl}?v=${Date.now()}`
+    if (socialPreviewImage) socialPreviewImage.src = previewUrl
     if (btnDownloadSocialPng) {
-      btnDownloadSocialPng.href = imgUrl
+      btnDownloadSocialPng.href = cleanUrl
       btnDownloadSocialPng.download = `smj-${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
     }
 
@@ -1761,9 +1762,9 @@ const clientData = {
       } else if (activeSocialChannel === 'whatsapp') {
         socialDownloadLabel.textContent = 'WhatsApp-Grafik herunterladen (PNG)'
       } else if (activeSocialPostSlide === 1) {
-        socialDownloadLabel.textContent = 'Slide 1 herunterladen (Cover / Catchy)'
+        socialDownloadLabel.textContent = 'Slide 1 herunterladen (Fakten)'
       } else {
-        socialDownloadLabel.textContent = 'Slide 2 herunterladen (Fakten & QR-Code)'
+        socialDownloadLabel.textContent = 'Slide 2 herunterladen (Großer QR-Code)'
       }
     }
 
@@ -1786,10 +1787,10 @@ const clientData = {
         socialDimensionsLabel.textContent = '1080 × 1080 PX (WHATSAPP COMMUNITY & STATUS)'
       } else if (activeSocialPostSlide === 1) {
         socialPreviewWrapper.style.aspectRatio = '1 / 1'
-        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST • SLIDE 1: COVER)'
+        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST • SLIDE 1: FAKTEN)'
       } else {
         socialPreviewWrapper.style.aspectRatio = '1 / 1'
-        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST • SLIDE 2: QR-CODE)'
+        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST • SLIDE 2: GROSSER QR-CODE)'
       }
     }
   }

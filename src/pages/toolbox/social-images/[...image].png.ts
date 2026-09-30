@@ -213,7 +213,7 @@ export const GET: APIRoute = async ({ props }) => {
     status: 200,
     headers: {
       'Content-Type': 'image/png',
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
     },
   })
 }
