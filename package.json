@@ -10,7 +10,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "preview": "astro preview",
-    "build": "astro build",
+    "build": "astro build && node scripts/split-toolbox-output.mjs",
     "build:toolbox-config": "node scripts/build-toolbox-config.mjs",
     "sync:calendar": "node scripts/sync-calendar.mjs",
     "sync:civicrm": "node scripts/sync-civicrm.mjs",

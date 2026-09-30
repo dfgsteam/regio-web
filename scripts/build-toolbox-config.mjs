@@ -52,14 +52,11 @@ const settings = {
 
 const publicOutput = path.resolve('dist/toolbox-auth/generated-config.php')
 const privateOutput = path.resolve('dist-private/generated-config.php')
-const publicToolbox = path.resolve('dist/toolbox')
 const privateToolbox = path.resolve('dist-private/toolbox')
-if (!fs.existsSync(path.dirname(publicOutput)) || !fs.existsSync(publicToolbox)) {
-  throw new Error('Astro-Build fehlt: dist/toolbox-auth/ oder dist/toolbox/ wurde nicht gefunden.')
+if (!fs.existsSync(path.dirname(publicOutput)) || !fs.existsSync(privateToolbox)) {
+  throw new Error('Build fehlt: dist/toolbox-auth/ oder dist-private/toolbox/ wurde nicht gefunden.')
 }
 fs.mkdirSync(path.dirname(privateOutput), { recursive: true })
-fs.rmSync(privateToolbox, { recursive: true, force: true })
-fs.renameSync(publicToolbox, privateToolbox)
 fs.copyFileSync(new URL('../server/toolbox/config.php', import.meta.url), path.resolve('dist-private/config.php'))
 
 const encoded = Buffer.from(JSON.stringify(settings), 'utf8').toString('base64')
