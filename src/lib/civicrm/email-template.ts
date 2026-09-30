@@ -165,7 +165,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData, options?: { 
             Hallo {contact.first_name|Abenteurer}!
           </p>
           <p style="margin: 0 0 16px 0;">
-            bist du bereit für die nächste große Aktion mit der SMJ? Es wird wieder Zeit für echte Natur, Dreck an den Schuhen, knisterndes Lagerfeuer, packende Geländespiele und unvergessliche Tage draußen mit anderen Jungs!
+            bist du bereit für die nächste große Aktion mit der SMJ? Es wird wieder Zeit für echte Natur, Dreck an den Schuhen, packende Geländespiele und unvergessliche Tage draußen mit anderen Jungs!
           </p>
           <p style="margin: 0; font-weight: bold; color: ${forestDark}; font-size: 14px; text-transform: uppercase; letter-spacing: 0.8px;">
             Hier sind alle Fakten auf einen Blick:
@@ -214,18 +214,9 @@ export function generateCampaignEmailHtml(event: CampaignEventData, options?: { 
         </td>
       </tr>
 
-      <!-- Highlights 3-Pills Bar -->
-      <tr>
-        <td class="mobile-padding" style="padding: 0 32px 30px 32px;">
-          <div style="background-color: #FAF8F4; border: 1px solid ${borderLight}; border-radius: 6px; padding: 12px 16px; text-align: center; font-size: 13px; font-weight: bold; color: ${forestDark};">
-            🔥 Lagerfeuer &amp; Action &nbsp;&bull;&nbsp; 🌲 100% Natur &nbsp;&bull;&nbsp; ⚔️ Jugend leitet Jugend
-          </div>
-        </td>
-      </tr>
-
       <!-- Big Primary CTA Button -->
       <tr>
-        <td class="mobile-padding" style="padding: 0 32px 32px 32px;" align="center">
+        <td class="mobile-padding" style="padding: 10px 32px 36px 32px;" align="center">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
               <td align="center" style="background-color: ${primaryActionColor}; border-radius: 6px; box-shadow: 0 4px 14px rgba(255,90,31,0.25);">
@@ -241,38 +232,23 @@ export function generateCampaignEmailHtml(event: CampaignEventData, options?: { 
         </td>
       </tr>
 
-      <!-- Parents Assurance Trust Box -->
-      <tr>
-        <td class="mobile-padding" style="padding: 0 32px 32px 32px;">
-          <div style="background-color: #F2F8F4; border-radius: 6px; padding: 20px 22px; border: 1px solid #C8E3D2; border-left: 4px solid #1B4D2E;">
-            <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 14px; color: #1B4D2E; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">
-              // WICHTIGER HINWEIS FÜR DEINE ELTERN:
-            </div>
-            <div style="font-size: 14px; line-height: 1.6; color: #1E3324;">
-              Liebe Eltern, alle Details zu unserem geschulten ehrenamtlichen Leitungsteam (Präventionsschulung &amp; Erste Hilfe), Vollverpflegung, Übernachtung und die vollständige Packliste finden Sie auf unserer Aktionsseite.
-            </div>
-          </div>
-        </td>
-      </tr>
-
       <!-- Footer & CiviCRM Unsubscribe Tokens -->
       <tr>
-        <td style="background-color: #FAF8F4; padding: 28px 32px; border-top: 1px solid #ECE7DE; font-size: 12px; line-height: 1.6; color: #68736B; text-align: center;">
-          <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 15px; color: ${forestDark}; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;">
+        <td style="background-color: #FAF8F4; padding: 24px 32px; border-top: 1px solid #ECE7DE; font-size: 12px; line-height: 1.6; color: #68736B; text-align: center;">
+          <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 14px; color: ${forestDark}; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">
             SMJ REGIO WEGWEISER
           </div>
-          <div style="color: #4A554D; margin-bottom: 4px; font-weight: 500;">
-            Schönstatt-Mannesjugend &bull; Diözesen Fulda, Erfurt, Magdeburg &amp; Dresden-Meißen
+          <div style="color: #4A554D; margin-bottom: 4px;">
+            Schönstatt-Mannesjugend im Bistum Erfurt
           </div>
-          <div style="margin-bottom: 8px; color: #68736B;">
+          <div style="margin-bottom: 8px;">
             Pater-Kentenich-Weg 3 &bull; 37308 Heilbad Heiligenstadt
           </div>
-          <div>
-            Web: <a href="https://smj-wegweiser.de" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a> &bull; E-Mail: <a href="mailto:kontakt@smj-wegweiser.de" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">kontakt@smj-wegweiser.de</a>
+          <div style="margin-bottom: 12px;">
+            <a href="https://smj-wegweiser.de" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a> &bull; <a href="mailto:kontakt@smj-wegweiser.de" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">kontakt@smj-wegweiser.de</a>
           </div>
-          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid ${borderLight}; font-size: 11px; color: #8D9389;">
-            Du erhältst diese Einladung als registrierter Teilnehmer oder Interessent der SMJ Wegweiser.<br>
-            <a href="{action.unsubscribeUrl}" style="color: #68736B; text-decoration: underline;">Von zukünftigen E-Mails abmelden</a> &bull; 
+          <div style="font-size: 11px; color: #8D9389;">
+            <a href="{action.unsubscribeUrl}" style="color: #68736B; text-decoration: underline;">Abmelden</a> &bull; 
             <a href="https://smj-wegweiser.de/impressum" style="color: #68736B; text-decoration: underline;">Impressum</a> &bull; 
             <a href="https://smj-wegweiser.de/datenschutz" style="color: #68736B; text-decoration: underline;">Datenschutz</a>
           </div>
