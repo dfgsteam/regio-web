@@ -2,15 +2,24 @@ import type { APIRoute } from 'astro'
 import { eventProvider, getSlugVariants, formatDateRange, formatAgeRange } from '../../../lib/events'
 import { getAllCamps } from '../../../lib/camps'
 import { generateSingleLetterPdf } from '../../../lib/pdf/letter-pdf'
-import { getGroupRecipients } from '../../../lib/civicrm/client'
 import type { CampaignEventData, CiviRecipient } from '../../../lib/civicrm/types'
 import { QR_BASE_URL } from '../../../lib/qr-url'
 
 export async function getStaticPaths() {
   const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
-  // Default smart group 12 (Alter 9-15) for single specimen/muster preview
-  const defaultRecipients = await getGroupRecipients(12)
-  const musterRecipient = defaultRecipients.slice(0, 1)
+  // A specimen PDF is public build output and must never contain a real contact.
+  const musterRecipient: CiviRecipient[] = [{
+    id: 0,
+    firstName: 'Lukas',
+    lastName: 'Mustermann',
+    displayName: 'Lukas Mustermann',
+    salutation: 'Lieber Lukas',
+    formalSalutation: 'Liebe Familie Mustermann',
+    address: { street: 'Musterstraße 1', postalCode: '37308', city: 'Heilbad Heiligenstadt' },
+    hasValidAddress: true,
+    hasValidEmail: false,
+    hasValidPhone: false,
+  }]
 
   const paths: {
     params: { id: string }
