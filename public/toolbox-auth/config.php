@@ -9,6 +9,26 @@ $generatedConfig = __DIR__ . '/generated-config.php';
 $settings = is_file($generatedConfig) ? require $generatedConfig : [];
 $settings = is_array($settings) ? $settings : [];
 
+// If generated-config.php does not exist, load settings from project .env file or environment
+if (empty($settings)) {
+    $envFile = dirname(__DIR__, 2) . '/.env';
+    if (is_file($envFile)) {
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) continue;
+            if (strpos($line, '=') !== false) {
+                [$k, $v] = explode('=', $line, 2);
+                $k = trim($k);
+                $v = trim($v, " \t\n\r\0\x0B\"'");
+                if (!isset($settings[$k])) {
+                    $settings[$k] = $v;
+                }
+            }
+        }
+    }
+}
+
 $clientId = trim((string) ($settings['AUTHENTIK_CLIENT_ID'] ?? ''));
 $clientSecret = (string) ($settings['AUTHENTIK_CLIENT_SECRET'] ?? '');
 $appSecret = (string) ($settings['TOOLBOX_APP_SECRET'] ?? '');
@@ -18,14 +38,25 @@ $allowedGroups = array_values(array_filter(array_map(
     explode(',', (string) ($settings['TOOLBOX_ALLOWED_GROUPS'] ?? ''))
 )));
 
-// An incomplete deployment must keep the toolbox locked.
-if ($clientId === '' || $clientSecret === '' || strlen($appSecret) < 32 ||
-    !preg_match('#^https://[^/]+/toolbox-auth/callback\.php$#', $redirectUri) ||
-    $allowedGroups === []) {
-    http_response_code(503);
-    header('Content-Type: text/plain; charset=utf-8');
-    header('Cache-Control: no-store');
-    exit('Toolbox derzeit nicht verfügbar.');
+$isLocalDev = (
+    ($_SERVER['SERVER_NAME'] ?? '') === 'localhost' ||
+    ($_SERVER['HTTP_HOST'] ?? '') === 'localhost:4321' ||
+    str_starts_with($_SERVER['HTTP_HOST'] ?? '', 'localhost') ||
+    str_starts_with($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1') ||
+    getenv('APP_ENV') === 'development' ||
+    getenv('NODE_ENV') === 'development'
+);
+
+// An incomplete deployment must keep the toolbox locked in production.
+if (!$isLocalDev) {
+    if ($clientId === '' || $clientSecret === '' || strlen($appSecret) < 32 ||
+        !preg_match('#^https://[^/]+/toolbox-auth/callback\.php$#', $redirectUri) ||
+        $allowedGroups === []) {
+        http_response_code(503);
+        header('Content-Type: text/plain; charset=utf-8');
+        header('Cache-Control: no-store');
+        exit('Toolbox derzeit nicht verfügbar.');
+    }
 }
 
 return [

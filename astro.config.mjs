@@ -18,6 +18,94 @@ const canonicalEventSlugs = new Set(
   }),
 )
 
+import { spawn } from 'node:child_process'
+import path from 'node:path'
+import fs from 'node:fs'
+
+function devPhpProxyPlugin() {
+  return {
+    name: 'dev-php-proxy',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url) return next()
+        const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost:4321'}`)
+        if (urlObj.pathname === '/toolbox-auth/civicrm-api.php') {
+          const chunks = []
+          req.on('data', (chunk) => chunks.push(chunk))
+          req.on('end', () => {
+            const bodyBuffer = Buffer.concat(chunks)
+            const scriptPath = path.resolve(process.cwd(), 'public/toolbox-auth/civicrm-api.php')
+
+            const phpBin = fs.existsSync('/opt/homebrew/bin/php-cgi')
+              ? '/opt/homebrew/bin/php-cgi'
+              : fs.existsSync('/usr/local/bin/php-cgi')
+              ? '/usr/local/bin/php-cgi'
+              : 'php-cgi'
+
+            const child = spawn(phpBin, [], {
+              env: {
+                ...process.env,
+                REQUEST_METHOD: req.method || 'GET',
+                QUERY_STRING: urlObj.search.replace(/^\?/, ''),
+                SCRIPT_FILENAME: scriptPath,
+                CONTENT_TYPE: req.headers['content-type'] || '',
+                CONTENT_LENGTH: String(bodyBuffer.length),
+                HTTP_HOST: req.headers.host || 'localhost:4321',
+                HTTP_COOKIE: req.headers.cookie || '',
+                REDIRECT_STATUS: '200',
+              },
+            })
+
+            const outChunks = []
+            child.stdout.on('data', (c) => outChunks.push(c))
+            child.stderr.on('data', (e) => console.error('[dev-php-cgi error]', e.toString()))
+
+            child.on('close', () => {
+              const full = Buffer.concat(outChunks)
+              const sepIdx = full.indexOf('\r\n\r\n')
+              if (sepIdx !== -1) {
+                const headerStr = full.slice(0, sepIdx).toString('utf-8')
+                const body = full.slice(sepIdx + 4)
+                for (const line of headerStr.split('\r\n')) {
+                  const colonIdx = line.indexOf(':')
+                  if (colonIdx !== -1) {
+                    const name = line.slice(0, colonIdx).trim()
+                    const val = line.slice(colonIdx + 1).trim()
+                    if (name.toLowerCase() === 'status') {
+                      const code = parseInt(val, 10)
+                      if (!isNaN(code)) res.statusCode = code
+                    } else {
+                      res.setHeader(name, val)
+                    }
+                  }
+                }
+                res.end(body)
+              } else {
+                res.setHeader('Content-Type', 'application/json; charset=utf-8')
+                res.end(full)
+              }
+            })
+
+            child.on('error', (err) => {
+              console.error('[dev-php-cgi spawn error]', err)
+              res.statusCode = 500
+              res.setHeader('Content-Type', 'application/json; charset=utf-8')
+              res.end(JSON.stringify({ success: false, message: 'php-cgi execution error: ' + err.message }))
+            })
+
+            if (bodyBuffer.length > 0) {
+              child.stdin.write(bodyBuffer)
+            }
+            child.stdin.end()
+          })
+          return
+        }
+        next()
+      })
+    },
+  }
+}
+
 export default defineConfig({
   site: siteUrl,
   output: 'static',
@@ -57,6 +145,6 @@ export default defineConfig({
     '/category/vereinsberichte': '/aktuelles/',
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), devPhpProxyPlugin()],
   },
 })

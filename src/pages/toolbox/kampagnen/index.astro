@@ -98,7 +98,7 @@ const clientData = {
   description="Crossmedia-Vorschau, persönliche Anschreiben (DIN A4 PDF), E-Mail-Mailing-Drafts und SMS-Sammelnachrichten aus deinen CiviCRM Smartgruppen."
   noIndex={true}
 >
-  <ToolboxHeader currentTitle="CiviCRM Kampagnen" backHref="/toolbox/" backLabel="Zurück zur Toolbox" />
+  <ToolboxHeader currentTitle="CiviCRM Kampagnen" backHref="/toolbox/" backLabel="Zurück zur Toolbox" activeNav="kampagnen" />
 
   <main class="bg-forest-950 py-8 px-4 sm:px-6">
     <div class="max-w-6xl mx-auto space-y-8">
@@ -1102,7 +1102,7 @@ const clientData = {
 
         <a
           id="dialog-btn-civi"
-          href="#"
+          href="https://civi.smj-wegweiser.de"
           target="_blank"
           rel="noopener noreferrer"
           class="hidden inline-flex items-center gap-2 px-5 py-2.5 bg-orange text-forest-950 font-mono text-xs font-bold uppercase tracking-wider hover:bg-paper rounded-xs transition-all shadow-md"
@@ -1231,7 +1231,7 @@ const clientData = {
     }
   }
 
-  function updateDialogError(title, errorMessage) {
+  function updateDialogError(title, errorMessage, fallbackUrl) {
     if (!civiDialog) return
     dialogIconLoading.classList.add('hidden')
     dialogIconSuccess.classList.add('hidden')
@@ -1239,7 +1239,12 @@ const clientData = {
 
     dialogTitle.textContent = title
     dialogSubtitle.textContent = 'Fehler aufgetreten'
-    dialogBody.innerHTML = `<span class="text-red-400">${errorMessage}</span><br><br>Hinweis: Prüfe bitte deine CiviCRM-Verbindung oder lege den Entwurf manuell in CiviCRM an.`
+    dialogBody.innerHTML = `<span class="text-red-400 font-bold">${errorMessage}</span><br><br>Hinweis: Prüfe bitte deine CiviCRM-Verbindung oder öffne CiviCRM direkt über die Schaltfläche unten.`
+
+    if (dialogBtnCivi) {
+      dialogBtnCivi.href = fallbackUrl || 'https://civi.smj-wegweiser.de'
+      dialogBtnCivi.classList.remove('hidden')
+    }
   }
 
   if (dialogBtnCloseX) dialogBtnCloseX.addEventListener('click', () => civiDialog.close())
@@ -1406,14 +1411,35 @@ const clientData = {
     })
   }
 
+  async function fetchLiveGroupContacts(groupId) {
+    try {
+      const res = await fetch(`/toolbox-auth/civicrm-api.php?action=contacts&group_id=${groupId}`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.success && Array.isArray(data.contacts) && data.contacts.length > 0) {
+          clientData.groupRecipientsMap[groupId] = data.contacts
+          updateRecipientsList(data.contacts)
+          return
+        }
+      }
+    } catch (err) {
+      console.log('[civi] PHP endpoint offline or unreachable, using local cache:', err)
+    }
+    // Fallback to precomputed cache
+    const fallbackRecs = clientData.groupRecipientsMap[groupId] || []
+    updateRecipientsList(fallbackRecs)
+  }
+
   // Group Selection Change
   if (groupSelect) {
     groupSelect.addEventListener('change', (e) => {
       currentGroupId = Number(e.target.value)
-      const recs = clientData.groupRecipientsMap[currentGroupId] || []
-      updateRecipientsList(recs)
+      fetchLiveGroupContacts(currentGroupId)
     })
   }
+
+  // Initial live sync on page load
+  fetchLiveGroupContacts(currentGroupId)
 
   // Handle URL query param: ?event=...
   const urlParams = new URLSearchParams(window.location.search)
@@ -1465,6 +1491,9 @@ const clientData = {
     const grp = clientData.groups.find((g) => g.id === currentGroupId)
     const groupName = grp ? grp.title : `Gruppe ${currentGroupId}`
     const actionTitle = isEmail ? 'E-Mail Mailing-Entwurf' : 'SMS-Aktivitätsentwurf'
+    const fallbackCiviUrl = isEmail
+      ? 'https://civi.smj-wegweiser.de/civicrm/mailing/browse/unscheduled?reset=1'
+      : 'https://civi.smj-wegweiser.de/civicrm/activity?action=browse&reset=1'
 
     openDialogLoading(actionTitle)
 
@@ -1484,32 +1513,16 @@ const clientData = {
         }
 
     try {
-      // Try Astro Node endpoint first, then PHP endpoint
-      let res
-      try {
-        res = await fetch('/api/civicrm/draft', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-      } catch (err) {
-        // Fallback to PHP on production Apache
-        res = await fetch('/toolbox-auth/civicrm-draft.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-      }
+      const res = await fetch('/toolbox-auth/civicrm-api.php?action=draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
 
-      if (!res.ok) {
-        // Try fallback if 404
-        if (res.status === 404) {
-          res = await fetch('/toolbox-auth/civicrm-draft.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          })
-        }
+      const contentType = res.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        const text = await res.text()
+        throw new Error(text.slice(0, 150) || `Server antwortete mit Status ${res.status}`)
       }
 
       const result = await res.json()
@@ -1522,13 +1535,13 @@ const clientData = {
           `${actionTitle} erstellt!`,
           msg,
           result.civicrmId,
-          result.civiUrl || 'https://civi.smj-wegweiser.de/civicrm/mailing/browse/unscheduled?reset=1'
+          result.civiUrl || fallbackCiviUrl
         )
       } else {
-        updateDialogError('Fehler beim Anlegen', result.message || 'CiviCRM API hat einen Fehler zurückgemeldet.')
+        updateDialogError('Fehler beim Anlegen', result.message || 'CiviCRM API hat einen Fehler zurückgemeldet.', fallbackCiviUrl)
       }
     } catch (e) {
-      updateDialogError('Netzwerk- oder Serverfehler', e.message || 'Konnte keine Verbindung zum CiviCRM-Endpunkt aufbauen.')
+      updateDialogError('Netzwerk- oder Serverfehler', e.message || 'Konnte keine Verbindung zum CiviCRM-Endpunkt aufbauen.', fallbackCiviUrl)
     }
   }
 

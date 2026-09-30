@@ -146,8 +146,11 @@ export async function getGroupRecipients(groupId: number): Promise<CiviRecipient
         'test.Name_Mutter',
         'test.Name_Vater',
       ],
-      where: [['groups', 'IN', [groupId]]],
-      limit: 150,
+      where: [
+        ['groups', 'IN', [groupId]],
+        ['is_deleted', '=', false],
+      ],
+      limit: 0,
     })
 
     if (!contacts || contacts.length === 0) {
