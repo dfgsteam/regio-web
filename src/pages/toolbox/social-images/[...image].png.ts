@@ -24,7 +24,14 @@ export async function getStaticPaths() {
   }[] = []
   const seen = new Set<string>()
 
-  const eventFormats: ('story' | 'post' | 'portrait')[] = ['story', 'post', 'portrait']
+  const eventFormats: ('story' | 'post' | 'post-slide-1' | 'post-slide-2' | 'whatsapp' | 'portrait')[] = [
+    'story',
+    'post',
+    'post-slide-1',
+    'post-slide-2',
+    'whatsapp',
+    'portrait',
+  ]
   const eventThemes: ('dark' | 'light' | 'orange' | 'black')[] = ['dark', 'light', 'orange', 'black']
 
   // 1. Single Events & Camps Social Images

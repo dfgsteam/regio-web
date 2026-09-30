@@ -97,6 +97,10 @@ jobs:
           port: 21
           timeout: 60000
 
+      - name: Verify Toolbox protection on webspace
+        if: ${{ env.FTP_PASSWORD != '' }}
+        run: node scripts/check-toolbox-deploy.mjs
+
       - name: Warn when FTP password is missing
         if: ${{ env.FTP_PASSWORD == '' }}
         run: |

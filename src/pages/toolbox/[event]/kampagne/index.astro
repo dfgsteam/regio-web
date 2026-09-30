@@ -739,6 +739,27 @@ const clientData = {
                 <span id="social-dimensions-label">1080 &times; 1920 PX (INSTAGRAM STORY)</span>
               </div>
 
+              <!-- Instagram Post Slide Switcher (Carousel: Slide 1 vs Slide 2) -->
+              <div
+                id="post-slide-switcher"
+                class="w-full max-w-[380px] flex items-center justify-center gap-1.5 p-1 bg-forest-900 border border-paper/20 rounded-xs font-mono text-xs mb-3 hidden"
+              >
+                <button
+                  type="button"
+                  class="post-slide-btn active flex-1 py-1.5 px-2 text-center font-bold uppercase rounded-xs transition-all cursor-pointer bg-orange text-forest-950 shadow-sm"
+                  data-slide="1"
+                >
+                  Slide 1: Cover (Catchy)
+                </button>
+                <button
+                  type="button"
+                  class="post-slide-btn flex-1 py-1.5 px-2 text-center font-bold uppercase rounded-xs transition-all cursor-pointer text-paper/70 hover:text-paper"
+                  data-slide="2"
+                >
+                  Slide 2: Fakten &amp; QR-Code
+                </button>
+              </div>
+
               <!-- Scaled Preview Image -->
               <div
                 id="social-preview-wrapper"
@@ -885,8 +906,14 @@ const clientData = {
                     >{initialCaption}</textarea>
                   </div>
 
-                  <div class="p-3 bg-forest-900/60 border border-paper/15 rounded-xs font-mono text-[11px] text-paper/70">
-                    💡 Ideal für Feed-Posts und Facebook. Die Anmelde-URL kann im Text oder in der Bio verlinkt werden.
+                  <div class="p-3 bg-forest-900/60 border border-paper/15 rounded-xs font-mono text-[11px] text-paper/70 space-y-1">
+                    <div class="font-bold text-orange flex items-center gap-1">
+                      <Sparkles class="w-3.5 h-3.5" />
+                      <span>2-teiliges Instagram Carousel:</span>
+                    </div>
+                    <p>• <strong>Slide 1 (Cover):</strong> Fesselnder Eye-Catcher mit Action-Quote &amp; Wisch-Aufforderung.</p>
+                    <p>• <strong>Slide 2 (QR &amp; Fakten):</strong> Alle 4 Fakten &amp; scanbarer QR-Code für die Anmeldung.</p>
+                    <p class="text-paper/50 pt-1">💡 Lade beide Slides links herunter und poste sie zusammen als Carousel!</p>
                   </div>
                 </div>
 
@@ -932,9 +959,10 @@ const clientData = {
                   <div class="p-3 bg-forest-900/60 border border-paper/15 rounded-xs font-mono text-[11px] text-paper/70 space-y-1">
                     <div class="font-bold text-green-400 flex items-center gap-1">
                       <BrandIcon name="whatsapp" class="w-3.5 h-3.5 fill-current" />
-                      <span>Direkt-Versand:</span>
+                      <span>Kein QR-Code nötig:</span>
                     </div>
-                    <p>Ein Klick auf <strong>„In WhatsApp ↗“</strong> öffnet die App direkt mit vorgefertigtem Text und Anmeldelink!</p>
+                    <p>Die WhatsApp-Grafik ist <strong>ohne QR-Code</strong> gestaltet, da der Anmeldelink direkt im Nachrichtentext steht und im Chat sofort angetippt werden kann.</p>
+                    <p class="text-green-400 font-bold pt-1">Ein Klick auf „In WhatsApp ↗“ öffnet den Chat direkt mit Text &amp; Link!</p>
                   </div>
                 </div>
 
@@ -1657,6 +1685,7 @@ const clientData = {
   let currentRecipients = []
   let activeSocialChannel = 'story'
   let activeSocialFormat = 'story'
+  let activeSocialPostSlide = 1
   let activeSocialTheme = 'dark'
 
   // Header Dropdown: Navigate to other event's campaign URL
@@ -1672,6 +1701,8 @@ const clientData = {
   const socialPreviewImage = document.getElementById('social-preview-image')
   const socialPreviewWrapper = document.getElementById('social-preview-wrapper')
   const socialDimensionsLabel = document.getElementById('social-dimensions-label')
+  const postSlideSwitcher = document.getElementById('post-slide-switcher')
+  const postSlideButtons = document.querySelectorAll('.post-slide-btn')
   const btnDownloadSocialPng = document.getElementById('btn-download-social-png')
   const socialDownloadLabel = document.getElementById('social-download-label')
   const linkBoxTitle = document.getElementById('link-box-title')
@@ -1700,21 +1731,39 @@ const clientData = {
   const copyDirectLinkLabel = document.getElementById('copy-direct-link-label')
 
   function updateSocialPreview() {
-    activeSocialFormat = activeSocialChannel === 'story' ? 'story' : 'post'
+    if (activeSocialChannel === 'story') {
+      activeSocialFormat = 'story'
+    } else if (activeSocialChannel === 'whatsapp') {
+      activeSocialFormat = 'whatsapp'
+    } else {
+      activeSocialFormat = activeSocialPostSlide === 1 ? 'post-slide-1' : 'post-slide-2'
+    }
+
     const imgUrl = `/toolbox/social-images/${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
     if (socialPreviewImage) socialPreviewImage.src = imgUrl
     if (btnDownloadSocialPng) {
       btnDownloadSocialPng.href = imgUrl
-      btnDownloadSocialPng.download = `smj-${currentEvent.id}-${activeSocialChannel}-${activeSocialTheme}.png`
+      btnDownloadSocialPng.download = `smj-${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
+    }
+
+    // Toggle Post Slide Switcher visibility
+    if (postSlideSwitcher) {
+      if (activeSocialChannel === 'post') {
+        postSlideSwitcher.classList.remove('hidden')
+      } else {
+        postSlideSwitcher.classList.add('hidden')
+      }
     }
 
     if (socialDownloadLabel) {
       if (activeSocialChannel === 'story') {
         socialDownloadLabel.textContent = 'Story-Grafik herunterladen (PNG)'
-      } else if (activeSocialChannel === 'post') {
-        socialDownloadLabel.textContent = 'Post-Grafik herunterladen (PNG)'
-      } else {
+      } else if (activeSocialChannel === 'whatsapp') {
         socialDownloadLabel.textContent = 'WhatsApp-Grafik herunterladen (PNG)'
+      } else if (activeSocialPostSlide === 1) {
+        socialDownloadLabel.textContent = 'Slide 1 herunterladen (Cover / Catchy)'
+      } else {
+        socialDownloadLabel.textContent = 'Slide 2 herunterladen (Fakten & QR-Code)'
       }
     }
 
@@ -1732,15 +1781,33 @@ const clientData = {
       if (activeSocialChannel === 'story') {
         socialPreviewWrapper.style.aspectRatio = '9 / 16'
         socialDimensionsLabel.textContent = '1080 × 1920 PX (INSTAGRAM STORY)'
-      } else if (activeSocialChannel === 'post') {
-        socialPreviewWrapper.style.aspectRatio = '1 / 1'
-        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST)'
-      } else {
+      } else if (activeSocialChannel === 'whatsapp') {
         socialPreviewWrapper.style.aspectRatio = '1 / 1'
         socialDimensionsLabel.textContent = '1080 × 1080 PX (WHATSAPP COMMUNITY & STATUS)'
+      } else if (activeSocialPostSlide === 1) {
+        socialPreviewWrapper.style.aspectRatio = '1 / 1'
+        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST • SLIDE 1: COVER)'
+      } else {
+        socialPreviewWrapper.style.aspectRatio = '1 / 1'
+        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM POST • SLIDE 2: QR-CODE)'
       }
     }
   }
+
+  // Post Carousel Slide Switcher (Slide 1 vs Slide 2)
+  postSlideButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const slide = Number(btn.dataset.slide) || 1
+      activeSocialPostSlide = slide
+      postSlideButtons.forEach((b) => {
+        b.classList.remove('bg-orange', 'text-forest-950', 'shadow-sm', 'active')
+        b.classList.add('text-paper/70')
+      })
+      btn.classList.add('bg-orange', 'text-forest-950', 'shadow-sm', 'active')
+      btn.classList.remove('text-paper/70')
+      updateSocialPreview()
+    })
+  })
 
   // Channel Switcher (Story vs Post vs WhatsApp)
   socialChannelButtons.forEach((btn) => {

@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
+import QRCode from 'qrcode'
 import type { ScheduleEventItem } from '../pdf/schedule-pdf'
 
 let whiteLogoInnerCache: string | null = null
@@ -169,7 +170,7 @@ const FACT_ICONS: Record<string, string> = {
 }
 
 export interface EventSocialOptions {
-  format: 'story' | 'post' | 'portrait' // story: 1080x1920, post: 1080x1080, portrait: 1080x1350
+  format: 'story' | 'post' | 'portrait' | 'post-slide-1' | 'post-slide-2' | 'whatsapp'
   theme: 'dark' | 'light' | 'orange' | 'black'
   title: string
   subtitle?: string
@@ -193,11 +194,420 @@ export interface ScheduleSlideSocialOptions {
   targetUrl: string
 }
 
+function renderEventFactCards(rawFacts: { label: string; value: string }[], isLight: boolean, cardH = 138) {
+  const factCardBg = isLight ? '#111713' : '#182019'
+  const factCardStroke = isLight ? '#111713' : '#2D3B2F'
+  return rawFacts
+    .map((f, i) => {
+      const col = i % 2
+      const row = Math.floor(i / 2)
+      const cardX = col * 458
+      const cardY = row * (cardH + 16)
+      const [line1, line2] = splitFact(f.label, f.value)
+      const iconSvg = FACT_ICONS[f.label] || ''
+
+      let l1Size = 38
+      if (line1.length > 16) l1Size -= 8
+      else if (line1.length > 12) l1Size -= 4
+
+      return `
+      <!-- ${f.label} -->
+      <g transform="translate(${cardX}, ${cardY})">
+        <rect x="0" y="0" width="430" height="${cardH}" fill="${factCardBg}" stroke="${factCardStroke}" stroke-width="${isLight ? '2' : '2.5'}" rx="10"/>
+        <rect x="0" y="0" width="12" height="${cardH}" fill="#FF5A1F" rx="4"/>
+        <svg x="26" y="16" width="24" height="24" viewBox="0 0 24 24">
+          ${iconSvg}
+        </svg>
+        <text x="60" y="34" fill="#FF5A1F" font-size="18" font-family="Impact, sans-serif" letter-spacing="2">${f.label}</text>
+        <text x="26" y="82" fill="#F1EBDD" font-size="${l1Size}" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(line1)}</text>
+        ${line2 ? `<text x="26" y="114" fill="#C9BA99" font-size="19" font-family="sans-serif" font-weight="bold">${escapeXml(line2)}</text>` : ''}
+      </g>
+    `
+    })
+    .join('')
+}
+
+/**
+ * Instagram Post - Slide 1: Catchy Cover with Claim & Carousel Swipe prompt
+ */
+async function generatePostSlide1Svg(options: EventSocialOptions): Promise<string> {
+  const width = 1080
+  const height = 1080
+  const isLight = options.theme === 'light'
+  const logoInner = getLogoInner(!isLight)
+
+  const bgColor = isLight ? '#F5EFE1' : '#111713'
+  const cardBg = isLight ? '#FFFFFF' : '#182019'
+  const textPrimary = isLight ? '#111713' : '#F1EBDD'
+  const textMuted = isLight ? '#4A524A' : '#C9BA99'
+
+  const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
+
+  let subText = options.subtitle || ''
+  if (!subText || subText.toLowerCase().includes('abenteuer')) {
+    subText = `${options.categoryLabel} • ${options.locationStr}`
+  }
+
+  const computedTitleSize = Math.floor(860 / (mainTitle.length * 0.54))
+  const titleFontSize = Math.max(54, Math.min(88, computedTitleSize))
+
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bgGradP1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${isLight ? '#F5EFE1' : '#182019'}"/>
+        <stop offset="50%" stop-color="${bgColor}"/>
+        <stop offset="100%" stop-color="${isLight ? '#E2D7C0' : '#0a0d0b'}"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="url(#bgGradP1)"/>
+
+    <!-- Watermark Logo -->
+    <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
+      <svg width="328" height="288" viewBox="0 0 328 288">${logoInner}</svg>
+    </g>
+
+    <!-- Framing -->
+    <rect x="40" y="40" width="${width - 80}" height="${height - 80}" fill="none" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="2.5" stroke-opacity="${isLight ? '0.8' : '0.25'}"/>
+    <path d="M 36 85 L 36 36 L 85 36" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+    <path d="M ${width - 85} 36 L ${width - 36} 36 L ${width - 36} 85" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+    <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+    <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+
+    <!-- Header Bar -->
+    <g transform="translate(96, 95)">
+      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">${logoInner}</svg>
+      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      
+      <!-- Badges Right -->
+      <g transform="translate(${width - 192 - 270}, -26)">
+        <rect x="0" y="0" width="140" height="38" fill="#FF5A1F" rx="4"/>
+        <text x="70" y="25" fill="#111713" font-size="19" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${escapeXml(options.categoryLabel.toUpperCase())}</text>
+
+        <rect x="150" y="0" width="120" height="38" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="#FF5A1F" stroke-width="1.5" rx="4"/>
+        <text x="210" y="25" fill="#FF5A1F" font-size="18" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">SLIDE 1/2</text>
+      </g>
+    </g>
+
+    <!-- Main Title Block (Huge & Catchy) -->
+    <g transform="translate(96, 175)">
+      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// RAUS. INS ABENTEUER.</text>
+      <text x="0" y="92" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="152" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="2">// ${escapeXml(subText.toUpperCase())}</text>
+    </g>
+
+    <!-- Central Catchy Adventure Card -->
+    <g transform="translate(96, 365)">
+      <rect x="0" y="0" width="888" height="320" fill="${cardBg}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="2.5" rx="14"/>
+      <rect x="0" y="0" width="14" height="320" fill="#FF5A1F" rx="6"/>
+
+      <!-- Claim in Quotes -->
+      <text x="44" y="62" fill="#FF5A1F" font-size="22" font-family="Impact, sans-serif" letter-spacing="2">// DEIN NÄCHSTER EINSATZ:</text>
+      
+      <text x="44" y="122" fill="${textPrimary}" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">DRECK AN DEN SCHUHEN.</text>
+      <text x="44" y="170" fill="${textPrimary}" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">RAUCH IN DEN KLAMOTTEN.</text>
+      <text x="44" y="218" fill="#FF5A1F" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">GESCHICHTEN IM KOPF.</text>
+
+      <!-- 3 Visual Badges at the bottom of the card -->
+      <g transform="translate(44, 250)">
+        <rect x="0" y="0" width="240" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="#FF5A1F" stroke-width="1.5" rx="6"/>
+        <text x="120" y="28" fill="${textPrimary}" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">🔥 LAGERFEUER &amp; ACTION</text>
+
+        <rect x="255" y="0" width="240" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="#FF5A1F" stroke-width="1.5" rx="6"/>
+        <text x="375" y="28" fill="${textPrimary}" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">🌲 100% IN DER NATUR</text>
+
+        <rect x="510" y="0" width="280" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="#FF5A1F" stroke-width="1.5" rx="6"/>
+        <text x="650" y="28" fill="#FF5A1F" font-size="16" font-family="sans-serif" font-weight="bold" text-anchor="middle">⚔️ JUGEND LEITET JUGEND</text>
+      </g>
+    </g>
+
+    <!-- Quick Date & Location Strip -->
+    <g transform="translate(96, 715)">
+      <rect x="0" y="0" width="888" height="80" fill="${isLight ? '#FFFFFF' : '#111713'}" stroke="#FF5A1F" stroke-width="2" rx="10"/>
+      <svg x="26" y="24" width="28" height="28" viewBox="0 0 24 24">
+        <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <text x="68" y="52" fill="${textPrimary}" font-size="28" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(options.dateStr.toUpperCase())}</text>
+      
+      <circle cx="530" cy="40" r="4" fill="#FF5A1F"/>
+
+      <svg x="555" y="24" width="28" height="28" viewBox="0 0 24 24">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" fill="none" stroke="#FF5A1F" stroke-width="2.5"/>
+      </svg>
+      <text x="595" y="52" fill="${textMuted}" font-size="22" font-family="sans-serif" font-weight="bold">${escapeXml(options.locationStr.toUpperCase())}</text>
+    </g>
+
+    <!-- Bottom Carousel Swipe Bar -->
+    <g transform="translate(96, 825)">
+      <rect x="0" y="0" width="888" height="145" fill="#FF5A1F" rx="12"/>
+      
+      <text x="36" y="58" fill="#111713" font-size="30" font-family="Impact, sans-serif" letter-spacing="1">WISCHE NACH RECHTS FÜR ALLE FAKTEN &amp; ANMELDUNG</text>
+      <text x="36" y="100" fill="#111713" font-size="20" font-family="sans-serif" font-weight="bold">Auf Slide 2: Teilnahmebeitrag, Zielgruppe &amp; direkter QR-Code!</text>
+
+      <!-- Carousel indicator & Arrow circle -->
+      <g transform="translate(${888 - 36 - 75}, 35)">
+        <circle cx="38" cy="38" r="38" fill="#111713"/>
+        <path d="M26 38 L50 38 M40 28 L50 38 L40 48" fill="none" stroke="#FF5A1F" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+
+    <!-- Footer Copyright -->
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • smj-wegweiser.de • Katholische Schönstatt-Mannesjugend</text>
+  </svg>`
+}
+
+/**
+ * Instagram Post - Slide 2: Facts & Crisp QR Code
+ */
+async function generatePostSlide2Svg(options: EventSocialOptions): Promise<string> {
+  const width = 1080
+  const height = 1080
+  const isLight = options.theme === 'light'
+  const logoInner = getLogoInner(!isLight)
+
+  const bgColor = isLight ? '#F5EFE1' : '#111713'
+  const cardBg = isLight ? '#FFFFFF' : '#182019'
+  const textPrimary = isLight ? '#111713' : '#F1EBDD'
+  const textMuted = isLight ? '#4A524A' : '#C9BA99'
+
+  const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
+
+  const rawFacts = [
+    { label: 'WANN', value: options.dateStr },
+    { label: 'WO', value: options.locationStr },
+    { label: 'WER', value: options.ageStr },
+    { label: 'BEITRAG', value: options.priceStr },
+  ]
+  const factsSvg = renderEventFactCards(rawFacts, isLight, 130)
+
+  // Generate crisp QR Code
+  const qrDataUrl = await QRCode.toDataURL(options.targetUrl, {
+    margin: 1,
+    width: 220,
+    color: {
+      dark: '#111713',
+      light: '#FFFFFF',
+    },
+  })
+
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bgGradP2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${isLight ? '#F5EFE1' : '#182019'}"/>
+        <stop offset="50%" stop-color="${bgColor}"/>
+        <stop offset="100%" stop-color="${isLight ? '#E2D7C0' : '#0a0d0b'}"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="url(#bgGradP2)"/>
+
+    <!-- Watermark Logo -->
+    <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
+      <svg width="328" height="288" viewBox="0 0 328 288">${logoInner}</svg>
+    </g>
+
+    <!-- Framing -->
+    <rect x="40" y="40" width="${width - 80}" height="${height - 80}" fill="none" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="2.5" stroke-opacity="${isLight ? '0.8' : '0.25'}"/>
+    <path d="M 36 85 L 36 36 L 85 36" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+    <path d="M ${width - 85} 36 L ${width - 36} 36 L ${width - 36} 85" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+    <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+    <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
+
+    <!-- Header Bar -->
+    <g transform="translate(96, 95)">
+      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">${logoInner}</svg>
+      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      
+      <!-- Badges Right -->
+      <g transform="translate(${width - 192 - 270}, -26)">
+        <rect x="0" y="0" width="140" height="38" fill="#FF5A1F" rx="4"/>
+        <text x="70" y="25" fill="#111713" font-size="19" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${escapeXml(options.categoryLabel.toUpperCase())}</text>
+
+        <rect x="150" y="0" width="120" height="38" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="#FF5A1F" stroke-width="1.5" rx="4"/>
+        <text x="210" y="25" fill="#FF5A1F" font-size="18" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">SLIDE 2/2</text>
+      </g>
+    </g>
+
+    <!-- Title Block -->
+    <g transform="translate(96, 175)">
+      <text x="0" y="0" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// DIE FAKTEN IM ÜBERBLICK</text>
+      <text x="0" y="80" fill="${textPrimary}" font-size="76" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+    </g>
+
+    <!-- 4 Key Fact Cards (2x2) -->
+    <g transform="translate(96, 305)">
+      ${factsSvg}
+    </g>
+
+    <!-- Registration QR-Code Box -->
+    <g transform="translate(96, 625)">
+      <rect x="0" y="0" width="888" height="340" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="14"/>
+      
+      <!-- White QR Frame -->
+      <g transform="translate(36, 40)">
+        <rect x="0" y="0" width="260" height="260" fill="#FFFFFF" stroke="#ded8c8" stroke-width="2" rx="12"/>
+        <image x="20" y="20" width="220" height="220" href="${qrDataUrl}"/>
+      </g>
+
+      <!-- Text Beside QR Code -->
+      <g transform="translate(330, 46)">
+        <rect x="0" y="0" width="260" height="42" fill="#FF5A1F" rx="4"/>
+        <text x="130" y="28" fill="#111713" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">JETZT ONLINE ANMELDEN</text>
+
+        <text x="0" y="105" fill="${textPrimary}" font-size="44" font-family="Impact, sans-serif" letter-spacing="1.5">QR-CODE SCANNEN</text>
+        <text x="0" y="150" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="1">ODER LINK IN DER BIO TIPPEN!</text>
+
+        <text x="0" y="196" fill="${textMuted}" font-size="20" font-family="sans-serif" font-weight="bold">Öffne deine Kamera &amp; scanne den Code für</text>
+        <text x="0" y="226" fill="${textMuted}" font-size="20" font-family="sans-serif" font-weight="bold">die offizielle Anmeldung &amp; alle Infos.</text>
+
+        <!-- Direct Link URL pill -->
+        <g transform="translate(0, 252)">
+          <rect x="0" y="0" width="510" height="42" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="1.5" rx="6"/>
+          <!-- Chain Link Icon -->
+          <svg x="16" y="11" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          <text x="46" y="28" fill="#FF5A1F" font-size="19" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(options.targetUrl.replace(/^https?:\/\//, ''))}</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Footer Copyright -->
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • smj-wegweiser.de • Katholische Schönstatt-Mannesjugend</text>
+  </svg>`
+}
+
+/**
+ * WhatsApp Community Card: High-contrast, informative, NO QR CODE
+ */
+async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string> {
+  const width = 1080
+  const height = 1080
+  const isLight = options.theme === 'light'
+  const logoInner = getLogoInner(!isLight)
+
+  const bgColor = isLight ? '#F5EFE1' : '#111713'
+  const cardBg = isLight ? '#FFFFFF' : '#182019'
+  const textPrimary = isLight ? '#111713' : '#F1EBDD'
+
+  const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
+
+  const rawFacts = [
+    { label: 'WANN', value: options.dateStr },
+    { label: 'WO', value: options.locationStr },
+    { label: 'WER', value: options.ageStr },
+    { label: 'BEITRAG', value: options.priceStr },
+  ]
+  const factsSvg = renderEventFactCards(rawFacts, isLight, 135)
+
+  let subText = options.subtitle || ''
+  if (!subText || subText.toLowerCase().includes('abenteuer')) {
+    subText = `${options.categoryLabel} • ${options.locationStr}`
+  }
+
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bgGradWa" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${isLight ? '#F5EFE1' : '#182019'}"/>
+        <stop offset="50%" stop-color="${bgColor}"/>
+        <stop offset="100%" stop-color="${isLight ? '#E2D7C0' : '#0a0d0b'}"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="url(#bgGradWa)"/>
+
+    <!-- Watermark Logo -->
+    <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
+      <svg width="328" height="288" viewBox="0 0 328 288">${logoInner}</svg>
+    </g>
+
+    <!-- Framing with WhatsApp Green Touch -->
+    <rect x="40" y="40" width="${width - 80}" height="${height - 80}" fill="none" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="2.5" stroke-opacity="${isLight ? '0.8' : '0.25'}"/>
+    <path d="M 36 85 L 36 36 L 85 36" fill="none" stroke="#25D366" stroke-width="7"/>
+    <path d="M ${width - 85} 36 L ${width - 36} 36 L ${width - 36} 85" fill="none" stroke="#25D366" stroke-width="7"/>
+    <path d="M 36 ${height - 85} L 36 ${height - 36} L 85 ${height - 36}" fill="none" stroke="#25D366" stroke-width="7"/>
+    <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#25D366" stroke-width="7"/>
+
+    <!-- Header Bar -->
+    <g transform="translate(96, 95)">
+      <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">${logoInner}</svg>
+      <text x="56" y="0" fill="#FF5A1F" font-size="24" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      
+      <!-- WhatsApp Badge Right -->
+      <g transform="translate(${width - 192 - 290}, -26)">
+        <rect x="0" y="0" width="290" height="38" fill="${isLight ? '#e7f7ed' : '#0d2b1a'}" stroke="#25D366" stroke-width="2" rx="6"/>
+        <text x="145" y="25" fill="#25D366" font-size="18" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="2">WHATSAPP COMMUNITY</text>
+      </g>
+    </g>
+
+    <!-- Title Block -->
+    <g transform="translate(96, 175)">
+      <text x="0" y="0" fill="#25D366" font-size="28" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
+      <text x="0" y="86" fill="${textPrimary}" font-size="80" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="146" fill="#FF5A1F" font-size="32" font-family="Impact, sans-serif" letter-spacing="2">// ${escapeXml(subText.toUpperCase())}</text>
+    </g>
+
+    <!-- 4 Key Fact Cards (2x2) -->
+    <g transform="translate(96, 360)">
+      ${factsSvg}
+    </g>
+
+    <!-- Highlights 3-Pills -->
+    <g transform="translate(96, 680)">
+      <rect x="0" y="0" width="888" height="65" fill="${cardBg}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="1.5" rx="8"/>
+      <text x="444" y="42" fill="${textPrimary}" font-size="22" font-family="sans-serif" font-weight="bold" text-anchor="middle">
+        🔥 Lagerfeuer &amp; Action • 🌲 100% Natur • ⚔️ Jugend leitet Jugend
+      </text>
+    </g>
+
+    <!-- WhatsApp Bottom Action Box: NO QR CODE, Clear Message Link CTA -->
+    <g transform="translate(96, 770)">
+      <rect x="0" y="0" width="888" height="200" fill="${isLight ? '#f2fbf5' : '#0c1d12'}" stroke="#25D366" stroke-width="3" rx="14"/>
+      <rect x="0" y="0" width="16" height="200" fill="#25D366" rx="6"/>
+
+      <!-- WhatsApp Action Text -->
+      <g transform="translate(44, 30)">
+        <rect x="0" y="0" width="310" height="38" fill="#25D366" rx="4"/>
+        <text x="155" y="25" fill="#0a1a0f" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">ONLINE-ANMELDUNG &amp; DETAILS</text>
+
+        <text x="0" y="82" fill="${isLight ? '#111713' : '#FFFFFF'}" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">ANMELDELINK DIREKT IN DER NACHRICHT!</text>
+        
+        <text x="0" y="122" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="22" font-family="sans-serif" font-weight="bold">Tippe auf den Link im Chat unter diesem Bild, um alle Infos zu sehen.</text>
+        <text x="0" y="152" fill="#25D366" font-size="20" font-family="sans-serif" font-weight="bold">🚀 Gerne in WhatsApp-Gruppen &amp; an interessierte Eltern weiterleiten!</text>
+      </g>
+
+      <!-- Downward Arrow Circle (Pointing to the message text below!) -->
+      <g transform="translate(${888 - 44 - 80}, 60)">
+        <circle cx="40" cy="40" r="40" fill="#25D366"/>
+        <path d="M40 22 L40 54 M26 40 L40 54 L54 40" fill="none" stroke="#0a1a0f" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+
+    <!-- Footer Copyright -->
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • smj-wegweiser.de • Katholische Schönstatt-Mannesjugend</text>
+  </svg>`
+}
+
 /**
  * Generates an SVG string for a single-event social media graphic.
  * Built with bold condensed display typography as an unmissable mobile eye-catcher.
  */
 export async function generateEventSocialSvg(options: EventSocialOptions): Promise<string> {
+  // Delegate specialized layouts
+  if (options.format === 'post-slide-2') {
+    return await generatePostSlide2Svg(options)
+  }
+  if (options.format === 'whatsapp') {
+    return await generateWhatsAppSvg(options)
+  }
+  if (options.format === 'post' || options.format === 'post-slide-1') {
+    return await generatePostSlide1Svg(options)
+  }
+
   const width = 1080
   const height = options.format === 'story' ? 1920 : options.format === 'portrait' ? 1350 : 1080
   const isLight = options.theme === 'light'
@@ -332,9 +742,6 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
       ${factsSvg}
     </g>
 
-    ${
-      options.format !== 'post'
-        ? `
     <!-- Highlights (Shown on Story and Portrait) -->
     <g transform="translate(96, ${options.format === 'story' ? 945 : 735})">
       <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 28 : 24}" font-family="Impact, sans-serif" letter-spacing="2">// WAS DICH BEI DIESER AKTION ERWARTET:</text>
@@ -351,9 +758,6 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
         )
         .join('')}
     </g>
-    `
-        : ''
-    }
 
     <!-- Bottom Action Banner CTA (Unmissable for Mobile Feed & Story) -->
     <g transform="translate(96, ${options.format === 'story' ? 1345 : options.format === 'portrait' ? 1075 : 715})">
