@@ -12,8 +12,8 @@ if (!is_string($urlPath) || !preg_match('#^/toolbox(?:/|$)#', $urlPath)) {
 }
 
 $rawCookie = $_COOKIE[$config['cookie_name']] ?? null;
-$isAuthenticated = false;
-if (is_string($rawCookie) && strpos($rawCookie, '.') !== false) {
+$isAuthenticated = $config['local_auth_bypass'];
+if (!$isAuthenticated && is_string($rawCookie) && strpos($rawCookie, '.') !== false) {
     [$b64Payload, $signature] = explode('.', $rawCookie, 2);
     $expectedSignature = hash_hmac('sha256', $b64Payload, $config['app_secret']);
     if (hash_equals($expectedSignature, $signature)) {

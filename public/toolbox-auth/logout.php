@@ -4,6 +4,10 @@
  * Löscht das signierte Session-Cookie und leitet zur Startseite weiter.
  */
 $config = require dirname(__DIR__, 2) . '/private/config.php';
+if ($config['local_auth_bypass']) {
+    header('Location: /toolbox/', true, 302);
+    exit;
+}
 
 // Cookie löschen
 setcookie($config['cookie_name'], '', [

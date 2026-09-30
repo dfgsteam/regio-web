@@ -14,6 +14,9 @@ $clientSecret = (string) ($settings['AUTHENTIK_CLIENT_SECRET'] ?? '');
 $appSecret = (string) ($settings['TOOLBOX_APP_SECRET'] ?? '');
 $redirectUri = trim((string) ($settings['TOOLBOX_REDIRECT_URI'] ?? ''));
 $isLocalDev = ($settings['TOOLBOX_LOCAL_DEV'] ?? false) === true;
+$localAuthBypass = $isLocalDev && getenv('TOOLBOX_LOCAL_AUTH_BYPASS') === '1' &&
+    in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1', '::ffff:127.0.0.1'], true) &&
+    in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost:4321', '127.0.0.1:4321'], true);
 $validRedirect = preg_match('#^https://[^/]+/toolbox-auth/callback\.php$#', $redirectUri) ||
     ($isLocalDev && preg_match('#^http://localhost(?::[0-9]+)?/toolbox-auth/callback\.php$#', $redirectUri));
 $allowedGroups = array_values(array_filter(array_map(
@@ -22,7 +25,7 @@ $allowedGroups = array_values(array_filter(array_map(
 )));
 
 // An incomplete deployment must keep the toolbox locked on every host.
-if ($clientId === '' || $clientSecret === '' || strlen($appSecret) < 32 ||
+if ((!$localAuthBypass && ($clientId === '' || $clientSecret === '' || strlen($appSecret) < 32)) ||
     !$validRedirect ||
     $allowedGroups === []) {
     http_response_code(503);
@@ -36,6 +39,7 @@ return [
     'client_id' => $clientId,
     'client_secret' => $clientSecret,
     'redirect_uri' => $redirectUri,
+    'local_auth_bypass' => $localAuthBypass,
     'cookie_secure' => !$isLocalDev,
     'app_secret' => $appSecret,
     'cookie_name' => 'smj_toolbox_session',

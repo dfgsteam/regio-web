@@ -19,6 +19,11 @@ $returnTo = $_GET['return_to'] ?? '/toolbox/';
 if (!is_string($returnTo) || !preg_match('#^/toolbox(?:/|\?|$)#', $returnTo) || preg_match('/[\x00-\x1F\x7F]/', $returnTo)) {
     $returnTo = '/toolbox/';
 }
+$localAuthBypass = $config['local_auth_bypass'];
+if ($localAuthBypass) {
+    header('Location: ' . $returnTo, true, 302);
+    exit;
+}
 $_SESSION['oauth2_return_to'] = $returnTo;
 
 // Authentik Authorization URL zusammensetzen

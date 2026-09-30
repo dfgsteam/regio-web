@@ -7,7 +7,7 @@ import { localToolboxRoot } from './local-toolbox-path.mjs'
 
 const root = path.resolve(import.meta.dirname, '..')
 const env = loadEnv('development', root, '')
-const required = ['AUTHENTIK_CLIENT_ID', 'AUTHENTIK_CLIENT_SECRET', 'TOOLBOX_APP_SECRET', 'CIVICRM_API_KEY']
+const required = ['CIVICRM_API_KEY']
 const missing = required.filter((name) => !env[name]?.trim())
 if (missing.length) {
   throw new Error(`Für die lokale Toolbox fehlen in .env: ${missing.join(', ')}`)
@@ -17,15 +17,7 @@ const groups = env.TOOLBOX_ALLOWED_GROUPS?.trim() || '*'
 if (groups.startsWith('[') || groups.endsWith(']')) {
   throw new Error('TOOLBOX_ALLOWED_GROUPS erwartet Gruppennamen ohne eckige Klammern oder * für alle angemeldeten Nutzer.')
 }
-if (Buffer.byteLength(env.TOOLBOX_APP_SECRET, 'utf8') < 32) {
-  throw new Error('TOOLBOX_APP_SECRET muss mindestens 32 Zeichen lang sein.')
-}
-
 const settings = {
-  AUTHENTIK_URL: env.AUTHENTIK_URL || 'https://auth.smj-wegweiser.de',
-  AUTHENTIK_CLIENT_ID: env.AUTHENTIK_CLIENT_ID,
-  AUTHENTIK_CLIENT_SECRET: env.AUTHENTIK_CLIENT_SECRET,
-  TOOLBOX_APP_SECRET: env.TOOLBOX_APP_SECRET,
   TOOLBOX_ALLOWED_GROUPS: groups,
   TOOLBOX_REDIRECT_URI: 'http://localhost:4321/toolbox-auth/callback.php',
   TOOLBOX_LOCAL_DEV: true,
@@ -50,4 +42,4 @@ const generated = `<?php\nreturn json_decode(base64_decode('${encoded}'), true, 
 fs.writeFileSync(path.join(privateDir, 'generated-config.php'), generated, { mode: 0o600 })
 fs.chmodSync(path.join(privateDir, 'generated-config.php'), 0o600)
 console.log('Lokale Toolbox-Konfiguration außerhalb des Projektverzeichnisses erzeugt (nicht in Git).')
-console.log('Authentik-Rücksprung: http://localhost:4321/toolbox-auth/callback.php')
+console.log('Lokale Authentik-Anmeldung deaktiviert; Zugriff nur über 127.0.0.1:4321 oder localhost:4321.')

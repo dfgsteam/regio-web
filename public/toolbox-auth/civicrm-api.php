@@ -20,8 +20,8 @@ $config = require dirname(__DIR__, 2) . '/private/config.php';
 
 // Verify signed session cookie
 $rawCookie = $_COOKIE[$config['cookie_name']] ?? null;
-$isAuthenticated = false;
-if (is_string($rawCookie) && strpos($rawCookie, '.') !== false) {
+$isAuthenticated = $config['local_auth_bypass'];
+if (!$isAuthenticated && is_string($rawCookie) && strpos($rawCookie, '.') !== false) {
     [$b64Payload, $signature] = explode('.', $rawCookie, 2);
     $expectedSignature = hash_hmac('sha256', $b64Payload, $config['app_secret']);
     if (hash_equals($expectedSignature, $signature)) {
@@ -93,7 +93,9 @@ if ($action === 'draft') {
         exit;
     }
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-    $configuredOrigin = parse_url($config['redirect_uri'], PHP_URL_SCHEME) . '://' . parse_url($config['redirect_uri'], PHP_URL_HOST);
+    $redirectParts = parse_url($config['redirect_uri']);
+    $configuredOrigin = $redirectParts['scheme'] . '://' . $redirectParts['host'] .
+        (isset($redirectParts['port']) ? ':' . $redirectParts['port'] : '');
     if (!is_string($origin) || !hash_equals($configuredOrigin, rtrim($origin, '/'))) {
         http_response_code(403);
         echo json_encode(['success' => false, 'message' => 'Ungültiger Ursprung.']);

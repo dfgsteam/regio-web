@@ -4,6 +4,10 @@
  * Tauscht den Authorization Code gegen Tokens, prüft User-Daten und setzt das signierte Session-Cookie.
  */
 $config = require dirname(__DIR__, 2) . '/private/config.php';
+if ($config['local_auth_bypass']) {
+    http_response_code(404);
+    exit('Not Found');
+}
 session_set_cookie_params(['secure' => $config['cookie_secure'], 'httponly' => true, 'samesite' => 'Lax']);
 session_start();
 header('Cache-Control: no-store');
