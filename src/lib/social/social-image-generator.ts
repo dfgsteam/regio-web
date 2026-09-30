@@ -45,6 +45,17 @@ function escapeXml(unsafe: string | null | undefined): string {
   })
 }
 
+function getDisplayDomain(url?: string): string {
+  if (!url) return 'smj-wegweiser.de'
+  try {
+    const parsed = new URL(url.startsWith('http') ? url : `https://${url}`)
+    return parsed.host || 'smj-wegweiser.de'
+  } catch {
+    return 'smj-wegweiser.de'
+  }
+}
+
+
 export function splitFact(label: string, rawVal: string): [string, string] {
   const v = (rawVal || '').trim()
   const u = v.toUpperCase().replace(/[–—]/g, '-')
@@ -242,6 +253,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
 
   const bgColor = isLight ? '#F5EFE1' : '#111713'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
+  const displayDomain = getDisplayDomain(options.targetUrl)
 
   const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
 
@@ -326,7 +338,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
     </g>
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • smj-wegweiser.de • Katholische Schönstatt-Mannesjugend</text>
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
   </svg>`
 }
 
@@ -343,6 +355,7 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
   const cardBg = isLight ? '#FFFFFF' : '#182019'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
   const textMuted = isLight ? '#4A524A' : '#C9BA99'
+  const displayDomain = getDisplayDomain(options.targetUrl)
 
   const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
 
@@ -435,7 +448,7 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
     </g>
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • smj-wegweiser.de • Katholische Schönstatt-Mannesjugend</text>
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
   </svg>`
 }
 
@@ -450,6 +463,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
 
   const bgColor = isLight ? '#F5EFE1' : '#111713'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
+  const displayDomain = getDisplayDomain(options.targetUrl)
 
   const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
 
@@ -535,7 +549,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
     </g>
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • smj-wegweiser.de • Katholische Schönstatt-Mannesjugend</text>
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
   </svg>`
 }
 
@@ -567,6 +581,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
   const cardBg = isLight ? '#FFFFFF' : '#182019'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
   const textMuted = isLight ? '#4A524A' : '#C9BA99'
+  const displayDomain = getDisplayDomain(options.targetUrl)
 
   // Fact cards: Solid dark forest cards (#111713) for high contrast and plakat feel
   const factCardBg = isLight ? '#111713' : isBlack ? '#090d0b' : isOrange ? '#1c0e09' : '#182019'
@@ -714,7 +729,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
       <text x="152" y="55" fill="#111713" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">JETZT ANMELDEN</text>
 
       <text x="32" y="${options.format === 'story' ? 132 : options.format === 'portrait' ? 112 : 122}" fill="${textPrimary}" font-size="${options.format === 'story' ? 46 : 42}" font-family="Impact, sans-serif" letter-spacing="1">PLÄTZE ONLINE SICHERN:</text>
-      <text x="32" y="${options.format === 'story' ? 196 : options.format === 'portrait' ? 168 : 182}" fill="#FF5A1F" font-size="${options.format === 'story' ? 60 : 54}" font-family="Impact, sans-serif" letter-spacing="2">SMJ-WEGWEISER.DE</text>
+      <text x="32" y="${options.format === 'story' ? 196 : options.format === 'portrait' ? 168 : 182}" fill="#FF5A1F" font-size="${options.format === 'story' ? 60 : 54}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(displayDomain.toUpperCase())}</text>
       
       <text x="32" y="${options.format === 'story' ? 238 : options.format === 'portrait' ? 200 : 216}" fill="${isLight ? '#3D453E' : textMuted}" font-size="${options.format === 'story' ? 24 : 21}" font-family="sans-serif" font-weight="bold">Link in Bio anklicken • Alle Infos &amp; Packliste online!</text>
 
@@ -726,7 +741,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
     </g>
 
     <!-- Footer Copyright Note -->
-    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Katholische Schönstatt-Mannesjugend • smj-wegweiser.de</text>
+    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Schönstatt-Mannesjugend • ${displayDomain}</text>
   </svg>`
 }
 
@@ -744,6 +759,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
   const cardBg = isLight ? '#FFFFFF' : '#182019'
   const textPrimary = isLight ? '#111713' : '#F1EBDD'
   const textMuted = isLight ? '#4A524A' : '#C9BA99'
+  const displayDomain = getDisplayDomain(options.targetUrl)
 
   const isLastSlide = options.slideIndex === options.totalSlides - 1
   const eventsCount = options.events.length
@@ -868,7 +884,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
       <text x="152" y="57" fill="#111713" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">ONLINE ANMELDEN</text>
 
       <text x="32" y="${options.format === 'story' ? 135 : 124}" fill="${textPrimary}" font-size="${options.format === 'story' ? 46 : 42}" font-family="Impact, sans-serif" letter-spacing="1">ALLE AKTIONEN &amp; TERMINE:</text>
-      <text x="32" y="${options.format === 'story' ? 202 : 186}" fill="#FF5A1F" font-size="${options.format === 'story' ? 58 : 52}" font-family="Impact, sans-serif" letter-spacing="2">SMJ-WEGWEISER.DE</text>
+      <text x="32" y="${options.format === 'story' ? 202 : 186}" fill="#FF5A1F" font-size="${options.format === 'story' ? 58 : 52}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(displayDomain.toUpperCase())}</text>
       <text x="32" y="${options.format === 'story' ? 250 : 224}" fill="${isLight ? '#3D453E' : textMuted}" font-size="${options.format === 'story' ? 24 : 21}" font-family="sans-serif" font-weight="bold">Kalender als iCal / Google abonnieren: /api/calendar.ics</text>
 
       <g transform="translate(${888 - 32 - 110}, ${options.format === 'story' ? 95 : 70})">
@@ -880,7 +896,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
     }
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Katholische Schönstatt-Mannesjugend • smj-wegweiser.de</text>
+    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Schönstatt-Mannesjugend • ${displayDomain}</text>
   </svg>`
 }
 

@@ -768,7 +768,7 @@ const clientData = {
               >
                 <img
                   id="social-preview-image"
-                  src={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+                  src={`/toolbox/social-images/${currentEvent.id}-story-light.png`}
                   alt="Social Media Vorlage"
                   class="w-full h-full object-contain block select-none"
                   loading="eager"
@@ -778,7 +778,7 @@ const clientData = {
               <div class="mt-6 flex flex-wrap items-center gap-3">
                 <a
                   id="btn-download-social-png"
-                  href={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+                  href={`/toolbox/social-images/${currentEvent.id}-story-light.png`}
                   download={`smj-${currentEvent.id}-story.png`}
                   class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 shadow-lg hover:bg-paper hover:border-paper transition-all cursor-pointer"
                 >
@@ -800,7 +800,7 @@ const clientData = {
                     <span id="copy-direct-link-label">Link kopieren</span>
                   </button>
                 </div>
-                <div class="p-2 bg-forest-950 border border-paper/10 text-orange truncate select-all rounded-xs">
+                <div class="p-2 bg-forest-950 border border-paper/10 text-orange truncate select-all rounded-xs" id="box-direct-link-display">
                   {currentEvent.registrationUrl}
                 </div>
               </div>
@@ -819,14 +819,14 @@ const clientData = {
                 <div class="grid grid-cols-2 gap-2 font-mono text-xs">
                   <button
                     type="button"
-                    class="social-theme-btn active border-2 border-orange bg-forest-900 text-paper px-3 py-2 text-center uppercase tracking-wider font-bold cursor-pointer rounded-xs"
+                    class="social-theme-btn border border-paper/20 bg-forest-900 text-paper px-3 py-2 text-center uppercase tracking-wider font-bold hover:border-orange cursor-pointer rounded-xs"
                     data-theme="dark"
                   >
                     Dark Forest
                   </button>
                   <button
                     type="button"
-                    class="social-theme-btn border border-paper/20 bg-paper text-forest-950 px-3 py-2 text-center uppercase tracking-wider font-bold hover:border-orange cursor-pointer rounded-xs"
+                    class="social-theme-btn active border-2 border-orange bg-paper text-forest-950 px-3 py-2 text-center uppercase tracking-wider font-bold cursor-pointer rounded-xs"
                     data-theme="light"
                   >
                     Hell (Papier)
@@ -1633,7 +1633,37 @@ const clientData = {
   let activeSocialChannel = 'story'
   let activeSocialFormat = 'story'
   let activeSocialPostSlide = 1
-  let activeSocialTheme = 'dark'
+  let activeSocialTheme = 'light'
+
+  // Ensure registrationUrl dynamically adapts to current window host if accessed on custom domain or local dev
+  if (currentEvent && currentEvent.registrationUrl && typeof window !== 'undefined') {
+    try {
+      const regUrl = new URL(currentEvent.registrationUrl)
+      if (window.location.host && regUrl.host !== window.location.host) {
+        const oldOrigin = regUrl.origin
+        regUrl.protocol = window.location.protocol
+        regUrl.host = window.location.host
+        currentEvent.registrationUrl = regUrl.toString()
+        const newOrigin = regUrl.origin
+
+        const directLinkDisplay = document.getElementById('box-direct-link-display')
+        if (directLinkDisplay) directLinkDisplay.textContent = currentEvent.registrationUrl
+
+        const socialCaptionTextarea = document.getElementById('social-caption-textarea')
+        if (socialCaptionTextarea) {
+          socialCaptionTextarea.value = socialCaptionTextarea.value.replaceAll(oldOrigin, newOrigin)
+        }
+        const whatsappTextTextarea = document.getElementById('whatsapp-text-textarea')
+        if (whatsappTextTextarea) {
+          whatsappTextTextarea.value = whatsappTextTextarea.value.replaceAll(oldOrigin, newOrigin)
+        }
+        const btnOpenWhatsapp = document.getElementById('btn-open-whatsapp')
+        if (btnOpenWhatsapp && whatsappTextTextarea) {
+          btnOpenWhatsapp.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappTextTextarea.value)}`
+        }
+      }
+    } catch (e) {}
+  }
 
   // Header Dropdown: Navigate to other event's campaign URL
   const headerEventSelect = document.getElementById('header-event-select')
@@ -1686,8 +1716,9 @@ const clientData = {
       activeSocialFormat = activeSocialPostSlide === 1 ? 'post-slide-1' : 'post-slide-2'
     }
 
-    const cleanUrl = `/toolbox/social-images/${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
-    const previewUrl = `${cleanUrl}?v=${Date.now()}`
+    const currentUrlParam = currentEvent.registrationUrl ? encodeURIComponent(currentEvent.registrationUrl) : ''
+    const cleanUrl = `/toolbox/social-images/${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png${currentUrlParam ? `?url=${currentUrlParam}` : ''}`
+    const previewUrl = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}v=${Date.now()}`
     if (socialPreviewImage) socialPreviewImage.src = previewUrl
     if (btnDownloadSocialPng) {
       btnDownloadSocialPng.href = cleanUrl

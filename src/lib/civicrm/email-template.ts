@@ -119,7 +119,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
                         SMJ REGIO WEGWEISER
                       </div>
                       <div style="font-family: -apple-system, sans-serif; font-size: 11px; color: ${textMuted}; font-weight: bold; letter-spacing: 1px; margin-top: 2px; text-transform: uppercase;">
-                        Katholische Schönstatt-Mannesjugend
+                        Schönstatt-Mannesjugend
                       </div>
                     </td>
                   </tr>
@@ -264,7 +264,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
             SMJ REGIO WEGWEISER
           </div>
           <div style="color: #B0A998; margin-bottom: 4px;">
-            Katholische Schönstatt-Mannesjugend &bull; Diözesen Fulda, Erfurt, Magdeburg &amp; Dresden-Meißen
+            Schönstatt-Mannesjugend &bull; Diözesen Fulda, Erfurt, Magdeburg &amp; Dresden-Meißen
           </div>
           <div style="margin-bottom: 8px;">
             Pater-Kentenich-Weg 3 (Klause 2.0) &bull; 37308 Heilbad Heiligenstadt

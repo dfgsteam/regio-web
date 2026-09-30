@@ -191,19 +191,51 @@ export async function getStaticPaths() {
   return paths
 }
 
-export const GET: APIRoute = async ({ props }) => {
-  const { eventOptions, slideOptions } = props as {
+export const GET: APIRoute = async ({ props, request, url }) => {
+  const { eventOptions, slideOptions } = (props || {}) as {
     eventOptions?: EventSocialOptions
     slideOptions?: ScheduleSlideSocialOptions
+  }
+
+  const customUrlParam = url?.searchParams?.get('url')
+  const host =
+    request?.headers?.get('x-forwarded-host') ||
+    request?.headers?.get('host') ||
+    url?.host
+  const proto =
+    request?.headers?.get('x-forwarded-proto') ||
+    (url?.protocol ? url.protocol.replace(':', '') : 'https')
+
+  function resolveTargetUrl(original?: string): string | undefined {
+    if (customUrlParam) return customUrlParam
+    if (!original) return original
+    try {
+      const u = new URL(original)
+      if (host) {
+        u.host = host
+        u.protocol = proto
+      }
+      return u.toString()
+    } catch {
+      return original
+    }
   }
 
   let pngBuffer: Buffer
 
   if (eventOptions) {
-    const svg = await generateEventSocialSvg(eventOptions)
+    const effectiveOptions: EventSocialOptions = {
+      ...eventOptions,
+      targetUrl: resolveTargetUrl(eventOptions.targetUrl) || eventOptions.targetUrl,
+    }
+    const svg = await generateEventSocialSvg(effectiveOptions)
     pngBuffer = await renderSvgToPng(svg)
   } else if (slideOptions) {
-    const svg = await generateScheduleSlideSvg(slideOptions)
+    const effectiveOptions: ScheduleSlideSocialOptions = {
+      ...slideOptions,
+      targetUrl: resolveTargetUrl(slideOptions.targetUrl) || slideOptions.targetUrl,
+    }
+    const svg = await generateScheduleSlideSvg(effectiveOptions)
     pngBuffer = await renderSvgToPng(svg)
   } else {
     return new Response('Not found', { status: 404 })
