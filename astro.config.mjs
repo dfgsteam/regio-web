@@ -30,6 +30,16 @@ function devPhpProxyPlugin() {
         if (!req.url) return next()
         const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost:4321'}`)
         if (urlObj.pathname === '/toolbox-auth/civicrm-api.php') {
+          if (!fs.existsSync(path.resolve(process.cwd(), 'private/config.php'))) {
+            res.statusCode = 503
+            res.setHeader('Content-Type', 'application/json; charset=utf-8')
+            res.setHeader('Cache-Control', 'no-store')
+            res.end(JSON.stringify({
+              success: false,
+              message: 'Live-CiviCRM-Daten benötigen lokal eine PHP-Konfiguration und eine gültige Toolbox-Anmeldung.',
+            }))
+            return
+          }
           const chunks = []
           req.on('data', (chunk) => chunks.push(chunk))
           req.on('end', () => {
@@ -81,8 +91,9 @@ function devPhpProxyPlugin() {
                 }
                 res.end(body)
               } else {
+                res.statusCode = 502
                 res.setHeader('Content-Type', 'application/json; charset=utf-8')
-                res.end(full)
+                res.end(JSON.stringify({ success: false, message: 'Die lokale PHP-Bridge hat keine gültige Antwort geliefert.' }))
               }
             })
 
