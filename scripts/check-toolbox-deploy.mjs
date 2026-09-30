@@ -2,6 +2,19 @@
 
 const site = new URL(process.env.SITE_URL || 'https://smj-wegweiser.de')
 
+const homepage = await fetch(site, {
+  method: 'HEAD',
+  redirect: 'manual',
+  signal: AbortSignal.timeout(15000),
+})
+if (homepage.headers.get('link')?.includes('/wp-json/')) {
+  console.log(`::warning::${site.origin} liefert noch WordPress aus. Toolbox-Schutz erst nach Umschaltung der Domain prüfbar.`)
+  process.exit(0)
+}
+if (homepage.status !== 200) {
+  throw new Error(`${site.origin}: HTTP ${homepage.status} statt 200. Toolbox-Schutz nicht prüfbar.`)
+}
+
 async function expectStatus(path, expected) {
   const response = await fetch(new URL(path, site), {
     method: 'HEAD',
@@ -27,8 +40,8 @@ async function expectHidden(path) {
 }
 
 await expectStatus('/toolbox-auth/generated-config.php', 403)
-await expectStatus('/private/generated-config.php', 404)
-await expectStatus('/private/toolbox/index.html', 404)
+await expectHidden('/private/generated-config.php')
+await expectHidden('/private/toolbox/index.html')
 await expectHidden('/.ftp-deploy-sync-state.json')
 await expectStatus('/toolbox-auth/civicrm-api.php?action=groups', 401)
 await expectStatus('/toolbox-auth/civicrm-api.php?action=contacts&group_id=12', 401)
