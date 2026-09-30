@@ -1005,91 +1005,21 @@ const clientData = {
 
           <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
             
-            <!-- LEFT: Authentic A4 Preview Container -->
-            <div class="bg-forest-950/80 border-2 border-paper/15 p-6 sm:p-10 rounded-xs flex flex-col items-center">
-              
-              <!-- A4 Sheet Mockup -->
-              <div class="w-full max-w-[520px] bg-[#F1EBDD] text-[#111713] p-8 rounded-xs shadow-2xl border-4 border-[#111713] relative select-none font-mono">
-                
-                <!-- Inner Expedition Border -->
-                <div class="border border-[#C9BA99] p-6 h-full flex flex-col justify-between">
-                  
-                  <!-- Header -->
-                  <div>
-                    <div class="flex items-center justify-between border-b border-[#111713]/20 pb-3 mb-4">
-                      <div class="flex items-center gap-2">
-                        <Logo variant="full" tone="dark" size="sm" />
-                      </div>
-                      <span class="bg-[#111713] text-[#F1EBDD] text-[9px] font-bold px-2 py-0.5 uppercase tracking-widest">
-                        {currentEvent.category}
-                      </span>
-                    </div>
-
-                    <!-- Title -->
-                    <div class="font-display text-2xl sm:text-3xl text-[#111713] uppercase tracking-tight leading-none mb-1">
-                      {currentEvent.title}
-                    </div>
-                    <div class="text-[11px] text-gray-700 uppercase font-bold mb-5">
-                      {currentEvent.subtitle}
-                    </div>
-
-                    <!-- 3 Fact Boxes (matching letter & poster) -->
-                    <div class="grid grid-cols-3 gap-2 mb-6">
-                      <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
-                        <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[8px] uppercase mb-0.5">
-                          <Calendar class="w-2.5 h-2.5 text-[#FF5A1F]" />
-                          <span>WANN</span>
-                        </div>
-                        <div class="font-['Impact'] text-[11px] text-[#111713] uppercase leading-tight">{initDate1}</div>
-                        <div class="text-[7.5px] text-gray-600 uppercase font-bold">{initDate2}</div>
-                      </div>
-
-                      <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
-                        <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[8px] uppercase mb-0.5">
-                          <MapPin class="w-2.5 h-2.5 text-[#FF5A1F]" />
-                          <span>WO</span>
-                        </div>
-                        <div class="font-['Impact'] text-[11px] text-[#111713] uppercase leading-tight truncate">{initLoc1}</div>
-                        <div class="text-[7.5px] text-gray-600 uppercase font-bold truncate">{initLoc2}</div>
-                      </div>
-
-                      <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
-                        <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[8px] uppercase mb-0.5">
-                          <Users class="w-2.5 h-2.5 text-[#FF5A1F]" />
-                          <span>WER</span>
-                        </div>
-                        <div class="font-['Impact'] text-[11px] text-[#111713] uppercase leading-tight">{initAge1}</div>
-                        <div class="text-[7.5px] text-gray-600 uppercase font-bold">{initAge2}</div>
-                      </div>
-                    </div>
-
-                    <!-- Description Text -->
-                    <div class="text-[10px] text-gray-800 leading-relaxed mb-6 space-y-1.5">
-                      <p>
-                        Bist du bereit für echte Abenteuer in der Natur? Lagerfeuer, Geländespiele, Action und eine starke Gemeinschaft warten auf dich!
-                      </p>
-                      <p class="font-bold text-[#FF5A1F]">
-                        Sichere dir jetzt deinen Platz &bull; Begrenzte Teilnehmerzahl!
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- QR Code Registration Box -->
-                  <div class="bg-[#111713] text-[#F1EBDD] p-3 rounded-xs flex items-center justify-between border-2 border-[#FF5A1F]">
-                    <div>
-                      <div class="font-['Impact'] text-xs text-[#FF5A1F] uppercase">JETZT ONLINE ANMELDEN:</div>
-                      <div class="text-[9px] text-[#C9BA99] truncate mt-0.5">{currentEvent.registrationUrl.replace(/^https?:\/\//, '')}</div>
-                      <div class="text-[8px] text-gray-400 mt-1">Kamera öffnen &amp; QR-Code scannen</div>
-                    </div>
-                    <div class="bg-white p-1 rounded-xs shrink-0">
-                      <QrCode class="w-12 h-12 text-[#111713]" />
-                    </div>
-                  </div>
-
-                </div>
-
+            <!-- LEFT: Embedded Real A4 PDF Preview (iframe) -->
+            <div class="bg-forest-950/80 border-2 border-paper/15 p-4 sm:p-6 rounded-xs flex flex-col items-center">
+              <div class="w-full flex items-center justify-between font-mono text-xs text-paper/50 mb-3 px-1">
+                <span class="flex items-center gap-1.5 text-orange font-bold">
+                  <span class="inline-block w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+                  ORIGINAL DRUCK-PDF (DIN A4)
+                </span>
+                <span>210 &times; 297 MM &bull; VEKTORGRAFIK (300 DPI)</span>
               </div>
-
+              <iframe
+                id="a4-pdf-preview-frame"
+                src={`/toolbox/flyers/${currentEvent.id}.pdf#view=FitH`}
+                class="w-full h-[650px] sm:h-[840px] rounded-xs border-2 border-paper/20 shadow-2xl bg-paper"
+                title={`DIN A4 Plakat & Flyer: ${currentEvent.title}`}
+              ></iframe>
             </div>
 
             <!-- RIGHT: Actions & Info -->
