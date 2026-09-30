@@ -113,13 +113,13 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
             <tr>
               <!-- WANN -->
               <td class="fact-col" width="48%" valign="top" style="background-color: ${forestDark}; border-radius: 8px; border-left: 6px solid ${primaryColor}; padding: 14px 16px; margin-bottom: 12px;">
-                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">WANN</div>
+                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">📅 WANN</div>
                 <div style="font-family: Impact, -apple-system, sans-serif; font-size: 20px; color: #F1EBDD; letter-spacing: 0.5px; margin-top: 4px;">${event.dateStr}</div>
               </td>
               <td width="4%" class="fact-col" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
               <!-- WO -->
               <td class="fact-col" width="48%" valign="top" style="background-color: ${forestDark}; border-radius: 8px; border-left: 6px solid ${primaryColor}; padding: 14px 16px; margin-bottom: 12px;">
-                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">WO</div>
+                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">📍 WO</div>
                 <div style="font-family: Impact, -apple-system, sans-serif; font-size: 20px; color: #F1EBDD; letter-spacing: 0.5px; margin-top: 4px;">${event.locationStr}</div>
               </td>
             </tr>
@@ -127,13 +127,13 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
             <tr>
               <!-- WER -->
               <td class="fact-col" width="48%" valign="top" style="background-color: ${forestDark}; border-radius: 8px; border-left: 6px solid ${primaryColor}; padding: 14px 16px;">
-                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">WER</div>
+                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">👥 WER</div>
                 <div style="font-family: Impact, -apple-system, sans-serif; font-size: 20px; color: #F1EBDD; letter-spacing: 0.5px; margin-top: 4px;">${event.ageStr}</div>
               </td>
               <td width="4%" class="fact-col" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
               <!-- BEITRAG -->
               <td class="fact-col" width="48%" valign="top" style="background-color: ${forestDark}; border-radius: 8px; border-left: 6px solid ${primaryColor}; padding: 14px 16px;">
-                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">BEITRAG</div>
+                <div style="font-family: Impact, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">💶 BEITRAG</div>
                 <div style="font-family: Impact, -apple-system, sans-serif; font-size: 20px; color: #F1EBDD; letter-spacing: 0.5px; margin-top: 4px;">${event.priceStr}</div>
               </td>
             </tr>

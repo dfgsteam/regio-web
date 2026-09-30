@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, type PDFFont } from 'pdf-lib'
+import { PDFDocument, rgb, type PDFFont, type PDFImage } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import QRCode from 'qrcode'
 import fs from 'node:fs'
@@ -6,6 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { CiviRecipient, CampaignEventData } from '../civicrm/types'
 import { splitFact } from '../campaigns/split-fact'
+import { embedIcon } from './pdf-icons'
 
 function cleanText(text: string): string {
   return text
@@ -90,6 +91,11 @@ export async function appendLetterPage(
     fontAnton: PDFFont
     fontInter: PDFFont
     fontMono: PDFFont
+  },
+  icons?: {
+    iconCalendar?: PDFImage
+    iconMapPin?: PDFImage
+    iconUsers?: PDFImage
   },
 ): Promise<void> {
   // DIN A4 standard dimensions in points (72 pt/inch)
@@ -337,9 +343,9 @@ export async function appendLetterPage(
   const boxH = 56
 
   const factItems = [
-    { label: 'WANN', value: event.dateStr },
-    { label: 'WO', value: event.locationStr },
-    { label: 'WER', value: event.ageStr },
+    { label: 'WANN', value: event.dateStr, icon: icons?.iconCalendar },
+    { label: 'WO', value: event.locationStr, icon: icons?.iconMapPin },
+    { label: 'WER', value: event.ageStr, icon: icons?.iconUsers },
   ]
 
   factItems.forEach((f, idx) => {
@@ -365,9 +371,19 @@ export async function appendLetterPage(
       color: colorOrange,
     })
 
-    // Orange label
+    // Orange label & Icon
+    const iconSize = 9
+    if (f.icon) {
+      page.drawImage(f.icon, {
+        x: bx + 10,
+        y: curY - 17,
+        width: iconSize,
+        height: iconSize,
+      })
+    }
+
     page.drawText(f.label, {
-      x: bx + 10,
+      x: bx + (f.icon ? 10 + iconSize + 3.5 : 10),
       y: curY - 15,
       size: 8,
       font: fonts.fontMono,
@@ -543,15 +559,22 @@ export async function generateSingleLetterPdf(
   const pdfDoc = await PDFDocument.create()
   pdfDoc.registerFontkit(fontkit)
 
-  const fontAnton = await pdfDoc.embedFont(loadFontBuffer('Anton-Regular.ttf'))
-  const fontInter = await pdfDoc.embedFont(loadFontBuffer('Inter-Regular.ttf'))
-  const fontMono = await pdfDoc.embedFont(loadFontBuffer('SpaceMono-Bold.ttf'))
+  const [fontAnton, fontInter, fontMono, iconCalendar, iconMapPin, iconUsers] = await Promise.all([
+    pdfDoc.embedFont(loadFontBuffer('Anton-Regular.ttf')),
+    pdfDoc.embedFont(loadFontBuffer('Inter-Regular.ttf')),
+    pdfDoc.embedFont(loadFontBuffer('SpaceMono-Bold.ttf')),
+    embedIcon(pdfDoc, 'calendar', '#FF5A1F'),
+    embedIcon(pdfDoc, 'map-pin', '#FF5A1F'),
+    embedIcon(pdfDoc, 'users', '#FF5A1F'),
+  ])
 
-  await appendLetterPage(pdfDoc, recipient, event, {
-    fontAnton,
-    fontInter,
-    fontMono,
-  })
+  await appendLetterPage(
+    pdfDoc,
+    recipient,
+    event,
+    { fontAnton, fontInter, fontMono },
+    { iconCalendar, iconMapPin, iconUsers },
+  )
 
   return await pdfDoc.save()
 }
@@ -566,16 +589,23 @@ export async function generateLetterBatchPdf(
   const pdfDoc = await PDFDocument.create()
   pdfDoc.registerFontkit(fontkit)
 
-  const fontAnton = await pdfDoc.embedFont(loadFontBuffer('Anton-Regular.ttf'))
-  const fontInter = await pdfDoc.embedFont(loadFontBuffer('Inter-Regular.ttf'))
-  const fontMono = await pdfDoc.embedFont(loadFontBuffer('SpaceMono-Bold.ttf'))
+  const [fontAnton, fontInter, fontMono, iconCalendar, iconMapPin, iconUsers] = await Promise.all([
+    pdfDoc.embedFont(loadFontBuffer('Anton-Regular.ttf')),
+    pdfDoc.embedFont(loadFontBuffer('Inter-Regular.ttf')),
+    pdfDoc.embedFont(loadFontBuffer('SpaceMono-Bold.ttf')),
+    embedIcon(pdfDoc, 'calendar', '#FF5A1F'),
+    embedIcon(pdfDoc, 'map-pin', '#FF5A1F'),
+    embedIcon(pdfDoc, 'users', '#FF5A1F'),
+  ])
 
   for (const recipient of recipients) {
-    await appendLetterPage(pdfDoc, recipient, event, {
-      fontAnton,
-      fontInter,
-      fontMono,
-    })
+    await appendLetterPage(
+      pdfDoc,
+      recipient,
+      event,
+      { fontAnton, fontInter, fontMono },
+      { iconCalendar, iconMapPin, iconUsers },
+    )
   }
 
   return await pdfDoc.save()

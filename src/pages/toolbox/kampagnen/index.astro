@@ -10,6 +10,7 @@ import {
   FileText,
   Smartphone,
   Calendar,
+  MapPin,
   Check,
   QrCode,
   Sparkles,
@@ -302,8 +303,8 @@ const clientData = {
                   </div>
                   <div class="border-t border-b border-gray-100 py-1 space-y-0.5">
                     <div class="font-bold text-[6.5px] text-[#FF5A1F] uppercase truncate showcase-sync-title">{initialEvent.title}</div>
-                    <div class="text-[5px] text-gray-700 truncate">Termin: <span class="showcase-sync-date">{initialEvent.dateStr}</span></div>
-                    <div class="text-[5px] text-gray-700 truncate">Ort: <span class="showcase-sync-loc">{initialEvent.locationStr}</span></div>
+                    <div class="text-[5px] text-gray-700 truncate flex items-center gap-1"><Calendar class="w-2 h-2 text-[#FF5A1F] shrink-0" /><span class="showcase-sync-date">{initialEvent.dateStr}</span></div>
+                    <div class="text-[5px] text-gray-700 truncate flex items-center gap-1"><MapPin class="w-2 h-2 text-[#FF5A1F] shrink-0" /><span class="showcase-sync-loc">{initialEvent.locationStr}</span></div>
                   </div>
                   <div class="flex items-center justify-between pt-1 border-t border-gray-200">
                     <span class="text-[4.5px] text-gray-500">smj-wegweiser.de</span>
@@ -815,23 +816,32 @@ const clientData = {
                   </p>
                 </div>
 
-                <!-- Fact Cards: 3 Boxen, 2-zeilig wie beim Plakat -->
+                <!-- Fact Cards: 3 Boxen, 2-zeilig wie beim Plakat mit Icons -->
                 <div class="grid grid-cols-3 gap-2.5 mb-3.5 font-mono">
                   <!-- WANN -->
                   <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
-                    <div class="text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">WANN</div>
+                    <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">
+                      <Calendar class="w-2.5 h-2.5 text-[#FF5A1F] shrink-0" />
+                      <span>WANN</span>
+                    </div>
                     <div id="preview-fact-date-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase">{initDate1}</div>
                     <div id="preview-fact-date-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold">{initDate2}</div>
                   </div>
                   <!-- WO -->
                   <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
-                    <div class="text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">WO</div>
+                    <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">
+                      <MapPin class="w-2.5 h-2.5 text-[#FF5A1F] shrink-0" />
+                      <span>WO</span>
+                    </div>
                     <div id="preview-fact-loc-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase truncate">{initLoc1}</div>
                     <div id="preview-fact-loc-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold truncate">{initLoc2}</div>
                   </div>
                   <!-- WER -->
                   <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
-                    <div class="text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">WER</div>
+                    <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">
+                      <Users class="w-2.5 h-2.5 text-[#FF5A1F] shrink-0" />
+                      <span>WER</span>
+                    </div>
                     <div id="preview-fact-age-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase">{initAge1}</div>
                     <div id="preview-fact-age-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold">{initAge2}</div>
                   </div>
