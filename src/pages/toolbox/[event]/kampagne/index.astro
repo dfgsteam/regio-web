@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../../layouts/BaseLayout.astro'
 import ToolboxHeader from '../../../../components/navigation/ToolboxHeader.astro'
+import BrandIcon from '../../../../components/common/BrandIcon.astro'
 import Logo from '../../../../components/common/Logo.astro'
 import {
   Mail,
@@ -142,6 +143,21 @@ const [initDate1, initDate2] = splitFact('WANN', currentEvent.dateStr)
 const [initLoc1, initLoc2] = splitFact('WO', currentEvent.locationStr)
 const [initAge1, initAge2] = splitFact('WER', currentEvent.ageStr)
 
+// Ready-to-copy WhatsApp Community & Group message
+const initialWhatsappText = `🏕️ *${currentEvent.title.toUpperCase()}*
+${currentEvent.subtitle ? `_${currentEvent.subtitle}_\n\n` : '\n'}Hallo zusammen! 👋
+Hier sind alle Infos zur kommenden Aktion der SMJ Regio Wegweiser:
+
+📅 *Wann:* ${currentEvent.dateStr}
+📍 *Wo:* ${currentEvent.locationStr}
+👥 *Wer:* ${currentEvent.ageStr}
+💶 *Beitrag:* ${currentEvent.priceStr}
+
+🔗 *Alle Details & Online-Anmeldung:*
+${currentEvent.registrationUrl}
+
+Bitte gerne in euren WhatsApp-Gruppen, an Eltern und interessierte Freunde weiterleiten! 🚀`
+
 // Ready-to-copy Instagram caption
 const initialCaption = `🏕️ ${currentEvent.title} // RAUS. INS ABENTEUER.
 
@@ -167,6 +183,7 @@ const clientData = {
   defaultEmailHtml: initialEmailHtml,
   defaultSms: initialSms,
   initialCaption,
+  initialWhatsappText,
 }
 ---
 
@@ -790,29 +807,95 @@ const clientData = {
                 </div>
               </div>
 
-              <!-- Instagram Caption Generator -->
-              <div class="border border-paper/20 bg-forest-950 p-6 rounded-xs">
-                <div class="flex items-center justify-between gap-2 mb-3">
-                  <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-orange flex items-center gap-2">
-                    <Sparkles class="h-4 w-4" />
-                    <span>Instagram Caption</span>
-                  </h3>
-                  <button
-                    type="button"
-                    id="btn-copy-caption"
-                    class="inline-flex items-center gap-1.5 text-xs font-mono text-orange hover:text-paper transition-colors cursor-pointer"
-                  >
-                    <Copy class="h-3.5 w-3.5" />
-                    <span id="copy-caption-label">Kopieren</span>
-                  </button>
+              <!-- Social & Community Text Vorlagen (WhatsApp & Instagram) -->
+              <div class="border border-paper/20 bg-forest-950 p-6 rounded-xs space-y-4">
+                
+                <!-- Subtab Switcher Header -->
+                <div class="flex items-center justify-between border-b border-paper/15 pb-3">
+                  <div class="flex items-center gap-1.5 p-1 bg-forest-900 border border-paper/15 rounded-xs font-mono text-xs">
+                    <button
+                      type="button"
+                      id="subtab-btn-whatsapp"
+                      class="channel-subtab-btn active inline-flex items-center gap-1.5 px-3 py-1.5 uppercase font-bold rounded-xs transition-all cursor-pointer bg-green-950 text-green-400 border border-green-800"
+                    >
+                      <BrandIcon name="whatsapp" class="h-3.5 w-3.5 fill-current text-green-400" />
+                      <span>WhatsApp Community</span>
+                    </button>
+                    <button
+                      type="button"
+                      id="subtab-btn-instagram"
+                      class="channel-subtab-btn inline-flex items-center gap-1.5 px-3 py-1.5 uppercase font-bold rounded-xs transition-all cursor-pointer text-paper/70 hover:text-paper"
+                    >
+                      <Sparkles class="h-3.5 w-3.5 text-orange" />
+                      <span>Instagram Caption</span>
+                    </button>
+                  </div>
                 </div>
 
-                <textarea
-                  id="social-caption-textarea"
-                  rows="9"
-                  readonly
-                  class="w-full bg-forest-900 border border-paper/20 p-3 font-mono text-xs text-paper/90 rounded-xs focus:outline-none focus:border-orange resize-none leading-relaxed select-all"
-                >{initialCaption}</textarea>
+                <!-- PANE 1: WHATSAPP COMMUNITY -->
+                <div id="channel-pane-whatsapp" class="space-y-3">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-mono text-[11px] text-paper/60 truncate">Für WhatsApp-Kanal, Eltern & Gruppen:</span>
+                    <div class="flex items-center gap-3 shrink-0">
+                      <a
+                        id="btn-open-whatsapp"
+                        href={`https://api.whatsapp.com/send?text=${encodeURIComponent(initialWhatsappText)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1 text-xs font-mono text-green-400 hover:text-green-300 transition-colors"
+                      >
+                        <ExternalLink class="h-3 w-3" />
+                        <span>In WhatsApp ↗</span>
+                      </a>
+                      <button
+                        type="button"
+                        id="btn-copy-whatsapp"
+                        class="inline-flex items-center gap-1 text-xs font-mono text-orange hover:text-paper transition-colors cursor-pointer"
+                      >
+                        <Copy class="h-3.5 w-3.5" />
+                        <span id="copy-whatsapp-label">Kopieren</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <textarea
+                    id="whatsapp-text-textarea"
+                    rows="9"
+                    readonly
+                    class="w-full bg-forest-900 border border-paper/20 p-3 font-mono text-xs text-paper/90 rounded-xs focus:outline-none focus:border-green-500 resize-none leading-relaxed select-all"
+                  >{initialWhatsappText}</textarea>
+                  
+                  <div class="text-[11px] font-mono text-paper/50">
+                    💡 Enthält Markdown-Formatierungen (*fett*, _kursiv_) für WhatsApp sowie den direkten Anmeldelink.
+                  </div>
+                </div>
+
+                <!-- PANE 2: INSTAGRAM CAPTION -->
+                <div id="channel-pane-instagram" class="space-y-3 hidden">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-mono text-[11px] text-paper/60 truncate">Mit Hashtags & Aufruf für Feed & Story:</span>
+                    <button
+                      type="button"
+                      id="btn-copy-caption"
+                      class="inline-flex items-center gap-1 text-xs font-mono text-orange hover:text-paper transition-colors cursor-pointer shrink-0"
+                    >
+                      <Copy class="h-3.5 w-3.5" />
+                      <span id="copy-caption-label">Kopieren</span>
+                    </button>
+                  </div>
+
+                  <textarea
+                    id="social-caption-textarea"
+                    rows="9"
+                    readonly
+                    class="w-full bg-forest-900 border border-paper/20 p-3 font-mono text-xs text-paper/90 rounded-xs focus:outline-none focus:border-orange resize-none leading-relaxed select-all"
+                  >{initialCaption}</textarea>
+                  
+                  <div class="text-[11px] font-mono text-paper/50">
+                    💡 Bereit zum Einfügen in Meta Business Suite, Instagram App oder Drittanbieter-Tools.
+                  </div>
+                </div>
+
               </div>
 
             </div>
@@ -1597,12 +1680,53 @@ const clientData = {
     })
   })
 
+  // Copy Instagram Caption
   if (btnCopyCaption && socialCaptionTextarea) {
     btnCopyCaption.addEventListener('click', () => {
       navigator.clipboard.writeText(socialCaptionTextarea.value)
       if (copyCaptionLabel) copyCaptionLabel.textContent = 'Kopiert! ✓'
       setTimeout(() => {
         if (copyCaptionLabel) copyCaptionLabel.textContent = 'Kopieren'
+      }, 2500)
+    })
+  }
+
+  // WhatsApp Community & Instagram Subtabs
+  const subtabBtnWhatsapp = document.getElementById('subtab-btn-whatsapp')
+  const subtabBtnInstagram = document.getElementById('subtab-btn-instagram')
+  const channelPaneWhatsapp = document.getElementById('channel-pane-whatsapp')
+  const channelPaneInstagram = document.getElementById('channel-pane-instagram')
+  const btnCopyWhatsapp = document.getElementById('btn-copy-whatsapp')
+  const copyWhatsappLabel = document.getElementById('copy-whatsapp-label')
+  const whatsappTextTextarea = document.getElementById('whatsapp-text-textarea')
+
+  if (subtabBtnWhatsapp && subtabBtnInstagram && channelPaneWhatsapp && channelPaneInstagram) {
+    subtabBtnWhatsapp.addEventListener('click', () => {
+      subtabBtnWhatsapp.className =
+        'channel-subtab-btn active inline-flex items-center gap-1.5 px-3 py-1.5 uppercase font-bold rounded-xs transition-all cursor-pointer bg-green-950 text-green-400 border border-green-800'
+      subtabBtnInstagram.className =
+        'channel-subtab-btn inline-flex items-center gap-1.5 px-3 py-1.5 uppercase font-bold rounded-xs transition-all cursor-pointer text-paper/70 hover:text-paper'
+      channelPaneWhatsapp.classList.remove('hidden')
+      channelPaneInstagram.classList.add('hidden')
+    })
+
+    subtabBtnInstagram.addEventListener('click', () => {
+      subtabBtnInstagram.className =
+        'channel-subtab-btn active inline-flex items-center gap-1.5 px-3 py-1.5 uppercase font-bold rounded-xs transition-all cursor-pointer bg-orange/20 text-orange border border-orange/40'
+      subtabBtnWhatsapp.className =
+        'channel-subtab-btn inline-flex items-center gap-1.5 px-3 py-1.5 uppercase font-bold rounded-xs transition-all cursor-pointer text-paper/70 hover:text-paper'
+      channelPaneInstagram.classList.remove('hidden')
+      channelPaneWhatsapp.classList.add('hidden')
+    })
+  }
+
+  // Copy WhatsApp Community Text
+  if (btnCopyWhatsapp && whatsappTextTextarea) {
+    btnCopyWhatsapp.addEventListener('click', () => {
+      navigator.clipboard.writeText(whatsappTextTextarea.value)
+      if (copyWhatsappLabel) copyWhatsappLabel.textContent = 'Kopiert! ✓'
+      setTimeout(() => {
+        if (copyWhatsappLabel) copyWhatsappLabel.textContent = 'Kopieren'
       }, 2500)
     })
   }
