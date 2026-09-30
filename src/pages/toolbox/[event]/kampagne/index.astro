@@ -1321,13 +1321,30 @@ const clientData = {
 
           <!-- HTML Email Preview Window -->
           <div class="border-2 border-paper/20 rounded-xs overflow-hidden bg-forest-950 shadow-2xl">
-            <div class="bg-forest-900 border-b border-paper/15 px-4 py-2 flex items-center justify-between font-mono text-xs">
-              <span class="text-paper/60">Betreff: <strong class="text-paper font-normal">Einladung: {currentEvent.title} – SMJ Regio Wegweiser</strong></span>
-              <span class="text-orange font-bold uppercase text-[10px]">HTML Mailing</span>
+            <div class="bg-forest-900 border-b border-paper/15 px-4 py-3 flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+                  <span class="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
+                  <span class="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
+                </div>
+                <div class="space-y-0.5 text-[11px]">
+                  <div><span class="text-paper/50">Von:</span> <span class="text-paper font-bold">SMJ Regio Wegweiser &lt;kontakt@smj-wegweiser.de&gt;</span></div>
+                  <div><span class="text-paper/50">Betreff:</span> <span class="text-orange font-bold">🏕️ Einladung: {currentEvent.title} – SMJ Regio Wegweiser</span></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-forest-950 border border-paper/20 rounded-xs text-orange text-[10px] uppercase font-bold">CiviMail HTML</span>
+              </div>
             </div>
             
-            <div class="p-4 sm:p-8 bg-[#111713] flex justify-center">
-              <div class="w-full max-w-[600px] bg-[#182019] border border-paper/15 rounded-xs overflow-hidden shadow-xl" set:html={initialEmailHtml}></div>
+            <div class="p-4 sm:p-8 bg-[#0b0f0c] flex justify-center">
+              <iframe
+                id="email-preview-frame"
+                srcdoc={initialEmailHtml}
+                class="w-full max-w-[640px] h-[860px] rounded-xs border border-paper/20 shadow-2xl bg-[#0b0f0c] block"
+                title="E-Mail Vorschau"
+              ></iframe>
             </div>
           </div>
 
