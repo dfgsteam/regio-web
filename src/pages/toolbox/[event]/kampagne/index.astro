@@ -1338,11 +1338,11 @@ const clientData = {
               </div>
             </div>
             
-            <div class="p-4 sm:p-8 bg-[#0b0f0c] flex justify-center">
+            <div class="p-4 sm:p-8 bg-[#141c16] flex justify-center">
               <iframe
                 id="email-preview-frame"
                 srcdoc={initialEmailHtml}
-                class="w-full max-w-[640px] h-[860px] rounded-xs border border-paper/20 shadow-2xl bg-[#0b0f0c] block"
+                class="w-full max-w-[640px] h-[860px] rounded-xs border border-paper/20 shadow-2xl bg-[#F4F0E6] block"
                 title="E-Mail Vorschau"
               ></iframe>
             </div>
@@ -2152,7 +2152,10 @@ const clientData = {
           type: 'email',
           campaignName: `${currentEvent.title} (Einladung)`,
           subject: `Einladung: ${currentEvent.title} – SMJ Regio Wegweiser`,
-          bodyHtml: clientData.defaultEmailHtml,
+          bodyHtml: clientData.defaultEmailHtml.replace(
+            /src="\/logo_wegweiser_dark\.png"/g,
+            'src="https://regio.hnld.de/logo_wegweiser_dark.png"'
+          ),
           groupId: currentGroupId,
         }
       : {

@@ -22,12 +22,15 @@ function splitFact(label: string, value: string): [string, string] {
   return [value, '']
 }
 
-export function generateCampaignEmailHtml(event: CampaignEventData): string {
-  const primaryColor = '#FF5A1F'
+export function generateCampaignEmailHtml(event: CampaignEventData, options?: { absoluteLogo?: boolean }): string {
+  const primaryActionColor = '#FF5A1F'
   const forestDark = '#111713'
-  const forestCard = '#182019'
-  const textLight = '#F1EBDD'
-  const textMuted = '#C9BA99'
+  const textBody = '#2D372F'
+  const textMuted = '#5A655C'
+  const bgCanvas = '#F4F0E6'
+  const bgCard = '#FFFFFF'
+  const borderLight = '#E5DFD5'
+  const logoUrl = options?.absoluteLogo ? 'https://regio.hnld.de/logo_wegweiser_dark.png' : '/logo_wegweiser_dark.png'
 
   const [date1, date2] = splitFact('WANN', event.dateStr)
   const [loc1, loc2] = splitFact('WO', event.locationStr)
@@ -49,9 +52,9 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
     body {
       margin: 0;
       padding: 0;
-      background-color: #0b0f0c;
+      background-color: ${bgCanvas};
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      color: #F1EBDD;
+      color: ${textBody};
       -webkit-font-smoothing: antialiased;
     }
     table {
@@ -66,7 +69,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
       display: block;
     }
     a {
-      color: #FF5A1F;
+      color: ${forestDark};
       text-decoration: underline;
     }
     @media only screen and (max-width: 620px) {
@@ -93,32 +96,27 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
     }
   </style>
 </head>
-<body style="margin: 0; padding: 24px 8px; background-color: #0b0f0c; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+<body style="margin: 0; padding: 28px 8px; background-color: ${bgCanvas}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: ${textBody};">
   <center>
     <!-- Main Card Container -->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="email-container" style="max-width: 600px; margin: 0 auto; background-color: ${forestDark}; border-radius: 12px; overflow: hidden; border: 1px solid #28372b; box-shadow: 0 12px 40px rgba(0,0,0,0.6);">
-      
-      <!-- Signal Orange Top Border Accent -->
-      <tr>
-        <td height="5" style="background-color: ${primaryColor}; font-size: 1px; line-height: 1px;">&nbsp;</td>
-      </tr>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="email-container" style="max-width: 600px; margin: 0 auto; background-color: ${bgCard}; border-radius: 8px; overflow: hidden; border: 1px solid ${borderLight}; box-shadow: 0 4px 20px rgba(17,23,19,0.06);">
 
-      <!-- Header Bar: Logo & Organization -->
+      <!-- Header Bar: Authentic Outdoor Organization Lockup (Clean, No Orange Slop) -->
       <tr>
-        <td style="background-color: ${forestCard}; padding: 20px 32px; border-bottom: 1px solid #233126;">
+        <td style="background-color: #FFFFFF; padding: 24px 32px 20px 32px; border-bottom: 1px solid #ECE7DE;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td valign="middle" align="left">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td valign="middle" style="padding-right: 12px;">
-                      <img src="https://regio.hnld.de/logo_wegweiser_white.png" alt="SMJ Logo" width="38" height="33" style="display: block; width: 38px; height: 33px; border: 0;" />
+                    <td valign="middle" style="padding-right: 14px;">
+                      <img src="${logoUrl}" alt="SMJ Logo" width="42" height="37" style="display: block; width: 42px; height: 37px; border: 0;" />
                     </td>
                     <td valign="middle">
-                      <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: ${primaryColor}; letter-spacing: 2px; text-transform: uppercase; line-height: 1;">
+                      <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: ${forestDark}; letter-spacing: 2px; text-transform: uppercase; line-height: 1;">
                         SMJ REGIO WEGWEISER
                       </div>
-                      <div style="font-family: -apple-system, sans-serif; font-size: 11px; color: ${textMuted}; font-weight: bold; letter-spacing: 1px; margin-top: 2px; text-transform: uppercase;">
+                      <div style="font-family: -apple-system, sans-serif; font-size: 11px; color: ${textMuted}; font-weight: 700; letter-spacing: 1.5px; margin-top: 3px; text-transform: uppercase;">
                         Schönstatt-Mannesjugend
                       </div>
                     </td>
@@ -126,7 +124,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
                 </table>
               </td>
               <td valign="middle" align="right">
-                <span style="display: inline-block; background-color: ${primaryColor}; color: #111713; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 12px; font-weight: bold; padding: 5px 12px; border-radius: 4px; letter-spacing: 1.5px; text-transform: uppercase;">
+                <span style="display: inline-block; background-color: ${forestDark}; color: #F1EBDD; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 11px; font-weight: bold; padding: 6px 12px; border-radius: 4px; letter-spacing: 1.5px; text-transform: uppercase;">
                   ${event.category || 'AKTION'}
                 </span>
               </td>
@@ -137,17 +135,17 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
 
       <!-- Hero Section -->
       <tr>
-        <td class="mobile-padding" style="padding: 36px 32px 20px 32px;">
-          <!-- Eyebrow -->
-          <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 15px; color: ${primaryColor}; letter-spacing: 2px; margin-bottom: 8px;">
-            // RAUS. INS ABENTEUER.
+        <td class="mobile-padding" style="padding: 32px 32px 18px 32px;">
+          <!-- Subdued Tracked Eyebrow -->
+          <div style="font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 700; color: ${textMuted}; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">
+            // OFFIZIELLE EINLADUNG
           </div>
           <!-- Big Bold Title -->
-          <h1 class="hero-title" style="margin: 0; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 42px; line-height: 1.05; color: ${textLight}; letter-spacing: 1px; text-transform: uppercase;">
+          <h1 class="hero-title" style="margin: 0; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 38px; line-height: 1.1; color: ${forestDark}; letter-spacing: 1px; text-transform: uppercase;">
             ${event.title}
           </h1>
           <!-- Quick Date & Location Strip -->
-          <div style="font-family: -apple-system, sans-serif; font-size: 15px; color: ${textMuted}; font-weight: bold; margin-top: 12px;">
+          <div style="font-family: -apple-system, sans-serif; font-size: 15px; color: #4A554D; font-weight: 600; margin-top: 14px; line-height: 1.4;">
             📅 ${event.dateStr} &nbsp;&bull;&nbsp; 📍 ${event.locationStr}
           </div>
         </td>
@@ -155,21 +153,21 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
 
       <!-- Dashed Expedition Divider -->
       <tr>
-        <td style="padding: 4px 32px 20px 32px;">
-          <div style="border-top: 1px dashed #2D3B2F; height: 1px; font-size: 1px; line-height: 1px;">&nbsp;</div>
+        <td style="padding: 4px 32px 22px 32px;">
+          <div style="border-top: 1px dashed #DCD5C9; height: 1px; font-size: 1px; line-height: 1px;">&nbsp;</div>
         </td>
       </tr>
 
       <!-- Personal Salutation & Adventure Intro -->
       <tr>
-        <td class="mobile-padding" style="padding: 0 32px 26px 32px; font-size: 16px; line-height: 1.65; color: #E5DFD1;">
-          <p style="margin: 0 0 14px 0; font-weight: bold; font-size: 19px; color: #FFFFFF;">
+        <td class="mobile-padding" style="padding: 0 32px 26px 32px; font-size: 16px; line-height: 1.65; color: ${textBody};">
+          <p style="margin: 0 0 14px 0; font-weight: bold; font-size: 19px; color: ${forestDark};">
             Hallo {contact.first_name|Abenteurer}!
           </p>
           <p style="margin: 0 0 16px 0;">
             bist du bereit für die nächste große Aktion mit der SMJ? Es wird wieder Zeit für echte Natur, Dreck an den Schuhen, knisterndes Lagerfeuer, packende Geländespiele und unvergessliche Tage draußen mit anderen Jungs!
           </p>
-          <p style="margin: 0; font-weight: bold; color: ${primaryColor}; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">
+          <p style="margin: 0; font-weight: bold; color: ${forestDark}; font-size: 14px; text-transform: uppercase; letter-spacing: 0.8px;">
             Hier sind alle Fakten auf einen Blick:
           </p>
         </td>
@@ -182,34 +180,34 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
             <!-- Row 1: WANN & WO -->
             <tr>
               <!-- Card 1: WANN -->
-              <td class="fact-stack" width="48%" valign="top" style="background-color: ${forestCard}; border-radius: 8px; border: 1px solid #2D3B2F; border-left: 5px solid ${primaryColor}; padding: 14px 16px;">
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">// WANN</div>
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: #FFFFFF; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${date1}</div>
-                ${date2 ? `<div style="font-size: 13px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${date2}</div>` : ''}
+              <td class="fact-stack" width="48%" valign="top" style="background-color: #FAF8F4; border-radius: 6px; border: 1px solid ${borderLight}; border-left: 4px solid ${forestDark}; padding: 14px 16px;">
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 12px; color: ${textMuted}; letter-spacing: 1.5px;">// WANN</div>
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: ${forestDark}; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${date1}</div>
+                ${date2 ? `<div style="font-size: 12px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${date2}</div>` : ''}
               </td>
               <td width="4%" class="fact-stack" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
               <!-- Card 2: WO -->
-              <td class="fact-stack" width="48%" valign="top" style="background-color: ${forestCard}; border-radius: 8px; border: 1px solid #2D3B2F; border-left: 5px solid ${primaryColor}; padding: 14px 16px;">
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">// WO</div>
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: #FFFFFF; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${loc1}</div>
-                ${loc2 ? `<div style="font-size: 13px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${loc2}</div>` : ''}
+              <td class="fact-stack" width="48%" valign="top" style="background-color: #FAF8F4; border-radius: 6px; border: 1px solid ${borderLight}; border-left: 4px solid ${forestDark}; padding: 14px 16px;">
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 12px; color: ${textMuted}; letter-spacing: 1.5px;">// WO</div>
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: ${forestDark}; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${loc1}</div>
+                ${loc2 ? `<div style="font-size: 12px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${loc2}</div>` : ''}
               </td>
             </tr>
             <tr><td colspan="3" height="12" style="font-size: 1px; line-height: 1px;">&nbsp;</td></tr>
             <!-- Row 2: WER & BEITRAG -->
             <tr>
               <!-- Card 3: WER -->
-              <td class="fact-stack" width="48%" valign="top" style="background-color: ${forestCard}; border-radius: 8px; border: 1px solid #2D3B2F; border-left: 5px solid ${primaryColor}; padding: 14px 16px;">
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">// WER</div>
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: #FFFFFF; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${age1}</div>
-                ${age2 ? `<div style="font-size: 13px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${age2}</div>` : ''}
+              <td class="fact-stack" width="48%" valign="top" style="background-color: #FAF8F4; border-radius: 6px; border: 1px solid ${borderLight}; border-left: 4px solid ${forestDark}; padding: 14px 16px;">
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 12px; color: ${textMuted}; letter-spacing: 1.5px;">// WER</div>
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: ${forestDark}; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${age1}</div>
+                ${age2 ? `<div style="font-size: 12px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${age2}</div>` : ''}
               </td>
               <td width="4%" class="fact-stack" style="font-size: 1px; line-height: 1px;">&nbsp;</td>
               <!-- Card 4: BEITRAG -->
-              <td class="fact-stack" width="48%" valign="top" style="background-color: ${forestCard}; border-radius: 8px; border: 1px solid #2D3B2F; border-left: 5px solid ${primaryColor}; padding: 14px 16px;">
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 13px; color: ${primaryColor}; letter-spacing: 1.5px;">// BEITRAG</div>
-                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: #FFFFFF; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${price1}</div>
-                ${price2 ? `<div style="font-size: 13px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${price2}</div>` : ''}
+              <td class="fact-stack" width="48%" valign="top" style="background-color: #FAF8F4; border-radius: 6px; border: 1px solid ${borderLight}; border-left: 4px solid ${forestDark}; padding: 14px 16px;">
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 12px; color: ${textMuted}; letter-spacing: 1.5px;">// BEITRAG</div>
+                <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 20px; color: ${forestDark}; letter-spacing: 0.5px; margin-top: 4px; line-height: 1.15; text-transform: uppercase;">${price1}</div>
+                ${price2 ? `<div style="font-size: 12px; color: ${textMuted}; font-weight: bold; margin-top: 3px; text-transform: uppercase;">${price2}</div>` : ''}
               </td>
             </tr>
           </table>
@@ -219,7 +217,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
       <!-- Highlights 3-Pills Bar -->
       <tr>
         <td class="mobile-padding" style="padding: 0 32px 30px 32px;">
-          <div style="background-color: ${forestCard}; border: 1px solid #2D3B2F; border-radius: 6px; padding: 12px 16px; text-align: center; font-size: 14px; font-weight: bold; color: ${textLight};">
+          <div style="background-color: #FAF8F4; border: 1px solid ${borderLight}; border-radius: 6px; padding: 12px 16px; text-align: center; font-size: 13px; font-weight: bold; color: ${forestDark};">
             🔥 Lagerfeuer &amp; Action &nbsp;&bull;&nbsp; 🌲 100% Natur &nbsp;&bull;&nbsp; ⚔️ Jugend leitet Jugend
           </div>
         </td>
@@ -227,18 +225,18 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
 
       <!-- Big Primary CTA Button -->
       <tr>
-        <td class="mobile-padding" style="padding: 0 32px 34px 32px;" align="center">
+        <td class="mobile-padding" style="padding: 0 32px 32px 32px;" align="center">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td align="center" style="background-color: ${primaryColor}; border-radius: 8px; box-shadow: 0 6px 18px rgba(255,90,31,0.35);">
-                <a href="${event.registrationUrl}" target="_blank" style="display: block; padding: 18px 28px; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 22px; color: #111713; text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase;">
+              <td align="center" style="background-color: ${primaryActionColor}; border-radius: 6px; box-shadow: 0 4px 14px rgba(255,90,31,0.25);">
+                <a href="${event.registrationUrl}" target="_blank" style="display: block; padding: 18px 28px; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 21px; color: #111713; text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase;">
                   JETZT ONLINE ANMELDEN &rarr;
                 </a>
               </td>
             </tr>
           </table>
-          <div style="font-size: 13px; color: #8D9389; margin-top: 12px; text-align: center; font-family: -apple-system, sans-serif;">
-            Begrenzte Plätze &bull; Direktanmeldung unter <a href="${event.registrationUrl}" style="color: ${primaryColor}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a>
+          <div style="font-size: 13px; color: #68736B; margin-top: 12px; text-align: center; font-family: -apple-system, sans-serif;">
+            Begrenzte Plätze &bull; Direktanmeldung unter <a href="${event.registrationUrl}" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a>
           </div>
         </td>
       </tr>
@@ -246,11 +244,11 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
       <!-- Parents Assurance Trust Box -->
       <tr>
         <td class="mobile-padding" style="padding: 0 32px 32px 32px;">
-          <div style="background-color: ${forestCard}; border-radius: 8px; padding: 20px 22px; border: 1px solid #2e4334; border-left: 5px solid #25D366;">
-            <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 15px; color: #25D366; letter-spacing: 1px; margin-bottom: 8px;">
+          <div style="background-color: #F2F8F4; border-radius: 6px; padding: 20px 22px; border: 1px solid #C8E3D2; border-left: 4px solid #1B4D2E;">
+            <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 14px; color: #1B4D2E; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;">
               // WICHTIGER HINWEIS FÜR DEINE ELTERN:
             </div>
-            <div style="font-size: 14px; line-height: 1.6; color: #D5CFBE;">
+            <div style="font-size: 14px; line-height: 1.6; color: #1E3324;">
               Liebe Eltern, alle Details zu unserem geschulten ehrenamtlichen Leitungsteam (Präventionsschulung &amp; Erste Hilfe), Vollverpflegung, Übernachtung und die vollständige Packliste finden Sie auf unserer Aktionsseite.
             </div>
           </div>
@@ -259,24 +257,24 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
 
       <!-- Footer & CiviCRM Unsubscribe Tokens -->
       <tr>
-        <td style="background-color: #0b0f0c; padding: 28px 32px; border-top: 1px solid #1f2b21; font-size: 12px; line-height: 1.6; color: #8D9389; text-align: center;">
-          <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 15px; color: ${primaryColor}; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;">
+        <td style="background-color: #FAF8F4; padding: 28px 32px; border-top: 1px solid #ECE7DE; font-size: 12px; line-height: 1.6; color: #68736B; text-align: center;">
+          <div style="font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 15px; color: ${forestDark}; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;">
             SMJ REGIO WEGWEISER
           </div>
-          <div style="color: #B0A998; margin-bottom: 4px;">
+          <div style="color: #4A554D; margin-bottom: 4px; font-weight: 500;">
             Schönstatt-Mannesjugend &bull; Diözesen Fulda, Erfurt, Magdeburg &amp; Dresden-Meißen
           </div>
-          <div style="margin-bottom: 8px;">
-            Pater-Kentenich-Weg 3 (Klause 2.0) &bull; 37308 Heilbad Heiligenstadt
+          <div style="margin-bottom: 8px; color: #68736B;">
+            Pater-Kentenich-Weg 3 &bull; 37308 Heilbad Heiligenstadt
           </div>
           <div>
-            Web: <a href="https://smj-wegweiser.de" style="color: #F1EBDD; text-decoration: underline;">smj-wegweiser.de</a> &bull; E-Mail: <a href="mailto:kontakt@smj-wegweiser.de" style="color: #F1EBDD; text-decoration: underline;">kontakt@smj-wegweiser.de</a>
+            Web: <a href="https://smj-wegweiser.de" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a> &bull; E-Mail: <a href="mailto:kontakt@smj-wegweiser.de" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">kontakt@smj-wegweiser.de</a>
           </div>
-          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #1a241c; font-size: 11px; color: #6a746a;">
+          <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid ${borderLight}; font-size: 11px; color: #8D9389;">
             Du erhältst diese Einladung als registrierter Teilnehmer oder Interessent der SMJ Wegweiser.<br>
-            <a href="{action.unsubscribeUrl}" style="color: #8D9389; text-decoration: underline;">Von zukünftigen E-Mails abmelden</a> &bull; 
-            <a href="https://smj-wegweiser.de/impressum" style="color: #8D9389; text-decoration: underline;">Impressum</a> &bull; 
-            <a href="https://smj-wegweiser.de/datenschutz" style="color: #8D9389; text-decoration: underline;">Datenschutz</a>
+            <a href="{action.unsubscribeUrl}" style="color: #68736B; text-decoration: underline;">Von zukünftigen E-Mails abmelden</a> &bull; 
+            <a href="https://smj-wegweiser.de/impressum" style="color: #68736B; text-decoration: underline;">Impressum</a> &bull; 
+            <a href="https://smj-wegweiser.de/datenschutz" style="color: #68736B; text-decoration: underline;">Datenschutz</a>
           </div>
         </td>
       </tr>
