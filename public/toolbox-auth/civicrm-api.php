@@ -16,7 +16,7 @@ ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
-$config = require __DIR__ . '/config.php';
+$config = require dirname(__DIR__, 2) . '/private/config.php';
 
 // Verify signed session cookie
 $rawCookie = $_COOKIE[$config['cookie_name']] ?? null;

@@ -110,7 +110,7 @@ AddCharset UTF-8 .html .css .js .json .xml .ics
 Options -Indexes
 
 # Direkten Web-Download von Konfigurationsdateien sperren
-<FilesMatch "(^\.env(?:\..*)?$|(?:generated-)?config\.php$|\.git$|\.ya?ml$)">
+<FilesMatch "(^\.(?!well-known)|(?:generated-)?config\.php$|\.(?:ya?ml|bak|sql|sqlite|db|pem|key|p12|pfx)$)">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

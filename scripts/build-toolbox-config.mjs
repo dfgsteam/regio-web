@@ -52,10 +52,15 @@ const settings = {
 
 const publicOutput = path.resolve('dist/toolbox-auth/generated-config.php')
 const privateOutput = path.resolve('dist-private/generated-config.php')
-if (!fs.existsSync(path.dirname(publicOutput))) {
-  throw new Error('Astro-Build fehlt: dist/toolbox-auth/ wurde nicht gefunden.')
+const publicToolbox = path.resolve('dist/toolbox')
+const privateToolbox = path.resolve('dist-private/toolbox')
+if (!fs.existsSync(path.dirname(publicOutput)) || !fs.existsSync(publicToolbox)) {
+  throw new Error('Astro-Build fehlt: dist/toolbox-auth/ oder dist/toolbox/ wurde nicht gefunden.')
 }
 fs.mkdirSync(path.dirname(privateOutput), { recursive: true })
+fs.rmSync(privateToolbox, { recursive: true, force: true })
+fs.renameSync(publicToolbox, privateToolbox)
+fs.copyFileSync(new URL('../server/toolbox/config.php', import.meta.url), path.resolve('dist-private/config.php'))
 
 const encoded = Buffer.from(JSON.stringify(settings), 'utf8').toString('base64')
 const privatePhp = `<?php
@@ -69,13 +74,13 @@ return json_decode(base64_decode('${encoded}'), true, 512, JSON_THROW_ON_ERROR);
 fs.writeFileSync(privateOutput, privatePhp, { mode: 0o600 })
 
 const publicPhp = `<?php
-// Generated locator only. Secrets are outside the public web directory.
+// Retired public file. Overwrite any older deployment containing secrets.
 if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === 'generated-config.php') {
     http_response_code(403);
     exit('Access Denied');
 }
-$privateConfig = dirname(__DIR__, 2) . '/private/generated-config.php';
-return is_file($privateConfig) ? require $privateConfig : [];
+http_response_code(403);
+exit('Access Denied');
 `
 fs.writeFileSync(publicOutput, publicPhp, { mode: 0o644 })
 for (const secret of [settings.AUTHENTIK_CLIENT_SECRET, settings.TOOLBOX_APP_SECRET, settings.CIVICRM_API_KEY, settings.CIVICRM_SITE_KEY]) {
@@ -83,4 +88,4 @@ for (const secret of [settings.AUTHENTIK_CLIENT_SECRET, settings.TOOLBOX_APP_SEC
     throw new Error('Geheimnisse dürfen nicht im öffentlichen Build liegen.')
   }
 }
-console.log('Toolbox-Konfiguration außerhalb des Webverzeichnisses erstellt.')
+console.log('Toolbox-Dateien und Konfiguration außerhalb des Webverzeichnisses erstellt.')

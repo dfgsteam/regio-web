@@ -1,6 +1,6 @@
 <?php
-/** Serve only files below /toolbox/ after checking the signed session. */
-$config = require __DIR__ . '/config.php';
+/** Serve private Toolbox files only after checking the signed session. */
+$config = require dirname(__DIR__, 2) . '/private/config.php';
 
 // Apache preserves the original request URI across its internal rewrite.
 // A query parameter must never select a file on disk.
@@ -33,23 +33,23 @@ if (!$isAuthenticated) {
     exit;
 }
 
-$docRoot = realpath(__DIR__ . '/..');
-$toolboxRoot = $docRoot !== false ? realpath($docRoot . '/toolbox') : false;
+$toolboxRoot = realpath(dirname(__DIR__, 2) . '/private/toolbox');
 if ($toolboxRoot === false) {
     http_response_code(503);
     exit('Toolbox derzeit nicht verfügbar.');
 }
 
 $cleanPath = ltrim(preg_replace('#/+#', '/', $urlPath), '/');
-if (is_dir($docRoot . '/' . $cleanPath) && substr($urlPath, -1) !== '/') {
+$relativePath = ltrim(substr($cleanPath, strlen('toolbox')), '/');
+if (is_dir($toolboxRoot . '/' . $relativePath) && substr($urlPath, -1) !== '/') {
     header('Location: ' . $urlPath . '/', true, 301);
     exit;
 }
 
 $candidates = [
-    $docRoot . '/' . rtrim($cleanPath, '/') . '/index.html',
-    $docRoot . '/' . $cleanPath,
-    $docRoot . '/' . $cleanPath . '.html',
+    $toolboxRoot . '/' . rtrim($relativePath, '/') . '/index.html',
+    $toolboxRoot . '/' . $relativePath,
+    $toolboxRoot . '/' . $relativePath . '.html',
 ];
 $mimeTypes = [
     'html' => 'text/html; charset=UTF-8',

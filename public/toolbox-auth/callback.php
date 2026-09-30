@@ -3,7 +3,7 @@
  * Authentik OAuth2 Callback Handler
  * Tauscht den Authorization Code gegen Tokens, prüft User-Daten und setzt das signierte Session-Cookie.
  */
-$config = require __DIR__ . '/config.php';
+$config = require dirname(__DIR__, 2) . '/private/config.php';
 session_set_cookie_params(['secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
 session_start();
 header('Cache-Control: no-store');

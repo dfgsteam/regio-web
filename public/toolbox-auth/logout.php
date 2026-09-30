@@ -3,7 +3,7 @@
  * Authentik Logout Handler
  * Löscht das signierte Session-Cookie und leitet zur Startseite weiter.
  */
-$config = require __DIR__ . '/config.php';
+$config = require dirname(__DIR__, 2) . '/private/config.php';
 
 // Cookie löschen
 setcookie($config['cookie_name'], '', [
