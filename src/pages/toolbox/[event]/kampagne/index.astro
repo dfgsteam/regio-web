@@ -1860,12 +1860,12 @@ const clientData = {
         const msg = isEmail
           ? `Der Mailing-Entwurf für <strong>${currentEvent.title}</strong> wurde in CiviCRM angelegt!<br><br>Zielgruppe: <strong>${groupName}</strong> (${currentRecipients.length} Kontakte).`
           : `Die SMS-Aktivität für <strong>${currentEvent.title}</strong> wurde vorbereitet!`
-        updateDialogSuccess(`${actionTitle} erstellt!`, msg, result.civicrmId, result.civiUrl || 'https://civicrm.regiowegweiser.de')
+        updateDialogSuccess(`${actionTitle} erstellt!`, msg, result.civicrmId, result.civiUrl || 'https://civi.smj-wegweiser.de')
       } else {
-        updateDialogError('Fehler beim Anlegen', result.message || 'CiviCRM Fehler.', 'https://civicrm.regiowegweiser.de')
+        updateDialogError('Fehler beim Anlegen', result.message || 'CiviCRM Fehler.', result.civiUrl || 'https://civi.smj-wegweiser.de')
       }
     } catch (e) {
-      updateDialogError('Netzwerk- oder Serverfehler', e.message || 'CiviCRM Verbindung fehlgeschlagen.', 'https://civicrm.regiowegweiser.de')
+      updateDialogError('Netzwerk- oder Serverfehler', e.message || 'CiviCRM Verbindung fehlgeschlagen.', 'https://civi.smj-wegweiser.de')
     }
   }
 

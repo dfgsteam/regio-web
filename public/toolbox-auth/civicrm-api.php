@@ -264,6 +264,12 @@ if ($action === 'contacts') {
     exit;
 }
 
+// Helper to strip 4-byte UTF-8 emojis that break MySQL tables without utf8mb4
+function sanitizeUtf8ForCivi($text) {
+    if (!is_string($text)) return $text;
+    return preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $text);
+}
+
 // ----------------------------------------------------
 // 3. POST CREATE DRAFT (MAILING OR SMS ACTIVITY)
 // ----------------------------------------------------
@@ -277,11 +283,11 @@ if ($action === 'draft' || $method === 'POST') {
 
     $type = $input['type'] ?? '';
     $groupId = intval($input['groupId'] ?? 0);
-    $campaignName = trim($input['campaignName'] ?? '');
+    $campaignName = sanitizeUtf8ForCivi(trim($input['campaignName'] ?? ''));
 
     if ($type === 'email') {
-        $subject = trim($input['subject'] ?? '');
-        $bodyHtml = $input['bodyHtml'] ?? '';
+        $subject = sanitizeUtf8ForCivi(trim($input['subject'] ?? ''));
+        $bodyHtml = sanitizeUtf8ForCivi($input['bodyHtml'] ?? '');
         if (empty($subject) || empty($bodyHtml) || empty($groupId)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Fehlende Felder für E-Mail-Mailing']);
@@ -305,19 +311,23 @@ if ($action === 'draft' || $method === 'POST') {
                 'success' => true,
                 'type' => 'email',
                 'civicrmId' => $id,
-                'civiUrl' => $civiBaseUrl . '/civicrm/mailing/browse/unscheduled?reset=1',
+                'civiUrl' => $civiBaseUrl . '/civicrm/a/#/mailing/' . $id,
                 'message' => 'Mailing-Entwurf erfolgreich in CiviCRM angelegt (Mailing-ID: ' . $id . ')',
             ]);
             exit;
         } else {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => $res['error_message'] ?? 'Fehler beim Erstellen des Mailings']);
+            echo json_encode([
+                'success' => false,
+                'message' => $res['error_message'] ?? ($res['error'] ?? 'Fehler beim Erstellen des Mailings'),
+                'civiUrl' => $civiBaseUrl . '/civicrm/mailing/browse/unscheduled?reset=1',
+            ]);
             exit;
         }
     }
 
     if ($type === 'sms') {
-        $text = trim($input['text'] ?? '');
+        $text = sanitizeUtf8ForCivi(trim($input['text'] ?? ''));
         if (empty($text) || empty($groupId)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'Fehlende Felder für SMS-Entwurf']);
