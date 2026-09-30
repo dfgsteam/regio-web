@@ -76,7 +76,11 @@ export async function getStaticPaths() {
         dateStr: formatDateRange(event.start, event.end),
         locationStr: (event.location || 'KLAUSE 2.0, HEILIGENSTADT').toUpperCase(),
         ageStr: (formatAgeRange(event.ageMin, event.ageMax) || '9 - 14 JAHRE').toUpperCase(),
-        priceStr: '45 €',
+        priceStr: event.price
+          ? event.price.toUpperCase()
+          : event.category === 'weekend'
+            ? 'INKL. VERPFLEGUNG'
+            : 'AUF ANFRAGE',
         registrationUrl: `${QR_BASE_URL}/abenteuer/${slug}/`,
       }
 

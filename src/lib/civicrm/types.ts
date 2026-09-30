@@ -30,6 +30,7 @@ export interface CiviRecipient {
   hasValidAddress: boolean
   hasValidEmail: boolean
   hasValidPhone: boolean
+  parentNames?: string
 }
 
 export interface CampaignEventData {
@@ -49,6 +50,7 @@ export interface CampaignDraftResult {
   success: boolean
   type: 'email' | 'sms'
   civicrmId?: number
+  civiUrl?: string
   message: string
   details?: Record<string, unknown>
 }

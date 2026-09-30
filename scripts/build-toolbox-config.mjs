@@ -45,6 +45,9 @@ const settings = {
   TOOLBOX_APP_SECRET: appSecret,
   TOOLBOX_REDIRECT_URI: new URL('/toolbox-auth/callback.php', siteUrl).href,
   TOOLBOX_ALLOWED_GROUPS: allowedGroups.join(','),
+  CIVICRM_BASE_URL: process.env.CIVICRM_BASE_URL || 'https://civi.smj-wegweiser.de',
+  CIVICRM_API_KEY: process.env.CIVICRM_API_KEY || '',
+  CIVICRM_SITE_KEY: process.env.CIVICRM_SITE_KEY || '',
 }
 
 const output = path.resolve(process.argv[2] || 'dist/toolbox-auth/generated-config.php')

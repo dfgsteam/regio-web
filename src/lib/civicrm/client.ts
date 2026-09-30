@@ -115,13 +115,20 @@ export async function getGroupRecipients(groupId: number): Promise<CiviRecipient
       first_name?: string
       last_name?: string
       birth_date?: string
+      'email_primary.email'?: string
       email_primary?: { email: string }
+      'phone_primary.phone'?: string
       phone_primary?: { phone: string }
+      'address_primary.street_address'?: string
+      'address_primary.postal_code'?: string
+      'address_primary.city'?: string
       address_primary?: {
         street_address?: string
         postal_code?: string
         city?: string
       }
+      'test.Name_Mutter'?: string
+      'test.Name_Vater'?: string
     }
 
     const contacts = await api4<RawContact>('Contact', 'get', {
@@ -136,9 +143,11 @@ export async function getGroupRecipients(groupId: number): Promise<CiviRecipient
         'address_primary.street_address',
         'address_primary.postal_code',
         'address_primary.city',
+        'test.Name_Mutter',
+        'test.Name_Vater',
       ],
-      where: [['groups', 'CONTAINS', groupId]],
-      limit: 100,
+      where: [['groups', 'IN', [groupId]]],
+      limit: 150,
     })
 
     if (!contacts || contacts.length === 0) {
@@ -148,11 +157,15 @@ export async function getGroupRecipients(groupId: number): Promise<CiviRecipient
     return contacts.map((c) => {
       const firstName = (c.first_name || '').trim() || (c.display_name.split(' ')[0] ?? '')
       const lastName = (c.last_name || '').trim() || (c.display_name.split(' ').slice(1).join(' ') ?? '')
-      const street = c.address_primary?.street_address?.trim() || ''
-      const postalCode = c.address_primary?.postal_code?.trim() || ''
-      const city = c.address_primary?.city?.trim() || ''
-      const email = c.email_primary?.email?.trim() || undefined
-      const phone = c.phone_primary?.phone?.trim() || undefined
+      const street = (c['address_primary.street_address'] || c.address_primary?.street_address || '').trim()
+      const postalCode = (c['address_primary.postal_code'] || c.address_primary?.postal_code || '').trim()
+      const city = (c['address_primary.city'] || c.address_primary?.city || '').trim()
+      const email = (c['email_primary.email'] || c.email_primary?.email || '').trim() || undefined
+      const phone = (c['phone_primary.phone'] || c.phone_primary?.phone || '').trim() || undefined
+
+      const mother = (c['test.Name_Mutter'] || '').trim()
+      const father = (c['test.Name_Vater'] || '').trim()
+      const parentNames = [mother, father].filter(Boolean).join(' & ') || undefined
 
       const hasValidAddress = Boolean(street && postalCode && city)
 
@@ -176,6 +189,7 @@ export async function getGroupRecipients(groupId: number): Promise<CiviRecipient
         displayName: c.display_name,
         salutation: firstName ? `Lieber ${firstName}` : `Lieber Teilnehmer`,
         formalSalutation: lastName ? `Liebe Familie ${lastName}` : `Liebe Eltern`,
+        parentNames,
         age,
         birthDate: c.birth_date,
         address: hasValidAddress
@@ -213,7 +227,8 @@ export async function createCiviMailingDraft(options: {
       success: true,
       type: 'email',
       civicrmId: Math.floor(Math.random() * 900) + 100,
-      message: 'Simulierter CiviCRM-Entwurf angelegt (Offline/Mock-Modus)',
+      civiUrl: `${CIVICRM_BASE_URL}/civicrm/mailing/browse/unscheduled?reset=1`,
+      message: 'Simulierter CiviCRM-Mailing-Entwurf angelegt (Offline/Mock-Modus)',
       details: { subject: options.subject, groupId: options.groupId },
     }
   }
@@ -224,35 +239,42 @@ export async function createCiviMailingDraft(options: {
         name: `${options.campaignName} (Entwurf)`,
         subject: options.subject,
         body_html: options.bodyHtml,
+        replyto_email: 'kontakt@smj-wegweiser.de',
+        from_name: 'SMJ Wegweiser',
         groups: { include: [options.groupId] },
       },
     })
 
     const created = res[0]
+    const civiUrl = `${CIVICRM_BASE_URL}/civicrm/mailing/browse/unscheduled?reset=1`
     return {
       success: true,
       type: 'email',
       civicrmId: created?.id,
-      message: `Mailing-Entwurf erfolgreich in CiviCRM angelegt (ID: ${created?.id})`,
+      civiUrl,
+      message: `Mailing-Entwurf erfolgreich in CiviCRM angelegt (Mailing-ID: ${created?.id})`,
       details: { mailingId: created?.id },
     }
   } catch (error: any) {
     console.error('[civicrm] Failed to create Mailing draft:', error)
-    // Fallback: try creating as MessageTemplate or Activity
+    // Fallback: try creating as Activity
     try {
       const act = await api4<{ id: number }>('Activity', 'create', {
         values: {
+          source_contact_id: 1021,
           activity_type_id: 3, // Email
           subject: `[Entwurf] ${options.subject}`,
           details: options.bodyHtml,
           status_id: 1, // Scheduled / Draft
         },
       })
+      const actId = act[0]?.id
       return {
         success: true,
         type: 'email',
-        civicrmId: act[0]?.id,
-        message: `Als E-Mail-Aktivitätsentwurf in CiviCRM angelegt (ID: ${act[0]?.id})`,
+        civicrmId: actId,
+        civiUrl: `${CIVICRM_BASE_URL}/civicrm/activity?action=view&reset=1&id=${actId}`,
+        message: `Als E-Mail-Aktivitätsentwurf in CiviCRM angelegt (ID: ${actId})`,
       }
     } catch (e2: any) {
       return {
@@ -277,6 +299,7 @@ export async function createCiviSmsDraft(options: {
       success: true,
       type: 'sms',
       civicrmId: Math.floor(Math.random() * 900) + 500,
+      civiUrl: `${CIVICRM_BASE_URL}/civicrm/contact?reset=1`,
       message: 'Simulierter SMS-Entwurf angelegt (Offline/Mock-Modus)',
       details: { text: options.text, groupId: options.groupId },
     }
@@ -285,6 +308,7 @@ export async function createCiviSmsDraft(options: {
   try {
     const act = await api4<{ id: number }>('Activity', 'create', {
       values: {
+        source_contact_id: 1021, // Current API user
         activity_type_id: 4, // SMS activity in CiviCRM
         subject: `SMS: ${options.campaignName}`,
         details: options.text,
@@ -292,12 +316,15 @@ export async function createCiviSmsDraft(options: {
       },
     })
 
+    const actId = act[0]?.id
+    const civiUrl = `${CIVICRM_BASE_URL}/civicrm/activity?action=view&reset=1&id=${actId}`
     return {
       success: true,
       type: 'sms',
-      civicrmId: act[0]?.id,
-      message: `SMS-Entwurf erfolgreich als CiviCRM-Aktivität angelegt (ID: ${act[0]?.id})`,
-      details: { activityId: act[0]?.id },
+      civicrmId: actId,
+      civiUrl,
+      message: `SMS-Entwurf erfolgreich als CiviCRM-Aktivität angelegt (Aktivitäts-ID: ${actId})`,
+      details: { activityId: actId },
     }
   } catch (error: any) {
     console.error('[civicrm] Failed to create SMS draft:', error)

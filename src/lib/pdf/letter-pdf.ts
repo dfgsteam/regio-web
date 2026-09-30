@@ -61,6 +61,23 @@ function wrapText(text: string, maxWidth: number, font: PDFFont, fontSize: numbe
   return lines
 }
 
+let cachedLogoBuffer: Buffer | null = null
+
+async function getLetterLogoBuffer(): Promise<Buffer | null> {
+  if (cachedLogoBuffer) return cachedLogoBuffer
+  try {
+    const { default: sharp } = await import('sharp')
+    const svgPath = path.resolve(process.cwd(), 'public/logo_wegweiser_dark.svg')
+    if (fs.existsSync(svgPath)) {
+      cachedLogoBuffer = await sharp(svgPath, { density: 300 }).png().toBuffer()
+      return cachedLogoBuffer
+    }
+  } catch (e) {
+    console.warn('[letter-pdf] Failed to render logo vector to PNG:', e)
+  }
+  return null
+}
+
 /**
  * Draws a single DIN A4 personalized letter for a recipient.
  */
@@ -87,6 +104,23 @@ export async function appendLetterPage(
   const colorBoxBg = rgb(246 / 255, 243 / 255, 236 / 255)
   const colorBorder = rgb(215 / 255, 206 / 255, 188 / 255)
 
+  // Subtle Logo Watermark in background
+  const logoBuf = await getLetterLogoBuffer()
+  if (logoBuf) {
+    try {
+      const watermarkImg = await pdfDoc.embedPng(logoBuf)
+      page.drawImage(watermarkImg, {
+        x: pageWidth / 2 - 120,
+        y: pageHeight / 2 - 105,
+        width: 240,
+        height: 210,
+        opacity: 0.04,
+      })
+    } catch (e) {
+      console.warn('[letter-pdf] Failed to embed watermark:', e)
+    }
+  }
+
   // 1. DIN 5008 Fold Marks (Falzmarken & Lochmarke)
   // Falzmarke 1: 105mm (297.64 pt from top)
   page.drawLine({
@@ -112,8 +146,26 @@ export async function appendLetterPage(
 
   // 2. Header Branding (Top Right / Top Margin)
   const headerRight = pageWidth - 56.7 // 20mm right margin
+  const brandTitleWidth = fonts.fontAnton.widthOfTextAtSize('SMJ REGIO WEGWEISER', 20)
+  
+  if (logoBuf) {
+    try {
+      const headerLogoImg = await pdfDoc.embedPng(logoBuf)
+      const logoW = 38
+      const logoH = 33.3
+      page.drawImage(headerLogoImg, {
+        x: headerRight - brandTitleWidth - logoW - 10,
+        y: pageHeight - 60,
+        width: logoW,
+        height: logoH,
+      })
+    } catch (e) {
+      console.warn('[letter-pdf] Failed to embed header logo:', e)
+    }
+  }
+
   page.drawText('SMJ REGIO WEGWEISER', {
-    x: headerRight - fonts.fontAnton.widthOfTextAtSize('SMJ REGIO WEGWEISER', 20),
+    x: headerRight - brandTitleWidth,
     y: pageHeight - 48,
     size: 20,
     font: fonts.fontAnton,
@@ -132,7 +184,7 @@ export async function appendLetterPage(
   // 45mm from top = 127.56 pt
   const leftMargin = 56.7 // 20mm from left
   const senderLineY = pageHeight - 128
-  const senderLineText = 'SMJ Regio Wegweiser • Kleingartenstr. 14 • 37308 Heiligenstadt'
+  const senderLineText = 'SMJ Regio Wegweiser • Pater-Kentenich-Weg 3 • Klause 2.0 • 37308 Heilbad Heiligenstadt'
   page.drawText(senderLineText, {
     x: leftMargin,
     y: senderLineY,
@@ -178,29 +230,50 @@ export async function appendLetterPage(
 
   // 5. Info & Date Block (Right side at 220 pt from top)
   const today = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date())
-  const infoX = headerRight - 150
-  const infoY = pageHeight - 145
+  const infoX = headerRight - 165
+  const infoY = pageHeight - 138
 
-  page.drawText('Heiligenstadt, ' + today, {
+  page.drawText('SMJ Regio Wegweiser', {
     x: infoX,
     y: infoY,
     size: 9.5,
+    font: fonts.fontAnton,
+    color: colorForest,
+  })
+  page.drawText('Pater-Kentenich-Weg 3', {
+    x: infoX,
+    y: infoY - 12,
+    size: 8,
     font: fonts.fontInter,
     color: colorForest,
   })
-  page.drawText('Aktions-Kampagne 2026', {
+  page.drawText('Klause 2.0', {
     x: infoX,
-    y: infoY - 14,
-    size: 9,
-    font: fonts.fontMono,
-    color: colorOrange,
+    y: infoY - 22,
+    size: 8,
+    font: fonts.fontInter,
+    color: colorForest,
+  })
+  page.drawText('37308 Heilbad Heiligenstadt', {
+    x: infoX,
+    y: infoY - 32,
+    size: 8,
+    font: fonts.fontInter,
+    color: colorForest,
+  })
+  page.drawText('Datum: ' + today, {
+    x: infoX,
+    y: infoY - 46,
+    size: 8,
+    font: fonts.fontInter,
+    color: colorMuted,
   })
   page.drawText('Web: smj-wegweiser.de', {
     x: infoX,
-    y: infoY - 26,
-    size: 8.5,
-    font: fonts.fontInter,
-    color: colorMuted,
+    y: infoY - 57,
+    size: 8,
+    font: fonts.fontMono,
+    color: colorOrange,
   })
 
   // 6. Subject Line (Betreffzeile) at ~280 pt from top
@@ -423,7 +496,7 @@ export async function appendLetterPage(
     thickness: 0.5,
     color: colorBorder,
   })
-  page.drawText('SMJ Regio Wegweiser • Katholische Schönstatt-Mannesjugend • smj-wegweiser.de • kontakt@smj-wegweiser.de', {
+  page.drawText('SMJ Regio Wegweiser • Pater-Kentenich-Weg 3 (Klause 2.0) • 37308 Heilbad Heiligenstadt • smj-wegweiser.de', {
     x: leftMargin,
     y: footerY,
     size: 7.5,

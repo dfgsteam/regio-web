@@ -57,11 +57,20 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
       
       <!-- Top Header Bar -->
       <tr>
-        <td style="background-color: ${forestDark}; padding: 24px 32px; border-bottom: 3px solid ${primaryColor};">
+        <td style="background-color: ${forestDark}; padding: 22px 32px; border-bottom: 3px solid ${primaryColor};">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td valign="middle" align="left">
-                <span style="font-family: Impact, -apple-system, sans-serif; font-size: 20px; color: ${primaryColor}; letter-spacing: 2px; text-transform: uppercase;">SMJ REGIO WEGWEISER</span>
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td valign="middle" style="padding-right: 12px;">
+                      <img src="https://smj-wegweiser.de/logo_wegweiser_white.svg" alt="SMJ Logo" width="38" height="33" style="display: block; width: 38px; height: 33px; border: 0;" />
+                    </td>
+                    <td valign="middle">
+                      <span style="font-family: Impact, -apple-system, sans-serif; font-size: 20px; color: ${primaryColor}; letter-spacing: 2px; text-transform: uppercase;">SMJ REGIO WEGWEISER</span>
+                    </td>
+                  </tr>
+                </table>
               </td>
               <td valign="middle" align="right">
                 <span style="display: inline-block; background-color: ${primaryColor}; color: #111713; font-family: Impact, -apple-system, sans-serif; font-size: 13px; font-weight: bold; padding: 4px 10px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase;">${event.category || 'AKTION'}</span>
@@ -169,6 +178,9 @@ export function generateCampaignEmailHtml(event: CampaignEventData): string {
         <td style="background-color: #F0ECE1; padding: 24px 32px; border-top: 1px solid #DDD3C1; font-size: 12px; line-height: 1.5; color: #667066; text-align: center;">
           <div style="font-weight: bold; color: ${forestDark}; margin-bottom: 4px;">
             SMJ Regio Wegweiser &bull; Katholische Schönstatt-Mannesjugend
+          </div>
+          <div style="margin-bottom: 4px;">
+            Pater-Kentenich-Weg 3 (Klause 2.0) &bull; 37308 Heilbad Heiligenstadt
           </div>
           <div>
             Web: <a href="https://smj-wegweiser.de" style="color: ${forestDark}; text-decoration: underline;">smj-wegweiser.de</a> &bull; E-Mail: kontakt@smj-wegweiser.de

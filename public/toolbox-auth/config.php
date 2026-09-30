@@ -37,4 +37,7 @@ return [
     'cookie_name' => 'smj_toolbox_session',
     'cookie_expire' => 8 * 3600,
     'allowed_groups' => $allowedGroups,
+    'civicrm_base_url' => rtrim((string) ($settings['CIVICRM_BASE_URL'] ?? 'https://civi.smj-wegweiser.de'), '/'),
+    'civicrm_api_key' => (string) ($settings['CIVICRM_API_KEY'] ?? ''),
+    'civicrm_site_key' => (string) ($settings['CIVICRM_SITE_KEY'] ?? ''),
 ];
