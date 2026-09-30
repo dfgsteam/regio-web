@@ -1,0 +1,1821 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro'
+import ToolboxHeader from '../../../../components/navigation/ToolboxHeader.astro'
+import Logo from '../../../../components/common/Logo.astro'
+import {
+  Mail,
+  Send,
+  Copy,
+  Users,
+  Printer,
+  FileText,
+  Smartphone,
+  Calendar,
+  MapPin,
+  QrCode,
+  Sparkles,
+  LayoutGrid,
+  ExternalLink,
+  CreditCard,
+  CircleAlert,
+  CircleCheck,
+  Loader,
+  X,
+  Download,
+  SlidersHorizontal,
+  Square,
+  ArrowLeft,
+} from '@lucide/astro'
+import { eventProvider, formatDateRange, formatAgeRange, getSlugVariants } from '../../../../lib/events'
+import { getAllCamps } from '../../../../lib/camps'
+import { getCampaignGroups, getGroupRecipients } from '../../../../lib/civicrm/client'
+import { generateCampaignEmailHtml } from '../../../../lib/civicrm/email-template'
+import { generateCampaignSmsText } from '../../../../lib/civicrm/sms-template'
+import type { CampaignEventData, CiviRecipient } from '../../../../lib/civicrm/types'
+import { QR_BASE_URL } from '../../../../lib/qr-url'
+import { splitFact } from '../../../../lib/campaigns/split-fact'
+
+export async function getStaticPaths() {
+  const [events, camps, groups] = await Promise.all([
+    eventProvider.getEvents(),
+    getAllCamps(),
+    getCampaignGroups(),
+  ])
+
+  // Prepare unified events list
+  const campaignEvents: CampaignEventData[] = [
+    ...camps.map((c) => ({
+      id: `zeltlager-${c.data.year}`,
+      title: c.data.title.toUpperCase(),
+      subtitle: (c.data.motto || `Sommerzeltlager ${c.data.year}`).toUpperCase(),
+      category: 'ZELTLAGER',
+      dateStr: formatDateRange(c.data.date.start, c.data.date.end),
+      locationStr: c.data.location?.name || 'Wiesenthal bei Thalwenden',
+      ageStr: formatAgeRange(c.data.age?.min, c.data.age?.max) || '9 – 14 Jahre',
+      priceStr: (c.data as any).price || '190 €',
+      registrationUrl: `${QR_BASE_URL}/abenteuer/zeltlager-${c.data.year}/`,
+    })),
+    ...events.map((e) => ({
+      id: e.slug,
+      title: e.title.toUpperCase(),
+      subtitle: (e.teaser || 'Aktion & Abenteuer der SMJ Regio Wegweiser').toUpperCase(),
+      category: e.category === 'weekend' ? 'WOCHENENDE' : 'AKTION',
+      dateStr: formatDateRange(e.start, e.end),
+      locationStr: e.location || 'Klause 2.0, Heiligenstadt',
+      ageStr: formatAgeRange(e.ageMin, e.ageMax) || '9 – 14 Jahre',
+      priceStr: e.price || (e.category === 'weekend' ? '45 €' : 'Kostenlos'),
+      registrationUrl: `${QR_BASE_URL}/abenteuer/${e.slug}/`,
+    })),
+  ]
+
+  // Pre-fetch recipients for all available campaign groups
+  const groupRecipientsMap: Record<number, CiviRecipient[]> = {}
+  await Promise.all(
+    groups.map(async (g) => {
+      groupRecipientsMap[g.id] = await getGroupRecipients(g.id)
+    })
+  )
+
+  const paths: {
+    params: { event: string }
+    props: {
+      currentEvent: CampaignEventData
+      allEvents: CampaignEventData[]
+      groups: typeof groups
+      groupRecipientsMap: typeof groupRecipientsMap
+    }
+  }[] = []
+
+  const seen = new Set<string>()
+
+  // 1. Direct campaign events
+  for (const ev of campaignEvents) {
+    if (!seen.has(ev.id)) {
+      seen.add(ev.id)
+      paths.push({
+        params: { event: ev.id },
+        props: {
+          currentEvent: ev,
+          allEvents: campaignEvents,
+          groups,
+          groupRecipientsMap,
+        },
+      })
+    }
+  }
+
+  // 2. Slug variants (e.g. actionwochenende-3-2026 vs actionwochenende-3)
+  for (const event of events) {
+    const variants = getSlugVariants(event.slug, event.title, event.start.getFullYear())
+    for (const slug of variants) {
+      if (!seen.has(slug)) {
+        seen.add(slug)
+        const baseEv = campaignEvents.find((c) => c.id === event.slug) || campaignEvents[0]!
+        paths.push({
+          params: { event: slug },
+          props: {
+            currentEvent: { ...baseEv, id: slug },
+            allEvents: campaignEvents,
+            groups,
+            groupRecipientsMap,
+          },
+        })
+      }
+    }
+  }
+
+  return paths
+}
+
+const { currentEvent, allEvents, groups, groupRecipientsMap } = Astro.props
+
+const initialGroup = groups[0] || { id: 12, title: 'Smartgruppe 12 (Alter 9-15)', isSmart: true }
+const initialRecipients = groupRecipientsMap[initialGroup.id] || []
+
+// Pre-generate initial Email & SMS drafts
+const initialEmailHtml = generateCampaignEmailHtml(currentEvent)
+const initialSmsObj = generateCampaignSmsText(currentEvent)
+const initialSms = initialSmsObj.text
+
+// Fact split for letter preview
+const [initDate1, initDate2] = splitFact('WANN', currentEvent.dateStr)
+const [initLoc1, initLoc2] = splitFact('WO', currentEvent.locationStr)
+const [initAge1, initAge2] = splitFact('WER', currentEvent.ageStr)
+
+// Ready-to-copy Instagram caption
+const initialCaption = `🏕️ ${currentEvent.title} // RAUS. INS ABENTEUER.
+
+${currentEvent.subtitle ? `🔥 ${currentEvent.subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft, Natur und unvergessliche Tage draußen?
+
+📅 Wann: ${currentEvent.dateStr}
+📍 Wo: ${currentEvent.locationStr}
+👥 Wer: ${currentEvent.ageStr}
+💰 Beitrag: ${currentEvent.priceStr}
+
+👉 Alle Infos & Online-Anmeldung über den Link in der Bio oder direkt unter:
+🔗 ${currentEvent.registrationUrl}
+
+#smj #regiowegweiser #jugendleitetjugend #eichsfeld #abenteuer #zeltlager #outdoor #lagerfeuer`
+
+// Serializable data bundle for client interactivity
+const clientData = {
+  events: allEvents,
+  currentEvent,
+  groups,
+  groupRecipientsMap,
+  defaultRecipients: initialRecipients,
+  defaultEmailHtml: initialEmailHtml,
+  defaultSms: initialSms,
+  initialCaption,
+}
+---
+
+<BaseLayout
+  title={`Kampagne: ${currentEvent.title} – Leiter-Toolbox`}
+  description={`All-in-One Kampagnen-Zentrale für ${currentEvent.title}: A4-Plakate, Instagram Stories, DIN 5008 Postbriefe und CiviCRM E-Mail & SMS.`}
+  noIndex={true}
+>
+  <ToolboxHeader activeNav="kampagnen" currentTitle={`Kampagne · ${currentEvent.title}`} backHref="/toolbox/" backLabel="Zurück zur Toolbox" />
+
+  <main class="min-h-screen bg-forest-950 text-paper pb-24">
+
+    <!-- Top Sticky Bar: Event Switcher & Quick Action Links -->
+    <div class="sticky top-14 z-40 bg-forest-950/95 border-b border-paper/15 backdrop-blur-md px-4 py-3 shadow-md">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Left: Breadcrumb & Switcher -->
+        <div class="flex items-center gap-3">
+          <a
+            href="/toolbox/"
+            class="text-paper/60 hover:text-orange text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+          >
+            <ArrowLeft class="w-3.5 h-3.5 text-orange" />
+            <span class="hidden sm:inline">Alle Aktionen</span>
+          </a>
+          <span class="text-paper/20">/</span>
+
+          <!-- Fast Event Dropdown Switcher -->
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-xs uppercase font-bold text-orange hidden md:inline">Aktion:</span>
+            <select
+              id="header-event-select"
+              class="bg-forest-900 border border-paper/25 text-paper font-mono text-xs px-3 py-1.5 rounded-xs focus:outline-none focus:border-orange cursor-pointer max-w-[260px] sm:max-w-xs truncate"
+            >
+              {allEvents.map((ev) => (
+                <option value={ev.id} selected={ev.id === currentEvent.id}>
+                  {ev.title} ({ev.dateStr})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <!-- Right: 1-Click Fast Downloads -->
+        <div class="flex items-center gap-2">
+          <a
+            href={`/toolbox/flyers/${currentEvent.id}.pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-forest-900 border border-paper/25 text-paper hover:border-orange hover:text-orange text-[11px] font-mono font-bold uppercase rounded-xs transition-colors"
+            title="Druckfertiges A4-Plakat als PDF öffnen"
+          >
+            <FileText class="w-3.5 h-3.5 text-orange" />
+            <span>A4 Plakat</span>
+          </a>
+
+          <a
+            href={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+            download={`smj-${currentEvent.id}-story.png`}
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-forest-900 border border-paper/25 text-paper hover:border-orange hover:text-orange text-[11px] font-mono font-bold uppercase rounded-xs transition-colors"
+            title="Instagram Story (9:16) in 1080px herunterladen"
+          >
+            <Smartphone class="w-3.5 h-3.5 text-orange" />
+            <span>Story</span>
+          </a>
+
+          <a
+            id="header-btn-letter-pdf"
+            href={`/toolbox/briefe/${currentEvent.id}-muster.pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-forest-900 border border-paper/25 text-paper hover:border-orange hover:text-orange text-[11px] font-mono font-bold uppercase rounded-xs transition-colors"
+            title="DIN 5008 Brief als PDF herunterladen"
+          >
+            <Printer class="w-3.5 h-3.5 text-orange" />
+            <span>Brief (PDF)</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+      <!-- Event Header Hero Banner -->
+      <div class="border border-paper/20 bg-forest-900/80 p-6 sm:p-8 rounded-xs mb-8 shadow-xl relative overflow-hidden">
+        
+        <!-- Subtle Background Watermark -->
+        <div class="absolute right-4 bottom-0 opacity-5 pointer-events-none select-none">
+          <Logo variant="watermark" tone="light" size="lg" />
+        </div>
+
+        <div class="relative z-10">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+            <span class="inline-flex items-center gap-2 font-mono text-xs uppercase font-bold tracking-widest text-orange">
+              <span class="inline-block w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+              <span>// KAMPAGNEN-ZENTRALE &bull; {currentEvent.category}</span>
+            </span>
+
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs text-paper/50">CiviCRM Sync aktiv</span>
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+            </div>
+          </div>
+
+          <h1 class="font-display text-3xl sm:text-5xl uppercase tracking-tight text-paper text-balance">
+            {currentEvent.title}
+          </h1>
+
+          <p class="font-mono text-xs sm:text-sm text-paper/70 mt-1 max-w-3xl">
+            {currentEvent.subtitle}
+          </p>
+
+          <!-- Key Badges Strip -->
+          <div class="mt-6 flex flex-wrap items-center gap-2 sm:gap-4 font-mono text-xs">
+            <div class="bg-forest-950/90 border border-paper/20 px-3 py-1.5 rounded-xs flex items-center gap-1.5">
+              <Calendar class="w-3.5 h-3.5 text-orange" />
+              <span class="text-paper/50">Termin:</span>
+              <strong class="text-paper">{currentEvent.dateStr}</strong>
+            </div>
+
+            <div class="bg-forest-950/90 border border-paper/20 px-3 py-1.5 rounded-xs flex items-center gap-1.5">
+              <MapPin class="w-3.5 h-3.5 text-orange" />
+              <span class="text-paper/50">Ort:</span>
+              <strong class="text-paper">{currentEvent.locationStr}</strong>
+            </div>
+
+            <div class="bg-forest-950/90 border border-paper/20 px-3 py-1.5 rounded-xs flex items-center gap-1.5">
+              <Users class="w-3.5 h-3.5 text-orange" />
+              <span class="text-paper/50">Alter:</span>
+              <strong class="text-paper">{currentEvent.ageStr}</strong>
+            </div>
+
+            <div class="bg-forest-950/90 border border-paper/20 px-3 py-1.5 rounded-xs flex items-center gap-1.5">
+              <CreditCard class="w-3.5 h-3.5 text-orange" />
+              <span class="text-paper/50">Beitrag:</span>
+              <strong class="text-orange">{currentEvent.priceStr}</strong>
+            </div>
+
+            <a
+              href={currentEvent.registrationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="bg-orange/15 border border-orange/40 hover:bg-orange hover:text-forest-950 px-3 py-1.5 rounded-xs text-orange font-bold flex items-center gap-1 transition-all"
+            >
+              <ExternalLink class="w-3.5 h-3.5" />
+              <span>Anmeldeseite ↗</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CiviCRM Smartgroup Target Selector Banner -->
+      <div class="bg-forest-900/60 border border-paper/20 p-5 rounded-xs mb-8 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-md">
+        
+        <div class="flex-1">
+          <label for="group-select" class="block font-mono text-xs font-bold uppercase text-orange mb-1.5 flex items-center gap-2">
+            <Users class="w-4 h-4 text-orange" />
+            <span>CiviCRM Zielgruppe &amp; Smartgruppe auswählen</span>
+          </label>
+          <select
+            id="group-select"
+            class="w-full bg-forest-950 border border-paper/30 text-paper font-mono text-sm px-3.5 py-2.5 rounded-xs focus:outline-none focus:border-orange cursor-pointer"
+          >
+            {groups.map((g) => (
+              <option value={g.id} selected={g.id === initialGroup.id}>
+                {g.title} {g.isSmart ? '⚡ [Smartgruppe]' : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class="flex items-center gap-4 bg-forest-950/80 border border-paper/15 p-3.5 rounded-xs font-mono text-xs">
+          <div>
+            <div class="text-paper/50 text-[10px] uppercase">Empfänger</div>
+            <strong id="counter-total" class="text-orange text-base font-bold">{initialRecipients.length}</strong>
+          </div>
+          <div class="w-px h-8 bg-paper/15"></div>
+          <div>
+            <div class="text-paper/50 text-[10px] uppercase">Postadresse</div>
+            <strong id="counter-post" class="text-green-400 text-base font-bold">
+              {initialRecipients.filter((r) => r.hasValidAddress).length}
+            </strong>
+          </div>
+          <div class="w-px h-8 bg-paper/15"></div>
+          <div>
+            <div class="text-paper/50 text-[10px] uppercase">E-Mail</div>
+            <strong id="counter-email" class="text-blue-400 text-base font-bold">
+              {initialRecipients.filter((r) => r.hasValidEmail).length}
+            </strong>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MAIN TABS CONTAINER: All Channels Integrated on One Page -->
+      <div class="border border-paper/20 bg-forest-900/60 rounded-xs overflow-hidden shadow-2xl">
+        
+        <!-- Tab Bar -->
+        <div class="border-b border-paper/20 bg-forest-950/90 flex flex-wrap items-center px-3 pt-3 gap-2 overflow-x-auto">
+          
+          <!-- Tab 1: Crossmedia Showcase -->
+          <button
+            type="button"
+            class="tab-btn active flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-orange text-orange bg-forest-900/80 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-showcase"
+          >
+            <LayoutGrid class="w-4 h-4" />
+            <span>1. Übersicht (Alle Kanäle)</span>
+          </button>
+
+          <!-- Tab 2: Social Media Studio -->
+          <button
+            type="button"
+            class="tab-btn flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-social"
+          >
+            <Smartphone class="w-4 h-4" />
+            <span>2. Social Story &amp; Feed</span>
+          </button>
+
+          <!-- Tab 3: A4 Plakat & Flyer -->
+          <button
+            type="button"
+            class="tab-btn flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-flyer"
+          >
+            <FileText class="w-4 h-4" />
+            <span>3. A4 Plakat / Flyer</span>
+          </button>
+
+          <!-- Tab 4: Persönlicher Brief -->
+          <button
+            type="button"
+            class="tab-btn flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-letter"
+          >
+            <Printer class="w-4 h-4" />
+            <span>4. Persönliche Postbriefe</span>
+          </button>
+
+          <!-- Tab 5: E-Mail Kampagne -->
+          <button
+            type="button"
+            class="tab-btn flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-email"
+          >
+            <Mail class="w-4 h-4" />
+            <span>5. E-Mail Sammelnachricht</span>
+          </button>
+
+          <!-- Tab 6: SMS Vorbereitung -->
+          <button
+            type="button"
+            class="tab-btn flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-sms"
+          >
+            <Send class="w-4 h-4" />
+            <span>6. SMS Einladung</span>
+          </button>
+
+          <!-- Tab 7: Empfängerliste -->
+          <button
+            type="button"
+            class="tab-btn flex items-center gap-2 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wider transition-all border-b-2 border-transparent text-paper/60 hover:text-paper hover:bg-forest-900/40 rounded-t-xs cursor-pointer"
+            data-target="tab-panel-recipients"
+          >
+            <Users class="w-4 h-4" />
+            <span>7. Empfänger (<span id="tab-recipient-count">{initialRecipients.length}</span>)</span>
+          </button>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 1: CROSSMEDIA SHOWCASE OVERVIEW -->
+        <!-- ========================================== -->
+        <div id="tab-panel-showcase" class="tab-panel p-6 sm:p-8 space-y-8">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <LayoutGrid class="w-6 h-6 text-orange" />
+                <span>Crossmedia Kampagnen-Showcase</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Alle Kanäle für <strong class="text-paper">{currentEvent.title}</strong> synchronisiert.
+              </p>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="btn-trigger-email-draft px-4 py-2 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors flex items-center gap-2 cursor-pointer shadow-md"
+              >
+                <Mail class="w-4 h-4" />
+                <span>E-Mail in CiviCRM anlegen</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Main Output Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <!-- Card 1: Social Media Story & Feed -->
+            <div class="border-2 border-paper/20 bg-forest-950 p-5 rounded-xs flex flex-col justify-between hover:border-orange transition-all shadow-md group">
+              <div>
+                <div class="flex items-center justify-between mb-3 font-mono text-[10px] text-paper/60 uppercase">
+                  <span class="text-orange font-bold flex items-center gap-1">
+                    <Smartphone class="w-3.5 h-3.5" />
+                    <span>Social Media</span>
+                  </span>
+                  <span>9:16 &bull; 1:1 HD</span>
+                </div>
+
+                <h3 class="font-display text-xl uppercase tracking-wide text-paper mb-1">
+                  Story &amp; Feed
+                </h3>
+                <p class="font-mono text-xs text-paper/60 mb-4">
+                  1080px Grafiken für Instagram, WhatsApp Status und Facebook.
+                </p>
+
+                <!-- Thumbnail -->
+                <div class="bg-forest-900 border border-paper/15 p-2 rounded-xs mb-4 flex items-center justify-center">
+                  <img
+                    src={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+                    alt="Story Vorschau"
+                    class="h-44 object-contain rounded-xs shadow"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-paper/10 font-mono text-xs">
+                <button
+                  type="button"
+                  class="w-full quick-switch-tab px-3 py-2 bg-forest-900 hover:bg-forest-800 text-paper font-bold uppercase rounded-xs border border-paper/20 flex items-center justify-center gap-1.5 cursor-pointer"
+                  data-target="tab-panel-social"
+                >
+                  <SlidersHorizontal class="w-3.5 h-3.5 text-orange" />
+                  <span>Im Studio anpassen &rarr;</span>
+                </button>
+                <a
+                  href={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+                  download={`smj-${currentEvent.id}-story.png`}
+                  class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-orange text-forest-950 font-bold uppercase rounded-xs hover:bg-paper transition-colors"
+                >
+                  <Download class="w-3.5 h-3.5" />
+                  <span>Story herunterladen</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Card 2: A4 Plakat / Flyer -->
+            <div class="border-2 border-paper/20 bg-forest-950 p-5 rounded-xs flex flex-col justify-between hover:border-orange transition-all shadow-md group">
+              <div>
+                <div class="flex items-center justify-between mb-3 font-mono text-[10px] text-paper/60 uppercase">
+                  <span class="text-orange font-bold flex items-center gap-1">
+                    <FileText class="w-3.5 h-3.5" />
+                    <span>Druck / Aushang</span>
+                  </span>
+                  <span>DIN A4 PDF</span>
+                </div>
+
+                <h3 class="font-display text-xl uppercase tracking-wide text-paper mb-1">
+                  A4 Plakat &amp; Flyer
+                </h3>
+                <p class="font-mono text-xs text-paper/60 mb-4">
+                  Druckfertig mit Schnittmarken, QR-Code und Abreiß-Informationen.
+                </p>
+
+                <!-- Thumbnail -->
+                <div class="bg-paper text-forest-950 p-3 rounded-xs border-2 border-paper/40 mb-4 font-mono text-[7px] leading-tight select-none">
+                  <div class="flex items-center justify-between border-b border-forest-950/20 pb-1 mb-1.5">
+                    <span class="font-bold text-[8px] uppercase">SMJ Wegweiser</span>
+                    <span class="text-orange font-bold">A4</span>
+                  </div>
+                  <div class="font-display text-[10px] uppercase truncate">{currentEvent.title}</div>
+                  <div class="text-gray-700 truncate">{currentEvent.dateStr} &bull; {currentEvent.locationStr}</div>
+                  <div class="mt-2 pt-1 border-t border-forest-950/15 flex items-center justify-between">
+                    <span class="text-orange font-bold">QR-Code Anmeldung</span>
+                    <QrCode class="w-3.5 h-3.5 text-forest-950" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-paper/10 font-mono text-xs">
+                <button
+                  type="button"
+                  class="w-full quick-switch-tab px-3 py-2 bg-forest-900 hover:bg-forest-800 text-paper font-bold uppercase rounded-xs border border-paper/20 flex items-center justify-center gap-1.5 cursor-pointer"
+                  data-target="tab-panel-flyer"
+                >
+                  <FileText class="w-3.5 h-3.5 text-orange" />
+                  <span>Plakat-Vorschau &rarr;</span>
+                </button>
+                <a
+                  href={`/toolbox/flyers/${currentEvent.id}.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-orange text-forest-950 font-bold uppercase rounded-xs hover:bg-paper transition-colors"
+                >
+                  <Download class="w-3.5 h-3.5" />
+                  <span>PDF herunterladen</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Card 3: Persönlicher Postbrief -->
+            <div class="border-2 border-paper/20 bg-forest-950 p-5 rounded-xs flex flex-col justify-between hover:border-orange transition-all shadow-md group">
+              <div>
+                <div class="flex items-center justify-between mb-3 font-mono text-[10px] text-paper/60 uppercase">
+                  <span class="text-orange font-bold flex items-center gap-1">
+                    <Printer class="w-3.5 h-3.5" />
+                    <span>Postversand</span>
+                  </span>
+                  <span>DIN 5008</span>
+                </div>
+
+                <h3 class="font-display text-xl uppercase tracking-wide text-paper mb-1">
+                  Persönliche Briefe
+                </h3>
+                <p class="font-mono text-xs text-paper/60 mb-4">
+                  Personalisierte Einladung direkt an das Kind im Fensterkuvert.
+                </p>
+
+                <!-- Mini Letter Preview -->
+                <div class="bg-paper text-forest-950 p-3 rounded-xs border-2 border-paper/40 mb-4 font-mono text-[7px] leading-tight select-none">
+                  <div class="text-[5px] text-gray-500 border-b border-gray-200 pb-0.5 mb-1 truncate">
+                    SMJ Wegweiser &bull; Pater-Kentenich-Weg 3 &bull; 37308 Heilbad Heiligenstadt
+                  </div>
+                  <div class="font-bold text-[7px] truncate">Lukas Mustermann</div>
+                  <div class="text-[6px] text-gray-600 truncate">Am Berg 12, Heiligenstadt</div>
+                  <div class="mt-1.5 pt-1 border-t border-gray-200">
+                    <div class="font-bold text-[7px] text-orange truncate">{currentEvent.title}</div>
+                    <div class="text-[6px] text-gray-700">WANN: {currentEvent.dateStr}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-paper/10 font-mono text-xs">
+                <button
+                  type="button"
+                  class="w-full quick-switch-tab px-3 py-2 bg-forest-900 hover:bg-forest-800 text-paper font-bold uppercase rounded-xs border border-paper/20 flex items-center justify-center gap-1.5 cursor-pointer"
+                  data-target="tab-panel-letter"
+                >
+                  <Printer class="w-3.5 h-3.5 text-orange" />
+                  <span>Brief-Vorschau &rarr;</span>
+                </button>
+                <a
+                  href={`/toolbox/briefe/${currentEvent.id}-batch.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-orange text-forest-950 font-bold uppercase rounded-xs hover:bg-paper transition-colors"
+                >
+                  <Download class="w-3.5 h-3.5" />
+                  <span>Sammeldruck (Batch)</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Card 4: E-Mail & SMS Kampagne -->
+            <div class="border-2 border-paper/20 bg-forest-950 p-5 rounded-xs flex flex-col justify-between hover:border-orange transition-all shadow-md group">
+              <div>
+                <div class="flex items-center justify-between mb-3 font-mono text-[10px] text-paper/60 uppercase">
+                  <span class="text-orange font-bold flex items-center gap-1">
+                    <Mail class="w-3.5 h-3.5" />
+                    <span>Digital</span>
+                  </span>
+                  <span>HTML &bull; CiviCRM</span>
+                </div>
+
+                <h3 class="font-display text-xl uppercase tracking-wide text-paper mb-1">
+                  E-Mail &amp; SMS
+                </h3>
+                <p class="font-mono text-xs text-paper/60 mb-4">
+                  Direkter Entwurf in CiviCRM an alle Kontakte der Smartgruppe.
+                </p>
+
+                <!-- Mini Email Preview -->
+                <div class="bg-forest-900 border border-paper/15 p-2.5 rounded-xs mb-4 font-mono text-[7px] space-y-1">
+                  <div class="bg-forest-950 p-1.5 rounded-xs border border-paper/10">
+                    <div class="text-orange font-bold text-[8px] uppercase">Einladung: {currentEvent.title}</div>
+                    <div class="text-paper/60 text-[6px]">Hallo Lukas! Bereit fürs Abenteuer?</div>
+                  </div>
+                  <div class="bg-orange/20 text-orange font-bold p-1 text-center rounded-xs text-[6.5px] uppercase">
+                    Jetzt online anmelden &rarr;
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-paper/10 font-mono text-xs">
+                <button
+                  type="button"
+                  class="w-full quick-switch-tab px-3 py-2 bg-forest-900 hover:bg-forest-800 text-paper font-bold uppercase rounded-xs border border-paper/20 flex items-center justify-center gap-1.5 cursor-pointer"
+                  data-target="tab-panel-email"
+                >
+                  <Mail class="w-3.5 h-3.5 text-orange" />
+                  <span>E-Mail ansehen &rarr;</span>
+                </button>
+                <button
+                  type="button"
+                  class="btn-trigger-email-draft w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-orange text-forest-950 font-bold uppercase rounded-xs hover:bg-paper transition-colors cursor-pointer"
+                >
+                  <Send class="w-3.5 h-3.5" />
+                  <span>In CiviCRM anlegen</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 2: SOCIAL MEDIA STUDIO (STORY & FEED) -->
+        <!-- ========================================== -->
+        <div id="tab-panel-social" class="tab-panel hidden p-6 sm:p-8 space-y-8">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <Smartphone class="w-6 h-6 text-orange" />
+                <span>Instagram Story &amp; Feed Studio</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Wähle dein Format (9:16 Story, 1:1 Feed) und Farbschema für gestochen scharfe Grafiken in 1080px.
+              </p>
+            </div>
+
+            <!-- Format Switcher Buttons -->
+            <div class="flex items-center gap-2 bg-forest-950 p-1 border border-paper/20 rounded-xs">
+              <button
+                type="button"
+                class="social-format-btn active flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs uppercase font-bold transition-all cursor-pointer bg-orange text-forest-950"
+                data-format="story"
+              >
+                <Smartphone class="h-3.5 w-3.5" />
+                <span>Story (9:16)</span>
+              </button>
+              <button
+                type="button"
+                class="social-format-btn flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs uppercase font-bold text-paper/70 transition-all hover:text-paper cursor-pointer"
+                data-format="feed"
+              >
+                <Square class="h-3.5 w-3.5" />
+                <span>Post (1:1)</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-8 items-start">
+            
+            <!-- LEFT: Live Interactive Preview Frame -->
+            <div class="flex flex-col items-center justify-center p-6 sm:p-10 bg-forest-950/80 border-2 border-paper/15 rounded-xs">
+              <div class="w-full flex items-center justify-between font-mono text-xs text-paper/50 mb-4 px-2">
+                <span class="flex items-center gap-1.5 text-orange font-bold">
+                  <span class="inline-block w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+                  HD LIVE-VORSCHAU (1080 PX)
+                </span>
+                <span id="social-dimensions-label">1080 &times; 1920 PX (STORY)</span>
+              </div>
+
+              <!-- Scaled Preview Image -->
+              <div
+                id="social-preview-wrapper"
+                class="relative w-full max-w-[380px] transition-all duration-300 bg-forest-950 border-2 border-paper/30 shadow-2xl overflow-hidden rounded-xs select-none"
+                style="aspect-ratio: 9 / 16;"
+              >
+                <img
+                  id="social-preview-image"
+                  src={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+                  alt="Social Media Vorlage"
+                  class="w-full h-full object-contain block select-none"
+                  loading="eager"
+                />
+              </div>
+
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <a
+                  id="btn-download-social-png"
+                  href={`/toolbox/social-images/${currentEvent.id}-story-dark.png`}
+                  download={`smj-${currentEvent.id}-story.png`}
+                  class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 shadow-lg hover:bg-paper hover:border-paper transition-all cursor-pointer"
+                >
+                  <Download class="h-4 w-4" />
+                  <span>Grafik herunterladen (PNG)</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- RIGHT: Design Controls & Caption Generator -->
+            <div class="space-y-6">
+              
+              <!-- Theme selector -->
+              <div class="border border-paper/20 bg-forest-950 p-6 rounded-xs">
+                <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-orange flex items-center gap-2 mb-4">
+                  <SlidersHorizontal class="h-4 w-4" />
+                  <span>Farbthema wählen</span>
+                </h3>
+
+                <div class="grid grid-cols-2 gap-2 font-mono text-xs">
+                  <button
+                    type="button"
+                    class="social-theme-btn active border-2 border-orange bg-forest-900 text-paper px-3 py-2 text-center uppercase tracking-wider font-bold cursor-pointer rounded-xs"
+                    data-theme="dark"
+                  >
+                    Dark Forest
+                  </button>
+                  <button
+                    type="button"
+                    class="social-theme-btn border border-paper/20 bg-paper text-forest-950 px-3 py-2 text-center uppercase tracking-wider font-bold hover:border-orange cursor-pointer rounded-xs"
+                    data-theme="light"
+                  >
+                    Hell (Papier)
+                  </button>
+                </div>
+
+                <div class="pt-3 mt-4 text-paper/60 font-mono text-[11px] border-t border-paper/10">
+                  &check; Automatisch vorgerendert mit Logo, Fact-Grid und direktem Anmelde-Link.
+                </div>
+              </div>
+
+              <!-- Instagram Caption Generator -->
+              <div class="border border-paper/20 bg-forest-950 p-6 rounded-xs">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-orange flex items-center gap-2">
+                    <Sparkles class="h-4 w-4" />
+                    <span>Instagram Caption</span>
+                  </h3>
+                  <button
+                    type="button"
+                    id="btn-copy-caption"
+                    class="inline-flex items-center gap-1.5 text-xs font-mono text-orange hover:text-paper transition-colors cursor-pointer"
+                  >
+                    <Copy class="h-3.5 w-3.5" />
+                    <span id="copy-caption-label">Kopieren</span>
+                  </button>
+                </div>
+
+                <textarea
+                  id="social-caption-textarea"
+                  rows="9"
+                  readonly
+                  class="w-full bg-forest-900 border border-paper/20 p-3 font-mono text-xs text-paper/90 rounded-xs focus:outline-none focus:border-orange resize-none leading-relaxed select-all"
+                >{initialCaption}</textarea>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 3: A4 PLAKAT & FLYER -->
+        <!-- ========================================== -->
+        <div id="tab-panel-flyer" class="tab-panel hidden p-6 sm:p-8 space-y-8">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <FileText class="w-6 h-6 text-orange" />
+                <span>A4 Plakat &amp; Ausleger-Flyer</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Druckfertiges DIN-A4-Plakat für Schaukästen, Pfarrheime, Schulen und Infowände.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <a
+                href={`/toolbox/flyers/${currentEvent.id}.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs hover:bg-paper transition-colors shadow-lg"
+              >
+                <Download class="w-4 h-4" />
+                <span>PDF herunterladen / Drucken</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
+            
+            <!-- LEFT: Authentic A4 Preview Container -->
+            <div class="bg-forest-950/80 border-2 border-paper/15 p-6 sm:p-10 rounded-xs flex flex-col items-center">
+              
+              <!-- A4 Sheet Mockup -->
+              <div class="w-full max-w-[520px] bg-[#F1EBDD] text-[#111713] p-8 rounded-xs shadow-2xl border-4 border-[#111713] relative select-none font-mono">
+                
+                <!-- Inner Expedition Border -->
+                <div class="border border-[#C9BA99] p-6 h-full flex flex-col justify-between">
+                  
+                  <!-- Header -->
+                  <div>
+                    <div class="flex items-center justify-between border-b border-[#111713]/20 pb-3 mb-4">
+                      <div class="flex items-center gap-2">
+                        <Logo variant="full" tone="dark" size="sm" />
+                      </div>
+                      <span class="bg-[#111713] text-[#F1EBDD] text-[9px] font-bold px-2 py-0.5 uppercase tracking-widest">
+                        {currentEvent.category}
+                      </span>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="font-display text-2xl sm:text-3xl text-[#111713] uppercase tracking-tight leading-none mb-1">
+                      {currentEvent.title}
+                    </div>
+                    <div class="text-[11px] text-gray-700 uppercase font-bold mb-5">
+                      {currentEvent.subtitle}
+                    </div>
+
+                    <!-- 3 Fact Boxes (matching letter & poster) -->
+                    <div class="grid grid-cols-3 gap-2 mb-6">
+                      <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                        <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[8px] uppercase mb-0.5">
+                          <Calendar class="w-2.5 h-2.5 text-[#FF5A1F]" />
+                          <span>WANN</span>
+                        </div>
+                        <div class="font-['Impact'] text-[11px] text-[#111713] uppercase leading-tight">{initDate1}</div>
+                        <div class="text-[7.5px] text-gray-600 uppercase font-bold">{initDate2}</div>
+                      </div>
+
+                      <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                        <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[8px] uppercase mb-0.5">
+                          <MapPin class="w-2.5 h-2.5 text-[#FF5A1F]" />
+                          <span>WO</span>
+                        </div>
+                        <div class="font-['Impact'] text-[11px] text-[#111713] uppercase leading-tight truncate">{initLoc1}</div>
+                        <div class="text-[7.5px] text-gray-600 uppercase font-bold truncate">{initLoc2}</div>
+                      </div>
+
+                      <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                        <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[8px] uppercase mb-0.5">
+                          <Users class="w-2.5 h-2.5 text-[#FF5A1F]" />
+                          <span>WER</span>
+                        </div>
+                        <div class="font-['Impact'] text-[11px] text-[#111713] uppercase leading-tight">{initAge1}</div>
+                        <div class="text-[7.5px] text-gray-600 uppercase font-bold">{initAge2}</div>
+                      </div>
+                    </div>
+
+                    <!-- Description Text -->
+                    <div class="text-[10px] text-gray-800 leading-relaxed mb-6 space-y-1.5">
+                      <p>
+                        Bist du bereit für echte Abenteuer in der Natur? Lagerfeuer, Geländespiele, Action und eine starke Gemeinschaft warten auf dich!
+                      </p>
+                      <p class="font-bold text-[#FF5A1F]">
+                        Sichere dir jetzt deinen Platz &bull; Begrenzte Teilnehmerzahl!
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- QR Code Registration Box -->
+                  <div class="bg-[#111713] text-[#F1EBDD] p-3 rounded-xs flex items-center justify-between border-2 border-[#FF5A1F]">
+                    <div>
+                      <div class="font-['Impact'] text-xs text-[#FF5A1F] uppercase">JETZT ONLINE ANMELDEN:</div>
+                      <div class="text-[9px] text-[#C9BA99] truncate mt-0.5">{currentEvent.registrationUrl.replace(/^https?:\/\//, '')}</div>
+                      <div class="text-[8px] text-gray-400 mt-1">Kamera öffnen &amp; QR-Code scannen</div>
+                    </div>
+                    <div class="bg-white p-1 rounded-xs shrink-0">
+                      <QrCode class="w-12 h-12 text-[#111713]" />
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Actions & Info -->
+            <div class="space-y-6">
+              
+              <div class="border border-paper/20 bg-forest-950 p-6 rounded-xs space-y-4">
+                <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-orange flex items-center gap-2">
+                  <Printer class="w-4 h-4" />
+                  <span>Druck-Spezifikationen</span>
+                </h3>
+
+                <div class="space-y-2 font-mono text-xs text-paper/70">
+                  <div class="flex justify-between border-b border-paper/10 pb-1.5">
+                    <span>Format:</span>
+                    <strong class="text-paper">DIN A4 (210 &times; 297 mm)</strong>
+                  </div>
+                  <div class="flex justify-between border-b border-paper/10 pb-1.5">
+                    <span>Auflösung:</span>
+                    <strong class="text-paper">300 DPI Vektorgrafik</strong>
+                  </div>
+                  <div class="flex justify-between border-b border-paper/10 pb-1.5">
+                    <span>Farbprofil:</span>
+                    <strong class="text-paper">CMYK-optimiert</strong>
+                  </div>
+                  <div class="flex justify-between border-b border-paper/10 pb-1.5">
+                    <span>QR-Code:</span>
+                    <strong class="text-green-400">Direktlink aktiv</strong>
+                  </div>
+                </div>
+
+                <div class="pt-2">
+                  <a
+                    href={`/toolbox/flyers/${currentEvent.id}.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-orange text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs hover:bg-paper transition-colors shadow-md"
+                  >
+                    <Download class="w-4 h-4" />
+                    <span>Plakat-PDF öffnen ↗</span>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 4: PERSÖNLICHE BRIEFE (DIN 5008) -->
+        <!-- ========================================== -->
+        <div id="tab-panel-letter" class="tab-panel hidden p-6 sm:p-8 space-y-8">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <Printer class="w-6 h-6 text-orange" />
+                <span>Persönliche Post-Einladungen (DIN 5008)</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Personalisierte Anschreiben für Fensterkuverts direkt an die Teilnehmer der Smartgruppe.
+              </p>
+            </div>
+
+            <!-- Download Buttons -->
+            <div class="flex flex-wrap items-center gap-2.5">
+              <a
+                id="btn-download-single"
+                href={`/toolbox/briefe/${currentEvent.id}-muster.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3 py-2 bg-forest-950 hover:bg-forest-900 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs transition-colors"
+              >
+                <FileText class="w-4 h-4 text-orange" />
+                <span>Muster-PDF ↗</span>
+              </a>
+
+              <a
+                id="btn-download-batch"
+                href={`/toolbox/briefe/${currentEvent.id}-batch.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors shadow-lg"
+              >
+                <Download class="w-4 h-4" />
+                <span id="batch-btn-label">Sammeldruck ({initialRecipients.length} Briefe)</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 items-start">
+            
+            <!-- LEFT: Live Letter Preview -->
+            <div class="bg-forest-950/80 border-2 border-paper/15 p-6 sm:p-8 rounded-xs flex flex-col items-center">
+              
+              <!-- Recipient Selector Header -->
+              <div class="w-full max-w-[560px] flex items-center justify-between font-mono text-xs text-paper/60 mb-3 px-1">
+                <span>Vorschau-Empfänger:</span>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    id="btn-prev-recipient"
+                    class="p-1 hover:text-orange bg-forest-900 rounded-xs border border-paper/20 cursor-pointer"
+                    title="Vorheriger Empfänger"
+                  >
+                    &larr;
+                  </button>
+                  <span id="preview-recipient-index" class="text-paper font-bold">1 / {initialRecipients.length || 1}</span>
+                  <button
+                    type="button"
+                    id="btn-next-recipient"
+                    class="p-1 hover:text-orange bg-forest-900 rounded-xs border border-paper/20 cursor-pointer"
+                    title="Nächster Empfänger"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- DIN A4 Paper Sheet Preview -->
+              <div class="w-full max-w-[560px] bg-[#F1EBDD] text-[#111713] p-8 sm:p-10 rounded-xs shadow-2xl border-4 border-[#111713] relative select-none font-mono text-[9px] leading-relaxed">
+                
+                <!-- Watermark Logo -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+                  <Logo variant="watermark" tone="dark" size="lg" />
+                </div>
+
+                <!-- Letter Header with Dark Logo -->
+                <div class="flex items-center justify-between border-b border-gray-300 pb-3 mb-6">
+                  <div>
+                    <Logo variant="full" tone="dark" size="sm" />
+                  </div>
+                  <div class="text-right text-[7px] text-gray-500 font-mono">
+                    <div>Pater-Kentenich-Weg 3 &bull; Klause 2.0</div>
+                    <div>37308 Heilbad Heiligenstadt</div>
+                    <div>smj-wegweiser.de</div>
+                  </div>
+                </div>
+
+                <!-- Window Envelope Address Field -->
+                <div class="mb-6 p-2 border border-dashed border-gray-300 bg-white/40 rounded-xs max-w-[280px]">
+                  <div class="text-[5.5px] text-gray-500 border-b border-gray-200 pb-0.5 mb-1 underline">
+                    Regio Wegweiser &bull; Pater-Kentenich-Weg 3 &bull; 37308 Heiligenstadt
+                  </div>
+                  <div id="preview-addr-name" class="font-bold text-[9px]">
+                    {initialRecipients[0]?.displayName || 'Lukas Mustermann'}
+                  </div>
+                  <div id="preview-addr-street" class="text-[8px] text-gray-700">
+                    {initialRecipients[0]?.address?.street || 'Am Berg 12'}
+                  </div>
+                  <div id="preview-addr-city" class="text-[8px] text-gray-700">
+                    {initialRecipients[0]?.address?.postalCode || '37308'} {initialRecipients[0]?.address?.city || 'Heilbad Heiligenstadt'}
+                  </div>
+                </div>
+
+                <!-- Subject & Date -->
+                <div class="mb-4">
+                  <div class="flex justify-between items-baseline mb-1">
+                    <span class="text-orange text-[7.5px] font-bold uppercase tracking-wider">// PERSÖNLICHE EINLADUNG</span>
+                    <span class="text-gray-500 text-[7px]">Datum: {new Date().toLocaleDateString('de-DE')}</span>
+                  </div>
+                  <h3 id="preview-subject" class="font-['Impact'] text-base uppercase text-[#111713] tracking-wide leading-tight">
+                    DEIN NÄCHSTES ABENTEUER: {currentEvent.title}
+                  </h3>
+                </div>
+
+                <!-- Body Text -->
+                <div class="space-y-2 mb-4 text-[8px] text-gray-800 leading-normal">
+                  <p id="preview-salutation" class="font-bold">
+                    Lieber {initialRecipients[0]?.firstName || 'Abenteurer'}!
+                  </p>
+                  <p>
+                    hast du Lust auf ein echtes Abenteuer? Raus in die Natur, Dreck an den Wanderschuhen, knisterndes Lagerfeuer und spannende Geländespiele mit anderen Jungs!
+                  </p>
+                  <p>
+                    Wir von der SMJ Regio Wegweiser laden dich ganz herzlich zu unserer nächsten großen Aktion ein:
+                  </p>
+                </div>
+
+                <!-- Fact Cards: 3 Boxen, 2-zeilig wie beim Plakat mit Icons -->
+                <div class="grid grid-cols-3 gap-2.5 mb-3.5 font-mono">
+                  <!-- WANN -->
+                  <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                    <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">
+                      <Calendar class="w-2.5 h-2.5 text-[#FF5A1F] shrink-0" />
+                      <span>WANN</span>
+                    </div>
+                    <div id="preview-fact-date-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase">{initDate1}</div>
+                    <div id="preview-fact-date-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold">{initDate2}</div>
+                  </div>
+                  <!-- WO -->
+                  <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                    <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">
+                      <MapPin class="w-2.5 h-2.5 text-[#FF5A1F] shrink-0" />
+                      <span>WO</span>
+                    </div>
+                    <div id="preview-fact-loc-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase truncate">{initLoc1}</div>
+                    <div id="preview-fact-loc-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold truncate">{initLoc2}</div>
+                  </div>
+                  <!-- WER -->
+                  <div class="bg-[#f7f5ed] border border-[#ded8c8] border-l-4 border-l-[#FF5A1F] p-2 rounded-xs">
+                    <div class="flex items-center gap-1 text-[#FF5A1F] font-bold text-[7px] tracking-wider uppercase mb-0.5">
+                      <Users class="w-2.5 h-2.5 text-[#FF5A1F] shrink-0" />
+                      <span>WER</span>
+                    </div>
+                    <div id="preview-fact-age-1" class="font-['Impact'] text-[11px] text-[#111713] leading-tight uppercase">{initAge1}</div>
+                    <div id="preview-fact-age-2" class="text-[7.5px] text-gray-600 leading-tight uppercase mt-0.5 font-bold">{initAge2}</div>
+                  </div>
+                </div>
+
+                <!-- QR Code Box -->
+                <div class="bg-[#111713] text-[#F1EBDD] p-2 rounded-xs flex items-center justify-between border border-[#FF5A1F] mb-3">
+                  <div class="pr-2">
+                    <div class="font-['Impact'] text-[9px] text-[#FF5A1F] uppercase">JETZT ONLINE ANMELDEN:</div>
+                    <div class="font-mono text-[6.5px] text-[#C9BA99] truncate">{currentEvent.registrationUrl.replace(/^https?:\/\//, '')}</div>
+                    <div class="text-[6px] text-gray-400 mt-0.5">Scanne den QR-Code mit deinem Smartphone.</div>
+                  </div>
+                  <div class="bg-white p-0.5 rounded-xs shrink-0">
+                    <QrCode class="w-8 h-8 text-black" />
+                  </div>
+                </div>
+
+                <!-- Parent Info Note -->
+                <div class="border-l-2 border-orange pl-2 py-0.5 mb-3 text-[6.5px] text-gray-600">
+                  <strong class="text-black uppercase">// Wichtiger Hinweis für deine Eltern:</strong>
+                  <div>Vollverpflegung, Betreuung und Packliste online abrufbar.</div>
+                </div>
+
+                <!-- Signature -->
+                <div class="pt-1 text-[7.5px]">
+                  <div>Wir freuen uns riesig auf dich!</div>
+                  <div class="font-bold text-[#FF5A1F] uppercase mt-0.5">Dein Leitungsteam der SMJ Regio Wegweiser</div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Controls -->
+            <div class="space-y-6">
+              
+              <div class="border border-paper/20 bg-forest-950 p-6 rounded-xs space-y-4">
+                <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-orange flex items-center gap-2">
+                  <Users class="w-4 h-4" />
+                  <span>Empfänger-Auswahl</span>
+                </h3>
+
+                <p class="font-mono text-xs text-paper/70">
+                  Wähle einen Empfänger aus der Smartgruppe, um die personalisierte Anschrift im Brief zu testen:
+                </p>
+
+                <select
+                  id="preview-recipient-select"
+                  class="w-full bg-forest-900 border border-paper/20 text-paper font-mono text-xs p-2.5 rounded-xs focus:outline-none focus:border-orange cursor-pointer"
+                >
+                  {initialRecipients.map((r, i) => (
+                    <option value={i}>
+                      {r.displayName} ({r.address?.city || 'Heiligenstadt'})
+                    </option>
+                  ))}
+                </select>
+
+                <div class="pt-2 text-paper/60 font-mono text-[11px]">
+                  &check; Druckfertiges DIN A4 mit genauer Falz- und Kuvertmarkierung.
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 5: E-MAIL SAMMELNACHRICHT (HTML) -->
+        <!-- ========================================== -->
+        <div id="tab-panel-email" class="tab-panel hidden p-6 sm:p-8 space-y-8">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <Mail class="w-6 h-6 text-orange" />
+                <span>E-Mail Sammelnachricht (HTML)</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Optimierte E-Mail-Vorlage im SMJ-Abenteuer-Look. Wird als CiviMail-Entwurf angelegt.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                class="btn-trigger-email-draft px-5 py-2.5 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors flex items-center gap-2 cursor-pointer shadow-lg"
+              >
+                <Send class="w-4 h-4" />
+                <span>Als Entwurf in CiviCRM anlegen</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- HTML Email Preview Window -->
+          <div class="border-2 border-paper/20 rounded-xs overflow-hidden bg-forest-950 shadow-2xl">
+            <div class="bg-forest-900 border-b border-paper/15 px-4 py-2 flex items-center justify-between font-mono text-xs">
+              <span class="text-paper/60">Betreff: <strong class="text-paper font-normal">Einladung: {currentEvent.title} – SMJ Regio Wegweiser</strong></span>
+              <span class="text-orange font-bold uppercase text-[10px]">HTML Mailing</span>
+            </div>
+            
+            <div class="p-4 sm:p-8 bg-[#111713] flex justify-center">
+              <div class="w-full max-w-[600px] bg-[#182019] border border-paper/15 rounded-xs overflow-hidden shadow-xl" set:html={initialEmailHtml}></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 6: SMS VORBEREITUNG -->
+        <!-- ========================================== -->
+        <div id="tab-panel-sms" class="tab-panel hidden p-6 sm:p-8 space-y-8">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <Send class="w-6 h-6 text-orange" />
+                <span>SMS Kurznachricht</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Kompakte Textnachricht mit Personalisierungs-Token für CiviCRM SMS.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button
+                type="button"
+                class="btn-trigger-sms-draft px-5 py-2.5 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors flex items-center gap-2 cursor-pointer shadow-lg"
+              >
+                <Send class="w-4 h-4" />
+                <span>Als SMS-Entwurf in CiviCRM anlegen</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
+            
+            <!-- SMS Editor -->
+            <div class="space-y-4">
+              <label for="sms-textarea" class="block font-mono text-xs uppercase font-bold text-orange">
+                SMS Text mit Tokens
+              </label>
+              <textarea
+                id="sms-textarea"
+                rows="6"
+                class="w-full bg-forest-950 border border-paper/20 p-4 font-mono text-sm text-paper rounded-xs focus:outline-none focus:border-orange leading-relaxed"
+              >{initialSms}</textarea>
+
+              <div class="flex items-center justify-between font-mono text-xs text-paper/60">
+                <span>Zeichen: <strong id="sms-char-count" class="text-orange">{initialSmsObj.characterCount}</strong> / 160 ({initialSmsObj.segmentCount} SMS-Segment)</span>
+                <span class="text-green-400">&check; GSM-7 kompatibel</span>
+              </div>
+            </div>
+
+            <!-- Smartphone Mockup Preview -->
+            <div class="bg-forest-950 border-2 border-paper/20 p-6 rounded-2xl max-w-[320px] mx-auto shadow-2xl">
+              <div class="w-12 h-1 bg-paper/20 rounded-full mx-auto mb-4"></div>
+              <div class="bg-forest-900 border border-paper/10 p-3 rounded-lg text-xs font-mono text-paper leading-relaxed">
+                <div class="text-[9px] text-orange font-bold uppercase mb-1">SMJ Regio Wegweiser</div>
+                <div id="phone-sms-preview">{initialSms}</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB PANEL 7: EMPFÄNGERLISTE -->
+        <!-- ========================================== -->
+        <div id="tab-panel-recipients" class="tab-panel hidden p-6 sm:p-8 space-y-6">
+          
+          <div class="border-b border-paper/15 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl uppercase tracking-wide text-paper flex items-center gap-2">
+                <Users class="w-6 h-6 text-orange" />
+                <span>Empfänger der gewählten Gruppe</span>
+              </h2>
+              <p class="font-mono text-xs text-paper/60 mt-1">
+                Alle Kontakte aus CiviCRM mit Post- und E-Mail-Bereitschaft.
+              </p>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="border border-paper/20 rounded-xs overflow-x-auto bg-forest-950">
+            <table class="w-full font-mono text-xs text-left">
+              <thead class="bg-forest-900 text-orange uppercase tracking-wider text-[11px] border-b border-paper/15">
+                <tr>
+                  <th class="p-3">#</th>
+                  <th class="p-3">Name</th>
+                  <th class="p-3">Postanschrift</th>
+                  <th class="p-3">E-Mail</th>
+                  <th class="p-3">Alter</th>
+                  <th class="p-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="recipient-table-body" class="divide-y divide-paper/10 text-paper/80">
+                {initialRecipients.map((r, i) => (
+                  <tr class="hover:bg-forest-900/50 transition-colors">
+                    <td class="p-3 text-paper/40">{i + 1}</td>
+                    <td class="p-3 font-bold text-paper">{r.displayName}</td>
+                    <td class="p-3">
+                      {r.hasValidAddress && r.address ? (
+                        <span>{r.address.street}, {r.address.postalCode} {r.address.city}</span>
+                      ) : (
+                        <span class="text-red-400">Keine Adresse</span>
+                      )}
+                    </td>
+                    <td class="p-3">
+                      {r.hasValidEmail && r.email ? (
+                        <span class="text-blue-300">{r.email}</span>
+                      ) : (
+                        <span class="text-paper/40">&mdash;</span>
+                      )}
+                    </td>
+                    <td class="p-3">{r.age ? `${r.age} Jahre` : (r.birthDate ? `${new Date().getFullYear() - new Date(r.birthDate).getFullYear()} Jahre` : '—')}</td>
+                    <td class="p-3 text-right">
+                      {r.hasValidAddress && (
+                        <span class="inline-block px-1.5 py-0.5 bg-green-950 text-green-400 border border-green-800 text-[10px] rounded-xs font-bold mr-1">Post</span>
+                      )}
+                      {r.hasValidEmail && (
+                        <span class="inline-block px-1.5 py-0.5 bg-blue-950 text-blue-400 border border-blue-800 text-[10px] rounded-xs font-bold">Mail</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- ACCESSIBLE CIVICRM DRAFT RESULT MODAL DIALOG                 -->
+  <!-- ============================================================ -->
+  <dialog
+    id="civi-dialog"
+    class="backdrop:bg-forest-950/80 backdrop:backdrop-blur-xs bg-forest-900 border-2 border-orange text-paper p-0 rounded-xs shadow-2xl max-w-lg w-[92vw] m-auto"
+  >
+    <div class="p-6 space-y-5">
+      
+      <!-- Dialog Header -->
+      <div class="flex items-start justify-between gap-4 border-b border-paper/15 pb-4">
+        <div class="flex items-center gap-3">
+          <div id="dialog-icon-container" class="p-2.5 rounded-xs bg-orange/20 border border-orange text-orange">
+            <Loader id="dialog-spinner" class="w-6 h-6 animate-spin" />
+            <CircleCheck id="dialog-check" class="w-6 h-6 text-green-400 hidden" />
+            <CircleAlert id="dialog-error" class="w-6 h-6 text-red-400 hidden" />
+          </div>
+          <div>
+            <h4 id="dialog-title" class="font-display text-xl uppercase tracking-wide text-paper">
+              CiviCRM Entwurf
+            </h4>
+            <div id="dialog-subtitle" class="font-mono text-xs text-orange">
+              Aktion wird vorbereitet...
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="dialog-btn-close-x"
+          class="text-paper/50 hover:text-paper p-1 rounded-xs hover:bg-forest-950 transition-colors cursor-pointer"
+          aria-label="Dialog schließen"
+        >
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Dialog Message Body -->
+      <div id="dialog-body" class="font-mono text-xs sm:text-sm text-paper/80 leading-relaxed space-y-2">
+        Entwurf wird über die CiviCRM APIv4 angelegt...
+      </div>
+
+      <!-- Details Summary Box -->
+      <div id="dialog-details-box" class="bg-forest-950 border border-paper/15 p-3.5 rounded-xs font-mono text-xs space-y-1.5">
+        <div class="flex items-center justify-between text-paper/60">
+          <span>Zielgruppe:</span>
+          <strong id="dialog-detail-group" class="text-paper">Smartgruppe 12</strong>
+        </div>
+        <div class="flex items-center justify-between text-paper/60">
+          <span>Aktion:</span>
+          <strong id="dialog-detail-event" class="text-orange truncate max-w-[240px]">{currentEvent.title}</strong>
+        </div>
+        <div id="dialog-detail-id-row" class="hidden flex items-center justify-between text-paper/60 border-t border-paper/10 pt-1.5">
+          <span>CiviCRM Datensatz-ID:</span>
+          <strong id="dialog-detail-id" class="text-green-400">#---</strong>
+        </div>
+      </div>
+
+      <!-- Dialog Footer Buttons -->
+      <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+        <button
+          type="button"
+          id="dialog-btn-close"
+          class="px-4 py-2 bg-forest-950 border border-paper/20 hover:border-paper/40 text-paper font-mono text-xs font-bold uppercase rounded-xs transition-colors cursor-pointer"
+        >
+          Schließen
+        </button>
+
+        <a
+          id="dialog-btn-open-civi"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hidden items-center gap-1.5 px-4 py-2 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors"
+        >
+          <ExternalLink class="w-4 h-4" />
+          <span>In CiviCRM öffnen &nearr;</span>
+        </a>
+      </div>
+
+    </div>
+  </dialog>
+</BaseLayout>
+
+<script is:inline define:vars={{ clientData }}>
+  let currentEvent = clientData.currentEvent
+  let currentGroupId = Number(clientData.groups[0]?.id || 12)
+  let currentRecipients = clientData.groupRecipientsMap[currentGroupId] || clientData.defaultRecipients
+  let activeSocialFormat = 'story'
+  let activeSocialTheme = 'dark'
+
+  // Header Dropdown: Navigate to other event's campaign URL
+  const headerEventSelect = document.getElementById('header-event-select')
+  if (headerEventSelect) {
+    headerEventSelect.addEventListener('change', (e) => {
+      const selectedId = e.target.value
+      window.location.href = `/toolbox/${selectedId}/kampagne/`
+    })
+  }
+
+  // Social Studio Elements
+  const socialPreviewImage = document.getElementById('social-preview-image')
+  const socialPreviewWrapper = document.getElementById('social-preview-wrapper')
+  const socialDimensionsLabel = document.getElementById('social-dimensions-label')
+  const btnDownloadSocialPng = document.getElementById('btn-download-social-png')
+  const socialFormatButtons = document.querySelectorAll('.social-format-btn')
+  const socialThemeButtons = document.querySelectorAll('.social-theme-btn')
+  const btnCopyCaption = document.getElementById('btn-copy-caption')
+  const copyCaptionLabel = document.getElementById('copy-caption-label')
+  const socialCaptionTextarea = document.getElementById('social-caption-textarea')
+
+  function updateSocialPreview() {
+    const imgUrl = `/toolbox/social-images/${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
+    if (socialPreviewImage) socialPreviewImage.src = imgUrl
+    if (btnDownloadSocialPng) {
+      btnDownloadSocialPng.href = imgUrl
+      btnDownloadSocialPng.download = `smj-${currentEvent.id}-${activeSocialFormat}-${activeSocialTheme}.png`
+    }
+
+    if (socialPreviewWrapper && socialDimensionsLabel) {
+      if (activeSocialFormat === 'story') {
+        socialPreviewWrapper.style.aspectRatio = '9 / 16'
+        socialDimensionsLabel.textContent = '1080 × 1920 PX (INSTAGRAM STORY)'
+      } else {
+        socialPreviewWrapper.style.aspectRatio = '1 / 1'
+        socialDimensionsLabel.textContent = '1080 × 1080 PX (INSTAGRAM FEED)'
+      }
+    }
+  }
+
+  socialFormatButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      socialFormatButtons.forEach((b) => {
+        b.classList.remove('bg-orange', 'text-forest-950', 'active')
+        b.classList.add('text-paper/70')
+      })
+      btn.classList.add('bg-orange', 'text-forest-950', 'active')
+      btn.classList.remove('text-paper/70')
+      activeSocialFormat = btn.dataset.format || 'story'
+      updateSocialPreview()
+    })
+  })
+
+  socialThemeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      socialThemeButtons.forEach((b) => {
+        b.classList.remove('border-orange', 'border-2', 'active')
+        b.classList.add('border-paper/20')
+      })
+      btn.classList.add('border-orange', 'border-2', 'active')
+      btn.classList.remove('border-paper/20')
+      activeSocialTheme = btn.dataset.theme || 'dark'
+      updateSocialPreview()
+    })
+  })
+
+  if (btnCopyCaption && socialCaptionTextarea) {
+    btnCopyCaption.addEventListener('click', () => {
+      navigator.clipboard.writeText(socialCaptionTextarea.value)
+      if (copyCaptionLabel) copyCaptionLabel.textContent = 'Kopiert! ✓'
+      setTimeout(() => {
+        if (copyCaptionLabel) copyCaptionLabel.textContent = 'Kopieren'
+      }, 2500)
+    })
+  }
+
+  // Letter Elements
+  const previewAddrName = document.getElementById('preview-addr-name')
+  const previewAddrStreet = document.getElementById('preview-addr-street')
+  const previewAddrCity = document.getElementById('preview-addr-city')
+  const previewSalutation = document.getElementById('preview-salutation')
+  const previewRecipientIndex = document.getElementById('preview-recipient-index')
+  const previewRecipientSelect = document.getElementById('preview-recipient-select')
+  const btnPrevRecipient = document.getElementById('btn-prev-recipient')
+  const btnNextRecipient = document.getElementById('btn-next-recipient')
+  let currentRecipientIdx = 0
+
+  function showRecipient(idx) {
+    if (!currentRecipients || currentRecipients.length === 0) return
+    currentRecipientIdx = (idx + currentRecipients.length) % currentRecipients.length
+    const r = currentRecipients[currentRecipientIdx]
+
+    const dispName = r.displayName || r.name || 'Abenteurer'
+    const street = r.address?.street || r.street || 'Am Berg 12'
+    const city = `${r.address?.postalCode || r.postalCode || '37308'} ${r.address?.city || r.city || 'Heilbad Heiligenstadt'}`
+
+    if (previewAddrName) previewAddrName.textContent = dispName
+    if (previewAddrStreet) previewAddrStreet.textContent = street
+    if (previewAddrCity) previewAddrCity.textContent = city
+    if (previewSalutation) previewSalutation.textContent = `Lieber ${r.firstName || 'Abenteurer'}!`
+    if (previewRecipientIndex) previewRecipientIndex.textContent = `${currentRecipientIdx + 1} / ${currentRecipients.length}`
+    if (previewRecipientSelect) previewRecipientSelect.value = String(currentRecipientIdx)
+  }
+
+  if (btnPrevRecipient) btnPrevRecipient.addEventListener('click', () => showRecipient(currentRecipientIdx - 1))
+  if (btnNextRecipient) btnNextRecipient.addEventListener('click', () => showRecipient(currentRecipientIdx + 1))
+  if (previewRecipientSelect) {
+    previewRecipientSelect.addEventListener('change', (e) => showRecipient(Number(e.target.value)))
+  }
+
+  // CiviCRM Group Switcher
+  const groupSelect = document.getElementById('group-select')
+  const counterTotal = document.getElementById('counter-total')
+  const counterPost = document.getElementById('counter-post')
+  const counterEmail = document.getElementById('counter-email')
+  const tabRecipientCount = document.getElementById('tab-recipient-count')
+  const batchBtnLabel = document.getElementById('batch-btn-label')
+  const recipientTableBody = document.getElementById('recipient-table-body')
+
+  function updateRecipientsDisplay() {
+    if (counterTotal) counterTotal.textContent = String(currentRecipients.length)
+    if (counterPost) counterPost.textContent = String(currentRecipients.filter((r) => r.hasValidAddress).length)
+    if (counterEmail) counterEmail.textContent = String(currentRecipients.filter((r) => r.hasValidEmail).length)
+    if (tabRecipientCount) tabRecipientCount.textContent = String(currentRecipients.length)
+    if (batchBtnLabel) batchBtnLabel.textContent = `Sammeldruck (${currentRecipients.length} Briefe)`
+
+    if (previewRecipientSelect) {
+      previewRecipientSelect.innerHTML = currentRecipients
+        .map((r, i) => `<option value="${i}">${r.displayName || r.name} (${r.address?.city || r.city || 'Heiligenstadt'})</option>`)
+        .join('')
+    }
+    showRecipient(0)
+
+    if (recipientTableBody) {
+      recipientTableBody.innerHTML = currentRecipients
+        .map(
+          (r, i) => `
+        <tr class="hover:bg-forest-900/50 transition-colors">
+          <td class="p-3 text-paper/40">${i + 1}</td>
+          <td class="p-3 font-bold text-paper">${r.displayName || r.name}</td>
+          <td class="p-3">${r.hasValidAddress ? `${r.address?.street || r.street}, ${r.address?.postalCode || r.postalCode} ${r.address?.city || r.city}` : '<span class="text-red-400">Keine Adresse</span>'}</td>
+          <td class="p-3">${r.hasValidEmail ? `<span class="text-blue-300">${r.email}</span>` : '<span class="text-paper/40">&mdash;</span>'}</td>
+          <td class="p-3">${r.age ? `${r.age} Jahre` : (r.birthDate ? `${new Date().getFullYear() - new Date(r.birthDate).getFullYear()} Jahre` : '—')}</td>
+          <td class="p-3 text-right">
+            ${r.hasValidAddress ? '<span class="inline-block px-1.5 py-0.5 bg-green-950 text-green-400 border border-green-800 text-[10px] rounded-xs font-bold mr-1">Post</span>' : ''}
+            ${r.hasValidEmail ? '<span class="inline-block px-1.5 py-0.5 bg-blue-950 text-blue-400 border border-blue-800 text-[10px] rounded-xs font-bold">Mail</span>' : ''}
+          </td>
+        </tr>
+      `,
+        )
+        .join('')
+    }
+  }
+
+  async function fetchLiveGroupContacts(groupId) {
+    try {
+      const res = await fetch(`/toolbox-auth/civicrm-api.php?action=contacts&group_id=${groupId}`)
+      if (!res.ok) return
+      const data = await res.json()
+      if (data && data.recipients) {
+        currentRecipients = data.recipients
+        updateRecipientsDisplay()
+      }
+    } catch (e) {
+      console.warn('Could not fetch live contacts:', e)
+    }
+  }
+
+  if (groupSelect) {
+    groupSelect.addEventListener('change', (e) => {
+      currentGroupId = Number(e.target.value)
+      currentRecipients = clientData.groupRecipientsMap[currentGroupId] || clientData.defaultRecipients
+      updateRecipientsDisplay()
+      fetchLiveGroupContacts(currentGroupId)
+    })
+  }
+
+  // Initial live sync for group contacts
+  fetchLiveGroupContacts(currentGroupId)
+
+  // Tab Switching
+  const tabButtons = document.querySelectorAll('.tab-btn')
+  const tabPanels = document.querySelectorAll('.tab-panel')
+
+  function switchTab(targetId) {
+    tabButtons.forEach((b) => {
+      if (b.dataset.target === targetId) {
+        b.classList.add('border-orange', 'text-orange', 'bg-forest-900/80', 'active')
+        b.classList.remove('border-transparent', 'text-paper/60')
+      } else {
+        b.classList.remove('border-orange', 'text-orange', 'bg-forest-900/80', 'active')
+        b.classList.add('border-transparent', 'text-paper/60')
+      }
+    })
+
+    tabPanels.forEach((panel) => {
+      if (panel.id === targetId) {
+        panel.classList.remove('hidden')
+      } else {
+        panel.classList.add('hidden')
+      }
+    })
+  }
+
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.target))
+  })
+
+  document.querySelectorAll('.quick-switch-tab').forEach((btn) => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.target))
+  })
+
+  // URL Hash or Param detection (e.g. ?tab=social)
+  const urlParams = new URLSearchParams(window.location.search)
+  const requestedTab = urlParams.get('tab')
+  if (requestedTab) {
+    const targetId = `tab-panel-${requestedTab}`
+    if (document.getElementById(targetId)) switchTab(targetId)
+  }
+
+  // CiviCRM Draft Dialog & Actions
+  const civiDialog = document.getElementById('civi-dialog')
+  const dialogSpinner = document.getElementById('dialog-spinner')
+  const dialogCheck = document.getElementById('dialog-check')
+  const dialogError = document.getElementById('dialog-error')
+  const dialogTitle = document.getElementById('dialog-title')
+  const dialogSubtitle = document.getElementById('dialog-subtitle')
+  const dialogBody = document.getElementById('dialog-body')
+  const dialogDetailGroup = document.getElementById('dialog-detail-group')
+  const dialogDetailEvent = document.getElementById('dialog-detail-event')
+  const dialogDetailId = document.getElementById('dialog-detail-id')
+  const dialogDetailIdRow = document.getElementById('dialog-detail-id-row')
+  const dialogBtnClose = document.getElementById('dialog-btn-close')
+  const dialogBtnCloseX = document.getElementById('dialog-btn-close-x')
+  const dialogBtnOpenCivi = document.getElementById('dialog-btn-open-civi')
+  const smsTextarea = document.getElementById('sms-textarea')
+
+  if (civiDialog) {
+    const closeDialog = () => civiDialog.close()
+    if (dialogBtnClose) dialogBtnClose.addEventListener('click', closeDialog)
+    if (dialogBtnCloseX) dialogBtnCloseX.addEventListener('click', closeDialog)
+    civiDialog.addEventListener('click', (e) => {
+      const rect = civiDialog.getBoundingClientRect()
+      const isIn = rect.top <= e.clientY && e.clientY <= rect.top + rect.height && rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+      if (!isIn) civiDialog.close()
+    })
+  }
+
+  function openDialogLoading(actionTitle) {
+    if (!civiDialog) return
+    if (dialogSpinner) dialogSpinner.classList.remove('hidden')
+    if (dialogCheck) dialogCheck.classList.add('hidden')
+    if (dialogError) dialogError.classList.add('hidden')
+    if (dialogTitle) dialogTitle.textContent = `${actionTitle} wird vorbereitet...`
+    if (dialogSubtitle) dialogSubtitle.textContent = 'Verbindung mit CiviCRM APIv4 wird hergestellt'
+    if (dialogBody) dialogBody.innerHTML = 'Bitte einen Moment Geduld &mdash; Entwurf wird in CiviCRM angelegt.'
+    if (dialogDetailIdRow) dialogDetailIdRow.classList.add('hidden')
+    if (dialogBtnOpenCivi) dialogBtnOpenCivi.classList.add('hidden')
+    civiDialog.showModal()
+  }
+
+  function updateDialogSuccess(title, html, civiId, civiUrl) {
+    if (dialogSpinner) dialogSpinner.classList.add('hidden')
+    if (dialogCheck) dialogCheck.classList.remove('hidden')
+    if (dialogError) dialogError.classList.add('hidden')
+    if (dialogTitle) dialogTitle.textContent = title
+    if (dialogSubtitle) dialogSubtitle.textContent = 'Erfolgreich in CiviCRM gespeichert'
+    if (dialogBody) dialogBody.innerHTML = html
+    if (civiId && dialogDetailIdRow && dialogDetailId) {
+      dialogDetailId.textContent = `#${civiId}`
+      dialogDetailIdRow.classList.remove('hidden')
+    }
+    if (civiUrl && dialogBtnOpenCivi) {
+      dialogBtnOpenCivi.href = civiUrl
+      dialogBtnOpenCivi.classList.remove('hidden')
+      dialogBtnOpenCivi.classList.add('inline-flex')
+    }
+  }
+
+  function updateDialogError(title, errorMsg, fallbackUrl) {
+    if (dialogSpinner) dialogSpinner.classList.add('hidden')
+    if (dialogCheck) dialogCheck.classList.add('hidden')
+    if (dialogError) dialogError.classList.remove('hidden')
+    if (dialogTitle) dialogTitle.textContent = title
+    if (dialogSubtitle) dialogSubtitle.textContent = 'CiviCRM Rückmeldung'
+    if (dialogBody) dialogBody.innerHTML = `<span class="text-red-400 font-bold">Fehler aufgetreten:</span><br>${errorMsg}`
+    if (fallbackUrl && dialogBtnOpenCivi) {
+      dialogBtnOpenCivi.href = fallbackUrl
+      dialogBtnOpenCivi.classList.remove('hidden')
+      dialogBtnOpenCivi.classList.add('inline-flex')
+    }
+  }
+
+  async function triggerCiviDraft(type) {
+    const isEmail = type === 'email'
+    const actionTitle = isEmail ? 'E-Mail-Mailing' : 'SMS-Aktivität'
+    const groupName = clientData.groups.find((g) => g.id === currentGroupId)?.title || 'Smartgruppe'
+
+    if (dialogDetailGroup) dialogDetailGroup.textContent = groupName
+    if (dialogDetailEvent) dialogDetailEvent.textContent = currentEvent.title
+
+    openDialogLoading(actionTitle)
+
+    const payload = isEmail
+      ? {
+          type: 'email',
+          campaignName: `${currentEvent.title} (Einladung)`,
+          subject: `Einladung: ${currentEvent.title} – SMJ Regio Wegweiser`,
+          bodyHtml: clientData.defaultEmailHtml,
+          groupId: currentGroupId,
+        }
+      : {
+          type: 'sms',
+          campaignName: currentEvent.title,
+          text: smsTextarea ? smsTextarea.value : '',
+          groupId: currentGroupId,
+        }
+
+    try {
+      const res = await fetch('/toolbox-auth/civicrm-api.php?action=draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const result = await res.json()
+      if (result.success) {
+        const msg = isEmail
+          ? `Der Mailing-Entwurf für <strong>${currentEvent.title}</strong> wurde in CiviCRM angelegt!<br><br>Zielgruppe: <strong>${groupName}</strong> (${currentRecipients.length} Kontakte).`
+          : `Die SMS-Aktivität für <strong>${currentEvent.title}</strong> wurde vorbereitet!`
+        updateDialogSuccess(`${actionTitle} erstellt!`, msg, result.civicrmId, result.civiUrl || 'https://civicrm.regiowegweiser.de')
+      } else {
+        updateDialogError('Fehler beim Anlegen', result.message || 'CiviCRM Fehler.', 'https://civicrm.regiowegweiser.de')
+      }
+    } catch (e) {
+      updateDialogError('Netzwerk- oder Serverfehler', e.message || 'CiviCRM Verbindung fehlgeschlagen.', 'https://civicrm.regiowegweiser.de')
+    }
+  }
+
+  document.querySelectorAll('.btn-trigger-email-draft').forEach((btn) => {
+    btn.addEventListener('click', () => triggerCiviDraft('email'))
+  })
+  document.querySelectorAll('.btn-trigger-sms-draft').forEach((btn) => {
+    btn.addEventListener('click', () => triggerCiviDraft('sms'))
+  })
+</script>

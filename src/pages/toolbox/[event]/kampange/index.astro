@@ -1,0 +1,32 @@
+---
+import { eventProvider, getSlugVariants } from '../../../../lib/events'
+import { getAllCamps } from '../../../../lib/camps'
+
+export async function getStaticPaths() {
+  const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
+  const paths: { params: { event: string } }[] = []
+  const seen = new Set<string>()
+
+  for (const c of camps) {
+    const slug = `zeltlager-${c.data.year}`
+    if (!seen.has(slug)) {
+      seen.add(slug)
+      paths.push({ params: { event: slug } })
+    }
+  }
+
+  for (const e of events) {
+    const variants = getSlugVariants(e.slug, e.title, e.start.getFullYear())
+    for (const slug of variants) {
+      if (!seen.has(slug)) {
+        seen.add(slug)
+        paths.push({ params: { event: slug } })
+      }
+    }
+  }
+
+  return paths
+}
+
+return Astro.redirect(`/toolbox/${Astro.params.event}/kampagne/`, 301)
+---
