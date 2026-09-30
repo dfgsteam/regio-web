@@ -304,6 +304,8 @@ Die erzeugte PHP-Konfiguration enthält Geheimnisse und darf nicht ins Repositor
 
 Der Authentik-Provider muss die erlaubten Gruppen im `groups`-Feld der Userinfo-Antwort liefern. Nach dem Einrichten den Zugriff ohne Cookie auf eine Toolbox-Seite, eine PDF-Datei und ein Social-Bild prüfen: Jede Anfrage muss zum Login führen. Auch das produktive Hosting muss `.htaccess` und PHP tatsächlich ausführen; ein reiner Static-Host schützt diese Dateien nicht.
 
+Gruppen, Kontakte und CiviCRM-Entwürfe laufen zur Laufzeit über `toolbox-auth/civicrm-api.php`. Der PHP-Endpunkt liest API-Schlüssel ausschließlich aus der beim Deployment erzeugten Konfiguration. Kampagnenseiten und Muster-PDFs enthalten keine echten CiviCRM-Kontakte. Ohne `CIVICRM_API_KEY` bleibt die Toolbox erreichbar, aber die CiviCRM-Funktionen melden einen Konfigurationsfehler. Der frühere Endpunkt `civicrm-draft.php` liefert nach dem nächsten Upload nur noch HTTP 410.
+
 Da frühere Versionen Zugangsdaten und einen Cookie-Schlüssel im Repository enthielten, **Authentik-Client-Secret und Toolbox-App-Secret vor der nächsten Freischaltung rotieren**. Bereits ausgestellte Toolbox-Cookies werden mit dem neuen Schlüssel ungültig.
 
 Das öffentliche Repository darf keine gebauten Toolbox-Dateien veröffentlichen. Der frühere `prod`-Branch mit solchen Dateien wurde entfernt; externe Kopien bereits veröffentlichter Inhalte werden dadurch nicht gelöscht.
@@ -345,7 +347,7 @@ Unter **Repository → Settings → Secrets and variables → Actions** eintrage
 | Bereich | Name | Verwendung |
 | --- | --- | --- |
 | **Secret** | `FTP_PASSWORD` | FTPS-Upload; ohne Passwort wird der Upload übersprungen. |
-| **Secret** | `CIVICRM_API_KEY` | Anmeldedaten beim Build synchronisieren; ohne Key bleibt der vorhandene Cache erhalten. |
+| **Secret** | `CIVICRM_API_KEY` | Anmeldedaten beim Build synchronisieren und Toolbox-API zur Laufzeit betreiben; ohne Key bleibt der vorhandene Cache erhalten und die Toolbox-CiviCRM-Funktionen sind nicht verfügbar. |
 | **Secret**, falls benötigt | `CIVICRM_SITE_KEY` | Nur wenn CiviCRM AuthX einen Site-Key verlangt. |
 | **Secret** | `AUTHENTIK_CLIENT_ID` | Client-ID für den Toolbox-Login. |
 | **Secret** | `AUTHENTIK_CLIENT_SECRET` | Client-Secret für den Toolbox-Login. |
@@ -362,7 +364,7 @@ Für lokale Builds und Syncs dient [`.env.example`](.env.example) als Vorlage f�
 
 ### Webserver: PHP-Laufzeit
 
-Auf dem Webserver müssen PHP und Apache-Rewrites aktiv sein. Der Deploy-Workflow liefert `.htaccess`, `toolbox-auth/config.php` und die erzeugte `toolbox-auth/generated-config.php`. Letztere wird **nur auf dem GitHub-Runner erstellt**, nicht im Repository gespeichert. Öffentliche HTTP-Anfragen dürfen sie nicht als Quelltext ausgeben.
+Auf dem Webserver müssen PHP 8+, die PHP-Erweiterung cURL, PHP-Sessions und Apache-Rewrites (`mod_rewrite`, `AllowOverride`) aktiv sein. Der Deploy-Workflow liefert `.htaccess`, `toolbox-auth/config.php` und die erzeugte `toolbox-auth/generated-config.php`. Letztere wird **nur auf dem GitHub-Runner erstellt**, nicht im Repository gespeichert. Öffentliche HTTP-Anfragen dürfen sie nicht als Quelltext ausgeben. Vor Freischaltung per HTTP prüfen, dass `/toolbox-auth/generated-config.php` mit 403 abgewiesen wird und `/toolbox/` ohne Anmeldung zu Authentik führt.
 
 Die PHP-Formulare für Kontakt und Newsletter nutzen ohne zusätzliche Konfiguration die im Code hinterlegten Mailadressen und PHP `mail()`. Optional können `MAIL_TO` und `MAIL_FROM` weiterhin in der PHP-Serverumgebung gesetzt werden; `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER` und `MAIL_PASSWORD` werden aktuell nicht verwendet.
 

@@ -35,19 +35,6 @@ if (is_string($rawCookie) && strpos($rawCookie, '.') !== false) {
     }
 }
 
-// In local development, allow authenticated access for testing
-$isLocalDev = (
-    ($_SERVER['SERVER_NAME'] ?? '') === 'localhost' ||
-    ($_SERVER['HTTP_HOST'] ?? '') === 'localhost:4321' ||
-    str_starts_with($_SERVER['HTTP_HOST'] ?? '', 'localhost') ||
-    str_starts_with($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1') ||
-    getenv('APP_ENV') === 'development' ||
-    getenv('NODE_ENV') === 'development'
-);
-if (!$isAuthenticated && $isLocalDev) {
-    $isAuthenticated = true;
-}
-
 if (!$isAuthenticated) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Nicht autorisiert. Bitte in der Toolbox neu anmelden.']);
@@ -57,14 +44,6 @@ if (!$isAuthenticated) {
 $civiBaseUrl = rtrim((string)($config['civicrm_base_url'] ?? 'https://civi.smj-wegweiser.de'), '/');
 $apiKey = (string)($config['civicrm_api_key'] ?? '');
 $siteKey = (string)($config['civicrm_site_key'] ?? '');
-
-// Fallback to environment variables if not present in config file
-if (empty($apiKey)) {
-    $apiKey = (string)(getenv('CIVICRM_API_KEY') ?: ($_ENV['CIVICRM_API_KEY'] ?? ''));
-}
-if (empty($siteKey)) {
-    $siteKey = (string)(getenv('CIVICRM_SITE_KEY') ?: ($_ENV['CIVICRM_SITE_KEY'] ?? ''));
-}
 
 // Low-level helper to execute CiviCRM APIv4 calls
 function callCiviApi4($baseUrl, $apiKey, $siteKey, $entity, $action, $params) {
@@ -102,6 +81,25 @@ function callCiviApi4($baseUrl, $apiKey, $siteKey, $entity, $action, $params) {
 
 $action = $_GET['action'] ?? ($_POST['action'] ?? '');
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if (($action === 'groups' || $action === 'contacts') && $method !== 'GET') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Methode nicht erlaubt.']);
+    exit;
+}
+if ($action === 'draft') {
+    if ($method !== 'POST') {
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Methode nicht erlaubt.']);
+        exit;
+    }
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    $configuredOrigin = parse_url($config['redirect_uri'], PHP_URL_SCHEME) . '://' . parse_url($config['redirect_uri'], PHP_URL_HOST);
+    if (!is_string($origin) || !hash_equals($configuredOrigin, rtrim($origin, '/'))) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Ungültiger Ursprung.']);
+        exit;
+    }
+}
 
 // ----------------------------------------------------
 // 1. GET GROUPS
@@ -120,7 +118,7 @@ if ($action === 'groups') {
         'limit' => 50,
     ]);
 
-    if (!empty($res['values'])) {
+    if (isset($res['values']) && is_array($res['values'])) {
         $groups = [];
         foreach ($res['values'] as $g) {
             $groups[] = [
@@ -273,7 +271,12 @@ function sanitizeUtf8ForCivi($text) {
 // ----------------------------------------------------
 // 3. POST CREATE DRAFT (MAILING OR SMS ACTIVITY)
 // ----------------------------------------------------
-if ($action === 'draft' || $method === 'POST') {
+if ($action === 'draft') {
+    if ($apiKey === '') {
+        http_response_code(503);
+        echo json_encode(['success' => false, 'message' => 'CiviCRM ist nicht konfiguriert.']);
+        exit;
+    }
     $input = json_decode(file_get_contents('php://input'), true);
     if (!is_array($input)) {
         http_response_code(400);
