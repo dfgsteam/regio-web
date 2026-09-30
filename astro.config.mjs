@@ -21,16 +21,28 @@ const canonicalEventSlugs = new Set(
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import fs from 'node:fs'
+import { localToolboxRoot } from './scripts/local-toolbox-path.mjs'
 
 function devPhpProxyPlugin() {
+  const phpRoutes = new Set(['login.php', 'callback.php', 'logout.php', 'civicrm-api.php'])
   return {
     name: 'dev-php-proxy',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (!req.url) return next()
         const urlObj = new URL(req.url, `http://${req.headers.host || 'localhost:4321'}`)
-        if (urlObj.pathname === '/toolbox-auth/civicrm-api.php') {
-          if (!fs.existsSync(path.resolve(process.cwd(), 'private/config.php'))) {
+        const phpRoute = urlObj.pathname.startsWith('/toolbox-auth/')
+          ? urlObj.pathname.slice('/toolbox-auth/'.length)
+          : ''
+        if (phpRoutes.has(phpRoute)) {
+          const remoteAddress = req.socket.remoteAddress || ''
+          if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remoteAddress) ||
+              !['localhost:4321', '127.0.0.1:4321'].includes(req.headers.host || '')) {
+            res.statusCode = 403
+            res.end('Local Toolbox access only')
+            return
+          }
+          if (!fs.existsSync(path.join(localToolboxRoot, 'private/config.php'))) {
             res.statusCode = 503
             res.setHeader('Content-Type', 'application/json; charset=utf-8')
             res.setHeader('Cache-Control', 'no-store')
@@ -44,7 +56,7 @@ function devPhpProxyPlugin() {
           req.on('data', (chunk) => chunks.push(chunk))
           req.on('end', () => {
             const bodyBuffer = Buffer.concat(chunks)
-            const scriptPath = path.resolve(process.cwd(), 'public/toolbox-auth/civicrm-api.php')
+            const scriptPath = path.join(localToolboxRoot, 'public/toolbox-auth', phpRoute)
 
             const phpBin = fs.existsSync('/opt/homebrew/bin/php-cgi')
               ? '/opt/homebrew/bin/php-cgi'
@@ -58,25 +70,36 @@ function devPhpProxyPlugin() {
                 REQUEST_METHOD: req.method || 'GET',
                 QUERY_STRING: urlObj.search.replace(/^\?/, ''),
                 SCRIPT_FILENAME: scriptPath,
+                SCRIPT_NAME: urlObj.pathname,
+                REQUEST_URI: req.url,
+                SERVER_PROTOCOL: 'HTTP/1.1',
+                SERVER_NAME: 'localhost',
+                SERVER_PORT: '4321',
+                REMOTE_ADDR: remoteAddress,
                 CONTENT_TYPE: req.headers['content-type'] || '',
                 CONTENT_LENGTH: String(bodyBuffer.length),
                 HTTP_HOST: req.headers.host || 'localhost:4321',
                 HTTP_COOKIE: req.headers.cookie || '',
+                HTTP_ORIGIN: req.headers.origin || '',
                 REDIRECT_STATUS: '200',
               },
             })
 
             const outChunks = []
+            let spawnFailed = false
             child.stdout.on('data', (c) => outChunks.push(c))
             child.stderr.on('data', (e) => console.error('[dev-php-cgi error]', e.toString()))
 
             child.on('close', () => {
+              if (spawnFailed) return
               const full = Buffer.concat(outChunks)
-              const sepIdx = full.indexOf('\r\n\r\n')
+              const headerEnd = full.toString('latin1').match(/\r?\n\r?\n/)
+              const sepIdx = headerEnd?.index ?? -1
               if (sepIdx !== -1) {
                 const headerStr = full.slice(0, sepIdx).toString('utf-8')
-                const body = full.slice(sepIdx + 4)
-                for (const line of headerStr.split('\r\n')) {
+                const body = full.slice(sepIdx + headerEnd[0].length)
+                const cookies = []
+                for (const line of headerStr.split(/\r?\n/)) {
                   const colonIdx = line.indexOf(':')
                   if (colonIdx !== -1) {
                     const name = line.slice(0, colonIdx).trim()
@@ -84,11 +107,14 @@ function devPhpProxyPlugin() {
                     if (name.toLowerCase() === 'status') {
                       const code = parseInt(val, 10)
                       if (!isNaN(code)) res.statusCode = code
+                    } else if (name.toLowerCase() === 'set-cookie') {
+                      cookies.push(val)
                     } else {
                       res.setHeader(name, val)
                     }
                   }
                 }
+                if (cookies.length) res.setHeader('Set-Cookie', cookies)
                 res.end(body)
               } else {
                 res.statusCode = 502
@@ -98,6 +124,7 @@ function devPhpProxyPlugin() {
             })
 
             child.on('error', (err) => {
+              spawnFailed = true
               console.error('[dev-php-cgi spawn error]', err)
               res.statusCode = 500
               res.setHeader('Content-Type', 'application/json; charset=utf-8')

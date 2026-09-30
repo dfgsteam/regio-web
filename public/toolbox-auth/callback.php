@@ -4,7 +4,7 @@
  * Tauscht den Authorization Code gegen Tokens, prüft User-Daten und setzt das signierte Session-Cookie.
  */
 $config = require dirname(__DIR__, 2) . '/private/config.php';
-session_set_cookie_params(['secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
+session_set_cookie_params(['secure' => $config['cookie_secure'], 'httponly' => true, 'samesite' => 'Lax']);
 session_start();
 header('Cache-Control: no-store');
 
@@ -133,7 +133,7 @@ $cookieValue = $b64Payload . '.' . $signature;
 setcookie($config['cookie_name'], $cookieValue, [
     'expires'  => $expiresAt,
     'path'     => '/',
-    'secure'   => true,
+    'secure'   => $config['cookie_secure'],
     'httponly' => true,
     'samesite' => 'Lax',
 ]);

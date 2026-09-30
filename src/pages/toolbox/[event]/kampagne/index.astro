@@ -1991,6 +1991,10 @@ const clientData = {
       const data = contentType.includes('application/json') ? await res.json() : null
       if (!res.ok) {
         if (res.status === 401) {
+          if (data?.message?.includes('Nicht autorisiert')) {
+            window.location.assign(`/toolbox-auth/login.php?return_to=${encodeURIComponent(window.location.pathname)}`)
+            return
+          }
           throw new Error(data?.message || 'Bitte erneut bei der Toolbox anmelden. Falls die Testumgebung einen zusätzlichen Zugangsschutz hat, melde dich auch dort an.')
         }
         throw new Error(data?.message || `Gruppenabfrage fehlgeschlagen (HTTP ${res.status}).`)

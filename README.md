@@ -106,6 +106,7 @@ npm run dev
 | Befehl | Beschreibung |
 | :--- | :--- |
 | `npm run dev` | Startet den lokalen Astro Dev-Server mit Hot-Reloading |
+| `npm run dev:toolbox` | Erzeugt die lokale PHP-Konfiguration außerhalb des Projekts aus `.env` und startet die Toolbox auf `localhost:4321` |
 | `npm run build` | Erstellt das produktionsbereite statische Bundle im `/dist`-Verzeichnis |
 | `npm run preview` | Lokale Vorschau des erstellten Produktions-Builds |
 | `npm run check` | Führt Astro- und TypeScript-Typprüfungen durch |
@@ -297,6 +298,8 @@ Das Leitungsteam wird zentral in [`src/pages/team/index.astro`](src/pages/team/i
 ## 🔒 Datenschutz & Rechtliches
 
 ### Leiter-Toolbox absichern
+
+Für lokale CiviCRM-Gruppen und Kontakte `npm run dev:toolbox` verwenden. Der Befehl benötigt `php-cgi` sowie die Authentik- und CiviCRM-Werte in `.env` und erzeugt eine geschützte PHP-Kopie mit Konfiguration im temporären Verzeichnis des Betriebssystems **außerhalb des Astro-Projekts**. Ein leeres `TOOLBOX_ALLOWED_GROUPS` erlaubt lokal wie die Repo-Variable `*` jeden erfolgreich bei dieser Authentik-Anwendung angemeldeten Nutzer. In Authentik muss für den verwendeten OAuth-Client zusätzlich die Redirect-URI `http://localhost:4321/toolbox-auth/callback.php` zugelassen sein. Danach die Toolbox auf `http://localhost:4321/toolbox/` öffnen und bei Authentik anmelden. Der PHP-Proxy akzeptiert nur Verbindungen vom eigenen Rechner; ohne gültiges signiertes Sitzungs-Cookie liefert die CiviCRM-API weiterhin HTTP 401. Für die normale Seitenentwicklung ohne Live-Daten bleibt `npm run dev` verfügbar.
 
 Die Toolbox unter `/toolbox/` wird auf dem Apache-Webhosting über `public/.htaccess` und `public/toolbox-auth/guard.php` geschützt. Der FTP-Zugang startet im gemeinsamen Elternordner von `public/` und `private/`; **nur `public/` ist als Webverzeichnis konfiguriert**. Schon `npm run build` trennt die Ausgaben: Die allgemeine Website liegt in `dist/`, die Toolbox-Seiten, PDFs und Grafiken in `dist-private/toolbox/`. Beim Deployment kommen außerdem der interne PHP-Konfigurationshelfer und die Schlüsseldatei nach `private/`. In `public/` liegen nur die aufrufbaren PHP-Endpunkte und allgemeine Website-Dateien. Alte öffentliche `config.php`- und `generated-config.php`-Dateien werden mit sperrenden Platzhaltern überschrieben. `TOOLBOX_REDIRECT_URI` wird aus `SITE_URL` berechnet. Eine separate Server-`.env` wird nicht gelesen und ist nicht erforderlich. Fehlt ein Pflichtwert oder schlägt der Upload nach `private/` fehl, wird die Website nicht hochgeladen; ohne gültige Konfiguration bleibt die Toolbox gesperrt. Mit `TOOLBOX_ALLOWED_GROUPS=*` erhält jeder Benutzer Zugang, der sich bei der konfigurierten Authentik-Anwendung erfolgreich anmeldet. Ohne Anmeldung bleibt die Toolbox geschützt.
 

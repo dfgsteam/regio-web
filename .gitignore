@@ -2,6 +2,7 @@
 node_modules/
 dist/
 dist-private/
+private/
 .astro/
 
 # Env

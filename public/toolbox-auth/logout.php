@@ -9,7 +9,7 @@ $config = require dirname(__DIR__, 2) . '/private/config.php';
 setcookie($config['cookie_name'], '', [
     'expires'  => time() - 86400,
     'path'     => '/',
-    'secure'   => true,
+    'secure'   => $config['cookie_secure'],
     'httponly' => true,
     'samesite' => 'Lax',
 ]);

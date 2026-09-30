@@ -13,6 +13,9 @@ $clientId = trim((string) ($settings['AUTHENTIK_CLIENT_ID'] ?? ''));
 $clientSecret = (string) ($settings['AUTHENTIK_CLIENT_SECRET'] ?? '');
 $appSecret = (string) ($settings['TOOLBOX_APP_SECRET'] ?? '');
 $redirectUri = trim((string) ($settings['TOOLBOX_REDIRECT_URI'] ?? ''));
+$isLocalDev = ($settings['TOOLBOX_LOCAL_DEV'] ?? false) === true;
+$validRedirect = preg_match('#^https://[^/]+/toolbox-auth/callback\.php$#', $redirectUri) ||
+    ($isLocalDev && preg_match('#^http://localhost(?::[0-9]+)?/toolbox-auth/callback\.php$#', $redirectUri));
 $allowedGroups = array_values(array_filter(array_map(
     'trim',
     explode(',', (string) ($settings['TOOLBOX_ALLOWED_GROUPS'] ?? ''))
@@ -20,7 +23,7 @@ $allowedGroups = array_values(array_filter(array_map(
 
 // An incomplete deployment must keep the toolbox locked on every host.
 if ($clientId === '' || $clientSecret === '' || strlen($appSecret) < 32 ||
-    !preg_match('#^https://[^/]+/toolbox-auth/callback\.php$#', $redirectUri) ||
+    !$validRedirect ||
     $allowedGroups === []) {
     http_response_code(503);
     header('Content-Type: text/plain; charset=utf-8');
@@ -33,6 +36,7 @@ return [
     'client_id' => $clientId,
     'client_secret' => $clientSecret,
     'redirect_uri' => $redirectUri,
+    'cookie_secure' => !$isLocalDev,
     'app_secret' => $appSecret,
     'cookie_name' => 'smj_toolbox_session',
     'cookie_expire' => 8 * 3600,
