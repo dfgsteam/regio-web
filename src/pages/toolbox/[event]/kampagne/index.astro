@@ -1987,9 +1987,15 @@ const clientData = {
     if (!groupSelect) return
     try {
       const res = await fetch('/toolbox-auth/civicrm-api.php?action=groups')
-      if (!res.ok) throw new Error('Gruppen konnten nicht geladen werden.')
-      const data = await res.json()
-      if (!Array.isArray(data.groups)) throw new Error('Ungültige Gruppenantwort.')
+      const contentType = res.headers.get('content-type') || ''
+      const data = contentType.includes('application/json') ? await res.json() : null
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error(data?.message || 'Bitte erneut bei der Toolbox anmelden. Falls die Testumgebung einen zusätzlichen Zugangsschutz hat, melde dich auch dort an.')
+        }
+        throw new Error(data?.message || `Gruppenabfrage fehlgeschlagen (HTTP ${res.status}).`)
+      }
+      if (!Array.isArray(data?.groups)) throw new Error('Die Gruppenabfrage lieferte keine gültige JSON-Antwort.')
       currentGroups = data.groups
       groupSelect.replaceChildren()
       currentGroups.forEach((group) => {
@@ -2003,11 +2009,16 @@ const clientData = {
       currentGroupId = Number(currentGroups[0]?.id || 0)
       if (currentGroupId) fetchLiveGroupContacts(currentGroupId)
     } catch (e) {
+      currentGroups = []
+      currentGroupId = 0
+      currentRecipients = []
+      updateRecipientsDisplay()
       groupSelect.replaceChildren()
       const option = document.createElement('option')
       option.textContent = 'Gruppen nicht verfügbar'
       groupSelect.append(option)
-      if (civiStatus) civiStatus.textContent = 'Gruppen konnten nicht geladen werden.'
+      groupSelect.disabled = true
+      if (civiStatus) civiStatus.textContent = e instanceof Error ? e.message : 'Gruppen konnten nicht geladen werden.'
       console.warn('Could not fetch live groups:', e)
     }
   }
