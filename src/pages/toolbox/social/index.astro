@@ -1,0 +1,21 @@
+---
+// src/pages/toolbox/social/index.astro
+// Automatic router for /toolbox/social/?event=...&format=...
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Social Media Studio Weiterleitung...</title>
+    <script is:inline>
+      const params = new URLSearchParams(window.location.search)
+      const eventSlug = params.get('event') || 'custom'
+      const format = params.get('format')
+      const target = `/toolbox/social/${eventSlug}/${format ? `?format=${format}` : ''}`
+      window.location.replace(target)
+    </script>
+  </head>
+  <body style="background: #111713; color: #F1EBDD; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <p>Social Media Studio wird geladen...</p>
+  </body>
+</html>

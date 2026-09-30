@@ -14,16 +14,11 @@ import {
   MapPin,
   FileText,
   Smartphone,
-  ArrowRight,
-  LogOut,
   Users,
   QrCode,
   Clock,
   Folder,
-  MessageSquare,
   Mail,
-  Layers,
-  LayoutGrid,
 } from '@lucide/astro'
 import { eventProvider } from '../../lib/events'
 import { getAllCamps } from '../../lib/camps'
@@ -571,6 +566,8 @@ const initialCustomSvg = await generateQrSvg(initialCustomUrl, { margin: 2, erro
                     {item.socialUrl && (
                       <a
                         href={item.socialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase rounded-xs hover:border-paper hover:bg-forest-900 transition-colors"
                         title="Instagram Storys & Feed Posts"
                       >

@@ -376,7 +376,9 @@ const clientData = {
                 </div>
                 <a
                   id="showcase-btn-plakat"
-                  href={`/toolbox/plakat/?event=${initialEvent.id}`}
+                  href={`/toolbox/flyer/${initialEvent.id}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase hover:border-paper hover:bg-forest-900 rounded-xs"
                 >
                   <FileText class="w-3.5 h-3.5 text-orange" />
@@ -427,7 +429,9 @@ const clientData = {
                 </div>
                 <a
                   id="showcase-btn-story"
-                  href={`/toolbox/social-media/?event=${initialEvent.id}&format=story`}
+                  href={`/toolbox/social/${initialEvent.id}/?format=story`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase hover:border-paper hover:bg-forest-900 rounded-xs"
                 >
                   <Share2 class="w-3.5 h-3.5 text-orange" />
@@ -475,7 +479,9 @@ const clientData = {
                 </div>
                 <a
                   id="showcase-btn-feed"
-                  href={`/toolbox/social-media/?event=${initialEvent.id}&format=feed`}
+                  href={`/toolbox/social/${initialEvent.id}/?format=feed`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-forest-950 border border-paper/30 text-paper font-mono text-xs font-bold uppercase hover:border-paper hover:bg-forest-900 rounded-xs"
                 >
                   <Share2 class="w-3.5 h-3.5 text-orange" />
@@ -1299,9 +1305,9 @@ const clientData = {
     // Showcase Sync
     if (showcaseCurrentTitle) showcaseCurrentTitle.textContent = currentEvent.title
     if (showcaseBtnMusterPdf) showcaseBtnMusterPdf.href = `/toolbox/briefe/${currentEvent.id}-muster.pdf`
-    if (showcaseBtnPlakat) showcaseBtnPlakat.href = `/toolbox/plakat/?event=${currentEvent.id}`
-    if (showcaseBtnStory) showcaseBtnStory.href = `/toolbox/social-media/?event=${currentEvent.id}&format=story`
-    if (showcaseBtnFeed) showcaseBtnFeed.href = `/toolbox/social-media/?event=${currentEvent.id}&format=feed`
+    if (showcaseBtnPlakat) showcaseBtnPlakat.href = `/toolbox/flyer/${currentEvent.id}/`
+    if (showcaseBtnStory) showcaseBtnStory.href = `/toolbox/social/${currentEvent.id}/?format=story`
+    if (showcaseBtnFeed) showcaseBtnFeed.href = `/toolbox/social/${currentEvent.id}/?format=feed`
 
     document.querySelectorAll('.showcase-sync-title').forEach(el => el.textContent = currentEvent.title)
     document.querySelectorAll('.showcase-sync-date').forEach(el => el.textContent = currentEvent.dateStr)

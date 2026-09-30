@@ -1,0 +1,20 @@
+---
+// src/pages/toolbox/plakat/index.astro
+// Automatic router for /toolbox/plakat/?event=...
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plakat / Flyer Weiterleitung...</title>
+    <script is:inline>
+      const params = new URLSearchParams(window.location.search)
+      const eventSlug = params.get('event')
+      const target = eventSlug ? `/toolbox/flyers/${eventSlug}.pdf` : `/toolbox/kampagnen/`
+      window.location.replace(target)
+    </script>
+  </head>
+  <body style="background: #111713; color: #F1EBDD; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <p>Plakat wird geladen...</p>
+  </body>
+</html>

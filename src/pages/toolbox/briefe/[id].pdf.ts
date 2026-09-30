@@ -37,6 +37,19 @@ export async function getStaticPaths() {
       registrationUrl: `${QR_BASE_URL}/abenteuer/${slug}/`,
     }
 
+    // Direct slug alias (e.g. zeltlager-2026.pdf)
+    if (!seen.has(slug)) {
+      seen.add(slug)
+      paths.push({
+        params: { id: slug },
+        props: {
+          campaignEvent: eventData,
+          recipients: defaultRecipients.slice(0, 1),
+          isBatch: false,
+        },
+      })
+    }
+
     // Muster-Brief
     if (!seen.has(`${slug}-muster`)) {
       seen.add(`${slug}-muster`)
@@ -82,6 +95,19 @@ export async function getStaticPaths() {
             ? 'INKL. VERPFLEGUNG'
             : 'AUF ANFRAGE',
         registrationUrl: `${QR_BASE_URL}/abenteuer/${slug}/`,
+      }
+
+      // Direct slug alias (e.g. actionwochenende-3-2026.pdf)
+      if (!seen.has(slug)) {
+        seen.add(slug)
+        paths.push({
+          params: { id: slug },
+          props: {
+            campaignEvent: eventData,
+            recipients: defaultRecipients.slice(0, 1),
+            isBatch: false,
+          },
+        })
       }
 
       if (!seen.has(`${slug}-muster`)) {
