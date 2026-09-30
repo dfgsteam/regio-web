@@ -1,22 +1,22 @@
 import type { APIRoute } from 'astro'
 import { eventProvider, getSlugVariants, formatDateRange, formatAgeRange } from '../../../lib/events'
 import { getAllCamps } from '../../../lib/camps'
-import { generateSingleLetterPdf, generateLetterBatchPdf } from '../../../lib/pdf/letter-pdf'
+import { generateSingleLetterPdf } from '../../../lib/pdf/letter-pdf'
 import { getGroupRecipients } from '../../../lib/civicrm/client'
 import type { CampaignEventData, CiviRecipient } from '../../../lib/civicrm/types'
 import { QR_BASE_URL } from '../../../lib/qr-url'
 
 export async function getStaticPaths() {
   const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
-  // Default smart group 12 (Alter 9-15)
+  // Default smart group 12 (Alter 9-15) for single specimen/muster preview
   const defaultRecipients = await getGroupRecipients(12)
+  const musterRecipient = defaultRecipients.slice(0, 1)
 
   const paths: {
     params: { id: string }
     props: {
       campaignEvent: CampaignEventData
       recipients: CiviRecipient[]
-      isBatch: boolean
     }
   }[] = []
 
@@ -44,8 +44,7 @@ export async function getStaticPaths() {
         params: { id: slug },
         props: {
           campaignEvent: eventData,
-          recipients: defaultRecipients.slice(0, 1),
-          isBatch: false,
+          recipients: musterRecipient,
         },
       })
     }
@@ -57,21 +56,7 @@ export async function getStaticPaths() {
         params: { id: `${slug}-muster` },
         props: {
           campaignEvent: eventData,
-          recipients: defaultRecipients.slice(0, 1),
-          isBatch: false,
-        },
-      })
-    }
-
-    // Batch-Druck
-    if (!seen.has(`${slug}-batch`)) {
-      seen.add(`${slug}-batch`)
-      paths.push({
-        params: { id: `${slug}-batch` },
-        props: {
-          campaignEvent: eventData,
-          recipients: defaultRecipients,
-          isBatch: true,
+          recipients: musterRecipient,
         },
       })
     }
@@ -104,8 +89,7 @@ export async function getStaticPaths() {
           params: { id: slug },
           props: {
             campaignEvent: eventData,
-            recipients: defaultRecipients.slice(0, 1),
-            isBatch: false,
+            recipients: musterRecipient,
           },
         })
       }
@@ -116,20 +100,7 @@ export async function getStaticPaths() {
           params: { id: `${slug}-muster` },
           props: {
             campaignEvent: eventData,
-            recipients: defaultRecipients.slice(0, 1),
-            isBatch: false,
-          },
-        })
-      }
-
-      if (!seen.has(`${slug}-batch`)) {
-        seen.add(`${slug}-batch`)
-        paths.push({
-          params: { id: `${slug}-batch` },
-          props: {
-            campaignEvent: eventData,
-            recipients: defaultRecipients,
-            isBatch: true,
+            recipients: musterRecipient,
           },
         })
       }
@@ -140,23 +111,17 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute = async ({ props }) => {
-  const { campaignEvent, recipients, isBatch } = props as {
+  const { campaignEvent, recipients } = props as {
     campaignEvent: CampaignEventData
     recipients: CiviRecipient[]
-    isBatch: boolean
   }
 
-  let pdfBytes: Uint8Array
-  if (isBatch) {
-    pdfBytes = await generateLetterBatchPdf(recipients, campaignEvent)
-  } else {
-    pdfBytes = await generateSingleLetterPdf(recipients[0]!, campaignEvent)
-  }
+  const pdfBytes = await generateSingleLetterPdf(recipients[0]!, campaignEvent)
 
   return new Response(Buffer.from(pdfBytes), {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `inline; filename="anschreiben-${campaignEvent.id}${isBatch ? '-batch' : ''}.pdf"`,
+      'Content-Disposition': `inline; filename="anschreiben-${campaignEvent.id}-muster.pdf"`,
       'Cache-Control': 'public, max-age=3600',
     },
   })

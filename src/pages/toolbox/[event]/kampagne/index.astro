@@ -617,15 +617,14 @@ const clientData = {
                   <Printer class="w-3.5 h-3.5 text-orange" />
                   <span>Brief-Vorschau &rarr;</span>
                 </button>
-                <a
-                  href={`/toolbox/briefe/${currentEvent.id}-batch.pdf`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-orange text-forest-950 font-bold uppercase rounded-xs hover:bg-paper transition-colors"
+                <button
+                  type="button"
+                  id="dashboard-btn-download-batch"
+                  class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-orange text-forest-950 font-bold uppercase rounded-xs hover:bg-paper transition-colors cursor-pointer"
                 >
                   <Download class="w-3.5 h-3.5" />
-                  <span>Sammeldruck (Batch)</span>
-                </a>
+                  <span>Sammeldruck (Live-Batch)</span>
+                </button>
               </div>
             </div>
 
@@ -1016,16 +1015,14 @@ const clientData = {
                 <span>Muster-PDF ↗</span>
               </a>
 
-              <a
+              <button
+                type="button"
                 id="btn-download-batch"
-                href={`/toolbox/briefe/${currentEvent.id}-batch.pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors shadow-lg"
+                class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange hover:bg-paper hover:text-forest-950 text-forest-950 font-mono text-xs font-bold uppercase tracking-wider rounded-xs transition-colors shadow-lg cursor-pointer"
               >
                 <Download class="w-4 h-4" />
-                <span id="batch-btn-label">Sammeldruck ({initialRecipients.length} Briefe)</span>
-              </a>
+                <span id="batch-btn-label">Live-Sammeldruck ({initialRecipients.length} Briefe)</span>
+              </button>
             </div>
           </div>
 
@@ -1466,7 +1463,67 @@ const clientData = {
 
     </div>
   </dialog>
+
+  <!-- ACCESSIBLE LETTER LIVE BATCH RENDERING MODAL DIALOG -->
+  <dialog
+    id="batch-dialog"
+    class="bg-forest-900 text-paper border-2 border-orange p-6 sm:p-8 rounded-xs max-w-lg w-[90%] shadow-2xl backdrop:bg-forest-950/80 backdrop:backdrop-blur-sm"
+  >
+    <div class="space-y-5">
+      <!-- Header -->
+      <div class="flex items-start justify-between gap-4 border-b border-paper/15 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 rounded-xs bg-orange/20 border border-orange text-orange">
+            <Loader id="batch-dialog-spinner" class="w-6 h-6 animate-spin" />
+            <CircleCheck id="batch-dialog-check" class="w-6 h-6 text-green-400 hidden" />
+            <CircleAlert id="batch-dialog-error" class="w-6 h-6 text-red-400 hidden" />
+          </div>
+          <div>
+            <h4 id="batch-dialog-title" class="font-display text-xl uppercase tracking-wide text-paper">
+              Sammeldruck wird live erstellt...
+            </h4>
+            <div id="batch-dialog-subtitle" class="font-mono text-xs text-orange">
+              Live-Generierung für ausgewählte CiviCRM-Kontakte
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="batch-dialog-btn-close-x"
+          class="text-paper/60 hover:text-paper p-1 cursor-pointer transition-colors"
+          aria-label="Dialog schließen"
+        >
+          <X class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Message & Progress -->
+      <div class="font-mono text-xs sm:text-sm text-paper/80 leading-relaxed space-y-3">
+        <div id="batch-progress-text">Vorbereitung des Druckauftrags...</div>
+        <div class="w-full bg-forest-950 h-2.5 rounded-xs overflow-hidden border border-paper/15 p-0.5">
+          <div id="batch-progress-bar" class="bg-orange h-full rounded-xs transition-all duration-150" style="width: 5%"></div>
+        </div>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="flex items-center justify-end gap-3 border-t border-paper/15 pt-4 font-mono text-xs">
+        <button
+          type="button"
+          id="batch-dialog-btn-close"
+          class="px-4 py-2 bg-forest-800 hover:bg-forest-700 text-paper font-bold uppercase rounded-xs border border-paper/20 cursor-pointer transition-colors"
+        >
+          Schließen
+        </button>
+      </div>
+    </div>
+  </dialog>
 </BaseLayout>
+
+<script>
+  import { generateClientLetterBatchPdf, downloadPdfBlob } from '../../../../scripts/client-letter-batch-pdf'
+  ;(window as any).generateClientLetterBatchPdf = generateClientLetterBatchPdf
+  ;(window as any).downloadPdfBlob = downloadPdfBlob
+</script>
 
 <script is:inline define:vars={{ clientData }}>
   let currentEvent = clientData.currentEvent
@@ -1818,4 +1875,93 @@ const clientData = {
   document.querySelectorAll('.btn-trigger-sms-draft').forEach((btn) => {
     btn.addEventListener('click', () => triggerCiviDraft('sms'))
   })
+
+  // Live Letter Batch PDF Generation
+  const batchDialog = document.getElementById('batch-dialog')
+  const batchDialogSpinner = document.getElementById('batch-dialog-spinner')
+  const batchDialogCheck = document.getElementById('batch-dialog-check')
+  const batchDialogError = document.getElementById('batch-dialog-error')
+  const batchDialogTitle = document.getElementById('batch-dialog-title')
+  const batchDialogSubtitle = document.getElementById('batch-dialog-subtitle')
+  const batchProgressText = document.getElementById('batch-progress-text')
+  const batchProgressBar = document.getElementById('batch-progress-bar')
+  const batchDialogBtnClose = document.getElementById('batch-dialog-btn-close')
+  const batchDialogBtnCloseX = document.getElementById('batch-dialog-btn-close-x')
+
+  if (batchDialog) {
+    const closeBatch = () => batchDialog.close()
+    if (batchDialogBtnClose) batchDialogBtnClose.addEventListener('click', closeBatch)
+    if (batchDialogBtnCloseX) batchDialogBtnCloseX.addEventListener('click', closeBatch)
+    batchDialog.addEventListener('click', (e) => {
+      const rect = batchDialog.getBoundingClientRect()
+      const isIn =
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width
+      if (!isIn) batchDialog.close()
+    })
+  }
+
+  async function triggerLiveBatchDownload() {
+    if (!currentRecipients || currentRecipients.length === 0) {
+      alert('Keine Empfänger für den Sammeldruck vorhanden.')
+      return
+    }
+
+    if (batchDialog) {
+      if (batchDialogSpinner) batchDialogSpinner.classList.remove('hidden')
+      if (batchDialogCheck) batchDialogCheck.classList.add('hidden')
+      if (batchDialogError) batchDialogError.classList.add('hidden')
+      if (batchDialogTitle) batchDialogTitle.textContent = 'Sammeldruck wird live erstellt...'
+      if (batchDialogSubtitle) batchDialogSubtitle.textContent = `Generiere ${currentRecipients.length} personalisierte DIN 5008 Briefe`
+      if (batchProgressText) batchProgressText.textContent = `Vorbereitung (1 von ${currentRecipients.length})...`
+      if (batchProgressBar) batchProgressBar.style.width = '5%'
+      batchDialog.showModal()
+    }
+
+    try {
+      while (!window.generateClientLetterBatchPdf) {
+        await new Promise((r) => setTimeout(r, 50))
+      }
+
+      const pdfBytes = await window.generateClientLetterBatchPdf(
+        currentRecipients,
+        currentEvent,
+        (current, total) => {
+          const pct = Math.round((current / total) * 100)
+          if (batchProgressText) batchProgressText.textContent = `Erstelle Brief ${current} von ${total}...`
+          if (batchProgressBar) batchProgressBar.style.width = `${pct}%`
+        }
+      )
+
+      const filename = `anschreiben-${currentEvent.id}-${currentRecipients.length}-briefe.pdf`
+      window.downloadPdfBlob(pdfBytes, filename)
+
+      if (batchDialogSpinner) batchDialogSpinner.classList.add('hidden')
+      if (batchDialogCheck) batchDialogCheck.classList.remove('hidden')
+      if (batchDialogTitle) batchDialogTitle.textContent = 'Sammeldruck fertiggestellt!'
+      if (batchDialogSubtitle) batchDialogSubtitle.textContent = `${currentRecipients.length} Briefe erfolgreich generiert`
+      if (batchProgressText) {
+        batchProgressText.innerHTML = `
+          <span class="text-green-400 font-bold">✓ PDF erfolgreich heruntergeladen:</span><br>
+          <span class="text-paper/90">${filename}</span><br><br>
+          Die Datei enthält alle personalisierten Seiten für die ausgewählte Gruppe und kann direkt gedruckt werden.
+        `
+      }
+      if (batchProgressBar) batchProgressBar.style.width = '100%'
+    } catch (err) {
+      console.error('[Live-Batch-PDF Error]', err)
+      if (batchDialogSpinner) batchDialogSpinner.classList.add('hidden')
+      if (batchDialogError) batchDialogError.classList.remove('hidden')
+      if (batchDialogTitle) batchDialogTitle.textContent = 'Fehler beim Sammeldruck'
+      if (batchDialogSubtitle) batchDialogSubtitle.textContent = 'Generierung abgebrochen'
+      if (batchProgressText) batchProgressText.textContent = `Fehler: ${err?.message || 'Unbekannter Fehler'}`
+    }
+  }
+
+  const btnDownloadBatch = document.getElementById('btn-download-batch')
+  const dashboardBtnDownloadBatch = document.getElementById('dashboard-btn-download-batch')
+  if (btnDownloadBatch) btnDownloadBatch.addEventListener('click', triggerLiveBatchDownload)
+  if (dashboardBtnDownloadBatch) dashboardBtnDownloadBatch.addEventListener('click', triggerLiveBatchDownload)
 </script>
