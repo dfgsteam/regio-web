@@ -81,8 +81,24 @@ jobs:
           port: 21
           timeout: 60000
 
-      - name: Upload to FTP
+      - name: Upload to FTP (attempt 1)
         if: ${{ env.FTP_PASSWORD != '' }}
+        id: upload_public_attempt_1
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ae9ed.netcup.net
+          username: github-hnld-regio
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./public/
+          local-dir: ./dist/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Upload to FTP (retry)
+        if: ${{ env.FTP_PASSWORD != '' && steps.upload_public_attempt_1.outcome == 'failure' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ae9ed.netcup.net
