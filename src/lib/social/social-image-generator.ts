@@ -683,7 +683,20 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
 
     <!-- Header Bar -->
-    <g transform="translate(96, ${options.format === 'story' ? 210 : 95})">
+    ${
+      options.format === 'story'
+        ? `
+    <g transform="translate(96, 210)">
+      <svg x="0" y="-58" width="96" height="84" viewBox="0 0 328 288">
+        ${logoInner}
+      </svg>
+      <text x="116" y="0" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      <rect x="${width - 192 - 200}" y="-42" width="200" height="48" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="6"/>
+      <text x="${width - 192 - 100}" y="-9" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">${catEsc}</text>
+    </g>
+        `
+        : `
+    <g transform="translate(96, 95)">
       <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">
         ${logoInner}
       </svg>
@@ -691,6 +704,8 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
       <rect x="${width - 192 - 180}" y="-26" width="180" height="38" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="4"/>
       <text x="${width - 192 - 90}" y="-1" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">${catEsc}</text>
     </g>
+        `
+    }
 
     <!-- Main Title Block (Giant Eye-Catcher) -->
     <g transform="translate(96, ${options.format === 'story' ? 310 : options.format === 'portrait' ? 175 : 160})">
@@ -802,7 +817,20 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
     <path d="M ${width - 85} ${height - 36} L ${width - 36} ${height - 36} L ${width - 36} ${height - 85}" fill="none" stroke="#FF5A1F" stroke-width="7"/>
 
     <!-- Header Bar -->
-    <g transform="translate(96, ${options.format === 'story' ? 210 : 95})">
+    ${
+      options.format === 'story'
+        ? `
+    <g transform="translate(96, 210)">
+      <svg x="0" y="-58" width="96" height="84" viewBox="0 0 328 288">
+        ${logoInner}
+      </svg>
+      <text x="116" y="0" fill="#FF5A1F" font-size="34" font-family="Impact, sans-serif" letter-spacing="3">SMJ REGIO WEGWEISER</text>
+      <rect x="${width - 192 - 200}" y="-42" width="200" height="48" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="6"/>
+      <text x="${width - 192 - 100}" y="-9" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">TEIL ${options.slideIndex + 1} / ${options.totalSlides}</text>
+    </g>
+        `
+        : `
+    <g transform="translate(96, 95)">
       <svg x="0" y="-27" width="44" height="38" viewBox="0 0 328 288">
         ${logoInner}
       </svg>
@@ -810,6 +838,8 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
       <rect x="${width - 192 - 180}" y="-26" width="180" height="38" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="4"/>
       <text x="${width - 192 - 90}" y="-1" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">TEIL ${options.slideIndex + 1} / ${options.totalSlides}</text>
     </g>
+        `
+    }
 
     ${
       !isLastSlide
