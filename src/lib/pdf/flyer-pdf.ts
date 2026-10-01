@@ -244,15 +244,15 @@ export async function generateFlyerPdf(data: FlyerPdfData): Promise<Uint8Array> 
   }
 
   const headerTextX = logoImage ? marginX + logoSize + 12 : marginX
-  page.drawText('SMJ REGIO WEGWEISER • HEILIGENSTADT', {
+  page.drawText('SMJ REGIO WEGWEISER', {
     x: headerTextX,
     y: headerTopY - 14,
-    size: 10.5,
+    size: 11,
     font: fontMono,
     color: cOrange,
   })
 
-  page.drawText('SCHÖNSTATT MANNESJUGEND • SMJ-WEGWEISER.DE', {
+  page.drawText('SCHÖNSTATT-MANNESJUGEND • SMJ-WEGWEISER.DE', {
     x: headerTextX,
     y: headerTopY - 28,
     size: 7.5,

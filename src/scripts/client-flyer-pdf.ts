@@ -118,15 +118,15 @@ export async function generateClientFlyerPdf(data: ClientFlyerData): Promise<Uin
   }
 
   const headerTextX = logoImage ? marginX + logoSize + 12 : marginX
-  page.drawText('SMJ REGIO WEGWEISER - KATHOLISCHE JUGEND', {
+  page.drawText('SMJ REGIO WEGWEISER', {
     x: headerTextX,
     y: headerTopY - 18,
-    size: 9.5,
+    size: 10,
     font: fontBold,
     color: cOrange,
   })
 
-  page.drawText('Thueringen & Sachsen-Anhalt - smj-wegweiser.de', {
+  page.drawText('Schoenstatt-Mannesjugend - smj-wegweiser.de', {
     x: headerTextX,
     y: headerTopY - 32,
     size: 8,
@@ -399,7 +399,7 @@ export async function generateClientFlyerPdf(data: ClientFlyerData): Promise<Uin
 
   // --- FOOTER NOTICE ---
   page.drawText(
-    `SMJ Regio Wegweiser - Jugend leitet Jugend - Katholische Schoenstatt-Mannesjugend - Stand: ${new Date().getFullYear()}`,
+    `SMJ Regio Wegweiser - Jugend leitet Jugend - Schoenstatt-Mannesjugend - Stand: ${new Date().getFullYear()}`,
     {
       x: marginX,
       y: footerY,

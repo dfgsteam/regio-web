@@ -191,7 +191,7 @@ export async function appendLetterPage(
   // 45mm from top = 127.56 pt
   const leftMargin = 56.7 // 20mm from left
   const senderLineY = pageHeight - 128
-  const senderLineText = 'Regio Wegweiser • Pater-Kentenich-Weg 3 • 37308 Heiligenstadt'
+  const senderLineText = 'SMJ Regio Wegweiser • Pater-Kentenich-Weg 3 • 37308 Heilbad Heiligenstadt'
   page.drawText(senderLineText, {
     x: leftMargin,
     y: senderLineY,
@@ -247,37 +247,30 @@ export async function appendLetterPage(
     font: fonts.fontAnton,
     color: colorForest,
   })
-  page.drawText('Klause 2.0', {
+  page.drawText('Pater-Kentenich-Weg 3', {
     x: infoX,
     y: infoY - 12,
     size: 8,
     font: fonts.fontInter,
     color: colorForest,
   })
-  page.drawText('Pater-Kentenich-Weg 3', {
+  page.drawText('37308 Heilbad Heiligenstadt', {
     x: infoX,
     y: infoY - 22,
     size: 8,
     font: fonts.fontInter,
     color: colorForest,
   })
-  page.drawText('37308 Heilbad Heiligenstadt', {
+  page.drawText('smj-wegweiser.de', {
     x: infoX,
     y: infoY - 32,
     size: 8,
     font: fonts.fontInter,
     color: colorForest,
   })
-  page.drawText('smj-wegweiser.de', {
-    x: infoX,
-    y: infoY - 42,
-    size: 8,
-    font: fonts.fontInter,
-    color: colorForest,
-  })
   page.drawText('Datum: ' + today, {
     x: infoX,
-    y: infoY - 60,
+    y: infoY - 50,
     size: 8,
     font: fonts.fontInter,
     color: colorMuted,
@@ -314,7 +307,7 @@ export async function appendLetterPage(
 
   // 8. Letter Body Text
   const bodyText =
-    'hast du Lust auf ein echtes Abenteuer? Raus in die Natur, Dreck an den Wanderschuhen, knisterndes Lagerfeuer und spannende Geländespiele mit anderen Jungs!\n\n' +
+    'hast du Lust auf ein echtes Abenteuer? Raus in die Natur, Dreck an den Wanderschuhen, spannende Geländespiele und echte Action mit anderen Jungs!\n\n' +
     'Wir von der SMJ Regio Wegweiser laden dich ganz herzlich zu unserer nächsten großen Aktion ein. Egal ob du schon einmal dabei warst oder das erste Mal mitkommst: Es warten unvergessliche Tage, eine starke Gemeinschaft und jede Menge Action auf dich.'
 
   const textWidth = pageWidth - leftMargin - 56.7
@@ -540,7 +533,7 @@ export async function appendLetterPage(
     thickness: 0.5,
     color: colorBorder,
   })
-  page.drawText('SMJ Regio Wegweiser • Klause 2.0 • Pater-Kentenich-Weg 3 • 37308 Heilbad Heiligenstadt • smj-wegweiser.de', {
+  page.drawText('SMJ Regio Wegweiser • Pater-Kentenich-Weg 3 • 37308 Heilbad Heiligenstadt • smj-wegweiser.de', {
     x: leftMargin,
     y: footerY,
     size: 7.5,

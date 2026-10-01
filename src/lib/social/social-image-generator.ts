@@ -49,11 +49,16 @@ function getDisplayDomain(url?: string): string {
   if (!url) return 'smj-wegweiser.de'
   try {
     const parsed = new URL(url.startsWith('http') ? url : `https://${url}`)
-    return parsed.host || 'smj-wegweiser.de'
+    const host = parsed.host || 'smj-wegweiser.de'
+    if (host.includes('127.0.0.1') || host.includes('localhost')) {
+      return 'smj-wegweiser.de'
+    }
+    return host
   } catch {
     return 'smj-wegweiser.de'
   }
 }
+
 
 
 export function splitFact(label: string, rawVal: string): [string, string] {
@@ -156,12 +161,10 @@ function parseTitleAndSubtitle(title: string, rawSubtitle?: string, location?: s
     sub.includes('Schönstatt-Mannesjugend') ||
     !sub
   ) {
-    if (location && location.toLowerCase().includes('klause')) {
-      sub = 'KLAUSE 2.0 • HEILIGENSTADT'
-    } else if (location && location.toLowerCase().includes('thalwenden')) {
-      sub = 'WIESENTHAL BEI THALWENDEN'
-    } else if (main.includes('ZELTLAGER')) {
-      sub = '10 TAGE EXPEDITION & LAGERFEUER'
+    if (main.includes('ZELTLAGER')) {
+      sub = '10 TAGE SOMMER-EXPEDITION'
+    } else if (main.includes('ACTION') || main.includes('WOCHENENDE') || (location && location.toLowerCase().includes('klause'))) {
+      sub = 'DAS ACTION-WOCHENENDE FÜR JUNGS'
     } else {
       sub = 'ACTION & ZEIT UNTER JUNGS'
     }
@@ -689,7 +692,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
       ? options.highlights.slice(0, 3)
       : [
           'Spannende Aktionen & Geländespiele im Wald',
-          'Große Gemeinschaft, Lagerfeuer & Ausflüge',
+          'Große Gemeinschaft, Freunde & Ausflüge',
           '100% draußen, handyfrei & echte Abenteuer',
         ]
 
@@ -870,11 +873,11 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
 
           return `
           <g transform="translate(0, ${yPos})">
-            <rect x="0" y="0" width="888" height="${itemH}" fill="${isLight ? '#111713' : '#182019'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="${isLight ? '2' : '2.5'}" rx="10"/>
+            <rect x="0" y="0" width="888" height="${itemH}" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="${isLight ? '2.5' : '2.5'}" rx="10"/>
             <rect x="0" y="0" width="12" height="${itemH}" fill="#FF5A1F" rx="4"/>
             <text x="32" y="${options.format === 'story' ? 60 : eventsCount <= 2 ? 52 : 44}" fill="#FF5A1F" font-size="${dateSize}" font-family="Impact, sans-serif" letter-spacing="1.5">${escapeXml(ev.dateStr.toUpperCase())}</text>
-            <text x="32" y="${options.format === 'story' ? 128 : eventsCount <= 2 ? 112 : 96}" fill="#F1EBDD" font-size="${titleSize}" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(ev.title.toUpperCase())}</text>
-            <text x="32" y="${options.format === 'story' ? 186 : eventsCount <= 2 ? 164 : 140}" fill="#C9BA99" font-size="${locSize}" font-family="sans-serif" font-weight="bold">${escapeXml([ev.location, ev.ageGroup].filter(Boolean).join(' • '))}</text>
+            <text x="32" y="${options.format === 'story' ? 128 : eventsCount <= 2 ? 112 : 96}" fill="${isLight ? '#111713' : '#F1EBDD'}" font-size="${titleSize}" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(ev.title.toUpperCase())}</text>
+            <text x="32" y="${options.format === 'story' ? 186 : eventsCount <= 2 ? 164 : 140}" fill="${isLight ? '#4A554D' : '#C9BA99'}" font-size="${locSize}" font-family="sans-serif" font-weight="bold">${escapeXml([ev.location, ev.ageGroup].filter(Boolean).join(' • '))}</text>
           </g>
         `
         })
@@ -894,7 +897,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
       <g transform="translate(0, 0)">
         <rect x="0" y="0" width="888" height="${options.format === 'story' ? 120 : 92}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="${isLight ? '2.5' : '1.5'}" stroke-opacity="${isLight ? '1' : '0.2'}" rx="10"/>
         <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="Impact, sans-serif">01</text>
-        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="sans-serif" font-weight="bold">ECHTE NATUR &amp; LAGERFEUER</text>
+        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="sans-serif" font-weight="bold">ECHTE GEMEINSCHAFT &amp; ABENTEUER</text>
       </g>
       <g transform="translate(0, ${options.format === 'story' ? 144 : 110})">
         <rect x="0" y="0" width="888" height="${options.format === 'story' ? 120 : 92}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="${isLight ? '2.5' : '1.5'}" stroke-opacity="${isLight ? '1' : '0.2'}" rx="10"/>

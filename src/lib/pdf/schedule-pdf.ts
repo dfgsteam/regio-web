@@ -64,8 +64,8 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
   // DIN A6: 105mm x 148mm = 297.64 x 419.53 pt
   const W = 297.64
   const H = 419.53
-  const marginX = 18
-  const contentW = W - 2 * marginX // 261.64 pt
+  const marginX = 16
+  const contentW = W - 2 * marginX // 265.64 pt
 
   const isDark = options.theme === 'dark'
 
@@ -77,15 +77,12 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
   const cWhite = rgb(1, 1, 1)
 
   const cBg = isDark ? cForest : cPaper
-  const cBorderOuter = isDark ? cOrange : cForest
-  const cBorderInner = isDark ? rgb(35 / 255, 45 / 255, 37 / 255) : cSand
   const cTextPrimary = isDark ? cPaper : cForest
-  const cTextMuted = isDark ? rgb(160 / 255, 170 / 255, 155 / 255) : rgb(50 / 255, 60 / 255, 52 / 255)
-  const cBoxBg = isDark ? rgb(24 / 255, 32 / 255, 25 / 255) : cWhite
-  const cBoxBorder = isDark ? cOrange : cForest
-  const cBoxText = isDark ? cPaper : cForest
-  const cBadgeBg = isDark ? cOrange : cForest
-  const cBadgeText = isDark ? cForest : cWhite
+  const cTextMuted = isDark ? rgb(160 / 255, 170 / 255, 155 / 255) : rgb(70 / 255, 80 / 255, 72 / 255)
+  const cCardBg = isDark ? rgb(24 / 255, 32 / 255, 25 / 255) : cWhite
+  const cCardBorder = isDark ? rgb(45 / 255, 58 / 255, 47 / 255) : rgb(215 / 255, 205 / 255, 185 / 255)
+
+
 
   // 1. Embed Brand Fonts
   let fontDisplay: PDFFont
@@ -178,14 +175,14 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       color: cBg,
     })
 
-    // Decorative expedition borders
+    // Expedition framing with technical hairline and signal orange corner brackets
     page.drawRectangle({
       x: 8,
       y: 8,
       width: W - 16,
       height: H - 16,
-      borderColor: cBorderOuter,
-      borderWidth: 1.5,
+      borderColor: isDark ? cOrange : cForest,
+      borderWidth: 1.2,
     })
 
     page.drawRectangle({
@@ -193,76 +190,115 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       y: 11,
       width: W - 22,
       height: H - 22,
-      borderColor: cBorderInner,
+      borderColor: isDark ? rgb(35 / 255, 45 / 255, 37 / 255) : cSand,
       borderWidth: 0.5,
     })
 
-    let currY = H - 22
+    // Corner brackets in signal orange (arm length 12pt, width 2.2pt)
+    const bracketLen = 12
+    const bracketThick = 2.2
+    // Top-Left
+    page.drawLine({ start: { x: 8, y: H - 8 }, end: { x: 8 + bracketLen, y: H - 8 }, thickness: bracketThick, color: cOrange })
+    page.drawLine({ start: { x: 8, y: H - 8 }, end: { x: 8, y: H - 8 - bracketLen }, thickness: bracketThick, color: cOrange })
+    // Top-Right
+    page.drawLine({ start: { x: W - 8, y: H - 8 }, end: { x: W - 8 - bracketLen, y: H - 8 }, thickness: bracketThick, color: cOrange })
+    page.drawLine({ start: { x: W - 8, y: H - 8 }, end: { x: W - 8, y: H - 8 - bracketLen }, thickness: bracketThick, color: cOrange })
+    // Bottom-Left
+    page.drawLine({ start: { x: 8, y: 8 }, end: { x: 8 + bracketLen, y: 8 }, thickness: bracketThick, color: cOrange })
+    page.drawLine({ start: { x: 8, y: 8 }, end: { x: 8, y: 8 + bracketLen }, thickness: bracketThick, color: cOrange })
+    // Bottom-Right
+    page.drawLine({ start: { x: W - 8, y: 8 }, end: { x: W - 8 - bracketLen, y: 8 }, thickness: bracketThick, color: cOrange })
+    page.drawLine({ start: { x: W - 8, y: 8 }, end: { x: W - 8, y: 8 + bracketLen }, thickness: bracketThick, color: cOrange })
+
+    let currY = H - 20
 
     // 2. Header
     if (isFirstPage) {
-      const logoSize = 28
+      const logoBadgeSize = 30
+      const logoBadgeY = currY - logoBadgeSize
+
+      // Logo container patch
+      page.drawRectangle({
+        x: marginX,
+        y: logoBadgeY,
+        width: logoBadgeSize,
+        height: logoBadgeSize,
+        color: isDark ? rgb(24 / 255, 32 / 255, 25 / 255) : cForest,
+        borderColor: cOrange,
+        borderWidth: 1,
+      })
+
       if (logoImage) {
+        const imgSize = 22
         page.drawImage(logoImage, {
-          x: marginX,
-          y: currY - logoSize,
-          width: logoSize,
-          height: logoSize,
+          x: marginX + (logoBadgeSize - imgSize) / 2,
+          y: logoBadgeY + (logoBadgeSize - imgSize) / 2,
+          width: imgSize,
+          height: imgSize,
         })
       }
 
-      const headerTextX = logoImage ? marginX + logoSize + 8 : marginX
+      const headerTextX = marginX + logoBadgeSize + 8
 
-      page.drawText('SMJ REGIO WEGWEISER', {
+      page.drawText('SCHÖNSTATT-MANNESJUGEND', {
         x: headerTextX,
         y: currY - 9,
-        size: 7.2,
+        size: 5.8,
         font: fontBold,
         color: cOrange,
       })
 
-      page.drawText('Katholische Schoenstatt-Mannesjugend', {
+      page.drawText('SMJ REGIO WEGWEISER', {
         x: headerTextX,
-        y: currY - 18,
-        size: 5.5,
+        y: currY - 19,
+        size: 8.5,
+        font: fontDisplay,
+        color: cTextPrimary,
+      })
+
+      page.drawText('DRAUSSEN - GEMEINSCHAFT - ABENTEUER', {
+        x: headerTextX,
+        y: currY - 27,
+        size: 4.8,
         font: fontBody,
         color: cTextMuted,
       })
 
       // Badge top right
       const badgeStr = 'TERMINKALENDER'
-      const badgeW = fontBold.widthOfTextAtSize(badgeStr, 6.5) + 12
+      const badgeW = fontBold.widthOfTextAtSize(badgeStr, 6.2) + 14
+      const badgeH = 15
       page.drawRectangle({
         x: W - marginX - badgeW,
-        y: currY - 16,
+        y: currY - 20,
         width: badgeW,
-        height: 14,
-        color: cBadgeBg,
+        height: badgeH,
+        color: isDark ? cOrange : cForest,
       })
       page.drawText(badgeStr, {
-        x: W - marginX - badgeW + 6,
-        y: currY - 12,
-        size: 6.5,
+        x: W - marginX - badgeW + 7,
+        y: currY - 15,
+        size: 6.2,
         font: fontBold,
-        color: cBadgeText,
+        color: isDark ? cForest : cWhite,
       })
 
-      currY -= logoSize + 6
+      currY -= logoBadgeSize + 6
 
-      // Title & Period Headline
+      // Title & Period Headline separator
       page.drawLine({
         start: { x: marginX, y: currY },
         end: { x: W - marginX, y: currY },
-        thickness: 1.5,
-        color: cBorderOuter,
+        thickness: 0.8,
+        color: cCardBorder,
       })
 
-      currY -= 13
+      currY -= 12
 
       page.drawText('// RAUS. INS ABENTEUER.', {
         x: marginX,
         y: currY,
-        size: 7.5,
+        size: 7,
         font: fontBold,
         color: cOrange,
       })
@@ -270,7 +306,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       currY -= 14
 
       const titleStr = cleanText(options.periodTitle.toUpperCase())
-      const titleSize = titleStr.length > 25 ? 12 : 14
+      const titleSize = titleStr.length > 25 ? 13 : 15
       page.drawText(titleStr, {
         x: marginX,
         y: currY,
@@ -285,7 +321,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         page.drawText(cleanText(options.periodSubtitle), {
           x: marginX,
           y: currY,
-          size: 7,
+          size: 6.8,
           font: fontBody,
           color: cTextMuted,
         })
@@ -295,128 +331,213 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       }
     } else {
       // Subsequent page compact header
-      page.drawText('SMJ REGIO WEGWEISER - TERMINKALENDER', {
+      page.drawText('SMJ REGIO WEGWEISER // TERMINKALENDER', {
         x: marginX,
         y: currY - 6,
         size: 6.5,
-        font: fontMono,
+        font: fontBold,
         color: cOrange,
       })
 
-      const fortText = `Fortsetzung (${pageIdx + 1}/${totalPages})`
+      const fortText = `Fortsetzung (Seite ${pageIdx + 1}/${totalPages})`
       page.drawText(fortText, {
-        x: W - marginX - fontMono.widthOfTextAtSize(fortText, 6),
+        x: W - marginX - fontMono.widthOfTextAtSize(fortText, 5.8),
         y: currY - 6,
-        size: 6,
+        size: 5.8,
         font: fontMono,
         color: cTextMuted,
       })
 
-      currY -= 12
+      currY -= 11
       page.drawLine({
         start: { x: marginX, y: currY },
         end: { x: W - marginX, y: currY },
-        thickness: 1,
-        color: cBorderOuter,
+        thickness: 0.8,
+        color: cCardBorder,
       })
-      currY -= 12
+      currY -= 10
     }
 
     // 3. Dynamic Height & Spacing Calculation for Event Items
     const footerY = 16
     const boxBottomY = footerY + 8
-    const boxH = 74
-    const bottomReservedY = isLastPage ? boxBottomY + boxH + 12 : boxBottomY + 22
+    const boxH = 72
+    const bottomReservedY = isLastPage ? boxBottomY + boxH + 10 : boxBottomY + 18
 
     const availableEventsH = Math.max(80, currY - bottomReservedY)
     const eventCount = Math.max(1, pageEvents.length)
 
     // Calculate optimal item height based on count
-    let itemHeight = 32
-    if (eventCount === 1) itemHeight = 85
-    else if (eventCount === 2) itemHeight = 70
-    else if (eventCount === 3) itemHeight = 58
-    else if (eventCount === 4) itemHeight = 48
-    else if (eventCount === 5) itemHeight = 38
-    else itemHeight = 32
+    let cardH = 38
+    if (eventCount === 1) cardH = 75
+    else if (eventCount === 2) cardH = 64
+    else if (eventCount === 3) cardH = 54
+    else if (eventCount === 4) cardH = 46
+    else if (eventCount === 5) cardH = 40
+    else cardH = 37
 
-    const totalUsedH = itemHeight * eventCount
-    const extraGap = Math.max(2, Math.floor((availableEventsH - totalUsedH) / (eventCount + 1)))
+    const totalCardsH = cardH * eventCount
+    const cardGap = Math.max(3, Math.min(10, Math.floor((availableEventsH - totalCardsH) / (eventCount + 1))))
 
-    currY -= extraGap
+    currY -= cardGap
 
     for (let i = 0; i < pageEvents.length; i++) {
       const ev = pageEvents[i]
       if (!ev) continue
 
-      // Left orange accent strip
-      const barH = itemHeight >= 60 ? 26 : (itemHeight >= 45 ? 20 : 16)
+      const cardY = currY - cardH
+
+      // Card Container
       page.drawRectangle({
         x: marginX,
-        y: currY - barH + 2,
-        width: 2.5,
-        height: barH,
+        y: cardY,
+        width: contentW,
+        height: cardH,
+        color: cCardBg,
+        borderColor: cCardBorder,
+        borderWidth: 0.8,
+      })
+
+      // Left Orange Ticket Stripe
+      page.drawRectangle({
+        x: marginX,
+        y: cardY,
+        width: 3.5,
+        height: cardH,
         color: cOrange,
       })
 
-      // Date string
-      const dateSize = itemHeight >= 60 ? 8 : (itemHeight >= 45 ? 7.2 : 6.5)
+      // Category Pill (Top Right)
+      let catText = 'AKTION'
+      const titleLower = ev.title.toLowerCase()
+      if (titleLower.includes('zeltlager') || ev.category === 'camp') catText = 'ZELTLAGER'
+      else if (titleLower.includes('wochenende') || ev.category === 'weekend') catText = 'WOCHENENDE'
+      else if (titleLower.includes('familie')) catText = 'FAMILIE'
+      else if (ev.category === 'special') catText = 'SPECIAL'
+
+      const catBadgeW = fontBold.widthOfTextAtSize(catText, 4.8) + 8
+      const catBadgeH = 10
+      const catBadgeX = marginX + contentW - catBadgeW - 6
+      const catBadgeY = cardY + cardH - catBadgeH - 4
+
+      page.drawRectangle({
+        x: catBadgeX,
+        y: catBadgeY,
+        width: catBadgeW,
+        height: catBadgeH,
+        color: isDark ? rgb(35 / 255, 45 / 255, 37 / 255) : rgb(240 / 255, 235 / 255, 225 / 255),
+      })
+      page.drawText(catText, {
+        x: catBadgeX + 4,
+        y: catBadgeY + 2.5,
+        size: 4.8,
+        font: fontBold,
+        color: isDark ? cOrange : cForest,
+      })
+
+      // Date chip
+      const dateSize = cardH >= 55 ? 7.2 : 6.4
+      const dateY = cardY + cardH - (cardH >= 55 ? 13 : 11)
       page.drawText(cleanText(ev.dateStr.toUpperCase()), {
-        x: marginX + 6,
-        y: currY - 2,
+        x: marginX + 10,
+        y: dateY,
         size: dateSize,
         font: fontBold,
         color: cOrange,
       })
 
-      // Title
-      let evTitle = cleanText(ev.title.toUpperCase())
-      if (evTitle.length > 34) {
-        evTitle = evTitle.substring(0, 33) + '...'
-      }
-      const titleFSize = itemHeight >= 60 ? 12.5 : (itemHeight >= 45 ? 10.5 : 9)
-      page.drawText(evTitle, {
-        x: marginX + 6,
-        y: currY - (itemHeight >= 60 ? 16 : (itemHeight >= 45 ? 13 : 11)),
-        size: titleFSize,
-        font: fontDisplay,
-        color: cTextPrimary,
-      })
+      // Title with automatic word wrapping
+      const fullTitle = cleanText(ev.title.toUpperCase())
+      const maxTextW = contentW - 20
+      const titleSize = cardH >= 60 ? 12 : (cardH >= 50 ? 10.5 : 9)
+      const titleY = dateY - titleSize - 2
+      const textWidth = fontDisplay.widthOfTextAtSize(fullTitle, titleSize)
 
-      // Location & Age
+      if (textWidth <= maxTextW) {
+        page.drawText(fullTitle, {
+          x: marginX + 10,
+          y: titleY,
+          size: titleSize,
+          font: fontDisplay,
+          color: cTextPrimary,
+        })
+      } else {
+        const words = fullTitle.split(' ')
+        let line1 = ''
+        let line2 = ''
+        for (const w of words) {
+          const testLine = line1 ? `${line1} ${w}` : w
+          if (fontDisplay.widthOfTextAtSize(testLine, titleSize) <= maxTextW) {
+            line1 = testLine
+          } else {
+            line2 = line2 ? `${line2} ${w}` : w
+          }
+        }
+        if (!line2) {
+          line1 = fullTitle
+        }
+
+        if (cardH <= 42) {
+          const shrinkSize = 7.8
+          page.drawText(line1, {
+            x: marginX + 10,
+            y: dateY - shrinkSize - 1.5,
+            size: shrinkSize,
+            font: fontDisplay,
+            color: cTextPrimary,
+          })
+          if (line2) {
+            page.drawText(line2, {
+              x: marginX + 10,
+              y: dateY - shrinkSize * 2 - 2.5,
+              size: shrinkSize,
+              font: fontDisplay,
+              color: cTextPrimary,
+            })
+          }
+        } else {
+          page.drawText(line1, {
+            x: marginX + 10,
+            y: titleY,
+            size: titleSize,
+            font: fontDisplay,
+            color: cTextPrimary,
+          })
+          if (line2) {
+            page.drawText(line2, {
+              x: marginX + 10,
+              y: titleY - titleSize - 1,
+              size: titleSize,
+              font: fontDisplay,
+              color: cTextPrimary,
+            })
+          }
+        }
+      }
+
+      // Meta: Location & Age
       const locAgeParts: string[] = []
       if (ev.location) locAgeParts.push(ev.location)
       if (ev.ageGroup) locAgeParts.push(ev.ageGroup)
-      let metaStr = cleanText(locAgeParts.join('  •  '))
-      if (metaStr.length > 44) {
-        metaStr = metaStr.substring(0, 43) + '..'
-      }
-      if (metaStr) {
-        const metaFSize = itemHeight >= 60 ? 7.2 : (itemHeight >= 45 ? 6.5 : 5.8)
+      const metaStr = cleanText(locAgeParts.join('  -  '))
+
+      if (metaStr && cardH >= 42) {
+        const metaSize = cardH >= 60 ? 6.5 : (cardH >= 50 ? 5.8 : 5.2)
+        const metaY = cardY + 5.5
         page.drawText(metaStr, {
-          x: marginX + 6,
-          y: currY - (itemHeight >= 60 ? 28 : (itemHeight >= 45 ? 23 : 19)),
-          size: metaFSize,
+          x: marginX + 10,
+          y: metaY,
+          size: metaSize,
           font: fontBody,
           color: cTextMuted,
         })
       }
 
-      // Thin separator line
-      if (i < pageEvents.length - 1) {
-        page.drawLine({
-          start: { x: marginX, y: currY - itemHeight + 4 },
-          end: { x: W - marginX, y: currY - itemHeight + 4 },
-          thickness: 0.5,
-          color: cBorderInner,
-        })
-      }
-
-      currY -= (itemHeight + extraGap)
+      currY = cardY - cardGap
     }
 
-    // Callout box if only few events to avoid empty feeling
-    if (isLastPage && pageEvents.length <= 3) {
+    // Callout box if 1-2 events to maintain editorial weight
+    if (isLastPage && pageEvents.length <= 2) {
       const calloutH = 34
       const calloutY = boxBottomY + boxH + 12
       page.drawRectangle({
@@ -424,18 +545,18 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         y: calloutY,
         width: contentW,
         height: calloutH,
-        color: isDark ? rgb(24 / 255, 32 / 255, 25 / 255) : rgb(248 / 255, 245 / 255, 238 / 255),
-        borderColor: isDark ? rgb(40 / 255, 52 / 255, 43 / 255) : cBorderInner,
+        color: isDark ? rgb(24 / 255, 32 / 255, 25 / 255) : rgb(246 / 255, 242 / 255, 234 / 255),
+        borderColor: cCardBorder,
         borderWidth: 0.8,
       })
-      page.drawText('// 100% DRAUSSEN & HANDYFREI', {
+      page.drawText('// JUGEND LEITET JUGEND - 100% DRAUSSEN', {
         x: marginX + 10,
         y: calloutY + calloutH - 12,
         size: 5.5,
         font: fontBold,
         color: cOrange,
       })
-      page.drawText('Zeltlager, Naturerlebnisse und echte Gemeinschaft unter Jungs.', {
+      page.drawText('Zeltlager, Aktionen und echte Gemeinschaft unter Jungs.', {
         x: marginX + 10,
         y: calloutY + 8,
         size: 5.5,
@@ -446,7 +567,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
 
     // Notice on multi-page when Page 1 ends
     if (!isLastPage && totalPages > 1) {
-      const fortText = '-> FORTSETZUNG AUF SEITE ' + (pageIdx + 2)
+      const fortText = 'FORTSETZUNG AUF SEITE ' + (pageIdx + 2) + ' ->'
       const fortW = fontBold.widthOfTextAtSize(fortText, 5.8) + 16
       page.drawRectangle({
         x: marginX,
@@ -459,7 +580,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       })
       page.drawText(fortText, {
         x: marginX + 8,
-        y: boxBottomY + 6,
+        y: boxBottomY + 5.5,
         size: 5.8,
         font: fontBold,
         color: cOrange,
@@ -475,44 +596,47 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         y: boxY,
         width: contentW,
         height: boxH,
-        color: cBoxBg,
-        borderColor: cBoxBorder,
+        color: isDark ? rgb(24 / 255, 32 / 255, 25 / 255) : cForest,
+        borderColor: cOrange,
         borderWidth: 1.5,
       })
 
       const innerX = marginX + 10
-      let innerY = boxY + boxH - 12
+      let innerY = boxY + boxH - 11
 
       // Orange badge
       page.drawRectangle({
         x: innerX,
-        y: innerY - 9,
-        width: 110,
-        height: 12,
+        y: innerY - 8,
+        width: 104,
+        height: 11,
         color: cOrange,
       })
       page.drawText('INFOS & ANMELDUNG', {
         x: innerX + 6,
-        y: innerY - 5.5,
-        size: 5.8,
+        y: innerY - 5,
+        size: 5.5,
         font: fontBold,
         color: cForest,
       })
 
-      innerY -= 20
+      innerY -= 17
 
       page.drawText('Alle Termine & Anmeldung online:', {
         x: innerX,
         y: innerY,
-        size: 6.5,
+        size: 6,
         font: fontBody,
-        color: cBoxText,
+        color: rgb(241 / 255, 235 / 255, 221 / 255),
       })
 
       innerY -= 11
 
-      const shortDomain = cleanText(targetUrl.replace(/^https?:\/\//, ''))
-      page.drawText(`-> ${shortDomain}`, {
+      const displayDomain = targetUrl.includes('127.0.0.1') || targetUrl.includes('localhost')
+        ? 'smj-wegweiser.de/abenteuer'
+        : cleanText(targetUrl.replace(/^https?:\/\//, ''))
+
+      page.drawText(`-> ${displayDomain}`, {
         x: innerX,
         y: innerY,
         size: 7.2,
@@ -525,25 +649,30 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
       page.drawText('Kalender abonnieren (iCal / Google):', {
         x: innerX,
         y: innerY,
-        size: 5.5,
+        size: 5.2,
         font: fontBody,
-        color: cTextMuted,
+        color: rgb(201 / 255, 186 / 255, 153 / 255),
       })
 
-      innerY -= 9
+      innerY -= 8
 
-      page.drawText(cleanText((options.calendarUrl || `${QR_BASE_URL}/api/calendar.ics`).replace(/^https?:\/\//, '')), {
+      const calendarDisplay = (options.calendarUrl || `${QR_BASE_URL}/api/calendar.ics`)
+        .replace(/^https?:\/\//, '')
+        .replace(/127\.0\.0\.1:\d+/, 'smj-wegweiser.de')
+        .replace(/localhost:\d+/, 'smj-wegweiser.de')
+
+      page.drawText(cleanText(calendarDisplay), {
         x: innerX,
         y: innerY,
-        size: 5.5,
+        size: 5.2,
         font: fontBold,
-        color: cBoxText,
+        color: rgb(241 / 255, 235 / 255, 221 / 255),
       })
 
       // Right QR Code inside white border container
-      const qrSize = 52
+      const qrSize = 50
       const qrX = W - marginX - qrSize - 8
-      const qrY = boxY + (boxH - qrSize) / 2
+      const qrY = boxY + (boxH - qrSize) / 2 + 3
 
       page.drawRectangle({
         x: qrX - 2,
@@ -551,7 +680,7 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         width: qrSize + 4,
         height: qrSize + 4,
         color: cWhite,
-        borderColor: isDark ? cOrange : cForest,
+        borderColor: cOrange,
         borderWidth: 0.8,
       })
 
@@ -562,12 +691,12 @@ export async function generateSchedulePdf(options: SchedulePdfOptions): Promise<
         height: qrSize,
       })
 
-      page.drawText('HIER SCANNEN ^', {
-        x: qrX + 4,
-        y: qrY - 8,
-        size: 4.8,
+      page.drawText('QR-CODE SCANNEN', {
+        x: qrX + 2,
+        y: qrY - 7.5,
+        size: 4.6,
         font: fontBold,
-        color: isDark ? cOrange : cForest,
+        color: cOrange,
       })
     }
 
@@ -692,7 +821,7 @@ export function buildSchedulePresets(events: any[], camps: any[]): Record<string
       id: 'terminkarte',
       filename: 'terminkarte.pdf',
       periodTitle: 'Kommende Termine',
-      periodSubtitle: 'Die naechsten Monate im Ueberblick',
+      periodSubtitle: 'Die nächsten Monate im Überblick',
       events: upcomingEvents.length > 0 ? upcomingEvents : events2026.slice(0, 6),
       targetUrl: `${QR_BASE_URL}/abenteuer/`,
     },
