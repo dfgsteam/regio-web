@@ -5,6 +5,7 @@
 import { readFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import '../src/lib/server-fonts.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outFile = join(root, 'public', 'og-image.png')
@@ -62,15 +63,15 @@ ${topo(960, 340, 520)}
   <!-- Top Technical Header -->
   <g transform="translate(72, 92)">
     <circle cx="6" cy="6" r="5" fill="#FF5A1F"/>
-    <text x="24" y="11" font-family="'DejaVu Sans Mono', 'Courier New', monospace" font-size="18" font-weight="bold" letter-spacing="4" fill="#FF5A1F">// SMJ REGIO WEGWEISER</text>
-    <text x="760" y="11" font-family="'DejaVu Sans Mono', 'Courier New', monospace" font-size="14" letter-spacing="2" fill="#8D9389">N 51° 21' 15" · E 10° 02' 30"</text>
+    <text x="24" y="11" font-family="'Space Mono', monospace" font-size="18" font-weight="bold" letter-spacing="4" fill="#FF5A1F">// SMJ REGIO WEGWEISER</text>
+    <text x="760" y="11" font-family="'Space Mono', monospace" font-size="14" letter-spacing="2" fill="#8D9389">N 51° 21' 15" · E 10° 02' 30"</text>
   </g>
 
   <!-- Main Headline -->
   <g transform="translate(72, 0)">
-    <text x="0" y="270" font-family="'DejaVu Sans', 'Arial Black', Impact, sans-serif" font-weight="900" font-size="108" fill="#F1EBDD" letter-spacing="-2">RAUS.</text>
-    <text x="0" y="375" font-family="'DejaVu Sans', 'Arial Black', Impact, sans-serif" font-weight="900" font-size="108" fill="#FF5A1F" letter-spacing="-2">INS</text>
-    <text x="0" y="480" font-family="'DejaVu Sans', 'Arial Black', Impact, sans-serif" font-weight="900" font-size="108" fill="#F1EBDD" letter-spacing="-2">ABENTEUER.</text>
+    <text x="0" y="270" font-family="'Anton', Impact, sans-serif" font-weight="900" font-size="108" fill="#F1EBDD" letter-spacing="-2">RAUS.</text>
+    <text x="0" y="375" font-family="'Anton', Impact, sans-serif" font-weight="900" font-size="108" fill="#FF5A1F" letter-spacing="-2">INS</text>
+    <text x="0" y="480" font-family="'Anton', Impact, sans-serif" font-weight="900" font-size="108" fill="#F1EBDD" letter-spacing="-2">ABENTEUER.</text>
   </g>
 
   <!-- Embedded Official Logo Emblem (Right Column) -->
@@ -80,8 +81,8 @@ ${topo(960, 340, 520)}
 
   <!-- Bottom Badges & Footer -->
   <line x1="72" y1="520" x2="${W - 72}" y2="520" stroke="#F1EBDD" stroke-opacity="0.15" stroke-width="1.5"/>
-  <text x="72" y="565" font-family="'DejaVu Sans Mono', 'Courier New', monospace" font-size="16" letter-spacing="3" fill="#8D9389">ZELTLAGER · GEMEINSCHAFT · ABENTEUER FÜR JUNGS</text>
-  <text x="${W - 72}" y="565" text-anchor="end" font-family="'DejaVu Sans Mono', 'Courier New', monospace" font-size="16" font-weight="bold" letter-spacing="3" fill="#FF5A1F">SMJ-WEGWEISER.DE ↗</text>
+  <text x="72" y="565" font-family="'Space Mono', monospace" font-size="16" letter-spacing="3" fill="#8D9389">ZELTLAGER · GEMEINSCHAFT · ABENTEUER FÜR JUNGS</text>
+  <text x="${W - 72}" y="565" text-anchor="end" font-family="'Space Mono', monospace" font-size="16" font-weight="bold" letter-spacing="3" fill="#FF5A1F">SMJ-WEGWEISER.DE ↗</text>
 </svg>
 `
 

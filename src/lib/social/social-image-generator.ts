@@ -2,7 +2,13 @@ import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import QRCode from 'qrcode'
+import '../server-fonts'
+import { ensureServerFontsConfigured } from '../server-fonts'
 import type { ScheduleEventItem } from '../pdf/schedule-pdf'
+
+export const FONT_DISPLAY = "'Anton', Impact, sans-serif"
+export const FONT_BODY = "'Inter', sans-serif"
+export const FONT_MONO = "'Space Mono', monospace"
 
 let whiteLogoInnerCache: string | null = null
 let darkLogoInnerCache: string | null = null
@@ -236,9 +242,9 @@ function renderEventFactCards(rawFacts: { label: string; value: string }[], isLi
         <svg x="26" y="${cardH > 150 ? 20 : 16}" width="24" height="24" viewBox="0 0 24 24">
           ${iconSvg}
         </svg>
-        <text x="60" y="${cardH > 150 ? 38 : 34}" fill="#FF5A1F" font-size="18" font-family="Impact, sans-serif" letter-spacing="2">${f.label}</text>
-        <text x="26" y="${l1Y}" fill="#F1EBDD" font-size="${l1Size}" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(line1)}</text>
-        ${line2 ? `<text x="26" y="${l2Y}" fill="#C9BA99" font-size="${l2Size}" font-family="sans-serif" font-weight="bold">${escapeXml(line2)}</text>` : ''}
+        <text x="60" y="${cardH > 150 ? 38 : 34}" fill="#FF5A1F" font-size="18" font-family="${FONT_DISPLAY}" letter-spacing="2">${f.label}</text>
+        <text x="26" y="${l1Y}" fill="#F1EBDD" font-size="${l1Size}" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(line1)}</text>
+        ${line2 ? `<text x="26" y="${l2Y}" fill="#C9BA99" font-size="${l2Size}" font-family="${FONT_BODY}" font-weight="bold">${escapeXml(line2)}</text>` : ''}
       </g>
     `
     })
@@ -296,8 +302,8 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
 
     <!-- Two-Tier Brand Lockup -->
     <g transform="translate(${badgeW + 20}, ${isStory ? 24 : 18})">
-      <text x="0" y="0" fill="${accentColor}" font-size="${eyebrowSize}" font-family="sans-serif" font-weight="bold" letter-spacing="2.5">SCHÖNSTATT-MANNESJUGEND</text>
-      <text x="0" y="${isStory ? 36 : 28}" fill="${textPrimary}" font-size="${titleSize}" font-family="Impact, sans-serif" letter-spacing="2">SMJ REGIO WEGWEISER</text>
+      <text x="0" y="0" fill="${accentColor}" font-size="${eyebrowSize}" font-family="${FONT_BODY}" font-weight="bold" letter-spacing="2.5">SCHÖNSTATT-MANNESJUGEND</text>
+      <text x="0" y="${isStory ? 36 : 28}" fill="${textPrimary}" font-size="${titleSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">SMJ REGIO WEGWEISER</text>
     </g>
 
     <!-- Badges Right -->
@@ -306,11 +312,11 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
         isWhatsApp
           ? `
         <rect x="0" y="0" width="270" height="${rightBadgeH}" fill="${isLight ? '#e7f7ed' : '#0d2b1a'}" stroke="#25D366" stroke-width="2" rx="6"/>
-        <text x="135" y="${isStory ? 32 : 26}" fill="#25D366" font-size="${rightBadgeFontSize}" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">WHATSAPP COMMUNITY</text>
+        <text x="135" y="${isStory ? 32 : 26}" fill="#25D366" font-size="${rightBadgeFontSize}" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">WHATSAPP COMMUNITY</text>
           `
           : `
         <rect x="0" y="0" width="${options.secondBadge ? 140 : 180}" height="${rightBadgeH}" fill="${isLight ? '#111713' : '#FF5A1F'}" rx="6"/>
-        <text x="${(options.secondBadge ? 140 : 180) / 2}" y="${isStory ? 32 : 26}" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="${rightBadgeFontSize}" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">${escapeXml(categoryLabel.toUpperCase())}</text>
+        <text x="${(options.secondBadge ? 140 : 180) / 2}" y="${isStory ? 32 : 26}" fill="${isLight ? '#F1EBDD' : '#111713'}" font-size="${rightBadgeFontSize}" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">${escapeXml(categoryLabel.toUpperCase())}</text>
         `
       }
 
@@ -318,7 +324,7 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
         options.secondBadge
           ? `
         <rect x="150" y="0" width="120" height="${rightBadgeH}" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="#FF5A1F" stroke-width="2" rx="6"/>
-        <text x="210" y="${isStory ? 32 : 26}" fill="#FF5A1F" font-size="${rightBadgeFontSize - 1}" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">${escapeXml(options.secondBadge.toUpperCase())}</text>
+        <text x="210" y="${isStory ? 32 : 26}" fill="#FF5A1F" font-size="${rightBadgeFontSize - 1}" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">${escapeXml(options.secondBadge.toUpperCase())}</text>
           `
           : ''
       }
@@ -384,8 +390,8 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
 
     <!-- Title Block (No subtitle) -->
     <g transform="translate(96, 198)">
-      <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
-      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="${FONT_DISPLAY}" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
+      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- 4 Key Fact Cards (2x2) -->
@@ -399,10 +405,10 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
       
       <g transform="translate(40, 36)">
         <rect x="0" y="0" width="280" height="36" fill="#111713" rx="4"/>
-        <text x="140" y="25" fill="#FF5A1F" font-size="19" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">WISCHE WEITER ZU SLIDE 2</text>
+        <text x="140" y="25" fill="#FF5A1F" font-size="19" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">WISCHE WEITER ZU SLIDE 2</text>
         
-        <text x="0" y="86" fill="#111713" font-size="38" font-family="Impact, sans-serif" letter-spacing="1">DIREKTER QR-CODE ZUR ANMELDUNG</text>
-        <text x="0" y="124" fill="#111713" font-size="22" font-family="sans-serif" font-weight="bold">Auf der nächsten Seite einfach mit der Kamera scannen &amp; Platz sichern!</text>
+        <text x="0" y="86" fill="#111713" font-size="38" font-family="${FONT_DISPLAY}" letter-spacing="1">DIREKTER QR-CODE ZUR ANMELDUNG</text>
+        <text x="0" y="124" fill="#111713" font-size="22" font-family="${FONT_BODY}" font-weight="bold">Auf der nächsten Seite einfach mit der Kamera scannen &amp; Platz sichern!</text>
       </g>
 
       <!-- Carousel arrow circle -->
@@ -413,7 +419,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
     </g>
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
   </svg>`
 }
 
@@ -472,8 +478,8 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
 
     <!-- Title Block -->
     <g transform="translate(96, 198)">
-      <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="Impact, sans-serif" letter-spacing="3">// JETZT ONLINE ANMELDEN</text>
-      <text x="0" y="74" fill="${textPrimary}" font-size="76" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="${FONT_DISPLAY}" letter-spacing="3">// JETZT ONLINE ANMELDEN</text>
+      <text x="0" y="74" fill="${textPrimary}" font-size="76" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- Big Centerpiece QR-Code & CTA Card -->
@@ -488,8 +494,8 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
 
       <!-- CTA Headlines below QR Code -->
       <g transform="translate(444, 440)" text-anchor="middle">
-        <text x="0" y="0" fill="${textPrimary}" font-size="44" font-family="Impact, sans-serif" letter-spacing="1.5">QR-CODE MIT DER KAMERA SCANNEN</text>
-        <text x="0" y="42" fill="#FF5A1F" font-size="28" font-family="Impact, sans-serif" letter-spacing="1">ODER LINK IN DER BIO ANKLICKEN!</text>
+        <text x="0" y="0" fill="${textPrimary}" font-size="44" font-family="${FONT_DISPLAY}" letter-spacing="1.5">QR-CODE MIT DER KAMERA SCANNEN</text>
+        <text x="0" y="42" fill="#FF5A1F" font-size="28" font-family="${FONT_DISPLAY}" letter-spacing="1">ODER LINK IN DER BIO ANKLICKEN!</text>
       </g>
 
       <!-- Direct Link Pill (Centered: (888 - 600) / 2 = 144) -->
@@ -500,17 +506,17 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
         </svg>
-        <text x="64" y="34" fill="#FF5A1F" font-size="22" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(options.targetUrl.replace(/^https?:\/\//, ''))}</text>
+        <text x="64" y="34" fill="#FF5A1F" font-size="22" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(options.targetUrl.replace(/^https?:\/\//, ''))}</text>
       </g>
 
       <!-- Instructional Subline -->
-      <text x="444" y="618" fill="${textMuted}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">
+      <text x="444" y="618" fill="${textMuted}" font-size="20" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">
         Kamera-App öffnen • Auf den Code halten • Link antippen &amp; Platz sichern
       </text>
     </g>
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
   </svg>`
 }
 
@@ -568,8 +574,8 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
 
     <!-- Title Block (No subtitle) -->
     <g transform="translate(96, 198)">
-      <text x="0" y="0" fill="#25D366" font-size="26" font-family="Impact, sans-serif" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
-      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="0" fill="#25D366" font-size="26" font-family="${FONT_DISPLAY}" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
+      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- 4 Key Fact Cards (2x2) -->
@@ -585,12 +591,12 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
       <!-- WhatsApp Action Text -->
       <g transform="translate(44, 32)">
         <rect x="0" y="0" width="310" height="38" fill="#25D366" rx="4"/>
-        <text x="155" y="25" fill="#0a1a0f" font-size="20" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1.5">ONLINE-ANMELDUNG &amp; DETAILS</text>
+        <text x="155" y="25" fill="#0a1a0f" font-size="20" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">ONLINE-ANMELDUNG &amp; DETAILS</text>
 
-        <text x="0" y="86" fill="${isLight ? '#111713' : '#FFFFFF'}" font-size="40" font-family="Impact, sans-serif" letter-spacing="1">ANMELDELINK DIREKT IN DER NACHRICHT!</text>
+        <text x="0" y="86" fill="${isLight ? '#111713' : '#FFFFFF'}" font-size="40" font-family="${FONT_DISPLAY}" letter-spacing="1">ANMELDELINK DIREKT IN DER NACHRICHT!</text>
         
-        <text x="0" y="128" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="22" font-family="sans-serif" font-weight="bold">Tippe auf den Link im Chat unter diesem Bild, um alle Infos zu sehen.</text>
-        <text x="0" y="158" fill="#25D366" font-size="20" font-family="sans-serif" font-weight="bold">🚀 Gerne in WhatsApp-Gruppen &amp; an interessierte Eltern weiterleiten!</text>
+        <text x="0" y="128" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="22" font-family="${FONT_BODY}" font-weight="bold">Tippe auf den Link im Chat unter diesem Bild, um alle Infos zu sehen.</text>
+        <text x="0" y="158" fill="#25D366" font-size="20" font-family="${FONT_BODY}" font-weight="bold">🚀 Gerne in WhatsApp-Gruppen &amp; an interessierte Eltern weiterleiten!</text>
       </g>
 
       <!-- Downward Arrow Circle (Pointing to the message text below!) -->
@@ -601,7 +607,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
     </g>
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
+    <text x="${width / 2}" y="${height - 48}" fill="${textPrimary}" fill-opacity="${isLight ? '0.75' : '0.6'}" font-size="19" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • ${displayDomain} • Schönstatt-Mannesjugend</text>
   </svg>`
 }
 
@@ -679,9 +685,9 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
         <svg x="26" y="20" width="28" height="28" viewBox="0 0 24 24">
           ${iconSvg}
         </svg>
-        <text x="66" y="40" fill="#FF5A1F" font-size="20" font-family="Impact, sans-serif" letter-spacing="2">${f.label}</text>
-        <text x="26" y="${options.format === 'story' ? 104 : 94}" fill="#F1EBDD" font-size="${l1Size}" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(line1)}</text>
-        ${line2 ? `<text x="26" y="${options.format === 'story' ? 144 : 132}" fill="#C9BA99" font-size="${l2Size}" font-family="sans-serif" font-weight="bold">${escapeXml(line2)}</text>` : ''}
+        <text x="66" y="40" fill="#FF5A1F" font-size="20" font-family="${FONT_DISPLAY}" letter-spacing="2">${f.label}</text>
+        <text x="26" y="${options.format === 'story' ? 104 : 94}" fill="#F1EBDD" font-size="${l1Size}" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(line1)}</text>
+        ${line2 ? `<text x="26" y="${options.format === 'story' ? 144 : 132}" fill="#C9BA99" font-size="${l2Size}" font-family="${FONT_BODY}" font-weight="bold">${escapeXml(line2)}</text>` : ''}
       </g>
     `
     })
@@ -737,9 +743,9 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
 
     <!-- Main Title Block (Giant Eye-Catcher) -->
     <g transform="translate(96, ${options.format === 'story' ? 340 : options.format === 'portrait' ? 185 : 185})">
-      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="Impact, sans-serif" letter-spacing="2">// RAUS. INS ABENTEUER.</text>
-      <text x="0" y="${options.format === 'story' ? 95 : options.format === 'portrait' ? 88 : 86}" fill="${textPrimary}" font-size="${titleFontSize}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(mainTitle)}</text>
-      <text x="0" y="${options.format === 'story' ? 158 : options.format === 'portrait' ? 144 : 142}" fill="#FF5A1F" font-size="${subFontSize}" font-family="Impact, sans-serif" letter-spacing="1.5">// ${escapeXml(subTitle)}</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="${FONT_DISPLAY}" letter-spacing="2">// RAUS. INS ABENTEUER.</text>
+      <text x="0" y="${options.format === 'story' ? 95 : options.format === 'portrait' ? 88 : 86}" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="${options.format === 'story' ? 158 : options.format === 'portrait' ? 144 : 142}" fill="#FF5A1F" font-size="${subFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="1.5">// ${escapeXml(subTitle)}</text>
     </g>
 
     <!-- Key Facts Grid (Big Bold Cards matching Plakat) -->
@@ -749,15 +755,15 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
 
     <!-- Highlights (Shown on Story and Portrait) -->
     <g transform="translate(96, ${options.format === 'story' ? 945 : 735})">
-      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 28 : 24}" font-family="Impact, sans-serif" letter-spacing="2">// WAS DICH BEI DIESER AKTION ERWARTET:</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 28 : 24}" font-family="${FONT_DISPLAY}" letter-spacing="2">// WAS DICH BEI DIESER AKTION ERWARTET:</text>
       
       ${highlights
         .map(
           (h, i) => `
         <g transform="translate(0, ${28 + i * (options.format === 'story' ? 122 : 104)})">
           <rect x="0" y="0" width="888" height="${options.format === 'story' ? 105 : 92}" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="${isLight ? '2.5' : '1.5'}" stroke-opacity="${isLight ? '1' : '0.2'}" rx="10"/>
-          <text x="32" y="${options.format === 'story' ? 66 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 36}" font-family="Impact, sans-serif">0${i + 1}</text>
-          <text x="98" y="${options.format === 'story' ? 62 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 28 : 25}" font-family="sans-serif" font-weight="bold">${escapeXml(h)}</text>
+          <text x="32" y="${options.format === 'story' ? 66 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 36}" font-family="${FONT_DISPLAY}">0${i + 1}</text>
+          <text x="98" y="${options.format === 'story' ? 62 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 28 : 25}" font-family="${FONT_BODY}" font-weight="bold">${escapeXml(h)}</text>
         </g>
       `,
         )
@@ -769,12 +775,12 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
       <rect x="0" y="0" width="888" height="${options.format === 'story' ? 270 : options.format === 'portrait' ? 215 : 240}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3.5" rx="12"/>
       
       <rect x="32" y="26" width="240" height="42" fill="#FF5A1F" rx="4"/>
-      <text x="152" y="55" fill="#111713" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">JETZT ANMELDEN</text>
+      <text x="152" y="55" fill="#111713" font-size="22" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1">JETZT ANMELDEN</text>
 
-      <text x="32" y="${options.format === 'story' ? 132 : options.format === 'portrait' ? 112 : 122}" fill="${textPrimary}" font-size="${options.format === 'story' ? 46 : 42}" font-family="Impact, sans-serif" letter-spacing="1">PLÄTZE ONLINE SICHERN:</text>
-      <text x="32" y="${options.format === 'story' ? 196 : options.format === 'portrait' ? 168 : 182}" fill="#FF5A1F" font-size="${options.format === 'story' ? 60 : 54}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(displayDomain.toUpperCase())}</text>
+      <text x="32" y="${options.format === 'story' ? 132 : options.format === 'portrait' ? 112 : 122}" fill="${textPrimary}" font-size="${options.format === 'story' ? 46 : 42}" font-family="${FONT_DISPLAY}" letter-spacing="1">PLÄTZE ONLINE SICHERN:</text>
+      <text x="32" y="${options.format === 'story' ? 196 : options.format === 'portrait' ? 168 : 182}" fill="#FF5A1F" font-size="${options.format === 'story' ? 60 : 54}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(displayDomain.toUpperCase())}</text>
       
-      <text x="32" y="${options.format === 'story' ? 238 : options.format === 'portrait' ? 200 : 216}" fill="${isLight ? '#3D453E' : textMuted}" font-size="${options.format === 'story' ? 24 : 21}" font-family="sans-serif" font-weight="bold">Link in Bio anklicken • Alle Infos &amp; Packliste online!</text>
+      <text x="32" y="${options.format === 'story' ? 238 : options.format === 'portrait' ? 200 : 216}" fill="${isLight ? '#3D453E' : textMuted}" font-size="${options.format === 'story' ? 24 : 21}" font-family="${FONT_BODY}" font-weight="bold">Link in Bio anklicken • Alle Infos &amp; Packliste online!</text>
 
       <!-- Action Arrow Circle Button -->
       <g transform="translate(${888 - 32 - 110}, ${options.format === 'story' ? 80 : options.format === 'portrait' ? 52 : 65})">
@@ -784,7 +790,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
     </g>
 
     <!-- Footer Copyright Note -->
-    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Schönstatt-Mannesjugend • ${displayDomain}</text>
+    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Schönstatt-Mannesjugend • ${displayDomain}</text>
   </svg>`
 }
 
@@ -851,9 +857,9 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
         ? `
     <!-- Title Section -->
     <g transform="translate(96, ${options.format === 'story' ? 340 : 185})">
-      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="Impact, sans-serif" letter-spacing="2">// TERMINE &amp; AKTIONEN</text>
-      <text x="0" y="${options.format === 'story' ? 88 : 74}" fill="${textPrimary}" font-size="${options.format === 'story' ? 84 : 70}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(options.periodTitle.toUpperCase())}</text>
-      <text x="0" y="${options.format === 'story' ? 148 : 126}" fill="#FF5A1F" font-size="${options.format === 'story' ? 36 : 30}" font-family="Impact, sans-serif" letter-spacing="1.5">// ${escapeXml((options.periodSubtitle || 'ALLE AKTIONEN IM ÜBERBLICK').toUpperCase())}</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="${FONT_DISPLAY}" letter-spacing="2">// TERMINE &amp; AKTIONEN</text>
+      <text x="0" y="${options.format === 'story' ? 88 : 74}" fill="${textPrimary}" font-size="${options.format === 'story' ? 84 : 70}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(options.periodTitle.toUpperCase())}</text>
+      <text x="0" y="${options.format === 'story' ? 148 : 126}" fill="#FF5A1F" font-size="${options.format === 'story' ? 36 : 30}" font-family="${FONT_DISPLAY}" letter-spacing="1.5">// ${escapeXml((options.periodSubtitle || 'ALLE AKTIONEN IM ÜBERBLICK').toUpperCase())}</text>
     </g>
 
     <!-- Events Cards List (Huge Bold Cards for Mobile Readability) -->
@@ -875,9 +881,9 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
           <g transform="translate(0, ${yPos})">
             <rect x="0" y="0" width="888" height="${itemH}" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="${isLight ? '2.5' : '2.5'}" rx="10"/>
             <rect x="0" y="0" width="12" height="${itemH}" fill="#FF5A1F" rx="4"/>
-            <text x="32" y="${options.format === 'story' ? 60 : eventsCount <= 2 ? 52 : 44}" fill="#FF5A1F" font-size="${dateSize}" font-family="Impact, sans-serif" letter-spacing="1.5">${escapeXml(ev.dateStr.toUpperCase())}</text>
-            <text x="32" y="${options.format === 'story' ? 128 : eventsCount <= 2 ? 112 : 96}" fill="${isLight ? '#111713' : '#F1EBDD'}" font-size="${titleSize}" font-family="Impact, sans-serif" letter-spacing="1">${escapeXml(ev.title.toUpperCase())}</text>
-            <text x="32" y="${options.format === 'story' ? 186 : eventsCount <= 2 ? 164 : 140}" fill="${isLight ? '#4A554D' : '#C9BA99'}" font-size="${locSize}" font-family="sans-serif" font-weight="bold">${escapeXml([ev.location, ev.ageGroup].filter(Boolean).join(' • '))}</text>
+            <text x="32" y="${options.format === 'story' ? 60 : eventsCount <= 2 ? 52 : 44}" fill="#FF5A1F" font-size="${dateSize}" font-family="${FONT_DISPLAY}" letter-spacing="1.5">${escapeXml(ev.dateStr.toUpperCase())}</text>
+            <text x="32" y="${options.format === 'story' ? 128 : eventsCount <= 2 ? 112 : 96}" fill="${isLight ? '#111713' : '#F1EBDD'}" font-size="${titleSize}" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(ev.title.toUpperCase())}</text>
+            <text x="32" y="${options.format === 'story' ? 186 : eventsCount <= 2 ? 164 : 140}" fill="${isLight ? '#4A554D' : '#C9BA99'}" font-size="${locSize}" font-family="${FONT_BODY}" font-weight="bold">${escapeXml([ev.location, ev.ageGroup].filter(Boolean).join(' • '))}</text>
           </g>
         `
         })
@@ -887,27 +893,27 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
         : `
     <!-- Final CTA Slide: Registration & Highlights -->
     <g transform="translate(96, ${options.format === 'story' ? 310 : 165})">
-      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="Impact, sans-serif" letter-spacing="2">// JETZT ANMELDEN</text>
-      <text x="0" y="${options.format === 'story' ? 88 : 74}" fill="${textPrimary}" font-size="${options.format === 'story' ? 84 : 70}" font-family="Impact, sans-serif" letter-spacing="2">ALLE INFOS ONLINE</text>
-      <text x="0" y="${options.format === 'story' ? 148 : 126}" fill="#FF5A1F" font-size="${options.format === 'story' ? 36 : 30}" font-family="Impact, sans-serif" letter-spacing="1.5">// PLÄTZE SICHERN &amp; KALENDER ABONNIEREN</text>
+      <text x="0" y="0" fill="#FF5A1F" font-size="${options.format === 'story' ? 30 : 26}" font-family="${FONT_DISPLAY}" letter-spacing="2">// JETZT ANMELDEN</text>
+      <text x="0" y="${options.format === 'story' ? 88 : 74}" fill="${textPrimary}" font-size="${options.format === 'story' ? 84 : 70}" font-family="${FONT_DISPLAY}" letter-spacing="2">ALLE INFOS ONLINE</text>
+      <text x="0" y="${options.format === 'story' ? 148 : 126}" fill="#FF5A1F" font-size="${options.format === 'story' ? 36 : 30}" font-family="${FONT_DISPLAY}" letter-spacing="1.5">// PLÄTZE SICHERN &amp; KALENDER ABONNIEREN</text>
     </g>
 
     <!-- 3 Highlight Feature Cards -->
     <g transform="translate(96, ${options.format === 'story' ? 510 : 330})">
       <g transform="translate(0, 0)">
         <rect x="0" y="0" width="888" height="${options.format === 'story' ? 120 : 92}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="${isLight ? '2.5' : '1.5'}" stroke-opacity="${isLight ? '1' : '0.2'}" rx="10"/>
-        <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="Impact, sans-serif">01</text>
-        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="sans-serif" font-weight="bold">ECHTE GEMEINSCHAFT &amp; ABENTEUER</text>
+        <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="${FONT_DISPLAY}">01</text>
+        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="${FONT_BODY}" font-weight="bold">ECHTE GEMEINSCHAFT &amp; ABENTEUER</text>
       </g>
       <g transform="translate(0, ${options.format === 'story' ? 144 : 110})">
         <rect x="0" y="0" width="888" height="${options.format === 'story' ? 120 : 92}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="${isLight ? '2.5' : '1.5'}" stroke-opacity="${isLight ? '1' : '0.2'}" rx="10"/>
-        <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="Impact, sans-serif">02</text>
-        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="sans-serif" font-weight="bold">JUNGS VON 9 BIS 14 JAHREN</text>
+        <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="${FONT_DISPLAY}">02</text>
+        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="${FONT_BODY}" font-weight="bold">JUNGS VON 9 BIS 14 JAHREN</text>
       </g>
       <g transform="translate(0, ${options.format === 'story' ? 288 : 220})">
         <rect x="0" y="0" width="888" height="${options.format === 'story' ? 120 : 92}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#F1EBDD'}" stroke-width="${isLight ? '2.5' : '1.5'}" stroke-opacity="${isLight ? '1' : '0.2'}" rx="10"/>
-        <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="Impact, sans-serif">03</text>
-        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="sans-serif" font-weight="bold">JUGEND LEITET JUGEND &#8226; 100% DRAUSSEN</text>
+        <text x="32" y="${options.format === 'story' ? 74 : 58}" fill="#FF5A1F" font-size="${options.format === 'story' ? 40 : 34}" font-family="${FONT_DISPLAY}">03</text>
+        <text x="100" y="${options.format === 'story' ? 70 : 56}" fill="${textPrimary}" font-size="${options.format === 'story' ? 30 : 26}" font-family="${FONT_BODY}" font-weight="bold">JUGEND LEITET JUGEND &#8226; 100% DRAUSSEN</text>
       </g>
     </g>
 
@@ -916,11 +922,11 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
       <rect x="0" y="0" width="888" height="${options.format === 'story' ? 300 : 255}" fill="${isLight ? '#FFFFFF' : cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3.5" rx="12"/>
       
       <rect x="32" y="28" width="240" height="42" fill="#FF5A1F" rx="4"/>
-      <text x="152" y="57" fill="#111713" font-size="22" font-family="Impact, sans-serif" text-anchor="middle" letter-spacing="1">ONLINE ANMELDEN</text>
+      <text x="152" y="57" fill="#111713" font-size="22" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1">ONLINE ANMELDEN</text>
 
-      <text x="32" y="${options.format === 'story' ? 135 : 124}" fill="${textPrimary}" font-size="${options.format === 'story' ? 46 : 42}" font-family="Impact, sans-serif" letter-spacing="1">ALLE AKTIONEN &amp; TERMINE:</text>
-      <text x="32" y="${options.format === 'story' ? 202 : 186}" fill="#FF5A1F" font-size="${options.format === 'story' ? 58 : 52}" font-family="Impact, sans-serif" letter-spacing="2">${escapeXml(displayDomain.toUpperCase())}</text>
-      <text x="32" y="${options.format === 'story' ? 250 : 224}" fill="${isLight ? '#3D453E' : textMuted}" font-size="${options.format === 'story' ? 24 : 21}" font-family="sans-serif" font-weight="bold">Kalender als iCal / Google abonnieren: /api/calendar.ics</text>
+      <text x="32" y="${options.format === 'story' ? 135 : 124}" fill="${textPrimary}" font-size="${options.format === 'story' ? 46 : 42}" font-family="${FONT_DISPLAY}" letter-spacing="1">ALLE AKTIONEN &amp; TERMINE:</text>
+      <text x="32" y="${options.format === 'story' ? 202 : 186}" fill="#FF5A1F" font-size="${options.format === 'story' ? 58 : 52}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(displayDomain.toUpperCase())}</text>
+      <text x="32" y="${options.format === 'story' ? 250 : 224}" fill="${isLight ? '#3D453E' : textMuted}" font-size="${options.format === 'story' ? 24 : 21}" font-family="${FONT_BODY}" font-weight="bold">Kalender als iCal / Google abonnieren: /api/calendar.ics</text>
 
       <g transform="translate(${888 - 32 - 110}, ${options.format === 'story' ? 95 : 70})">
         <circle cx="55" cy="55" r="55" fill="#FF5A1F"/>
@@ -931,7 +937,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
     }
 
     <!-- Footer Copyright -->
-    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Schönstatt-Mannesjugend • ${displayDomain}</text>
+    <text x="${width / 2}" y="${height - (options.format === 'story' ? 150 : 40)}" fill="${textPrimary}" fill-opacity="${isLight ? '0.85' : '0.6'}" font-size="20" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">SMJ Regio Wegweiser • Schönstatt-Mannesjugend • ${displayDomain}</text>
   </svg>`
 }
 
@@ -939,5 +945,6 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
  * Converts an SVG string to a high-resolution PNG Buffer using sharp.
  */
 export async function renderSvgToPng(svgString: string): Promise<Buffer> {
+  ensureServerFontsConfigured()
   return await sharp(Buffer.from(svgString)).png({ compressionLevel: 8 }).toBuffer()
 }

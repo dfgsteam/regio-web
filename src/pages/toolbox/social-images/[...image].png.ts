@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro'
+import '../../../lib/server-fonts'
+import { ensureServerFontsConfigured } from '../../../lib/server-fonts'
 import { eventProvider, getSlugVariants, formatDateRange, formatAgeRange } from '../../../lib/events'
 import { getAllCamps } from '../../../lib/camps'
 import { buildSchedulePresets } from '../../../lib/pdf/schedule-pdf'
@@ -13,6 +15,7 @@ import {
 import { QR_BASE_URL as BASE_DOMAIN } from '../../../lib/qr-url'
 
 export async function getStaticPaths() {
+  ensureServerFontsConfigured()
   const [events, camps] = await Promise.all([eventProvider.getEvents(), getAllCamps()])
 
   const paths: {
