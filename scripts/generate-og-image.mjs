@@ -21,6 +21,7 @@ const logoContent = logoRaw
   .replace(/<!DOCTYPE.*?>/i, '')
   .replace(/<svg[^>]*>/i, '')
   .replace(/<\/svg>/i, '')
+const logoViewBox = logoRaw.match(/viewBox="([^"]+)"/i)?.[1] || '0 0 2048 2048'
 
 const topo = (cx, cy, r0) => {
   const rings = []
@@ -37,7 +38,7 @@ const crosshair = (x, y, size = 26) =>
   `<path d="M${x - size} ${y}H${x + size}M${x} ${y - size}V${y + size}" stroke="#FF5A1F" stroke-width="3"/>` +
   `<circle cx="${x}" cy="${y}" r="3" fill="#FF5A1F"/>`
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:serif="http://www.serif.com/" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#FF5A1F" flood-opacity="0.35"/>
@@ -75,9 +76,9 @@ ${topo(960, 340, 520)}
   </g>
 
   <!-- Embedded Official Logo Emblem (Right Column) -->
-  <g transform="translate(750, 140) scale(1.15)" filter="url(#glow)">
+  <svg x="760" y="150" width="330" height="330" viewBox="${logoViewBox}" filter="url(#glow)">
     ${logoContent}
-  </g>
+  </svg>
 
   <!-- Bottom Badges & Footer -->
   <line x1="72" y1="520" x2="${W - 72}" y2="520" stroke="#F1EBDD" stroke-opacity="0.15" stroke-width="1.5"/>

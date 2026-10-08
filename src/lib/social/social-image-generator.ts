@@ -22,10 +22,14 @@ function getLogoInner(isDark: boolean): string {
   try {
     const raw = fs.readFileSync(filePath, 'utf-8')
     const match = raw.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i)
-    const inner = match?.[1] ? match[1].trim() : ''
-    if (isDark) whiteLogoInnerCache = inner
-    else darkLogoInnerCache = inner
-    return inner
+    const inner = match?.[1] ? match[1].trim().replace(/\sserif:id="[^"]*"/g, '') : ''
+    const viewBox = raw.match(/viewBox="0 0 (\d+) (\d+)"/i)
+    const width = Number(viewBox?.[1] || 1024)
+    const height = Number(viewBox?.[2] || 1024)
+    const normalized = `<g transform="scale(${1024 / width} ${1024 / height})">${inner}</g>`
+    if (isDark) whiteLogoInnerCache = normalized
+    else darkLogoInnerCache = normalized
+    return normalized
   } catch {
     return ''
   }
@@ -296,7 +300,7 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
     <g transform="translate(0, ${isStory ? -14 : -10})">
       <rect x="0" y="0" width="${badgeW}" height="${badgeH}" fill="${badgeBg}" stroke="${badgeStroke}" stroke-width="2.5" rx="10"/>
       <g transform="translate(${(badgeW - iconW) / 2}, ${(badgeH - iconH) / 2})">
-        <svg width="${iconW}" height="${iconH}" viewBox="0 0 328 288">${logoInner}</svg>
+        <svg width="${iconW}" height="${iconH}" viewBox="0 0 1024 1024">${logoInner}</svg>
       </g>
     </g>
 
@@ -376,7 +380,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
 
     <!-- Watermark Logo -->
     <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
-      <svg width="328" height="288" viewBox="0 0 328 288">${logoInner}</svg>
+      <svg width="328" height="288" viewBox="0 0 1024 1024">${logoInner}</svg>
     </g>
 
     <!-- Framing -->
@@ -464,7 +468,7 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
 
     <!-- Watermark Logo -->
     <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
-      <svg width="328" height="288" viewBox="0 0 328 288">${logoInner}</svg>
+      <svg width="328" height="288" viewBox="0 0 1024 1024">${logoInner}</svg>
     </g>
 
     <!-- Framing -->
@@ -560,7 +564,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
 
     <!-- Watermark Logo -->
     <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
-      <svg width="328" height="288" viewBox="0 0 328 288">${logoInner}</svg>
+      <svg width="328" height="288" viewBox="0 0 1024 1024">${logoInner}</svg>
     </g>
 
     <!-- Framing with WhatsApp Green Touch -->
@@ -716,7 +720,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
 
     <!-- Background Watermark Logo -->
     <g transform="translate(${options.format === 'story' ? '560, 480' : options.format === 'portrait' ? '580, 320' : '600, 240'}) rotate(12) scale(${options.format === 'story' ? '2.8' : '2.3'})" opacity="${isLight ? '0.06' : '0.07'}">
-      <svg width="328" height="288" viewBox="0 0 328 288">
+      <svg width="328" height="288" viewBox="0 0 1024 1024">
         ${logoInner}
       </svg>
     </g>
@@ -827,7 +831,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
 
     <!-- Background Watermark Logo -->
     <g transform="translate(${options.format === 'story' ? '560, 480' : '600, 240'}) rotate(12) scale(${options.format === 'story' ? '2.8' : '2.3'})" opacity="${isLight ? '0.06' : '0.07'}">
-      <svg width="328" height="288" viewBox="0 0 328 288">
+      <svg width="328" height="288" viewBox="0 0 1024 1024">
         ${logoInner}
       </svg>
     </g>
