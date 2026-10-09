@@ -10,7 +10,7 @@ import kilianPortrait from '../../assets/images/team/kilian-schlosser.png'
 import vinzenzPortrait from '../../assets/images/team/vinzenz-hupe.png'
 import jonathanPortrait from '../../assets/images/team/jonathan-hunold.png'
 
-const teamMembers = [
+const leadershipTeam = [
   {
     role: 'Regiosprecher',
     badge: 'Regiosprecher',
@@ -21,7 +21,7 @@ const teamMembers = [
       'Koordination der Region Wegweiser, Vernetzung und Gesamtverantwortung für die Aktionen vor Ort.',
   },
   {
-    role: 'Diözesanleitung',
+    role: '1. Diözesanleiter',
     badge: 'Diözesanleitung',
     name: 'Vinzenz Hupe',
     email: 'vinzenz.hupe@smj-wegweiser.de',
@@ -30,31 +30,13 @@ const teamMembers = [
       'Vertretung auf Diözesanebene, Aus- und Weiterbildung der Gruppenleiter sowie Jahresplanung.',
   },
   {
-    role: 'Diözesanleitung',
+    role: '2. Diözesanleiter',
     badge: 'Diözesanleitung',
     name: 'Jonathan Hunold',
     email: 'jonathan.hunold@smj-wegweiser.de',
     image: jonathanPortrait,
     description:
       'Unterstützung der Leitung, Organisation von Wochenenden und Begleitung neuer Gruppenleiter.',
-  },
-  {
-    role: 'Finanzen & Kasse',
-    badge: 'Finanzen',
-    name: 'Julian Hupe',
-    email: 'julian.hupe@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
-    description:
-      'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
-  },
-  {
-    role: 'Öffentlichkeitsbeauftragter',
-    badge: 'Öffentlichkeit',
-    name: 'Christian Watterott',
-    email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
-    description:
-      'Pressearbeit, Website, Social Media und Außendarstellung der Regio Wegweiser.',
   },
   {
     role: 'Geistliche Begleitung',
@@ -66,68 +48,47 @@ const teamMembers = [
       'Geistliche Impulse, Gottesdienste, Andachten und seelsorgliche Begleitung der Freizeiten.',
   },
   {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Dominik Watterott',
-    email: 'kontakt@smj-wegweiser.de',
+    role: 'Finanzen',
+    badge: 'Finanzen',
+    name: 'Julian Hupe',
+    email: 'julian.hupe@smj-wegweiser.de',
     image: '/team/avatar-silhouette.svg',
     description:
-      'Gruppenleitung vor Ort, Lagerfeuer, Geländespiele und Betreuung der Teilnehmer.',
+      'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
   },
   {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Hannes Imwalle',
+    role: 'Öffentlichkeitsarbeit',
+    badge: 'Öffentlichkeit',
+    name: 'Christian Watterott',
     email: 'kontakt@smj-wegweiser.de',
     image: '/team/avatar-silhouette.svg',
     description:
-      'Gruppenleitung vor Ort, Zeltlager-Aktionen und Begleitung bei Wochenenden.',
+      'Pressearbeit, Social Media und Außendarstellung der Regio Wegweiser.',
   },
   {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Immo Spiller',
+    role: 'Technische Verwaltung',
+    badge: 'Technik',
+    name: 'Julius Hunold',
     email: 'kontakt@smj-wegweiser.de',
     image: '/team/avatar-silhouette.svg',
-    description:
-      'Gruppenleitung vor Ort, Programmgestaltung und Zeltlager-Einsätze.',
+    description: 'Betreuung der Website und der digitalen Werkzeuge der Region.',
   },
-  {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Lukas Thon',
-    email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
-    description:
-      'Gruppenleitung vor Ort, Geländespiele und Betreuung der Zeltgemeinschaften.',
-  },
-  {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Magnus Hesse',
-    email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
-    description:
-      'Gruppenleitung vor Ort, Zeltlager, Wettkämpfe und handwerkliche Pionierbauten.',
-  },
-  {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Silas Hulha',
-    email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
-    description:
-      'Gruppenleitung vor Ort, Outdoor-Aktionen und Zeltlager-Einsätze.',
-  },
-  {
-    role: 'Gruppenleiter',
-    badge: 'Gruppenleiter',
-    name: 'Valentin Degenhardt',
-    email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
-    description:
-      'Gruppenleitung vor Ort, sportliche Turniere, Abendrunden und Lagerleben.',
-  },
+]
+
+const groupLeaderNames = [
+  'Silas',
+  'Immo',
+  'Valentin',
+  'Nils',
+  'Magnus',
+  'Fiete',
+  'Nathanael',
+  'Lukas',
+  'Jakob',
+  'Hannes',
+  'Dominik',
+  'Maxi',
+  'Toni',
 ]
 ---
 
@@ -198,14 +159,14 @@ const teamMembers = [
         </div>
         <p class="max-w-md font-mono text-xs leading-relaxed text-paper/70">
           // JUGEND LEITET JUGEND<br />
-          Verantwortung, Vertrauen und echte Einsätze vor Ort. Du erreichst jeden von uns direkt.
+          Verantwortung, Vertrauen und echte Einsätze vor Ort. Bei Fragen erreichst du unsere Leitung über die angegebenen Kontakte.
         </p>
       </div>
 
       <!-- Hero Character Roster Grid - Exactly 3 in a row -->
       <div id="team-members-container" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {
-          teamMembers.map((member, idx) => (
+          leadershipTeam.map((member, idx) => (
             <article class="team-member-card group relative flex min-h-[620px] flex-col justify-between overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 sm:p-8 transition-all duration-500 hover:border-orange hover:shadow-[0_25px_60px_rgba(255,90,31,0.2)] hover:-translate-y-2">
               <!-- Topo & Stage Background Textures -->
               <div class="texture-topo absolute inset-0 opacity-25 pointer-events-none" aria-hidden="true" />
@@ -285,7 +246,29 @@ const teamMembers = [
     </Container>
   </section>
 
-  <section class="bg-forest-900 py-20">
+  <section class="bg-forest-900 py-20 text-paper" aria-labelledby="gruppenleiter-heading">
+    <Container size="wide">
+      <p class="eyebrow mb-3">Jugend leitet Jugend</p>
+      <h2 id="gruppenleiter-heading" class="display text-4xl uppercase text-paper sm:text-5xl">
+        Unsere <span class="text-orange">Gruppenleiter.</span>
+      </h2>
+      <p class="mt-4 max-w-2xl text-sm leading-relaxed text-paper/75">
+        Sie gestalten Gruppenstunden, Aktionen und Zeltlager mit.
+      </p>
+      <ul class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {groupLeaderNames.map((name, index) => (
+          <li class="flex items-center gap-4 border border-paper/15 bg-forest-950 px-5 py-4">
+            <span class="font-mono text-xs text-orange" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span class="font-display text-2xl uppercase tracking-wide">{name}</span>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="bg-forest-900 pb-20">
     <Container size="wide" class="grid gap-6 md:grid-cols-2">
       <article class="border border-paper/15 bg-forest-950 p-8">
         <p class="eyebrow mb-3">Jugend leitet Jugend</p>
