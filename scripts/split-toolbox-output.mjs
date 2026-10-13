@@ -12,4 +12,10 @@ if (!fs.existsSync(publicToolbox) || !fs.statSync(publicToolbox).isDirectory()) 
 fs.mkdirSync(path.dirname(privateToolbox), { recursive: true })
 fs.rmSync(privateToolbox, { recursive: true, force: true })
 fs.renameSync(publicToolbox, privateToolbox)
+
+for (const sub of ['briefe', 'flyers', 'social-images']) {
+  fs.mkdirSync(path.join(privateToolbox, sub), { recursive: true })
+}
+
 console.log('Toolbox-Dateien aus dem öffentlichen Build nach dist-private/ verschoben.')
+

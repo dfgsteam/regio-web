@@ -67,39 +67,8 @@ jobs:
           CIVICRM_SITE_KEY: ${{ secrets.CIVICRM_SITE_KEY }}
         run: npm run build:toolbox-config
 
-      - name: Upload private Toolbox files outside web root
-        id: private_upload_first
-        if: ${{ env.FTP_PASSWORD != '' }}
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
-          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ./private/
-          local-dir: ./dist-private/
-          protocol: ftps
-          security: strict
-          port: 21
-          timeout: 60000
-
-      # Netcup occasionally resets the FTPS data connection while creating a
-      # directory. A fresh connection can resume the same incremental upload.
-      - name: Retry private Toolbox upload after FTPS disconnect
-        if: ${{ env.FTP_PASSWORD != '' && steps.private_upload_first.outcome == 'failure' }}
-        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
-        with:
-          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
-          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ./private/
-          local-dir: ./dist-private/
-          protocol: ftps
-          security: strict
-          port: 21
-          timeout: 60000
-
-      - name: Upload to FTP
+      # --- 1. WEB UPLOAD (Öffentliche Website) ---
+      - name: Upload public website to FTP
         id: public_upload_first
         if: ${{ env.FTP_PASSWORD != '' }}
         continue-on-error: true
@@ -115,7 +84,7 @@ jobs:
           port: 21
           timeout: 60000
 
-      - name: Retry public upload after FTPS disconnect
+      - name: Retry public website upload after FTPS disconnect
         if: ${{ env.FTP_PASSWORD != '' && steps.public_upload_first.outcome == 'failure' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
@@ -124,6 +93,140 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./public/
           local-dir: ./dist/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      # --- 2. TOOL UPLOAD (Toolbox Kern-App & Configs außerhalb des Web-Roots) ---
+      - name: Upload private Toolbox app outside web root
+        id: tool_upload_first
+        if: ${{ env.FTP_PASSWORD != '' }}
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/
+          local-dir: ./dist-private/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            toolbox/briefe/**
+            toolbox/flyers/**
+            toolbox/social-images/**
+
+      - name: Retry private Toolbox app upload after FTPS disconnect
+        if: ${{ env.FTP_PASSWORD != '' && steps.tool_upload_first.outcome == 'failure' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/
+          local-dir: ./dist-private/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            toolbox/briefe/**
+            toolbox/flyers/**
+            toolbox/social-images/**
+
+      # --- 3. GENERIERTE BEREICHE (Briefe, Flyer, Social Images) ---
+      - name: Upload generated letters (briefe)
+        id: briefe_upload_first
+        if: ${{ env.FTP_PASSWORD != '' }}
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/toolbox/briefe/
+          local-dir: ./dist-private/toolbox/briefe/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Retry generated letters upload after FTPS disconnect
+        if: ${{ env.FTP_PASSWORD != '' && steps.briefe_upload_first.outcome == 'failure' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/toolbox/briefe/
+          local-dir: ./dist-private/toolbox/briefe/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Upload generated flyers
+        id: flyers_upload_first
+        if: ${{ env.FTP_PASSWORD != '' }}
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/toolbox/flyers/
+          local-dir: ./dist-private/toolbox/flyers/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Retry generated flyers upload after FTPS disconnect
+        if: ${{ env.FTP_PASSWORD != '' && steps.flyers_upload_first.outcome == 'failure' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/toolbox/flyers/
+          local-dir: ./dist-private/toolbox/flyers/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Upload generated social images
+        id: social_upload_first
+        if: ${{ env.FTP_PASSWORD != '' }}
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/toolbox/social-images/
+          local-dir: ./dist-private/toolbox/social-images/
+          protocol: ftps
+          security: strict
+          port: 21
+          timeout: 60000
+
+      - name: Retry generated social images upload after FTPS disconnect
+        if: ${{ env.FTP_PASSWORD != '' && steps.social_upload_first.outcome == 'failure' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ./private/toolbox/social-images/
+          local-dir: ./dist-private/toolbox/social-images/
           protocol: ftps
           security: strict
           port: 21

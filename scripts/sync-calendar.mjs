@@ -345,10 +345,12 @@ async function main() {
     }
 
     const icsText = await res.text()
-    const events = parseIcs(icsText, defaults, overrides)
+    const allEvents = parseIcs(icsText, defaults, overrides)
+    const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10) : new Date().getFullYear()
+    const events = allEvents.filter((ev) => new Date(ev.start).getFullYear() === currentYear)
 
     if (events.length === 0) {
-      console.warn('[sync-calendar] Warning: No events found in parsed feed.')
+      console.warn(`[sync-calendar] Warning: No events found for year ${currentYear}.`)
       return
     }
 

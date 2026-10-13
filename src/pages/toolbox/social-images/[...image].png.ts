@@ -77,7 +77,9 @@ export async function getStaticPaths() {
   }
 
   // B) Camps
+  const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10) : new Date().getFullYear()
   for (const camp of camps) {
+    if (camp.data.year !== currentYear) continue
     const campSlugs = [`zeltlager-${camp.data.year}`, 'zeltlager']
     for (const slug of campSlugs) {
       for (const format of eventFormats) {

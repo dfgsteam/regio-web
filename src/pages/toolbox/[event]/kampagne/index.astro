@@ -41,9 +41,11 @@ export async function getStaticPaths() {
     getAllCamps(),
   ])
 
+  const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10) : new Date().getFullYear()
+
   // Prepare unified events list
   const campaignEvents: CampaignEventData[] = [
-    ...camps.map((c) => ({
+    ...camps.filter((c) => c.data.year === currentYear).map((c) => ({
       id: `zeltlager-${c.data.year}`,
       title: c.data.title.toUpperCase(),
       subtitle: (c.data.motto || `Sommerzeltlager ${c.data.year}`).toUpperCase(),

@@ -61,8 +61,11 @@ export async function getStaticPaths() {
     }
   }
 
+  const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10) : new Date().getFullYear()
+
   // 3. Camps
   for (const camp of camps) {
+    if (camp.data.year !== currentYear) continue
     const campSlug = `zeltlager-${camp.data.year}`
     if (!seen.has(campSlug)) {
       seen.add(campSlug)
@@ -73,11 +76,12 @@ export async function getStaticPaths() {
     }
   }
 
-  if (camps.length > 0 && !seen.has('zeltlager')) {
+  const currentCamp = camps.find((c) => c.data.year === currentYear) || camps[0]
+  if (currentCamp && !seen.has('zeltlager')) {
     seen.add('zeltlager')
     paths.push({
       params: { id: 'zeltlager' },
-      props: { slug: 'zeltlager', campData: camps[0] },
+      props: { slug: 'zeltlager', campData: currentCamp },
     })
   }
 

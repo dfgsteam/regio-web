@@ -7,7 +7,10 @@ export async function getStaticPaths() {
   const paths: { params: { event: string } }[] = []
   const seen = new Set<string>()
 
+  const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10) : new Date().getFullYear()
+
   for (const c of camps) {
+    if (c.data.year !== currentYear) continue
     const slug = `zeltlager-${c.data.year}`
     if (!seen.has(slug)) {
       seen.add(slug)
