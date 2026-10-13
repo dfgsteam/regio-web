@@ -3,7 +3,18 @@
  * Authentik Login-Initiator
  * Erzeugt kryptografischen CSRF-State und leitet zu Authentik weiter.
  */
-$config = require dirname(__DIR__, 2) . '/private/config.php';
+$configFile = dirname(__DIR__, 2) . '/private/config.php';
+if (!is_file($configFile)) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Toolbox-Konfiguration auf dem Server nicht gefunden (' . htmlspecialchars($configFile) . ').');
+}
+$config = require $configFile;
+if (!is_array($config)) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Toolbox-Konfiguration liefert keine gültigen Daten.');
+}
 session_set_cookie_params(['secure' => $config['cookie_secure'], 'httponly' => true, 'samesite' => 'Lax']);
 session_start();
 session_regenerate_id(true);

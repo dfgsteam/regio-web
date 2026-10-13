@@ -16,7 +16,18 @@ ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
-$config = require dirname(__DIR__, 2) . '/private/config.php';
+$configFile = dirname(__DIR__, 2) . '/private/config.php';
+if (!is_file($configFile)) {
+    http_response_code(503);
+    echo json_encode(['error' => 'Toolbox-Konfiguration auf dem Server nicht gefunden (' . $configFile . ')']);
+    exit;
+}
+$config = require $configFile;
+if (!is_array($config)) {
+    http_response_code(503);
+    echo json_encode(['error' => 'Toolbox-Konfiguration liefert keine gültigen Daten.']);
+    exit;
+}
 
 // Verify signed session cookie
 $rawCookie = $_COOKIE[$config['cookie_name']] ?? null;

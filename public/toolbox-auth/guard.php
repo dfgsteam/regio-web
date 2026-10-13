@@ -1,6 +1,15 @@
-<?php
-/** Serve private Toolbox files only after checking the signed session. */
-$config = require dirname(__DIR__, 2) . '/private/config.php';
+$configFile = dirname(__DIR__, 2) . '/private/config.php';
+if (!is_file($configFile)) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Toolbox-Konfiguration auf dem Server nicht gefunden (' . htmlspecialchars($configFile) . ').');
+}
+$config = require $configFile;
+if (!is_array($config)) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Toolbox-Konfiguration liefert keine gültigen Daten.');
+}
 
 // Apache preserves the original request URI across its internal rewrite.
 // A query parameter must never select a file on disk.

@@ -3,7 +3,18 @@
  * Authentik OAuth2 Callback Handler
  * Tauscht den Authorization Code gegen Tokens, prüft User-Daten und setzt das signierte Session-Cookie.
  */
-$config = require dirname(__DIR__, 2) . '/private/config.php';
+$configFile = dirname(__DIR__, 2) . '/private/config.php';
+if (!is_file($configFile)) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Toolbox-Konfiguration auf dem Server nicht gefunden (' . htmlspecialchars($configFile) . ').');
+}
+$config = require $configFile;
+if (!is_array($config)) {
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Toolbox-Konfiguration liefert keine gültigen Daten.');
+}
 if ($config['local_auth_bypass']) {
     http_response_code(404);
     exit('Not Found');
