@@ -9,6 +9,18 @@ import teamGroup from '../../assets/images/team/team-group.png'
 import kilianPortrait from '../../assets/images/team/kilian-schlosser.png'
 import vinzenzPortrait from '../../assets/images/team/vinzenz-hupe.png'
 import jonathanPortrait from '../../assets/images/team/jonathan-hunold.png'
+import juliusPortrait from '../../assets/images/team/julius.png'
+import rainerPortrait from '../../assets/images/team/rainer.png'
+import christianWatterottPortrait from '../../assets/images/team/christian-watterott.png'
+import julianHupePortrait from '../../assets/images/team/julian-hupe.png'
+import silasPortrait from '../../assets/images/team/silas.png'
+import immoPortrait from '../../assets/images/team/immo.png'
+import nilsPortrait from '../../assets/images/team/nils.png'
+import fietePortrait from '../../assets/images/team/fiete.png'
+import nathanelPortrait from '../../assets/images/team/nathanel.png'
+import lukasPortrait from '../../assets/images/team/lukas.png'
+import hannesPortrait from '../../assets/images/team/hannes.png'
+import toniPortrait from '../../assets/images/team/toni.png'
 
 const leadershipTeam = [
   {
@@ -43,7 +55,7 @@ const leadershipTeam = [
     badge: 'Begleitung',
     name: 'Rainer Marius Gotter',
     email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
+    image: rainerPortrait,
     description:
       'Geistliche Impulse, Gottesdienste, Andachten und seelsorgliche Begleitung der Freizeiten.',
   },
@@ -52,7 +64,7 @@ const leadershipTeam = [
     badge: 'Finanzen',
     name: 'Julian Hupe',
     email: 'julian.hupe@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
+    image: julianHupePortrait,
     description:
       'Lagerbeiträge, Zuschüsse, Materialkasse und transparente Abrechnung aller Freizeiten.',
   },
@@ -61,7 +73,7 @@ const leadershipTeam = [
     badge: 'Öffentlichkeit',
     name: 'Christian Watterott',
     email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
+    image: christianWatterottPortrait,
     description:
       'Pressearbeit, Social Media und Außendarstellung der Regio Wegweiser.',
   },
@@ -70,25 +82,25 @@ const leadershipTeam = [
     badge: 'Technik',
     name: 'Julius Hunold',
     email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
+    image: juliusPortrait,
     description: 'Betreuung der Website und der digitalen Werkzeuge der Region.',
   },
 ]
 
-const groupLeaderNames = [
-  'Silas',
-  'Immo',
-  'Valentin',
-  'Nils',
-  'Magnus',
-  'Fiete',
-  'Nathanael',
-  'Lukas',
-  'Jakob',
-  'Hannes',
-  'Dominik',
-  'Maxi',
-  'Toni',
+const groupLeaders = [
+  { name: 'Silas', image: silasPortrait },
+  { name: 'Immo', image: immoPortrait },
+  { name: 'Valentin', image: '/team/avatar-silhouette.svg' },
+  { name: 'Nils', image: nilsPortrait },
+  { name: 'Magnus', image: '/team/avatar-silhouette.svg' },
+  { name: 'Fiete', image: fietePortrait },
+  { name: 'Nathanael', image: nathanelPortrait },
+  { name: 'Lukas', image: lukasPortrait },
+  { name: 'Jakob', image: '/team/avatar-silhouette.svg' },
+  { name: 'Hannes', image: hannesPortrait },
+  { name: 'Dominik', image: '/team/avatar-silhouette.svg' },
+  { name: 'Maxi', image: '/team/avatar-silhouette.svg' },
+  { name: 'Toni', image: toniPortrait },
 ]
 ---
 
@@ -255,16 +267,70 @@ const groupLeaderNames = [
       <p class="mt-4 max-w-2xl text-sm leading-relaxed text-paper/75">
         Sie gestalten Gruppenstunden, Aktionen und Zeltlager mit.
       </p>
-      <ul class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {groupLeaderNames.map((name, index) => (
-          <li class="flex items-center gap-4 border border-paper/15 bg-forest-950 px-5 py-4">
-            <span class="font-mono text-xs text-orange" aria-hidden="true">
-              {String(index + 1).padStart(2, '0')}
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {groupLeaders.map((leader, idx) => (
+          <article class="group relative flex min-h-[460px] flex-col justify-between overflow-hidden border-2 border-paper/15 bg-gradient-to-b from-[#161f18] via-forest-900 to-forest-950 p-6 transition-all duration-500 hover:border-orange hover:shadow-[0_20px_50px_rgba(255,90,31,0.2)] hover:-translate-y-2">
+            <!-- Topo & Stage Background Textures -->
+            <div class="texture-topo absolute inset-0 opacity-25 pointer-events-none" aria-hidden="true" />
+
+            <!-- Giant Watermark Number in Background -->
+            <span class="pointer-events-none absolute -top-4 -left-2 select-none font-mono text-[7rem] font-black leading-none text-paper/[0.04] transition-colors duration-500 group-hover:text-orange/[0.08]" aria-hidden="true">
+              {String(idx + 1).padStart(2, '0')}
             </span>
-            <span class="font-display text-2xl uppercase tracking-wide">{name}</span>
-          </li>
+
+            <!-- Warm Radial Spotlight behind Character -->
+            <div class="pointer-events-none absolute inset-x-0 top-12 h-64 rounded-full bg-radial from-orange/20 via-orange/5 to-transparent blur-2xl opacity-40 transition-all duration-700 group-hover:opacity-90 group-hover:scale-110" aria-hidden="true" />
+
+            <!-- Top Card Header / Badges -->
+            <div class="relative z-20 flex items-start justify-between gap-2">
+              <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-orange">
+                // {`LEITER ${String(idx + 1).padStart(2, '0')}`}
+              </span>
+              <span class="stamp-distressed text-[0.62rem] border-orange/80 bg-forest-950/90 text-orange px-2.5 py-0.5 font-mono font-bold uppercase tracking-[0.16em]">
+                Gruppenleiter
+              </span>
+            </div>
+
+            <!-- Cutout Hero Character Stage -->
+            <div class="absolute inset-0 flex items-end justify-center pointer-events-none overflow-hidden pb-12 pt-8">
+              {typeof leader.image === 'string' ? (
+                <img
+                  src={leader.image}
+                  alt={`Porträt von ${leader.name}`}
+                  class="relative z-10 h-[82%] w-auto max-w-[90%] object-contain object-bottom opacity-85 transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2 group-hover:opacity-100"
+                  loading="lazy"
+                />
+              ) : (
+                <Image
+                  src={leader.image}
+                  alt={`Porträt von ${leader.name}`}
+                  class="relative z-10 h-[82%] w-auto max-w-[90%] object-contain object-bottom transition-all duration-700 ease-out group-hover:scale-108 group-hover:-translate-y-2"
+                  loading="lazy"
+                  format="webp"
+                  widths={[200, 320, 480]}
+                  sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+                />
+              )}
+            </div>
+
+            <!-- Smooth Dark Layered Gradient Overlay (over image z-10, under text z-20) -->
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-forest-950 from-40% via-forest-950/90 via-75% to-transparent z-15" aria-hidden="true" />
+
+            <!-- Bottom Overlaid Character Info -->
+            <div class="relative z-20 mt-auto pt-16">
+              <p class="font-mono text-[0.7rem] font-bold uppercase tracking-[0.2em] text-orange">
+                Gruppenleiter
+              </p>
+              <h3 class="display text-3xl sm:text-4xl text-paper tracking-wide uppercase mt-1 transition-colors duration-300 group-hover:text-orange">
+                {leader.name}
+              </h3>
+              <p class="mt-2 text-xs leading-relaxed text-paper/75">
+                Gestaltet Gruppenstunden, Aktionen und Zeltlager mit.
+              </p>
+            </div>
+          </article>
         ))}
-      </ul>
+      </div>
     </Container>
   </section>
 

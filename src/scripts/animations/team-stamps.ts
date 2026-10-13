@@ -15,7 +15,6 @@ export function initTeamStampsAnimation() {
 
     cards.forEach((card) => {
       const stamp = card.querySelector<HTMLElement>('.team-stamp')
-      const img = card.querySelector<HTMLElement>('img')
 
       // Card reveals smoothly with scroll position
       gsap.fromTo(
@@ -38,23 +37,6 @@ export function initTeamStampsAnimation() {
           },
         }
       )
-
-      if (img) {
-        gsap.fromTo(
-          img,
-          { scale: 1.15 },
-          {
-            scale: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 92%',
-              end: 'top 55%',
-              scrub: 0.5,
-            },
-          }
-        )
-      }
 
       // Stamp stamps down onto the card and lifts back up when scrolling in reverse
       if (stamp) {
