@@ -2,6 +2,10 @@
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import Container from '../../components/common/Container.astro'
 import Eyebrow from '../../components/common/Eyebrow.astro'
+import { getDioezesanleiter } from '../../lib/team'
+
+const dioezesanleiter = getDioezesanleiter()
+const vorstandText = dioezesanleiter.map((l) => l.name).join(' und ')
 ---
 
 <ContentLayout
@@ -26,7 +30,7 @@ import Eyebrow from '../../components/common/Eyebrow.astro'
         </p>
         <p>
           <strong>Vertreten durch den Vorstand:</strong><br />
-          Christian Watterott und Nils Kullmann
+          {vorstandText}
         </p>
 
         <h2>Kontakt</h2>
