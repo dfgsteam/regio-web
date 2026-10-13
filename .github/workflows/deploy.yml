@@ -73,8 +73,8 @@ jobs:
         continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ae9ed.netcup.net
-          username: github-hnld-regio
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./private/
           local-dir: ./dist-private/
@@ -89,8 +89,8 @@ jobs:
         if: ${{ env.FTP_PASSWORD != '' && steps.private_upload_first.outcome == 'failure' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ae9ed.netcup.net
-          username: github-hnld-regio
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./private/
           local-dir: ./dist-private/
@@ -105,8 +105,8 @@ jobs:
         continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ae9ed.netcup.net
-          username: github-hnld-regio
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./public/
           local-dir: ./dist/
@@ -119,8 +119,8 @@ jobs:
         if: ${{ env.FTP_PASSWORD != '' && steps.public_upload_first.outcome == 'failure' }}
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ae9ed.netcup.net
-          username: github-hnld-regio
+          server: ${{ vars.FTP_SERVER || 'a2e85.netcup.net' }}
+          username: ${{ vars.FTP_USERNAME || 'github-julius' }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./public/
           local-dir: ./dist/
