@@ -17,7 +17,13 @@ const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10
 const staticEvents: Event[] = (rawEvents as any[])
   .filter((item) => !item.disabled && !item.hidden)
   .map(parseJsonEvent)
-  .filter((event) => event.start.getFullYear() === currentYear)
+  .filter((event) => {
+    const year = event.start.getFullYear()
+    if (process.env.BUILD_YEAR) {
+      return year === currentYear
+    }
+    return year >= currentYear && year <= currentYear + 1
+  })
   .map((event) => enrichEventWithCivi(event))
 
 export class StaticJsonEventProvider implements EventProvider {

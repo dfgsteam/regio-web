@@ -347,10 +347,16 @@ async function main() {
     const icsText = await res.text()
     const allEvents = parseIcs(icsText, defaults, overrides)
     const currentYear = process.env.BUILD_YEAR ? parseInt(process.env.BUILD_YEAR, 10) : new Date().getFullYear()
-    const events = allEvents.filter((ev) => new Date(ev.start).getFullYear() === currentYear)
+    const events = allEvents.filter((ev) => {
+      const evYear = new Date(ev.start).getFullYear()
+      if (process.env.BUILD_YEAR) {
+        return evYear === currentYear
+      }
+      return evYear >= currentYear && evYear <= currentYear + 1
+    })
 
     if (events.length === 0) {
-      console.warn(`[sync-calendar] Warning: No events found for year ${currentYear}.`)
+      console.warn(`[sync-calendar] Warning: No events found for year ${currentYear} / ${currentYear + 1}.`)
       return
     }
 
