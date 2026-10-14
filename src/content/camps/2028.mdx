@@ -1,7 +1,7 @@
 ---
 year: 2028
 title: Zeltlager 2028
-motto: Zeltlager Thalwenden 2028
+motto: Save the Date
 active: true
 featured: false
 date:
@@ -25,30 +25,12 @@ theme:
     texture: /placeholders/wide.svg
 registration:
   enabled: false
-images:
-  - src: /placeholders/reel.svg
-    alt: Lagerleben und Zeltstadt im Wiesental
-    ratio: 5:3
-  - src: /placeholders/story.svg
-    alt: Lagerfeuer und Gemeinschaft
-    ratio: 4:5
-  - src: /placeholders/wide.svg
-    alt: Sommerabenteuer in Thalwenden
-    ratio: 16:10
-story: >-
-  Zehn Tage draußen im Wald, schlafen im Zelt, kochen über offenem Feuer,
-  Nachtwache am Bundesfeuer und packende Geländespiele: Das Zeltlager 2028 im
-  Wiesental bei Thalwenden steht bereits fest im Terminkalender! Vom 16. bis 26.
-  August 2028 laden wir alle Jungs zwischen 9 und 14 Jahren wieder zu unserem
-  großen Sommerabenteuer ein. Das offizielle Lagermotto, die Spielgeschichte und
-  alle Details zum Programm werden aktuell von unserem Vorbereitungsteam
-  erarbeitet. Eltern und Familien können sich diesen Termin schon jetzt fest für
-  die Sommerferien 2028 vormerken!
+images: []
 faq:
   - question: 'Kann man sich schon für das Zeltlager 2028 anmelden?'
-    answer: 'Die reguläre Online-Anmeldung öffnet rechtzeitig vor dem Lager. Derzeit dient diese Seite als Terminhinweis und Vormerkung für Eltern zur frühzeitigen Urlaubsplanung.'
+    answer: 'Die reguläre Online-Anmeldung öffnet rechtzeitig vor dem Lager (voraussichtlich Anfang 2028). Derzeit dient diese Seite als Terminhinweis und Vormerkung für Eltern zur frühzeitigen Urlaubsplanung.'
   - question: 'Wann wird das offizielle Lagermotto bekanntgegeben?'
-    answer: 'Unser Leiterteam erarbeitet das Motto und die Rahmenhandlung traditionell in der Vorbereitungsphase. Sobald das Motto steht, wird diese Seite mit der vollständigen Kampagne und allen Details aktualisiert.'
+    answer: 'Unser Leiterteam erarbeitet das Motto und die Rahmenhandlung traditionell in der Vorbereitungsphase. Sobald das Motto steht, wird diese Seite mit der vollständigen Kampagne, Plakat und allen Spieldetails aktualisiert.'
   - question: 'Für welches Alter ist das Zeltlager geeignet?'
     answer: 'Das Sommerzeltlager richtet sich an alle Jungen im Alter von 9 bis 14 Jahren – sowohl an erfahrene Zeltlager-Veteranen als auch an Neueinsteiger, die zum ersten Mal Lagerluft schnuppern möchten.'
   - question: 'Wo findet das Zeltlager 2028 statt?'
@@ -58,26 +40,20 @@ faq:
 ---
 
 import CampHero from '../../components/camp/CampHero.astro'
+import CampSaveTheDate from '../../components/camp/CampSaveTheDate.astro'
 import CampFacts from '../../components/camp/CampFacts.astro'
-import CampStory from '../../components/camp/CampStory.astro'
-import CampGallery from '../../components/camp/CampGallery.astro'
 import CampLocation from '../../components/camp/CampLocation.astro'
 import CampParents from '../../components/camp/CampParents.astro'
 import CampFaq from '../../components/camp/CampFaq.astro'
-import CampRegistration from '../../components/camp/CampRegistration.astro'
 
 <CampHero />
 
+<CampSaveTheDate />
+
 <CampFacts />
-
-<CampStory />
-
-<CampGallery />
 
 <CampLocation />
 
 <CampParents />
 
 <CampFaq />
-
-<CampRegistration />
