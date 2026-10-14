@@ -1,0 +1,115 @@
+---
+import Container from '../common/Container.astro'
+import Eyebrow from '../common/Eyebrow.astro'
+import { Flame, Compass, Mountain, Shield } from '@lucide/astro'
+
+const chapters = [
+  {
+    number: '01',
+    phase: 'TAG 01–03',
+    title: 'Der Ruf ins Nebeltal',
+    tagline: 'Das Wiesenthal schließt die Pforten zur Außenwelt.',
+    body: 'Wenn der Nebel zwischen den bewaldeten Hängen von Thalwenden aufsteigt, beginnt der Übergang. Kein Strom, kein Smartphone, keine Hektik. Zusammen mit deiner Zeltgemeinschaft errichten wir das Basislager im Herzen des Tals. Doch schon in der ersten Nacht spüren alle: In den Felsen schlummert eine alte Macht.',
+    quote: 'Wer den Pfad des Drachen betritt, lässt den Lärm der Welt hinter sich.',
+    meta: 'FELDNOTE · 21:45 UHR · TORII-PFORTE',
+    icon: Compass,
+  },
+  {
+    number: '02',
+    phase: 'TAG 04–06',
+    title: 'Die drei Felsen',
+    tagline: 'Klettern, Taktik und die Suche nach den uralten Siegeln.',
+    body: 'Drei gewaltige Felsformationen überragen das Tal wie versteinerte Wächter. An jedem Felsen wartet eine Prüfung: Packende Geländespiele im Unterholz, Klettertouren an rauem Sandstein und Rätsel, die nur durch eisernen Teamgeist gelöst werden können. Hier zählt kein Einzelkämpfer – nur die Gruppe.',
+    quote: 'Ein Fels wankt nicht. Sei wie der Stein, wenn die Prüfung beginnt.',
+    meta: 'FELDNOTE · 14:20 UHR · DRACHENRÜCKEN',
+    icon: Mountain,
+  },
+  {
+    number: '03',
+    phase: 'TAG 07–08',
+    title: 'Der Weg der Shinobi',
+    tagline: 'Nachtmissionen, absolute Stille und die Kunst der Wachsamkeit.',
+    body: 'Wenn die Fackeln erlöschen und nur noch der Mond über den Klippen steht, erwacht der Geist der Schatten. Bei der traditionellen Nachtwache und nächtlichen Geländespielen lernen wir, uns lautlos im Gelände zu bewegen und im Dunkeln die Nerven zu behalten. Ein Knacken im Gehölz – und die Zeltstadt ist wach.',
+    quote: 'Im Dunkeln zählt nicht, wer am lautesten schreit – sondern wer im Stillen wacht.',
+    meta: 'FELDNOTE · 02:15 UHR · SCHATTENSCHLUCHT',
+    icon: Shield,
+  },
+  {
+    number: '04',
+    phase: 'TAG 09–10',
+    title: 'Das Erwachen der Flamme',
+    tagline: 'Das große Bundesfeuer. Aus Suchenden werden Brüder.',
+    body: 'Am letzten Abend entzünden wir das weithin sichtbare Bundesfeuer. Funkenfontänen tanzen bis in die Sternennacht über Thalwenden. Die Prüfungen sind bestanden, das Geheimnis des Drachens ist gelüftet. Jeder Junge empfängt das Zeichen der Wegweiser – eine Erinnerung fürs ganze Leben.',
+    quote: 'Zehn Tage draußen im Wiesental. Du fährst als anderer Mensch nach Hause.',
+    meta: 'FELDNOTE · 23:50 UHR · BUNDESFEUERKREIS',
+    icon: Flame,
+  },
+]
+---
+
+<section id="dragon-story" class="camp-bg relative py-20 sm:py-28 overflow-hidden border-t camp-border">
+  <div class="texture-topo absolute inset-0 opacity-40 pointer-events-none" aria-hidden="true" />
+
+  <Container class="relative">
+    <div class="max-w-3xl mb-16 sm:mb-20">
+      <Eyebrow label="Die Storyline · Zeltlager 2027" />
+      <h2 class="display text-3xl sm:text-5xl md:text-6xl mt-3 camp-fg tracking-tight uppercase">
+        Vier Akte im Tal<br />
+        <span class="text-[#E62E2D]">des Drachen.</span>
+      </h2>
+      <p class="mt-4 font-mono text-xs sm:text-sm text-paper/70 uppercase tracking-widest leading-relaxed">
+        Jedes Zeltlager ist eine eigene, lebendige Geschichte. Zehn Tage, an denen du selbst die Hauptrolle spielst.
+      </p>
+    </div>
+
+    <!-- Chapter Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+      {
+        chapters.map((ch) => {
+          const Icon = ch.icon
+          return (
+            <article class="relative flex flex-col justify-between border-2 border-paper/15 bg-[#090D12]/90 p-6 sm:p-8 hover:border-[#E62E2D]/60 transition-all duration-300 group">
+              <!-- Top Header: Phase and Number -->
+              <div>
+                <div class="flex items-center justify-between border-b border-paper/10 pb-4 mb-6">
+                  <div class="flex items-center gap-3">
+                    <span class="bg-[#E62E2D]/20 text-[#E62E2D] p-2 border border-[#E62E2D]/40">
+                      <Icon class="h-4 w-4" />
+                    </span>
+                    <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#E62E2D] font-bold">
+                      {ch.phase}
+                    </span>
+                  </div>
+                  <span class="font-display text-3xl sm:text-4xl text-paper/30 group-hover:text-[#E62E2D] transition-colors">
+                    {ch.number}
+                  </span>
+                </div>
+
+                <h3 class="font-display text-2xl sm:text-3xl text-paper uppercase tracking-wide">
+                  {ch.title}
+                </h3>
+                <p class="font-mono text-xs text-orange mt-1 uppercase tracking-wider">
+                  {ch.tagline}
+                </p>
+
+                <p class="mt-5 text-sm sm:text-base leading-relaxed text-paper/80 font-sans">
+                  {ch.body}
+                </p>
+              </div>
+
+              <!-- Bottom Quote & Meta -->
+              <div class="mt-8 pt-5 border-t border-paper/10">
+                <blockquote class="font-hand text-lg sm:text-xl text-[#F1EBDD] leading-snug">
+                  "{ch.quote}"
+                </blockquote>
+                <div class="mt-3 font-mono text-[0.65rem] uppercase tracking-[0.25em] text-paper/40">
+                  {ch.meta}
+                </div>
+              </div>
+            </article>
+          )
+        })
+      }
+    </div>
+  </Container>
+</section>

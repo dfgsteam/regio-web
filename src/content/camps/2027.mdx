@@ -1,75 +1,87 @@
 ---
 year: 2027
 title: Zeltlager 2027
-motto: Die verlorene Expedition
-active: false
+motto: Das Tal des steinernen Drachen
+active: true
 date:
-  start: 2027-07-09
-  end: 2027-07-18
+  start: 2027-07-21
+  end: 2027-07-30
 age:
   min: 9
   max: 14
+price: 189 €
 location:
-  name: Wiesenthal bei Thalwenden
+  name: Im Wiesental Thalwenden
   coordinates: N 51° 22' 04.8" / E 10° 06' 55.6"
 theme:
-  id: expedition
+  id: dragon
   colors:
-    background: '#182019'
+    background: '#090D12'
     foreground: '#F1EBDD'
-    accent: '#E2A93B'
+    accent: '#E62E2D'
   assets:
-    hero: /placeholders/camp-hero.svg
+    hero: /images/camps/2027/poster.webp
     texture: /placeholders/wide.svg
 registration:
   enabled: true
   url: https://smj-wegweiser.de/anmeldung-zeltlager-2027
-  deadline: 2027-06-01
+  deadline: 2027-06-15
 images:
-  - src: /placeholders/reel.svg
-    alt: Platzhalterbild – Expeditionskolonne auf dem Marsch
-    ratio: 5:3
+  - src: /images/camps/2027/poster.webp
+    alt: 'Offizielles Plakat – Zeltlager 2027: Das Tal des steinernen Drachen'
+    ratio: '2:3'
   - src: /placeholders/story.svg
-    alt: Platzhalterbild – Kartenstudium im Basislager
+    alt: Klettern und Geländespiele an den Sandsteinfelsen
     ratio: 4:5
   - src: /placeholders/wide.svg
-    alt: Platzhalterbild – Abend am Lagerfeuer
+    alt: Nachtwache und Fackelzug im Wiesental
     ratio: 16:10
 story: >-
-  Die Karte ist alt. Die Namen darauf stimmen nicht mehr. Also bleibt nur
-  eines: losgehen. Zehn Tage durch Wiesen, Wald und Nebel – vorbei an
-  vergessenen Dörfern, über Flüsse ohne Namen, bis in ein Tal, das auf
-  keiner Karte der Welt verzeichnet ist. Wer dort ankommt, hat mehr gefunden
-  als den Weg: eine Gruppe, die zusammenhält, wenn es dreckig wird.
+  Eine Legende. Drei Felsen. Ein verborgenes Geheimnis.
+  Tief im Wiesental bei Thalwenden liegt das Tal des steinernen Drachen.
+  Zehn Tage draußen im Wald, zehn Tage Zeltstadt, Lagerfeuer, Klettern
+  an den Sandsteinfelsen und packende Geländespiele nach alter Legende.
+  Hier zählt kein digitaler Lärm – nur echter Zusammenhalt, Mut
+  und das Abenteuer deines Lebens.
 faq:
-  - question: Muss ich schon Wandererfahrung haben?
-    answer: Nein. Kondition ist gut, aber was zählt, ist mitzugehen. Wer nicht mehr kann, wird getragen – im übertragenen Sinn.
-  - question: Kann ich mein Handy mitnehmen?
-    answer: Mitnehmen ja, benutzen selten. Unterwegs gibt es Empfang kaum, und das ist gewollt.
-  - question: Was, wenn ich Heimweh bekomme?
-    answer: Passiert. Jeder Leiter kennt das. Wir reden darüber, und meistens ist es nach dem ersten Abend vorbei.
-  - question: Wie komme ich zur Anreise?
-    answer: Die Anreise organisieren wir gemeinsam von Heiligenstadt aus. Treffpunkt und Zeiten gibt es mit der Anmeldebestätigung.
+  - question: Was bedeutet das Motto "Das Tal des steinernen Drachen"?
+    answer: Jedes Jahr verwandelt sich das Wiesental durch ein großes Lagermotto in eine lebendige Erlebniswelt. 2027 dreht sich alles um die uralte Legende des steinernen Drachen, die Geheimnisse der drei Felsen und den Ehrenkodex der Gemeinschaft. Geländespiele, Abendrunden und Lagerbauten greifen die Story auf.
+  - question: Wann und wo findet das Zeltlager 2027 statt?
+    answer: Das Zeltlager findet vom 21. bis 30. Juli 2027 im Wiesental bei Thalwenden statt. Zehn Tage echtes Outdoor-Zeltlager für Jungs von 9 bis 14 Jahren.
+  - question: Was kostet die Teilnahme und wann ist Anmeldeschluss?
+    answer: Der Teilnahmebeitrag beträgt 189,00 € (inklusive Vollverpflegung, Zeltunterkunft, Betreuung und allen Programmaktionen). Der offizielle Anmeldeschluss ist der 15. Juni 2027.
+  - question: Brauchen die Teilnehmer Vorkenntnisse oder besondere Ausrüstung?
+    answer: Nein, Vorkenntnisse sind nicht erforderlich! Gebraucht werden wetterfeste Kleidung, feste Schuhe bzw. Wanderschuhe, Schlafsack, Isomatte, Taschen- oder Stirnlampe sowie Essgeschirr. Eine ausführliche Packliste erhalten alle angemeldeten Teilnehmer rechtzeitig vor Beginn.
+  - question: Wie läuft die Betreuung der Jungs ab?
+    answer: Die Betreuung erfolgt durch unser geschultes und erfahrenes Leiterteam der SMJ Regio Wegweiser nach dem bewährten Prinzip "Jugend leitet Jugend" – stets mit verlässlichen Ansprechpartnern, eigener Lagerküche und Sanitätsdienst.
+  - question: Dürfen Handys oder Smartphones mitgenommen werden?
+    answer: Nein, unser Zeltlager ist ein 100% handyfreies Naturerlebnis. Handys bleiben zu Hause oder werden während des Lagers sicher verwahrt. Für Notfälle sind die Lagerleiter rund um die Uhr für Eltern erreichbar.
 ---
 
 import CampHero from '../../components/camp/CampHero.astro'
 import CampFacts from '../../components/camp/CampFacts.astro'
-import CampStory from '../../components/camp/CampStory.astro'
+import DragonPoster from '../../components/camp/DragonPoster.astro'
+import DragonStory from '../../components/camp/DragonStory.astro'
+import DragonMap from '../../components/camp/DragonMap.astro'
 import CampGallery from '../../components/camp/CampGallery.astro'
+import CampLocation from '../../components/camp/CampLocation.astro'
 import CampParents from '../../components/camp/CampParents.astro'
 import CampFaq from '../../components/camp/CampFaq.astro'
 import CampRegistration from '../../components/camp/CampRegistration.astro'
-import ExpeditionRoute from '../../components/camp/ExpeditionRoute.astro'
 
 <CampHero />
 
+<DragonPoster />
+
 <CampFacts />
 
-<ExpeditionRoute />
+<DragonStory />
 
-<CampStory />
+<DragonMap />
 
 <CampGallery />
+
+<CampLocation />
 
 <CampParents />
 

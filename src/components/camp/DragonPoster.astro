@@ -1,0 +1,154 @@
+---
+import Container from '../common/Container.astro'
+import { Calendar, MapPin, Users, Coins, Clock, Download } from '@lucide/astro'
+
+interface Props {
+  posterUrl?: string
+}
+
+const { posterUrl = '/images/camps/2027/poster.webp' } = Astro.props
+
+const posterFacts = [
+  { label: 'WAS?', value: 'Zeltlager für Jungs', icon: Users },
+  { label: 'WANN?', value: '21.07.2027 – 30.07.2027', icon: Calendar },
+  { label: 'WO?', value: 'Im Wiesental Thalwenden', icon: MapPin },
+  { label: 'ALTER?', value: '9–14 Jahre', icon: Users },
+  { label: 'KOSTEN?', value: '189,00 €', icon: Coins },
+  { label: 'ANMELDESCHLUSS?', value: '15. Juni 2027', icon: Clock },
+]
+---
+
+<section id="dragon-poster" class="camp-bg relative py-20 sm:py-28 overflow-hidden border-t camp-border">
+  <!-- Subtle decorative ambient elements -->
+  <div class="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-red-900/10 blur-3xl pointer-events-none" aria-hidden="true" />
+  <div class="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-cyan-900/10 blur-3xl pointer-events-none" aria-hidden="true" />
+
+  <Container class="relative">
+    <div class="mx-auto max-w-5xl">
+      <!-- Section Header -->
+      <div class="text-center mb-12 sm:mb-16">
+        <!-- Torii Gate Icon -->
+        <div class="inline-flex items-center justify-center mb-4">
+          <svg viewBox="0 0 48 36" class="h-8 w-12 text-[#E62E2D] fill-current" aria-hidden="true">
+            <path d="M2 4 C 14 0, 34 0, 46 4 L 45 8 C 34 5, 14 5, 3 8 Z" />
+            <rect x="6" y="11" width="36" height="3" />
+            <rect x="12" y="4" width="4" height="30" />
+            <rect x="32" y="4" width="4" height="30" />
+            <rect x="2" y="32" width="44" height="2" opacity="0.3" />
+          </svg>
+        </div>
+
+        <p class="font-mono text-xs uppercase tracking-[0.3em] text-[#E62E2D] font-bold">
+          // DAS OFFIZIELLE LAGERTAL 2027
+        </p>
+
+        <h2 class="display text-4xl sm:text-6xl md:text-7xl mt-2 camp-fg tracking-tight uppercase">
+          Das Tal des<br />
+          <span class="text-[#E62E2D]">Steinernen Drachen</span>
+        </h2>
+
+        <p class="mt-4 font-mono text-sm sm:text-base text-paper/70 tracking-widest uppercase">
+          Eine Legende. Drei Felsen. Ein verborgenes Geheimnis.
+        </p>
+      </div>
+
+      <!-- Main Layout: Poster Preview & Fact Board -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+        <!-- Left: Poster Display with authentic frame -->
+        <div class="lg:col-span-6 flex justify-center">
+          <div class="relative group max-w-md w-full">
+            <!-- Decorative Corners -->
+            <div class="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-[#E62E2D] z-20 pointer-events-none" />
+            <div class="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-[#E62E2D] z-20 pointer-events-none" />
+            <div class="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-[#E62E2D] z-20 pointer-events-none" />
+            <div class="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-[#E62E2D] z-20 pointer-events-none" />
+
+            <!-- Poster Artwork Container -->
+            <div class="relative overflow-hidden border-2 border-paper/20 bg-[#090D12] shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]">
+              <img
+                src={posterUrl}
+                alt="Zeltlager 2027 – Das Tal des steinernen Drachen Plakat"
+                class="w-full h-auto object-cover block select-none"
+                loading="eager"
+              />
+
+              <!-- Hover Overlay with Download Action -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-6">
+                <a
+                  href="/images/camps/2027/poster.jpg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 bg-[#E62E2D] hover:bg-paper hover:text-forest-950 text-paper font-mono text-xs font-bold uppercase tracking-wider px-5 py-3 transition-colors shadow-xl"
+                >
+                  <Download class="h-4 w-4" />
+                  <span>Plakat in Vollbild öffnen</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Plakat-Fakten "ALLES AUF EINEN BLICK" -->
+        <div class="lg:col-span-6 flex flex-col justify-center">
+          <!-- Traditional Seal Header -->
+          <div class="border-2 border-paper/15 bg-[#090D12]/80 backdrop-blur-sm p-6 sm:p-8 relative">
+            <!-- Japanese Kanji Badge "Shinobi" (忍) -->
+            <div class="absolute -top-5 right-6 bg-[#E62E2D] text-paper font-bold text-lg w-10 h-10 flex items-center justify-center border-2 border-paper/20 shadow-lg select-none">
+              忍
+            </div>
+
+            <div class="border-b border-paper/10 pb-5 mb-6">
+              <span class="font-mono text-[0.68rem] font-bold uppercase tracking-[0.25em] text-[#E62E2D]">
+                ZELTLAGER FÜR JUNGS
+              </span>
+              <h3 class="font-display text-2xl sm:text-3xl text-paper uppercase tracking-wider mt-1">
+                Alles auf einen Blick
+              </h3>
+            </div>
+
+            <!-- Facts List matching the poster -->
+            <dl class="space-y-4 font-mono">
+              {
+                posterFacts.map((fact) => (
+                  <div class="flex items-center justify-between border-b border-paper/10 pb-3 gap-4">
+                    <dt class="flex items-center gap-2.5 text-xs uppercase tracking-wider text-paper/60">
+                      <span class="text-[#E62E2D] font-bold">{fact.label}</span>
+                    </dt>
+                    <dd class="text-right text-xs sm:text-sm font-bold uppercase tracking-wide text-paper">
+                      {fact.value}
+                    </dd>
+                  </div>
+                ))
+              }
+            </dl>
+
+            <!-- Bottom Note -->
+            <div class="mt-6 pt-4 border-t border-paper/10 flex items-center justify-between gap-4 font-mono text-[0.68rem] text-paper/60">
+              <span class="italic">100% handyfreie Naturerfahrung</span>
+              <span class="text-[#E62E2D] font-bold">// 10 TAGE IM WIESENTAL</span>
+            </div>
+
+            <!-- Direct Download / Share Actions -->
+            <div class="mt-8 flex flex-wrap gap-4">
+              <a
+                href="/images/camps/2027/poster.jpg"
+                download="SMJ-Zeltlager-2027-Das-Tal-des-steinernen-Drachen.jpg"
+                class="flex-1 inline-flex items-center justify-center gap-2 border-2 border-[#E62E2D] bg-[#E62E2D] px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-paper transition-all hover:bg-paper hover:border-paper hover:text-forest-950 shadow-md text-center"
+              >
+                <Download class="h-4 w-4" />
+                <span>Plakat herunterladen</span>
+              </a>
+
+              <a
+                href="#anmeldung"
+                class="inline-flex items-center justify-center gap-2 border border-paper/30 bg-transparent px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-paper transition-all hover:bg-paper/10 hover:border-paper text-center"
+              >
+                <span>Zur Anmeldung ↓</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
