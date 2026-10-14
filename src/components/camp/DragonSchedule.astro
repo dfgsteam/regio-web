@@ -1,0 +1,203 @@
+---
+import Container from '../common/Container.astro'
+import { Calendar } from '@lucide/astro'
+
+const scheduleDays = [
+  {
+    day: 'TAG 01',
+    date: 'Mi, 21.07.2027',
+    title: 'Aufnahme in die Gemeinschaft',
+    activity: 'Anreise & Zeltbelegung',
+    pillar: null,
+    summary:
+      'Ankunft im Wiesental, Zeltverteilung mit deinen Zeltkumpels, Kennenlernspiele und die ersten Erkundungen des Geländes. Abends versammeln wir uns zum ersten stimmungsvollen Lagerfeuer.',
+    badge: 'Ankunft & Start',
+  },
+  {
+    day: 'TAG 02',
+    date: 'Do, 22.07.2027',
+    title: 'Revier der Schatten (Lagerbau)',
+    activity: 'Zeltdorf errichten & Werkeln',
+    pillar: null,
+    summary:
+      'Der große Bau-Tag! Gemeinsam stellen wir Jurten und Mannschaftszelte auf, zimmern das Lagertor, errichten den Fahnenmast, bauen Werkzeugschuppen und richten die Feuerstelle für die nächsten 10 Tage ein.',
+    badge: 'Lagerbau',
+  },
+  {
+    day: 'TAG 03',
+    date: 'Fr, 23.07.2027',
+    title: 'Training der Schatten',
+    activity: 'Gruppenstunde & Kampfbasteln',
+    pillar: 'Gemeinschaft & Liebesbündnis',
+    summary:
+      'In den Zeltgruppen schmieden wir unseren eigenen Gruppenkodex. Anschließend wird gebastelt: Holzschwerter, Schilde und Lagerausrüstung. Nachmittags erste Geländespiele im Wald.',
+    badge: 'Training & Kodex',
+  },
+  {
+    day: 'TAG 04',
+    date: 'Sa, 24.07.2027',
+    title: 'Tag des Messe(ns) & Olympiade',
+    activity: 'Lager-Olympiade & Zeltlagermesse',
+    pillar: 'Apostel sein',
+    summary:
+      'Sport, Teamgeist und Fairness: Große Lager-Olympiade mit Parkour-Staffel, Ringen, Speerweitwurf und Wikingerschach im Sandstein. Zeit für warme Duschen und abends feierliche Zeltlagermesse am offenen Feuer.',
+    badge: 'Olympiade & Messe',
+  },
+  {
+    day: 'TAG 05',
+    date: 'So, 25.07.2027',
+    title: 'Mission der Schatten: Der Große Haijk (Teil 1)',
+    activity: '2-Tages-Wanderung & Biwak',
+    pillar: null,
+    summary:
+      'Rucksäcke packen und auf ins Unbekannte! In kleinen Sippen starten wir zur legendären 2-Tages-Expedition durch die Wälder des Eichsfelds. Orientierung nur nach Karte und Kompass, Nachtbiwak unter freiem Sternenhimmel.',
+    badge: '2-Tage-Haijk',
+  },
+  {
+    day: 'TAG 06',
+    date: 'Mo, 26.07.2027',
+    title: 'Mission der Schatten: Rückkehr & Bündnis (Teil 2)',
+    activity: 'Haijk-Rückkehr & Bündnisfeier',
+    pillar: 'Liebesbündnis',
+    summary:
+      'Die Späher kehren ins Basislager Wiesental zurück. Nach der langen Tour gibt es deftiges Essen aus der Lagerküche, große Auswertung der Geschichten und einen feierlichen Abend im Fackelschein.',
+    badge: 'Haijk-Rückkehr',
+  },
+  {
+    day: 'TAG 07',
+    date: 'Di, 27.07.2027',
+    title: 'Schatten-Wasserratten',
+    activity: 'Ausflug ins Schwimmbad',
+    pillar: null,
+    summary:
+      'Nach den Kilometern des Haijks geht es zur Erfrischung ins Schwimmbad! Ausgiebiges Duschen, Wasserschlachten, Sprungturm und Ausruhen auf den Liegewiesen. Bei schlechtem Wetter alternatives Hallenbad-Programm.',
+    badge: 'Schwimmbad-Tag',
+  },
+  {
+    day: 'TAG 08',
+    date: 'Mi, 28.07.2027',
+    title: 'Kloppen & Zocken',
+    activity: 'Fußballturnier & Casinoabend',
+    pillar: 'Mann sein',
+    summary:
+      'Nachmittags der legendäre Klassiker auf dem Bolzplatz: Jungs gegen die Leiterrunde! Vollgas, Fairplay und echte Zweikämpfe. Abends verwandelt sich das Großzelt in ein stilechtes Casino mit Spieltischen und alkoholfreien Drinks.',
+    badge: 'Turnier & Casino',
+  },
+  {
+    day: 'TAG 09',
+    date: 'Do, 29.07.2027',
+    title: 'Grande Finale im Tal des Drachen',
+    activity: 'Motto-Geländespiel & Großes Bundesfeuer',
+    pillar: 'Lebensschule',
+    summary:
+      'Der Höhepunkt des Zeltlagers: Ein episches ganztägiges Geländespiel, die feierliche Verleihung der Zeltlager-Abzeichen, eine gemeinsame Festtafel und schließlich das gigantische Bundesfeuer, das bis tief in die Nacht lodert.',
+    badge: 'Grande Finale',
+  },
+  {
+    day: 'TAG 10',
+    date: 'Fr, 30.07.2027',
+    title: 'Aufbruch der Schatten',
+    activity: 'Abbau, Abschlussandacht & Abholung',
+    pillar: null,
+    summary:
+      'Gemeinsamer Abbau der Zelte, Aufräumen des Platzes, ehrliche Feedbackrunde und eine bewegende Abschlussandacht. Ab ca. 16:00 Uhr können die Eltern ihre Jungs stolz und voller Geschichten wieder in Empfang nehmen.',
+    badge: 'Heimreise (ab 16 Uhr)',
+  },
+]
+---
+
+<section id="dragon-schedule" class="camp-bg relative py-20 sm:py-28 overflow-hidden border-t camp-border">
+  <Container class="relative">
+    <!-- Header -->
+    <div class="max-w-3xl mb-14 sm:mb-16">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#E62E2D] font-bold">
+          // DER 10-TAGE-ABLAUF · WOCHENPLAN
+        </span>
+      </div>
+      <h2 class="display text-3xl sm:text-5xl md:text-6xl camp-fg tracking-tight uppercase">
+        10 Tage im Tal<br />
+        <span class="text-[#E62E2D]">des Drachen.</span>
+      </h2>
+      <p class="mt-4 font-mono text-xs sm:text-sm text-paper/70 uppercase tracking-widest leading-relaxed">
+        Vom ersten Zeltnagel bis zum großen Bundesfeuer: Jeder Tag hat seinen eigenen Schwerpunkt.
+      </p>
+    </div>
+
+    <!-- 10-Days Timeline Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+      {
+        scheduleDays.map((item) => (
+          <div class="relative flex flex-col justify-between border-2 border-paper/15 bg-[#090D12]/90 p-6 sm:p-7 hover:border-[#E62E2D]/60 transition-all duration-300 group">
+            <div>
+              <!-- Day Header -->
+              <div class="flex items-center justify-between border-b border-paper/10 pb-3 mb-4">
+                <div class="flex items-center gap-2.5">
+                  <span class="font-mono text-xs font-bold text-[#E62E2D] tracking-wider">
+                    {item.day}
+                  </span>
+                  <span class="text-paper/40 font-mono text-xs">·</span>
+                  <span class="font-mono text-xs text-paper/70 tracking-wider">
+                    {item.date}
+                  </span>
+                </div>
+                <span class="border border-paper/20 px-2 py-0.5 font-mono text-[0.65rem] uppercase tracking-wider text-paper/60 group-hover:border-[#E62E2D]/40 group-hover:text-paper transition-colors">
+                  {item.badge}
+                </span>
+              </div>
+
+              <!-- Title & Activity -->
+              <h3 class="font-display text-xl sm:text-2xl text-paper uppercase tracking-wide group-hover:text-[#E62E2D] transition-colors">
+                {item.title}
+              </h3>
+              <p class="font-mono text-xs text-orange mt-0.5 tracking-wider uppercase">
+                {item.activity}
+              </p>
+
+              <!-- Description -->
+              <p class="mt-4 text-xs sm:text-sm leading-relaxed text-paper/80 font-sans">
+                {item.summary}
+              </p>
+            </div>
+
+            <!-- Footer: Pillar Tag if available -->
+            {item.pillar && (
+              <div class="mt-5 pt-3 border-t border-paper/10 flex items-center justify-between">
+                <span class="font-mono text-[0.65rem] uppercase tracking-wider text-paper/50">
+                  SMJ-Säule:
+                </span>
+                <span class="font-mono text-[0.65rem] font-bold uppercase tracking-wider text-[#E62E2D] bg-[#E62E2D]/10 px-2 py-0.5 border border-[#E62E2D]/30">
+                  {item.pillar}
+                </span>
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Parent Note Callout -->
+    <div class="mt-12 border-2 border-paper/15 bg-[#090D12] p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div class="flex items-start gap-4">
+        <div class="bg-[#E62E2D]/20 text-[#E62E2D] p-3 border border-[#E62E2D]/40 flex-shrink-0">
+          <Calendar class="h-6 w-6" />
+        </div>
+        <div>
+          <h4 class="font-display text-lg sm:text-xl text-paper uppercase">
+            Hinweis zum Wochenplan
+          </h4>
+          <p class="font-sans text-xs sm:text-sm text-paper/70 mt-1 max-w-2xl leading-relaxed">
+            Dieser Ablauf basiert auf unserem bewährten Zeltlagerkonzept. Die Leitung passt einzelne Aktionen je nach Witterung und Gruppendynamik flexibel an. Für Notfälle sind die Lagerleiter während der gesamten zehn Tage rund um die Uhr für Eltern erreichbar.
+          </p>
+        </div>
+      </div>
+
+      <a
+        href="#anmeldung"
+        class="flex-shrink-0 border-2 border-[#E62E2D] bg-[#E62E2D] px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-paper hover:bg-paper hover:text-forest-950 transition-all text-center"
+      >
+        Jetzt Platz sichern →
+      </a>
+    </div>
+  </Container>
+</section>
