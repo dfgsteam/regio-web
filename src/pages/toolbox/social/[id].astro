@@ -77,8 +77,9 @@ export async function getStaticPaths() {
 }
 
 const { id } = Astro.params
-const eventId = id || 'custom'
 const { eventData, campData } = Astro.props
+const canonicalId = eventData?.slug || (campData ? `zeltlager-${campData.data.year}` : id || 'custom')
+const eventId = canonicalId
 
 // Resolve Initial Fields
 let title = 'Aktion & Abenteuer der SMJ'
@@ -162,8 +163,8 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
         <a
           id="btn-download-social-png"
-          href={`/toolbox/social-images/${id}-story-dark.png`}
-          download={`smj-${id}-story.png`}
+          href={`/toolbox/social-images/${canonicalId}-story-dark.png`}
+          download={`smj-${canonicalId}-story.png`}
           class="inline-flex items-center gap-2 border-2 border-orange bg-orange px-5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-forest-950 shadow-lg transition-all hover:bg-paper hover:border-paper cursor-pointer"
         >
           <Download class="h-4 w-4" />
@@ -237,7 +238,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
           >
             <img
               id="social-preview-image"
-              src={`/toolbox/social-images/${id}-story-dark.png`}
+              src={`/toolbox/social-images/${canonicalId}-story-dark.png`}
               alt="Social Media Vorlage"
               class="w-full h-full object-contain block select-none"
               loading="eager"
@@ -335,8 +336,8 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 
             <a
               id="btn-download-social-png-big"
-              href={`/toolbox/social-images/${id}-story-dark.png`}
-              download={`smj-${id}-story-dark.png`}
+              href={`/toolbox/social-images/${canonicalId}-story-dark.png`}
+              download={`smj-${canonicalId}-story-dark.png`}
               class="w-full inline-flex items-center justify-center gap-2 border-2 border-orange bg-orange px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] text-forest-950 hover:bg-paper hover:border-paper transition-all cursor-pointer shadow-xl"
             >
               <Download class="h-4 w-4" />

@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 import '../../../lib/server-fonts'
 import { ensureServerFontsConfigured } from '../../../lib/server-fonts'
-import { eventProvider, getSlugVariants, formatDateRange, formatAgeRange } from '../../../lib/events'
+import { eventProvider, formatDateRange, formatAgeRange } from '../../../lib/events'
 import { getAllCamps } from '../../../lib/camps'
 import { buildSchedulePresets } from '../../../lib/pdf/schedule-pdf'
 import {
@@ -40,37 +40,35 @@ export async function getStaticPaths() {
   // 1. Single Events & Camps Social Images
   // A) Events
   for (const event of events) {
-    const variants = getSlugVariants(event.slug, event.title, event.start.getFullYear())
-    for (const slug of variants) {
-      for (const format of eventFormats) {
-        for (const theme of eventThemes) {
-          const imgKey = `${slug}-${format}-${theme}`
-          if (!seen.has(imgKey)) {
-            seen.add(imgKey)
-            paths.push({
-              params: { image: imgKey },
-              props: {
-                eventOptions: {
-                  format,
-                  theme,
-                  title: event.title,
-                  subtitle: event.teaser || 'Raus. Ins Abenteuer.',
-                  categoryLabel:
-                    event.category === 'weekend'
-                      ? 'Wochenende'
-                      : event.category === 'camp'
-                        ? 'Zeltlager'
-                        : 'Sonderaktion',
-                  dateStr: formatDateRange(event.start, event.end),
-                  locationStr: event.location || 'Klause 2.0, Heiligenstadt',
-                  ageStr: formatAgeRange(event.ageMin, event.ageMax) || 'Jungs von 9–14 Jahren',
-                  priceStr: event.price || 'Inkl. Verpflegung',
-                  highlights: event.highlights && event.highlights.length > 0 ? event.highlights : undefined,
-                  targetUrl: `${BASE_DOMAIN}/abenteuer/${event.slug}/`,
-                },
+    const slug = event.slug
+    for (const format of eventFormats) {
+      for (const theme of eventThemes) {
+        const imgKey = `${slug}-${format}-${theme}`
+        if (!seen.has(imgKey)) {
+          seen.add(imgKey)
+          paths.push({
+            params: { image: imgKey },
+            props: {
+              eventOptions: {
+                format,
+                theme,
+                title: event.title,
+                subtitle: event.teaser || 'Raus. Ins Abenteuer.',
+                categoryLabel:
+                  event.category === 'weekend'
+                    ? 'Wochenende'
+                    : event.category === 'camp'
+                      ? 'Zeltlager'
+                      : 'Sonderaktion',
+                dateStr: formatDateRange(event.start, event.end),
+                locationStr: event.location || 'Klause 2.0, Heiligenstadt',
+                ageStr: formatAgeRange(event.ageMin, event.ageMax) || 'Jungs von 9–14 Jahren',
+                priceStr: event.price || 'Inkl. Verpflegung',
+                highlights: event.highlights && event.highlights.length > 0 ? event.highlights : undefined,
+                targetUrl: `${BASE_DOMAIN}/abenteuer/${event.slug}/`,
               },
-            })
-          }
+            },
+          })
         }
       }
     }
