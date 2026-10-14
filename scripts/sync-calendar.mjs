@@ -352,11 +352,11 @@ async function main() {
       if (process.env.BUILD_YEAR) {
         return evYear === currentYear
       }
-      return evYear >= currentYear && evYear <= currentYear + 1
+      return evYear >= currentYear
     })
 
     if (events.length === 0) {
-      console.warn(`[sync-calendar] Warning: No events found for year ${currentYear} / ${currentYear + 1}.`)
+      console.warn(`[sync-calendar] Warning: No events found for year ${currentYear}+.`)
       return
     }
 

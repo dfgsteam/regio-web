@@ -22,7 +22,7 @@ const staticEvents: Event[] = (rawEvents as any[])
     if (process.env.BUILD_YEAR) {
       return year === currentYear
     }
-    return year >= currentYear && year <= currentYear + 1
+    return year >= currentYear
   })
   .map((event) => enrichEventWithCivi(event))
 

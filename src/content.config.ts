@@ -31,6 +31,7 @@ const camps = defineCollection({
     title: z.string(),
     motto: z.string(),
     active: z.boolean().default(true),
+    featured: z.boolean().default(false),
     date: z.object({
       start: z.coerce.date(),
       end: z.coerce.date(),

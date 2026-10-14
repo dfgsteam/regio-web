@@ -2,6 +2,7 @@
 import { formatAgeRange, formatDateRange } from '../../lib/events'
 import type { Event } from '../../lib/events'
 import { getRegistrationState } from '../../lib/civicrm/registration'
+import { getCurrentCamp } from '../../lib/camps'
 
 interface Props {
   event: Event
@@ -16,9 +17,11 @@ const eventYear = event.start.getFullYear()
 const isPast = event.end < new Date()
 const registrationState = getRegistrationState(event)
 
-// Past camps link to their specific year page /abenteuer/zeltlager-[year]/
-// Current camp links to /abenteuer/zeltlager/ (which is also reachable via /abenteuer/zeltlager-[year]/)
-const campUrl = isPast ? `/abenteuer/zeltlager-${eventYear}/` : '/abenteuer/zeltlager/'
+// Current camp links to /abenteuer/zeltlager/
+// Other years (past or future camps like 2028) link to /abenteuer/zeltlager-[year]/
+const currentCamp = await getCurrentCamp()
+const isCurrentCamp = currentCamp?.data.year === eventYear
+const campUrl = isCurrentCamp ? '/abenteuer/zeltlager/' : `/abenteuer/zeltlager-${eventYear}/`
 const targetUrl = href ?? (isCamp ? campUrl : `/abenteuer/${event.slug}/`)
 const age = formatAgeRange(event.ageMin, event.ageMax)
 ---

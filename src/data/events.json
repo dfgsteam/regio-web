@@ -304,7 +304,7 @@
     "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=62",
     "category": "camp",
     "contact": {
-      "name": "Vincenz Hupe & Jonathan Hunold",
+      "name": "Christian Watterott",
       "role": "Lagerleitung",
       "email": "zeltlager@smj-wegweiser.de"
     }
@@ -393,6 +393,40 @@
       "role": "Diözesanleitung",
       "email": "jonathan.hunold@smj-wegweiser.de",
       "phone": ""
+    }
+  },
+  {
+    "id": "60bohg2djf9ld2r51p310n3v73@google.com",
+    "title": "Zeltlager Thalwenden",
+    "slug": "zeltlager-2028",
+    "start": "2028-08-16T07:00:00.000Z",
+    "end": "2028-08-26T07:00:00.000Z",
+    "location": "Zeltplatz Wiesental, Thalwenden",
+    "address": "Birkenfelder Str., 37318 Uder-Thalwenden",
+    "ageMin": 9,
+    "ageMax": 14,
+    "price": "189 € (inkl. 10 Tage Vollverpflegung, Zeltunterkunft, Material & Betreuung)",
+    "teaser": "Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "description": "Herzliche Einladung zu Zeltlager Thalwenden der SMJ Regio Wegweiser! Alle wichtigen Informationen, Zeiten und Details findest du in der Übersicht.",
+    "highlights": [
+      "Zeltdorf im malerischen Wiesental",
+      "Nachtwache, Bundesfeuer & Fackelläufe",
+      "Großes Lagerspiel nach Motto-Storyline",
+      "100% handyfreie Natur- und Gemeinschaftserfahrung"
+    ],
+    "packingList": [
+      "Warmer Schlafsack & dicke Isomatte / Luftbett",
+      "Wanderstiefel, feste Schuhe & Gummistiefel",
+      "Regenfeste Kleidung, warme Jacke & Badesachen",
+      "Essgeschirr, Becher & Besteck im Stoffbeutel",
+      "Taschenlampe / Kopflampe mit Ersatzbatterien",
+      "Krankenkassenkarte & Impfausweis"
+    ],
+    "category": "camp",
+    "contact": {
+      "name": "Vincenz Hupe & Jonathan Hunold",
+      "role": "Lagerleitung",
+      "email": "zeltlager@smj-wegweiser.de"
     }
   }
 ]

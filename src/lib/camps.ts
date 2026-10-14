@@ -60,6 +60,16 @@ export async function getCampByYear(year?: string | number): Promise<CampEntry |
 export async function getCurrentCamp(): Promise<CampEntry | null> {
   const camps = await getCollection('camps')
   const active = camps.filter((camp) => camp.data.active)
+
+  const featured = active.find((camp) => camp.data.featured)
+  if (featured) return featured
+
+  const now = new Date()
+  const upcoming = active
+    .filter((camp) => camp.data.date.end >= now)
+    .sort((a, b) => a.data.date.start.getTime() - b.data.date.start.getTime())
+  if (upcoming.length > 0) return upcoming[0] ?? null
+
   return active.sort((a, b) => b.data.year - a.data.year)[0] ?? null
 }
 
