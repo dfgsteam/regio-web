@@ -105,6 +105,9 @@ const eyebrowLabel = isPast
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '')
 
+const isHeiligenstadt = (event.location + ' ' + (event.address ?? '')).toLowerCase().includes('heiligenstadt')
+const isThalwenden = (event.location + ' ' + (event.address ?? '')).toLowerCase().includes('thalwenden')
+
 const eventStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Event',
@@ -115,12 +118,49 @@ const eventStructuredData = {
   endDate: event.end.toISOString(),
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   eventStatus: isPast ? 'https://schema.org/EventScheduled' : 'https://schema.org/EventScheduled',
+  typicalAgeRange: event.ageMin && event.ageMax ? `${event.ageMin}-${event.ageMax}` : undefined,
   organizer: { '@type': 'Organization', '@id': `${siteUrl}/#organization` },
-  location: {
-    '@type': 'Place',
-    name: event.location,
-    address: event.address ?? event.location,
-  },
+  location: isHeiligenstadt
+    ? {
+        '@type': 'Place',
+        name: event.location,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Pater-Kentenich-Weg 3',
+          addressLocality: 'Heilbad Heiligenstadt',
+          postalCode: '37308',
+          addressRegion: 'Thüringen',
+          addressCountry: 'DE',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 51.3789,
+          longitude: 10.1378,
+        },
+      }
+    : isThalwenden
+      ? {
+          '@type': 'Place',
+          name: event.location,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Birkenfelder Str.',
+            addressLocality: 'Uder (Ortsteil Thalwenden)',
+            postalCode: '37318',
+            addressRegion: 'Thüringen',
+            addressCountry: 'DE',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: 51.368,
+            longitude: 10.1154,
+          },
+        }
+      : {
+          '@type': 'Place',
+          name: event.location,
+          address: event.address ?? event.location,
+        },
   offers: event.price && registrationState === 'open'
     ? {
         '@type': 'Offer',
@@ -135,6 +175,31 @@ const eventStructuredData = {
         ? { '@type': 'Offer', availability: 'https://schema.org/SoldOut' }
       : undefined,
 }
+
+const breadcrumbStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Startseite',
+      item: `${siteUrl}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Abenteuer',
+      item: `${siteUrl}/abenteuer/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: event.title,
+      item: `${siteUrl}/abenteuer/${event.slug}/`,
+    },
+  ],
+}
 ---
 
 <ContentLayout
@@ -142,7 +207,7 @@ const eventStructuredData = {
   description={event.teaser ?? `${event.title} der SMJ Regio Wegweiser vom ${formattedDate}.`}
   image={event.image ?? '/placeholders/wide.svg'}
   canonicalPath={canonicalPath}
-  structuredData={eventStructuredData}
+  structuredData={[eventStructuredData, breadcrumbStructuredData]}
 >
   <!-- Header / Hero Section -->
   <section class="texture-topo relative overflow-hidden bg-forest-950 pb-16 pt-36 sm:pt-44 border-b border-paper/10">

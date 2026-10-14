@@ -43,16 +43,38 @@ const ogImage = new URL(image, Astro.site)
 const structuredDataBlocks = Array.isArray(structuredData) ? structuredData : [structuredData].filter(Boolean)
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '')
+const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION || process.env.PUBLIC_GOOGLE_SITE_VERIFICATION
 
 const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   '@id': `${siteUrl}/#organization`,
   name: 'SMJ Regio Wegweiser',
+  alternateName: ['Schönstatt-Mannesjugend Regio Wegweiser', 'SMJ Wegweiser'],
   url: siteUrl,
   logo: `${siteUrl}/logo_wegweiser_dark.png`,
+  image: `${siteUrl}/og-image.png`,
   description:
     'Jugendverband der Schönstatt-Mannesjugend in der Region Wegweiser. Zeltlager, Wochenenden und Gemeinschaft für Jungs von 9 bis 14 Jahren.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Pater-Kentenich-Weg 3',
+    addressLocality: 'Heilbad Heiligenstadt',
+    postalCode: '37308',
+    addressRegion: 'Thüringen',
+    addressCountry: 'DE',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 51.3789,
+    longitude: 10.1378,
+  },
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Eichsfeld' },
+    { '@type': 'AdministrativeArea', name: 'Thüringen' },
+    { '@type': 'AdministrativeArea', name: 'Bistum Erfurt' },
+    { '@type': 'Country', name: 'Deutschland' },
+  ],
   contactPoint: {
     '@type': 'ContactPoint',
     email: 'kontakt@smj-wegweiser.de',
@@ -83,10 +105,21 @@ const organizationStructuredData = {
       <meta name="robots" content="index, follow" />
     )}
     <link rel="alternate" hreflang="de" href={canonical} />
+
+    {googleSiteVerification && (
+      <meta name="google-site-verification" content={googleSiteVerification} />
+    )}
+
+    <!-- GEO & Local SEO -->
+    <meta name="geo.region" content="DE-TH" />
+    <meta name="geo.placename" content="Heilbad Heiligenstadt" />
+    <meta name="geo.position" content="51.3789;10.1378" />
+    <meta name="ICBM" content="51.3789, 10.1378" />
     <link rel="alternate" type="application/rss+xml" title="Aktuelles – SMJ Regio Wegweiser" href={new URL('/rss.xml', Astro.site)} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- OpenGraph -->
     <meta property="og:type" content={ogType} />

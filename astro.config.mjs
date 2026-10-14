@@ -172,8 +172,10 @@ export default defineConfig({
     '/zeltlager': '/abenteuer/zeltlager/',
     '/zeltlager-2026': '/abenteuer/zeltlager-2026/',
     '/zeltlager-2027': '/abenteuer/zeltlager-2027/',
+    '/zeltlager-2028': '/abenteuer/zeltlager-2028/',
     '/abenteuer/zeltlager/2026': '/abenteuer/zeltlager-2026/',
     '/abenteuer/zeltlager/2027': '/abenteuer/zeltlager-2027/',
+    '/abenteuer/zeltlager/2028': '/abenteuer/zeltlager-2028/',
 
     // Legacy WordPress aliases — verify against the real old URL
     // structure before relying on these in production.

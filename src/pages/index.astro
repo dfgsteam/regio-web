@@ -24,12 +24,51 @@ const websiteStructuredData = {
   inLanguage: 'de-DE',
   publisher: { '@id': `${siteUrl}/#organization` },
 }
+
+const faqStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Wer passt auf?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Unsere Leiter sind geschult, verantwortlich und selbst in der SMJ groß geworden. Jugend leitet Jugend – mit Rückhalt durch erfahrene Erwachsene.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Dürfen Handys mit auf das Zeltlager?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Unsere Lager sind bewusst handyfreie Zonen. Handys bleiben in der sicheren Verwahrung der Lagerleitung. So tauchen die Jungs voll ins echte Leben ein. Für Notfälle ist die Leitung 24/7 telefonisch erreichbar.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Was kostet das Zeltlager?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Wir halten die Teilnahmebeiträge so niedrig wie möglich. Bei Geschwistern oder finanziellen Engpässen finden wir immer einen Weg. Kein Junge bleibt aus Kostengründen zu Hause.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Was ist die SMJ eigentlich?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Die Schönstatt-Mannesjugend ist eine katholische Jugendgemeinschaft. Wir bieten Jungs Raum für Abenteuer, echte Freundschaft und Persönlichkeitsbildung – offen für alle, ohne Zwang.',
+      },
+    },
+  ],
+}
 ---
 
 <BaseLayout
   title="SMJ Regio Wegweiser – Raus. Ins Abenteuer."
   description="Zeltlager. Lagerfeuer. Wettkämpfe. Freunde. Zehn Tage, die anders sind als alles davor. Die SMJ Regio Wegweiser – Abenteuer und Gemeinschaft für Jungs von 9 bis 14."
-  structuredData={websiteStructuredData}
+  structuredData={[websiteStructuredData, faqStructuredData]}
 >
   <Header />
   <main>

@@ -1,0 +1,28 @@
+{
+  "name": "SMJ Regio Wegweiser",
+  "short_name": "SMJ Wegweiser",
+  "description": "Zeltlager, Aktionen und Gemeinschaft für Jungs von 9 bis 14 Jahren.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111713",
+  "theme_color": "#111713",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo_wegweiser_white.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

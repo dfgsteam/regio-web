@@ -24,10 +24,24 @@ const eventStructuredData = {
   endDate: camp.date.end.toISOString(),
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   eventStatus: 'https://schema.org/EventScheduled',
+  typicalAgeRange: `${camp.age.min}-${camp.age.max}`,
   organizer: { '@type': 'Organization', '@id': `${siteUrl}/#organization` },
   location: {
     '@type': 'Place',
     name: camp.location.name,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Birkenfelder Str.',
+      addressLocality: 'Uder (Ortsteil Thalwenden)',
+      postalCode: '37318',
+      addressRegion: 'Thüringen',
+      addressCountry: 'DE',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 51.368,
+      longitude: 10.1154,
+    },
   },
   offers: registration.state === 'open' && registration.url
     ? {
@@ -39,6 +53,31 @@ const eventStructuredData = {
     : registration.state === 'full'
       ? { '@type': 'Offer', availability: 'https://schema.org/SoldOut' }
       : undefined,
+}
+
+const breadcrumbStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Startseite',
+      item: `${siteUrl}/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Abenteuer',
+      item: `${siteUrl}/abenteuer/`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: `Zeltlager ${camp.year}`,
+      item: `${siteUrl}/abenteuer/zeltlager-${camp.year}/`,
+    },
+  ],
 }
 
 const faqStructuredData =
@@ -60,7 +99,7 @@ const faqStructuredData =
   description={`${camp.motto}: ${camp.date.start.toLocaleDateString('de-DE')} – ${camp.date.end.toLocaleDateString('de-DE')} in ${camp.location.name}. Für ${camp.age.min}–${camp.age.max} Jahre.`}
   image={camp.theme.assets.hero}
   imageAlt={`Zeltlager ${camp.year} – ${camp.motto}`}
-  structuredData={[eventStructuredData, faqStructuredData].filter(Boolean)}
+  structuredData={[eventStructuredData, faqStructuredData, breadcrumbStructuredData].filter(Boolean)}
 >
   <Header />
   <div
