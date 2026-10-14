@@ -4,6 +4,7 @@ import vinzenzPortrait from '../assets/images/team/vinzenz-hupe.png'
 import jonathanPortrait from '../assets/images/team/jonathan-hunold.png'
 import juliusPortrait from '../assets/images/team/julius.png'
 import rainerPortrait from '../assets/images/team/rainer.png'
+import christianPortrait from '../assets/images/team/christian.png'
 import silasPortrait from '../assets/images/team/silas.png'
 import immoPortrait from '../assets/images/team/immo.png'
 import nilsPortrait from '../assets/images/team/nils.png'
@@ -78,7 +79,7 @@ export const leadershipTeam: TeamMember[] = [
     badge: 'Öffentlichkeit',
     name: 'Christian Watterott',
     email: 'kontakt@smj-wegweiser.de',
-    image: '/team/avatar-silhouette.svg',
+    image: christianPortrait,
     description:
       'Pressearbeit, Social Media und Außendarstellung der Regio Wegweiser.',
   },
