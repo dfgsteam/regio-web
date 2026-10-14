@@ -1,0 +1,20 @@
+services:
+  cms:
+    image: ghcr.io/lonestone/astrocms:latest
+    restart: unless-stopped
+    init: true
+    ports:
+      # Nur an Loopback binden; der Reverse Proxy übernimmt den SSO-Zugang.
+      - '4001:4001'
+    environment:
+      GIT_REPO_URL: ${GIT_REPO_URL:?Set GIT_REPO_URL in docker/cms/.env}
+      GIT_BRANCH: main
+      GIT_PAT: ${GIT_PAT:?Set GIT_PAT in docker/cms/.env}
+      GIT_USER_NAME: SMJ Regio CMS
+      GIT_USER_EMAIL: cms@smj-wegweiser.de
+      ASTROCMS_PR_BASED_EDITS: ${ASTROCMS_PR_BASED_EDITS:-false}
+    volumes:
+      - cms-data:/data
+
+volumes:
+  cms-data:
