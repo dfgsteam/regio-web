@@ -82,9 +82,9 @@ export async function getAllCamps(): Promise<CampEntry[]> {
 // Camp MDX components live inside [year] pages, so the year comes
 // from the URL. Falls back to the current camp for safety.
 export async function resolveCampForUrl(url: string): Promise<CampEntry | null> {
-  const segment = url.split('/').filter(Boolean).pop()
-  if (segment && /^\d{4}$/.test(segment)) {
-    const byYear = await getCampByYear(segment)
+  const match = url.match(/(?:zeltlager-|\/)(\d{4})(?:\/|$)/)
+  if (match && match[1]) {
+    const byYear = await getCampByYear(match[1])
     if (byYear) return byYear
   }
   return getCurrentCamp()
