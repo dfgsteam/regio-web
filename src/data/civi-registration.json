@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-28T17:58:41.015Z",
+  "updatedAt": "2026-10-14T08:59:43.660Z",
   "events": [
     {
       "id": 58,
@@ -15,6 +15,46 @@
       "id": 61,
       "title": "Actionwochenende 1",
       "start": "2027-01-15 19:00:00",
+      "registrationStart": null,
+      "registrationEnd": null,
+      "registrationEnabled": true,
+      "maxParticipants": 20,
+      "isFull": false
+    },
+    {
+      "id": 63,
+      "title": "Actionwochenende 2",
+      "start": "2027-05-28 18:00:00",
+      "registrationStart": null,
+      "registrationEnd": null,
+      "registrationEnabled": true,
+      "maxParticipants": 20,
+      "isFull": false
+    },
+    {
+      "id": 64,
+      "title": "Actionwochenende 3",
+      "start": "2027-11-26 18:00:00",
+      "registrationStart": null,
+      "registrationEnd": null,
+      "registrationEnabled": true,
+      "maxParticipants": 20,
+      "isFull": false
+    },
+    {
+      "id": 65,
+      "title": "Zeltlager",
+      "start": "2027-07-21 14:00:00",
+      "registrationStart": null,
+      "registrationEnd": null,
+      "registrationEnabled": true,
+      "maxParticipants": 50,
+      "isFull": false
+    },
+    {
+      "id": 66,
+      "title": "Sterntreffen 2027",
+      "start": "2027-08-27 18:00:00",
       "registrationStart": null,
       "registrationEnd": null,
       "registrationEnabled": true,

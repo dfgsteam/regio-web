@@ -24,7 +24,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=56",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=56",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -76,7 +76,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?id=57&reset=1",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?id=57&reset=1",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -112,7 +112,7 @@
       "Taschenlampe / Kopflampe mit Ersatzbatterien",
       "Krankenkassenkarte & Impfausweis"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=55",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=55",
     "category": "camp",
     "contact": {
       "name": "Vincenz Hupe & Jonathan Hunold",
@@ -146,7 +146,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=59",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=59",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -180,7 +180,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=58",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=58",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -214,7 +214,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=60",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=60",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -248,7 +248,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=61",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=61",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -301,10 +301,10 @@
       "Taschenlampe / Kopflampe mit Ersatzbatterien",
       "Krankenkassenkarte & Impfausweis"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=62",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=62",
     "category": "camp",
     "contact": {
-      "name": "Christian Watterott",
+      "name": "Vincenz Hupe & Jonathan Hunold",
       "role": "Lagerleitung",
       "email": "zeltlager@smj-wegweiser.de"
     }
@@ -352,7 +352,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=63",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=63",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",
@@ -386,7 +386,7 @@
       "Schlafsack oder Bettbezug und Bettlaken (Leihgebühr: 5 €)",
       "Taschenlampe oder Kopflampe"
     ],
-    "registrationUrl": "https://smj-wegweiser.de/civicrm/event/register/?reset=1&id=64",
+    "registrationUrl": "https://civi.smj-wegweiser.de/civicrm/event/register/?reset=1&id=64",
     "category": "weekend",
     "contact": {
       "name": "Jonathan Hunold",

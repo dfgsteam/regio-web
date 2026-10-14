@@ -2,7 +2,6 @@ import rawRegistration from '../../data/civi-registration.json'
 import type { Event } from '../events/types'
 
 const CIVICRM_BASE_URL = 'https://civi.smj-wegweiser.de'
-const LEGACY_CIVI_LINKS_ENABLED = import.meta.env.CIVICRM_LEGACY_LINKS_ENABLED !== 'false'
 
 interface CiviRegistration {
   id: number
@@ -48,7 +47,11 @@ export function civiIdFromUrl(url?: string): number | undefined {
   if (!url) return undefined
   try {
     const parsed = new URL(url)
-    if (parsed.origin !== CIVICRM_BASE_URL || !parsed.pathname.includes('/civicrm/event/register')) return undefined
+    const isCiviHost =
+      parsed.origin === CIVICRM_BASE_URL ||
+      parsed.hostname === 'smj-wegweiser.de' ||
+      parsed.hostname === 'civi.smj-wegweiser.de'
+    if (!isCiviHost || !parsed.pathname.includes('/civicrm/event/register')) return undefined
     const id = Number(parsed.searchParams.get('id'))
     return Number.isSafeInteger(id) && id > 0 ? id : undefined
   } catch {
@@ -81,32 +84,52 @@ export function getRegistrationState(event: Event, now = new Date()): Registrati
 
 export function enrichEventWithCivi(event: Event, registrations: CiviRegistration[] = rawRegistration.events): Event {
   const explicitId = event.civiEventId ? Number(event.civiEventId) : civiIdFromUrl(event.registrationUrl)
-  const matched = explicitId
-    ? registrations.find((entry) => entry.id === explicitId)
-    : (() => {
-        const candidates = registrations.filter((entry) => {
-          const start = berlinDate(entry.start)
-          return start && dateInBerlin(start) === dateInBerlin(event.start)
-            && normalizedTitle(entry.title) === normalizedTitle(event.title)
-        })
-        return candidates.length === 1 ? candidates[0] : undefined
-      })()
+
+  // 1. Try matching by explicit ID first if present, but verify date consistency
+  let matched = explicitId ? registrations.find((entry) => entry.id === explicitId) : undefined
+  if (matched) {
+    const civiStart = berlinDate(matched.start)
+    if (!civiStart || dateInBerlin(civiStart) !== dateInBerlin(event.start)) {
+      // The explicit ID from calendar had wrong date (e.g. copy-pasted wrong ID) -> fallback to date search
+      matched = undefined
+    }
+  }
+
+  // 2. If not matched by ID (e.g. gcal had an outdated/missing ID), try matching by date + title/category
+  if (!matched) {
+    const candidates = registrations.filter((entry) => {
+      const start = berlinDate(entry.start)
+      if (!start || dateInBerlin(start) !== dateInBerlin(event.start)) return false
+      const cTitle = normalizedTitle(entry.title)
+      const eTitle = normalizedTitle(event.title)
+      return (
+        cTitle === eTitle ||
+        cTitle.includes(eTitle) ||
+        eTitle.includes(cTitle) ||
+        (cTitle.includes('zeltlager') && eTitle.includes('zeltlager')) ||
+        (cTitle.includes('sterntreffen') && eTitle.includes('sterntreffen'))
+      )
+    })
+    if (candidates.length === 1) {
+      matched = candidates[0]
+    }
+  }
 
   if (!matched) {
     if (explicitId) {
-      return rawRegistration.updatedAt
-        ? { ...event, civiEventId: explicitId, registrationUrl: undefined, registrationStatus: 'unavailable' }
-        : { ...event, civiEventId: explicitId, registrationUrl: registrationUrl(explicitId) }
+      return {
+        ...event,
+        civiEventId: explicitId,
+        registrationUrl: registrationUrl(explicitId),
+      }
     }
-    if (isLegacyCiviUrl(event.registrationUrl) && !LEGACY_CIVI_LINKS_ENABLED) {
-      return { ...event, registrationUrl: undefined, registrationStatus: 'unavailable' }
+    if (event.registrationUrl && isLegacyCiviUrl(event.registrationUrl)) {
+      return {
+        ...event,
+        registrationUrl: event.registrationUrl.replace('://smj-wegweiser.de/civicrm/', '://civi.smj-wegweiser.de/civicrm/'),
+      }
     }
     return event
-  }
-
-  const civiStart = berlinDate(matched.start)
-  if (explicitId && (!civiStart || dateInBerlin(civiStart) !== dateInBerlin(event.start))) {
-    return { ...event, civiEventId: explicitId, registrationUrl: undefined, registrationStatus: 'unavailable' }
   }
 
   const registrationOpensAt = berlinDate(matched.registrationStart)

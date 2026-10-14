@@ -32,6 +32,12 @@ AddCharset UTF-8 .html .css .js .json .xml .ics
   RewriteBase /
 
   # ----------------------------------------------------------------------------
+  # CiviCRM Subdomain Redirect: Alte Links auf civi.smj-wegweiser.de umleiten
+  # ----------------------------------------------------------------------------
+  RewriteCond %{REQUEST_URI} ^/civicrm(/.*)?$ [NC]
+  RewriteRule ^civicrm(/.*)?$ https://civi.smj-wegweiser.de/civicrm$1 [R=301,L,QSA]
+
+  # ----------------------------------------------------------------------------
   # Authentik Guard: Schutz für die gesamte Leiter-Toolbox (/toolbox/*)
   # ----------------------------------------------------------------------------
   # Auth-Dateien (Login, Callback, Logout) direkt durchlassen

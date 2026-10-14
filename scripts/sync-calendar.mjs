@@ -149,7 +149,10 @@ function transformVEvent(raw, defaults = {}, overrides = {}) {
   const rawDesc = decodeIcsText(raw['DESCRIPTION'] || '').trim()
 
   const regUrlMatch = rawDesc.match(/https?:\/\/[^\s"'<>]+/i)
-  const registrationUrl = regUrlMatch ? regUrlMatch[0].replace(/&amp;/g, '&') : undefined
+  let registrationUrl = regUrlMatch ? regUrlMatch[0].replace(/&amp;/g, '&') : undefined
+  if (registrationUrl && registrationUrl.includes('smj-wegweiser.de/civicrm/')) {
+    registrationUrl = registrationUrl.replace('://smj-wegweiser.de/civicrm/', '://civi.smj-wegweiser.de/civicrm/')
+  }
   const cleanDesc = sanitizeEventDescription(rawDesc)
 
   // 1. Determine base category
