@@ -1,3 +1,5 @@
+<?php
+/** Serve private Toolbox files only after checking the signed session. */
 $configFile = dirname(__DIR__, 2) . '/private/config.php';
 if (!is_file($configFile)) {
     http_response_code(503);
