@@ -6,6 +6,7 @@ import { formatDateRange, formatAgeRange } from '../events'
 import flyerTemplates from '../../data/flyer-templates.json'
 
 import { QR_BASE_URL as BASE_DOMAIN } from '../qr-url'
+import { addTrackingParams } from '../tracking'
 
 export interface FlyerHighlight {
   title: string
@@ -188,6 +189,7 @@ export function resolveFlyerData(
   }
 
   const shortUrl = targetUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  targetUrl = addTrackingParams(targetUrl, slug, 'flyer', 'qr-code')
 
   return {
     id: slug,

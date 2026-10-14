@@ -26,6 +26,7 @@ import { getAllCamps } from '../../lib/camps'
 import type { CampEntry } from '../../lib/camps'
 import { generateQrSvg } from '../../scripts/qrcode-renderer'
 import { QR_BASE_URL as BASE_DOMAIN } from '../../lib/qr-url'
+import { addTrackingParams } from '../../lib/tracking'
 
 
 export async function getStaticPaths() {
@@ -138,8 +139,13 @@ if (campData) {
 
 const eventSlug = campData ? `zeltlager-${campData.data.year}` : eventData ? eventData.slug : 'custom'
 
+// Tracked URLs
+const qrTargetUrl = addTrackingParams(targetUrl, eventSlug, 'flyer', 'qr-code')
+const whatsappUrl = addTrackingParams(targetUrl, eventSlug, 'whatsapp', 'messenger')
+const instagramUrl = addTrackingParams(targetUrl, eventSlug, 'instagram', 'social')
+
 // Generate QR Code SVG and HD previews
-const qrSvg = await generateQrSvg(targetUrl, { margin: 1, errorCorrectionLevel: 'M' })
+const qrSvg = await generateQrSvg(qrTargetUrl, { margin: 1, errorCorrectionLevel: 'M' })
 
 // WhatsApp Template
 const whatsappText = `🏕️ *${title.toUpperCase()}*
@@ -152,7 +158,7 @@ Hier sind alle Infos zur kommenden Aktion der SMJ Regio Wegweiser:
 💰 *Beitrag:* ${priceStr}
 
 🔗 *Alle Details & Online-Anmeldung:*
-${targetUrl}
+${whatsappUrl}
 
 Bitte gerne an interessierte Familien und Freunde weiterleiten! 🚀`
 
@@ -167,7 +173,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
 💰 Beitrag: ${priceStr}
 
 👉 Alle Infos & Online-Anmeldung über den Link in der Bio oder direkt unter:
-🔗 ${targetUrl}
+🔗 ${instagramUrl}
 
 #smj #regiowegweiser #jugendleitetjugend #eichsfeld #abenteuer #zeltlager #outdoor #lagerfeuer`
 ---
@@ -404,7 +410,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
                 type="button"
                 id="btn-dl-qr-1024"
                 class="flex-1 inline-flex items-center justify-center gap-1.5 border-2 border-orange bg-orange/10 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wider text-orange hover:bg-orange hover:text-forest-950 transition-all cursor-pointer"
-                data-url={targetUrl}
+                data-url={qrTargetUrl}
               >
                 <Download class="h-3.5 w-3.5" />
                 <span>PNG 1024px</span>
@@ -413,7 +419,7 @@ ${subtitle ? `🔥 ${subtitle}\n\n` : ''}Bist du bereit für echte Gemeinschaft,
                 type="button"
                 id="btn-dl-qr-2048"
                 class="flex-1 inline-flex items-center justify-center gap-1.5 border border-paper/20 bg-forest-900 px-3 py-2 font-mono text-xs uppercase tracking-wider text-paper/80 hover:border-orange hover:text-orange transition-colors cursor-pointer"
-                data-url={targetUrl}
+                data-url={qrTargetUrl}
               >
                 <Download class="h-3.5 w-3.5 text-orange" />
                 <span>HD 2048px</span>

@@ -1,4 +1,5 @@
 import type { CampaignEventData } from './types'
+import { addTrackingParams } from '../tracking'
 
 function splitFact(label: string, value: string): [string, string] {
   if (!value) return ['', '']
@@ -36,6 +37,8 @@ export function generateCampaignEmailHtml(event: CampaignEventData, options?: { 
   const [loc1, loc2] = splitFact('WO', event.locationStr)
   const [age1, age2] = splitFact('WER', event.ageStr)
   const [price1, price2] = splitFact('BEITRAG', event.priceStr)
+
+  const emailRegistrationUrl = addTrackingParams(event.registrationUrl, event.id, 'email', 'newsletter')
 
   return `<!DOCTYPE html>
 <html lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -220,14 +223,14 @@ export function generateCampaignEmailHtml(event: CampaignEventData, options?: { 
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
               <td align="center" style="background-color: ${primaryActionColor}; border-radius: 6px; box-shadow: 0 4px 14px rgba(255,90,31,0.25);">
-                <a href="${event.registrationUrl}" target="_blank" style="display: block; padding: 18px 28px; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 21px; color: #111713; text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase;">
+                <a href="${emailRegistrationUrl}" target="_blank" style="display: block; padding: 18px 28px; font-family: Impact, Arial Black, -apple-system, sans-serif; font-size: 21px; color: #111713; text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase;">
                   JETZT ONLINE ANMELDEN &rarr;
                 </a>
               </td>
             </tr>
           </table>
           <div style="font-size: 13px; color: #68736B; margin-top: 12px; text-align: center; font-family: -apple-system, sans-serif;">
-            Begrenzte Plätze &bull; Direktanmeldung unter <a href="${event.registrationUrl}" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a>
+            Begrenzte Plätze &bull; Direktanmeldung unter <a href="${emailRegistrationUrl}" style="color: ${forestDark}; font-weight: bold; text-decoration: underline;">smj-wegweiser.de</a>
           </div>
         </td>
       </tr>

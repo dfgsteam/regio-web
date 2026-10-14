@@ -34,6 +34,7 @@ import { generateCampaignSmsText } from '../../../../lib/civicrm/sms-template'
 import type { CampaignEventData, CiviRecipient } from '../../../../lib/civicrm/types'
 import { QR_BASE_URL } from '../../../../lib/qr-url'
 import { splitFact } from '../../../../lib/campaigns/split-fact'
+import { addTrackingParams } from '../../../../lib/tracking'
 
 export async function getStaticPaths() {
   const [events, camps] = await Promise.all([
@@ -127,6 +128,10 @@ const [initDate1, initDate2] = splitFact('WANN', currentEvent.dateStr)
 const [initLoc1, initLoc2] = splitFact('WO', currentEvent.locationStr)
 const [initAge1, initAge2] = splitFact('WER', currentEvent.ageStr)
 
+// Tracked URLs for social copy texts
+const whatsappUrl = addTrackingParams(currentEvent.registrationUrl, currentEvent.id, 'whatsapp', 'messenger')
+const instagramUrl = addTrackingParams(currentEvent.registrationUrl, currentEvent.id, 'instagram', 'social')
+
 // Ready-to-copy WhatsApp Community & Group message
 const initialWhatsappText = `🏕️ *${currentEvent.title.toUpperCase()}*
 ${currentEvent.subtitle ? `_${currentEvent.subtitle}_\n\n` : '\n'}Hallo zusammen! 👋
@@ -138,7 +143,7 @@ Hier sind alle Infos zur kommenden Aktion der SMJ Regio Wegweiser:
 💶 *Beitrag:* ${currentEvent.priceStr}
 
 🔗 *Alle Details & Online-Anmeldung:*
-${currentEvent.registrationUrl}
+${whatsappUrl}
 
 Bitte gerne in euren WhatsApp-Gruppen, an Eltern und interessierte Freunde weiterleiten! 🚀`
 
@@ -153,7 +158,7 @@ ${currentEvent.subtitle ? `🔥 ${currentEvent.subtitle}\n\n` : ''}Bist du berei
 💰 Beitrag: ${currentEvent.priceStr}
 
 👉 Alle Infos & Online-Anmeldung über den Link in der Bio oder direkt unter:
-🔗 ${currentEvent.registrationUrl}
+🔗 ${instagramUrl}
 
 #smj #regiowegweiser #jugendleitetjugend #eichsfeld #abenteuer #zeltlager #outdoor #lagerfeuer`
 

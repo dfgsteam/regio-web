@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import type { CiviRecipient, CampaignEventData } from '../civicrm/types'
 import { splitFact } from '../campaigns/split-fact'
 import { embedIcon } from './pdf-icons'
+import { addTrackingParams } from '../tracking'
 
 function cleanText(text: string): string {
   return text
@@ -427,7 +428,8 @@ export async function appendLetterPage(
 
   // Embed QR-Code
   try {
-    const qrDataUrl = await QRCode.toDataURL(event.registrationUrl, {
+    const qrUrl = addTrackingParams(event.registrationUrl, event.id, 'brief', 'print-letter')
+    const qrDataUrl = await QRCode.toDataURL(qrUrl, {
       margin: 1,
       width: 250,
       color: { dark: '#111713', light: '#FFFFFF' },
