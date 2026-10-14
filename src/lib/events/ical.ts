@@ -118,7 +118,7 @@ function transformVEvent(raw: Record<string, string>): Event | null {
   let price: string | undefined
   let highlights: string[] | undefined
   let packingList: string[] | undefined
-  let location = rawLocation || 'Region Wegweiser'
+  let location = rawLocation || 'Regio Wegweiser'
   let address = rawLocation
   let contactName = 'SMJ Regio Wegweiser'
   let contactRole = 'Lager- & Eventleitung'

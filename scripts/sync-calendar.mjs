@@ -179,7 +179,7 @@ function transformVEvent(raw, defaults = {}, overrides = {}) {
   let price = catDef.price
   let highlights = catDef.highlights ? [...catDef.highlights] : undefined
   let packingList = catDef.packingList ? [...catDef.packingList] : undefined
-  let location = rawLocation || catDef.location || 'Region Wegweiser'
+  let location = rawLocation || catDef.location || 'Regio Wegweiser'
   let address = rawLocation || catDef.address || ''
   let contact = { ...(catDef.contact || {}) }
 

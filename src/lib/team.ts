@@ -36,7 +36,7 @@ export const leadershipTeam: TeamMember[] = [
     email: 'kilian.schlosser@smj-wegweiser.de',
     image: kilianPortrait,
     description:
-      'Koordination der Region Wegweiser, Vernetzung und Gesamtverantwortung für die Aktionen vor Ort.',
+      'Koordination der Regio Wegweiser, Vernetzung und Gesamtverantwortung für die Aktionen vor Ort.',
   },
   {
     role: '1. Diözesanleiter',

@@ -48,7 +48,7 @@ export const GET: APIRoute = async () => {
       ? `${rawDesc}\\n\\nAlle Infos, Packliste & Anmeldung: ${eventUrl}`
       : `Alle Infos, Packliste & Anmeldung: ${eventUrl}`
 
-    const location = (event.location || 'Region Wegweiser').replace(/\n/g, ' ')
+    const location = (event.location || 'Regio Wegweiser').replace(/\n/g, ' ')
 
     lines.push(
       'BEGIN:VEVENT',
