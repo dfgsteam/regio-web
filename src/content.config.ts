@@ -54,6 +54,7 @@ const camps = defineCollection({
       assets: z.object({
         hero: z.string(),
         texture: z.string().optional(),
+        teaser: z.string().optional(),
       }),
     }),
     registration: z.object({

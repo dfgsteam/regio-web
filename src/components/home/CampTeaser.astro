@@ -16,6 +16,7 @@ if (!camp) return null
 const { year, motto, date, age, location, theme } = camp.data
 const campRegistration = await getCampRegistration(camp.data)
 const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000) + 1
+const teaserImage = theme.assets.teaser || theme.assets.hero
 ---
 
 <section
@@ -72,45 +73,49 @@ const days = Math.round((date.end.getTime() - date.start.getTime()) / 86_400_000
         </div>
       </div>
 
-      <!-- Right Column: 3D Unfolding Camp Poster & Map -->
-      <div class="w-full lg:w-[48%] [perspective:1200px]">
-        <div class="unfold-wrapper relative border-2 camp-border bg-forest-950 shadow-2xl overflow-hidden [transform-style:preserve-3d]">
-          <!-- Top Fold Panel -->
-          <div class="fold-panel-top relative h-[33.33%] w-full overflow-hidden border-b border-paper/10 [backface-visibility:hidden]">
-            <img
-              src={theme.assets.hero}
-              alt={`Zeltlager ${year} – ${motto}`}
-              loading="lazy"
-              class="h-[300%] w-full object-cover object-top"
-            />
-            <div class="crease-shadow absolute inset-0 bg-gradient-to-b from-black/40 to-transparent pointer-events-none transition-opacity" />
-          </div>
+      <!-- Right Column: Camp Artwork Teaser -->
+      <div class="w-full lg:w-[48%] flex justify-center [perspective:1200px]">
+        <a
+          href="/abenteuer/zeltlager/"
+          class="camp-artwork-card group relative block w-full max-w-md overflow-hidden border-2 camp-border bg-forest-950 shadow-2xl transition-all duration-500 hover:border-camp-accent hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
+          aria-label={`Zum Zeltlager ${year} – ${motto}`}
+        >
+          <!-- Corner Accents -->
+          <div class="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-camp-accent z-10 pointer-events-none" />
+          <div class="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-camp-accent z-10 pointer-events-none" />
+          <div class="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-camp-accent z-10 pointer-events-none" />
+          <div class="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-camp-accent z-10 pointer-events-none" />
 
-          <!-- Middle Panel -->
-          <div class="fold-panel-middle relative h-[33.33%] w-full overflow-hidden [backface-visibility:hidden]">
+          <!-- Artwork Image Container -->
+          <div class="relative overflow-hidden aspect-[4/3] sm:aspect-[5/4] bg-forest-950">
             <img
-              src={theme.assets.hero}
+              src={teaserImage}
               alt={`Zeltlager ${year} – ${motto}`}
               loading="lazy"
-              class="h-[300%] w-full object-cover object-center -mt-[100%]"
+              class="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
             />
-          </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-forest-950/80 via-transparent to-black/20 pointer-events-none" />
 
-          <!-- Bottom Fold Panel -->
-          <div class="fold-panel-bottom relative h-[33.34%] w-full overflow-hidden border-t border-paper/10 [backface-visibility:hidden]">
-            <img
-              src={theme.assets.hero}
-              alt={`Zeltlager ${year} – ${motto}`}
-              loading="lazy"
-              class="h-[300%] w-full object-cover object-bottom -mt-[200%]"
-            />
-            <div class="crease-shadow absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none transition-opacity" />
-            
             <span class="absolute bottom-4 left-4 bg-[color:var(--camp-bg)]/90 border border-paper/20 px-3.5 py-1.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.24em] camp-fg">
               Zeltlager {year}
             </span>
           </div>
-        </div>
+
+          <!-- Bottom Action Bar -->
+          <div class="p-4 sm:p-5 flex items-center justify-between border-t border-paper/10 bg-forest-950/90">
+            <div>
+              <p class="font-display text-lg uppercase tracking-wide text-paper group-hover:text-camp-accent transition-colors">
+                {motto}
+              </p>
+              <p class="font-mono text-[0.65rem] uppercase tracking-wider text-paper/60">
+                10 Tage Outdoor · Wiesental
+              </p>
+            </div>
+            <span class="font-mono text-xs font-bold uppercase tracking-wider camp-accent group-hover:translate-x-1 transition-transform">
+              Entdecken →
+            </span>
+          </div>
+        </a>
       </div>
     </div>
   </Container>

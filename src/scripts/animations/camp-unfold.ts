@@ -10,54 +10,31 @@ gsap.registerPlugin(ScrollTrigger)
 
   const mm = gsap.matchMedia()
 
-  // Desktop: Pinned 3D Paper/Poster Unfold
+  // Desktop: Smooth 3D entrance and subtle tilt
   mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
     scopedContext(section, () => {
-      const unfoldWrap = section.querySelector('.unfold-wrapper')
-      const panelTop = section.querySelector('.fold-panel-top')
-      const panelMiddle = section.querySelector('.fold-panel-middle')
-      const panelBottom = section.querySelector('.fold-panel-bottom')
-      const creaseShadows = section.querySelectorAll('.crease-shadow')
+      const artwork = section.querySelector('.camp-artwork-card')
       const infoBox = section.querySelector('.camp-info-col')
 
-      if (!unfoldWrap || !panelTop || !panelMiddle || !panelBottom) return
+      if (!artwork && !infoBox) return
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: 'top 60%',
-          end: 'top 10%',
+          start: 'top 70%',
+          end: 'top 20%',
           scrub: 0.8,
         },
       })
 
-      // Unfold top and bottom panels with 3D rotation and perspective
-      tl.fromTo(
-        unfoldWrap,
-        { rotateZ: -3, scale: 0.9, filter: 'drop-shadow(0 25px 25px rgba(0,0,0,0.6))' },
-        { rotateZ: 0, scale: 1, filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))', ease: 'power2.out', duration: 1 },
-        0
-      )
-
-      tl.fromTo(
-        panelTop,
-        { rotateX: -65, transformOrigin: 'bottom center', opacity: 0.85 },
-        { rotateX: 0, opacity: 1, ease: 'power2.inOut', duration: 1 },
-        0
-      )
-
-      tl.fromTo(
-        panelBottom,
-        { rotateX: 65, transformOrigin: 'top center', opacity: 0.85 },
-        { rotateX: 0, opacity: 1, ease: 'power2.inOut', duration: 1 },
-        0
-      )
-
-      tl.to(
-        creaseShadows,
-        { opacity: 0, ease: 'power2.inOut', duration: 0.8 },
-        0.2
-      )
+      if (artwork) {
+        tl.fromTo(
+          artwork,
+          { rotateY: 8, rotateZ: -2, scale: 0.94, opacity: 0.8 },
+          { rotateY: 0, rotateZ: 0, scale: 1, opacity: 1, ease: 'power2.out', duration: 1 },
+          0
+        )
+      }
 
       if (infoBox) {
         tl.fromTo(
@@ -73,20 +50,20 @@ gsap.registerPlugin(ScrollTrigger)
   // Mobile: Smooth 2D Scale and Spring Reveal
   mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
     scopedContext(section, () => {
-      const poster = section.querySelector('.unfold-wrapper')
-      if (poster) {
+      const artwork = section.querySelector('.camp-artwork-card')
+      if (artwork) {
         gsap.fromTo(
-          poster,
-          { scale: 0.92, y: 40, opacity: 0.6 },
+          artwork,
+          { scale: 0.92, y: 30, opacity: 0.7 },
           {
             scale: 1,
             y: 0,
             opacity: 1,
             ease: 'power2.out',
             scrollTrigger: {
-              trigger: poster,
+              trigger: artwork,
               start: 'top 85%',
-              end: 'top 40%',
+              end: 'top 45%',
               scrub: 0.6,
             },
           }
