@@ -60,10 +60,10 @@ AddCharset UTF-8 .html .css .js .json .xml .ics
   RewriteCond %{REQUEST_FILENAME}/index.html -f
   RewriteRule ^(.*)/?$ /$1/index.html [L]
 
-  # Fallback to 404 page if no route matches
+  # Return a real 404; ErrorDocument 404 serves /404.html with that status.
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^ /404.html [L]
+  RewriteRule ^ - [R=404,L]
 </IfModule>
 
 # 5. Security Headers

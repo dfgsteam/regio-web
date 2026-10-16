@@ -46,6 +46,7 @@ async function expectHidden(path) {
   console.log(`${path}: HTTP ${response.status}`)
 }
 
+await expectStatus('/__toolbox-deploy-404-probe__.html', 404)
 await expectStatus('/toolbox-auth/generated-config.php', 403)
 await expectHidden('/private/generated-config.php')
 await expectHidden('/private/toolbox/index.html')
