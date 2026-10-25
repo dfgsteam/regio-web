@@ -1,5 +1,6 @@
 ---
 import { Navigation, MapPin } from '@lucide/astro'
+import 'leaflet/dist/leaflet.css'
 
 interface Props {
   title: string
@@ -113,8 +114,6 @@ const mapId = `leaflet-map-${Math.random().toString(36).substring(2, 9)}`
 </div>
 
 <style is:global>
-  @import 'leaflet/dist/leaflet.css';
-
   .leaflet-container {
     background: #111713 !important;
     font-family: inherit;
