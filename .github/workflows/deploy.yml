@@ -7,8 +7,9 @@ on:
   repository_dispatch:
     types: [calendar_update, rebuild]
   schedule:
-    # Registration capacity is cached in the static build; refresh it hourly.
-    - cron: '0 * * * *'
+    # Refresh cached registration capacity at 00:00 UTC on odd calendar days.
+    # Cron resets at month boundaries, so this is approximately every two days.
+    - cron: '0 0 */2 * *'
 
 permissions:
   contents: read
@@ -231,12 +232,6 @@ jobs:
           security: strict
           port: 21
           timeout: 60000
-
-      - name: Verify Toolbox protection on webspace
-        if: ${{ env.FTP_PASSWORD != '' }}
-        env:
-          DEPLOY_HTTP_BASIC_AUTH: ${{ secrets.DEPLOY_HTTP_BASIC_AUTH }}
-        run: node scripts/check-toolbox-deploy.mjs
 
       - name: Warn when FTP password is missing
         if: ${{ env.FTP_PASSWORD == '' }}

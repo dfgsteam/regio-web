@@ -182,7 +182,7 @@ Die 20 neuesten veröffentlichten Beiträge stehen außerdem unter `/rss.xml` al
 
 Google Calendar liefert Titel, Zeit und Ort über `scripts/sync-calendar.mjs` nach `src/data/events.json`.
 CiviCRM liefert Anmeldestart, Meldeschluss und Belegung über APIv4 nach `src/data/civi-registration.json`. Beide Datenquellen werden beim Build zusammengeführt. Die feste CiviCRM-Adresse ist `https://civi.smj-wegweiser.de`.
-Vorhandene Civi-Anmeldelinks im Kalender enthalten bereits die Event-ID. Ohne Link erfolgt eine Zuordnung nur bei eindeutig gleichem Titel und Veranstaltungstag. Bei abweichenden Namen lässt sich `civiEventId` in `src/data/event-overrides.json` setzen. Der statische Build aktualisiert die Belegung stündlich; CiviCRM entscheidet beim eigentlichen Absenden der Anmeldung über freie Plätze.
+Vorhandene Civi-Anmeldelinks im Kalender enthalten bereits die Event-ID. Ohne Link erfolgt eine Zuordnung nur bei eindeutig gleichem Titel und Veranstaltungstag. Bei abweichenden Namen lässt sich `civiEventId` in `src/data/event-overrides.json` setzen. Der statische Build aktualisiert die Belegung automatisch an ungeraden Kalendertagen um 00:00 UTC (ungefähr alle zwei Tage) sowie bei Pushes und manuell ausgelösten Deployments; CiviCRM entscheidet beim eigentlichen Absenden der Anmeldung über freie Plätze.
 
 ---
 
@@ -355,7 +355,6 @@ Unter **Repository → Settings → Secrets and variables → Actions** eintrage
 | **Secret** | `AUTHENTIK_CLIENT_ID` | Client-ID für den Toolbox-Login. |
 | **Secret** | `AUTHENTIK_CLIENT_SECRET` | Client-Secret für den Toolbox-Login. |
 | **Secret** | `TOOLBOX_APP_SECRET` | Mindestens 32 zufällige Zeichen für signierte Toolbox-Sitzungen. |
-| **Secret**, optional | `DEPLOY_HTTP_BASIC_AUTH` | `Benutzername:Passwort` für die abschließenden HTTP-Schutztests, solange `SITE_URL` durch Basic Auth geschützt ist. Ohne Wert meldet der Workflow eine Warnung und verschiebt nur diese Tests. |
 | **Variable** | `SITE_URL` | Canonical-Links, Sitemap und QR-Ziele; ohne Wert `https://smj-wegweiser.de`. |
 | **Variable** | `TOOLBOX_ALLOWED_GROUPS` | Exakte Authentik-Gruppennamen **ohne eckige Klammern**, mehrere durch Komma getrennt, z. B. `smj`; oder `*` für alle angemeldeten Authentik-Nutzer. `[]` ist keine gültige Freigabe. |
 | **Variable** | `CIVICRM_LEGACY_LINKS_ENABLED` | Nach Abschaltung des alten CiviCRM auf `false` setzen; sonst bleiben nicht zugeordnete alte Anmeldelinks aktiv. |
