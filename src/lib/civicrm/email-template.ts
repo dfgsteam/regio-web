@@ -165,7 +165,7 @@ export function generateCampaignEmailHtml(event: CampaignEventData, options?: { 
       <tr>
         <td class="mobile-padding" style="padding: 0 32px 26px 32px; font-size: 16px; line-height: 1.65; color: ${textBody};">
           <p style="margin: 0 0 14px 0; font-weight: bold; font-size: 19px; color: ${forestDark};">
-            Hallo {contact.first_name|Abenteurer}!
+            Hallo {contact.first_name}!
           </p>
           <p style="margin: 0 0 16px 0;">
             bist du bereit für die nächste große Aktion mit der SMJ? Es wird wieder Zeit für echte Natur, Dreck an den Schuhen, packende Geländespiele und unvergessliche Tage draußen mit anderen Jungs!

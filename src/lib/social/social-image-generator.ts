@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import QRCode from 'qrcode'
+import fontkit, { type Font } from '@pdf-lib/fontkit'
 import '../server-fonts'
 import { ensureServerFontsConfigured } from '../server-fonts'
 import type { ScheduleEventItem } from '../pdf/schedule-pdf'
@@ -9,6 +10,16 @@ import type { ScheduleEventItem } from '../pdf/schedule-pdf'
 export const FONT_DISPLAY = "'Anton', Impact, sans-serif"
 export const FONT_BODY = "'Inter', sans-serif"
 export const FONT_MONO = "'Space Mono', monospace"
+
+let displayFont: Font | undefined
+
+function fitDisplaySize(text: string, maxWidth: number, preferredSize: number, tracking = 1): number {
+  displayFont ??= fontkit.create(fs.readFileSync(path.resolve(process.cwd(), 'src/assets/fonts/Anton-Regular.ttf')))
+  const run = displayFont.layout(text)
+  const widthAtUnitSize = run.advanceWidth / displayFont.unitsPerEm
+  const trackingWidth = Array.from(text).length * tracking
+  return Math.min(preferredSize, Math.floor((maxWidth - trackingWidth) / widthAtUnitSize))
+}
 
 let whiteLogoInnerCache: string | null = null
 let darkLogoInnerCache: string | null = null
@@ -271,14 +282,14 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
   const isWhatsApp = Boolean(options.isWhatsApp)
 
   // Emblem Patch Dimensions
-  const badgeW = isStory ? 104 : 84
-  const badgeH = isStory ? 92 : 74
-  const iconW = isStory ? 84 : 68
-  const iconH = isStory ? 74 : 60
+  const badgeW = isStory ? 120 : 104
+  const badgeH = isStory ? 112 : 104
+  const iconW = isStory ? 104 : 96
+  const iconH = isStory ? 104 : 96
   const yPos = isStory ? 200 : 85
 
   // Typography Dimensions
-  const titleSize = isStory ? 35 : 28
+  const titleSize = isStory ? 42 : 36
   const eyebrowSize = isStory ? 14 : 12
   const rightBadgeH = isStory ? 48 : 40
   const rightBadgeFontSize = isStory ? 22 : 18
@@ -297,7 +308,7 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
   <!-- Premium Brand Header Bar -->
   <g transform="translate(96, ${yPos})">
     <!-- Emblem Patch / Logo Stamp -->
-    <g transform="translate(0, ${isStory ? -14 : -10})">
+    <g transform="translate(0, ${isStory ? -22 : -26})">
       <rect x="0" y="0" width="${badgeW}" height="${badgeH}" fill="${badgeBg}" stroke="${badgeStroke}" stroke-width="2.5" rx="10"/>
       <g transform="translate(${(badgeW - iconW) / 2}, ${(badgeH - iconH) / 2})">
         <svg width="${iconW}" height="${iconH}" viewBox="0 0 1024 1024">${logoInner}</svg>
@@ -307,7 +318,7 @@ function renderBrandHeader(options: BrandHeaderOptions): string {
     <!-- Two-Tier Brand Lockup -->
     <g transform="translate(${badgeW + 20}, ${isStory ? 24 : 18})">
       <text x="0" y="0" fill="${accentColor}" font-size="${eyebrowSize}" font-family="${FONT_BODY}" font-weight="bold" letter-spacing="2.5">SCHÖNSTATT-MANNESJUGEND</text>
-      <text x="0" y="${isStory ? 36 : 28}" fill="${textPrimary}" font-size="${titleSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">SMJ REGIO WEGWEISER</text>
+      <text x="0" y="${isStory ? 50 : 42}" fill="${textPrimary}" font-size="${titleSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">SMJ REGIO WEGWEISER</text>
     </g>
 
     <!-- Badges Right -->
@@ -363,8 +374,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
   ]
   const factsSvg = renderEventFactCards(rawFacts, isLight, 168)
 
-  const computedTitleSize = Math.floor(860 / (mainTitle.length * 0.54))
-  const titleFontSize = Math.max(54, Math.min(88, computedTitleSize))
+  const titleFontSize = fitDisplaySize(mainTitle, 888, 88, 2)
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -379,8 +389,8 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
     <rect width="100%" height="100%" fill="url(#bgGradP1)"/>
 
     <!-- Watermark Logo -->
-    <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
-      <svg width="328" height="288" viewBox="0 0 1024 1024">${logoInner}</svg>
+    <g transform="translate(156, 188)" opacity="${isLight ? '0.16' : '0.18'}">
+      <svg width="768" height="768" viewBox="0 0 1024 1024">${logoInner}</svg>
     </g>
 
     <!-- Framing -->
@@ -395,7 +405,7 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
     <!-- Title Block (No subtitle) -->
     <g transform="translate(96, 198)">
       <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="${FONT_DISPLAY}" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
-      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="100" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- 4 Key Fact Cards (2x2) -->
@@ -405,14 +415,15 @@ async function generatePostSlide1Svg(options: EventSocialOptions): Promise<strin
 
     <!-- Bottom Carousel Swipe Bar (No highlights strip) -->
     <g transform="translate(96, 735)">
-      <rect x="0" y="0" width="888" height="185" fill="#FF5A1F" rx="14"/>
+      <rect x="0" y="0" width="888" height="210" fill="#FF5A1F" rx="14"/>
       
-      <g transform="translate(40, 36)">
+      <g transform="translate(40, 28)">
         <rect x="0" y="0" width="280" height="36" fill="#111713" rx="4"/>
         <text x="140" y="25" fill="#FF5A1F" font-size="19" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">WISCHE WEITER ZU SLIDE 2</text>
         
-        <text x="0" y="86" fill="#111713" font-size="38" font-family="${FONT_DISPLAY}" letter-spacing="1">DIREKTER QR-CODE ZUR ANMELDUNG</text>
-        <text x="0" y="124" fill="#111713" font-size="22" font-family="${FONT_BODY}" font-weight="bold">Auf der nächsten Seite einfach mit der Kamera scannen &amp; Platz sichern!</text>
+        <text x="0" y="86" fill="#111713" font-size="${fitDisplaySize('DIREKTER QR-CODE ZUR ANMELDUNG', 680, 38)}" font-family="${FONT_DISPLAY}" letter-spacing="1">DIREKTER QR-CODE ZUR ANMELDUNG</text>
+        <text x="0" y="124" fill="#111713" font-size="22" font-family="${FONT_BODY}" font-weight="bold">Auf der nächsten Seite einfach mit der Kamera scannen</text>
+        <text x="0" y="156" fill="#111713" font-size="22" font-family="${FONT_BODY}" font-weight="bold">&amp; Platz sichern!</text>
       </g>
 
       <!-- Carousel arrow circle -->
@@ -443,6 +454,14 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
   const displayDomain = getDisplayDomain(options.targetUrl)
 
   const { mainTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
+  const titleFontSize = fitDisplaySize(mainTitle, 888, 76, 2)
+  // Tracking parameters belong in the QR payload, not in the printed link.
+  const displayUrl = new URL(options.targetUrl)
+  for (const key of [...displayUrl.searchParams.keys()]) {
+    if (key.toLowerCase().startsWith('utm_')) displayUrl.searchParams.delete(key)
+  }
+  const printedUrl = `${displayDomain}${displayUrl.pathname}${displayUrl.search}${displayUrl.hash}`
+  const linkFontSize = fitDisplaySize(printedUrl, 704, 24)
 
   // Generate large high-res crisp QR Code
   const qrDataUrl = await QRCode.toDataURL(options.targetUrl, {
@@ -467,8 +486,8 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
     <rect width="100%" height="100%" fill="url(#bgGradP2)"/>
 
     <!-- Watermark Logo -->
-    <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
-      <svg width="328" height="288" viewBox="0 0 1024 1024">${logoInner}</svg>
+    <g transform="translate(156, 188)" opacity="${isLight ? '0.16' : '0.18'}">
+      <svg width="768" height="768" viewBox="0 0 1024 1024">${logoInner}</svg>
     </g>
 
     <!-- Framing -->
@@ -483,15 +502,15 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
     <!-- Title Block -->
     <g transform="translate(96, 198)">
       <text x="0" y="0" fill="#FF5A1F" font-size="26" font-family="${FONT_DISPLAY}" letter-spacing="3">// JETZT ONLINE ANMELDEN</text>
-      <text x="0" y="74" fill="${textPrimary}" font-size="76" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="100" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- Big Centerpiece QR-Code & CTA Card -->
-    <g transform="translate(96, 305)">
-      <rect x="0" y="0" width="888" height="645" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="16"/>
+    <g transform="translate(96, 330)">
+      <rect x="0" y="0" width="888" height="620" fill="${cardBg}" stroke="${isLight ? '#111713' : '#FF5A1F'}" stroke-width="3" rx="16"/>
 
       <!-- Large QR-Code Frame (Centered: (888 - 360) / 2 = 264) -->
-      <g transform="translate(264, 40)">
+      <g transform="translate(264, 24)">
         <rect x="0" y="0" width="360" height="360" fill="#FFFFFF" stroke="#ded8c8" stroke-width="3" rx="16"/>
         <image x="20" y="20" width="320" height="320" href="${qrDataUrl}"/>
       </g>
@@ -502,19 +521,19 @@ async function generatePostSlide2Svg(options: EventSocialOptions): Promise<strin
         <text x="0" y="42" fill="#FF5A1F" font-size="28" font-family="${FONT_DISPLAY}" letter-spacing="1">ODER LINK IN DER BIO ANKLICKEN!</text>
       </g>
 
-      <!-- Direct Link Pill (Centered: (888 - 600) / 2 = 144) -->
-      <g transform="translate(144, 522)">
-        <rect x="0" y="0" width="600" height="52" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="2" rx="8"/>
+      <!-- Keep the readable URL inside the card, including long event slugs. -->
+      <g transform="translate(40, 522)">
+        <rect x="0" y="0" width="808" height="52" fill="${isLight ? '#F5EFE1' : '#111713'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="2" rx="8"/>
         <!-- Link Icon -->
         <svg x="24" y="14" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF5A1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
         </svg>
-        <text x="64" y="34" fill="#FF5A1F" font-size="22" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(options.targetUrl.replace(/^https?:\/\//, ''))}</text>
+        <text x="64" y="34" fill="#FF5A1F" font-size="${linkFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(printedUrl)}</text>
       </g>
 
       <!-- Instructional Subline -->
-      <text x="444" y="618" fill="${textMuted}" font-size="20" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">
+      <text x="444" y="600" fill="${textMuted}" font-size="20" font-family="${FONT_BODY}" font-weight="bold" text-anchor="middle">
         Kamera-App öffnen • Auf den Code halten • Link antippen &amp; Platz sichern
       </text>
     </g>
@@ -547,8 +566,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
   ]
   const factsSvg = renderEventFactCards(rawFacts, isLight, 168)
 
-  const computedTitleSize = Math.floor(860 / (mainTitle.length * 0.54))
-  const titleFontSize = Math.max(54, Math.min(88, computedTitleSize))
+  const titleFontSize = fitDisplaySize(mainTitle, 888, 88, 2)
 
   return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -563,8 +581,8 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
     <rect width="100%" height="100%" fill="url(#bgGradWa)"/>
 
     <!-- Watermark Logo -->
-    <g transform="translate(620, 260) rotate(12) scale(2.4)" opacity="${isLight ? '0.05' : '0.06'}">
-      <svg width="328" height="288" viewBox="0 0 1024 1024">${logoInner}</svg>
+    <g transform="translate(156, 188)" opacity="${isLight ? '0.16' : '0.18'}">
+      <svg width="768" height="768" viewBox="0 0 1024 1024">${logoInner}</svg>
     </g>
 
     <!-- Framing with WhatsApp Green Touch -->
@@ -579,7 +597,7 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
     <!-- Title Block (No subtitle) -->
     <g transform="translate(96, 198)">
       <text x="0" y="0" fill="#25D366" font-size="26" font-family="${FONT_DISPLAY}" letter-spacing="3">// NÄCHSTE AKTION DER SMJ</text>
-      <text x="0" y="74" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
+      <text x="0" y="100" fill="${textPrimary}" font-size="${titleFontSize}" font-family="${FONT_DISPLAY}" letter-spacing="2">${escapeXml(mainTitle)}</text>
     </g>
 
     <!-- 4 Key Fact Cards (2x2) -->
@@ -589,18 +607,19 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
 
     <!-- WhatsApp Bottom Action Box: NO QR CODE, Clear Message Link CTA -->
     <g transform="translate(96, 730)">
-      <rect x="0" y="0" width="888" height="210" fill="${isLight ? '#f2fbf5' : '#0c1d12'}" stroke="#25D366" stroke-width="3" rx="14"/>
-      <rect x="0" y="0" width="16" height="210" fill="#25D366" rx="6"/>
+      <rect x="0" y="0" width="888" height="234" fill="${isLight ? '#f2fbf5' : '#0c1d12'}" stroke="#25D366" stroke-width="3" rx="14"/>
+      <rect x="0" y="0" width="16" height="234" fill="#25D366" rx="6"/>
 
       <!-- WhatsApp Action Text -->
-      <g transform="translate(44, 32)">
+      <g transform="translate(44, 28)">
         <rect x="0" y="0" width="310" height="38" fill="#25D366" rx="4"/>
         <text x="155" y="25" fill="#0a1a0f" font-size="20" font-family="${FONT_DISPLAY}" text-anchor="middle" letter-spacing="1.5">ONLINE-ANMELDUNG &amp; DETAILS</text>
 
-        <text x="0" y="86" fill="${isLight ? '#111713' : '#FFFFFF'}" font-size="40" font-family="${FONT_DISPLAY}" letter-spacing="1">ANMELDELINK DIREKT IN DER NACHRICHT!</text>
+        <text x="0" y="86" fill="${isLight ? '#111713' : '#FFFFFF'}" font-size="${fitDisplaySize('ANMELDELINK DIREKT IN DER NACHRICHT!', 680, 36)}" font-family="${FONT_DISPLAY}" letter-spacing="1">ANMELDELINK DIREKT IN DER NACHRICHT!</text>
         
-        <text x="0" y="128" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="22" font-family="${FONT_BODY}" font-weight="bold">Tippe auf den Link im Chat unter diesem Bild, um alle Infos zu sehen.</text>
-        <text x="0" y="158" fill="#25D366" font-size="20" font-family="${FONT_BODY}" font-weight="bold">🚀 Gerne in WhatsApp-Gruppen &amp; an interessierte Eltern weiterleiten!</text>
+        <text x="0" y="124" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="22" font-family="${FONT_BODY}" font-weight="bold">Tippe auf den Link im Chat unter diesem Bild,</text>
+        <text x="0" y="156" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="22" font-family="${FONT_BODY}" font-weight="bold">um alle Infos zu sehen.</text>
+        <text x="0" y="190" fill="${isLight ? '#2d4b38' : '#E0F2E9'}" font-size="18" font-family="${FONT_BODY}" font-weight="bold">Gerne in WhatsApp-Gruppen &amp; an interessierte Eltern weiterleiten!</text>
       </g>
 
       <!-- Downward Arrow Circle (Pointing to the message text below!) -->
