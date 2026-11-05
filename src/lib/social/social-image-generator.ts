@@ -231,7 +231,6 @@ export interface ScheduleSlideSocialOptions {
 
 function renderEventFactCards(rawFacts: { label: string; value: string }[], isLight: boolean, cardH = 168) {
   const factCardBg = isLight ? '#111713' : '#182019'
-  const factCardStroke = isLight ? '#111713' : '#2D3B2F'
   return rawFacts
     .map((f, i) => {
       const col = i % 2
@@ -252,8 +251,7 @@ function renderEventFactCards(rawFacts: { label: string; value: string }[], isLi
       return `
       <!-- ${f.label} -->
       <g transform="translate(${cardX}, ${cardY})">
-        <rect x="0" y="0" width="430" height="${cardH}" fill="${factCardBg}" stroke="${factCardStroke}" stroke-width="${isLight ? '2' : '2.5'}" rx="12"/>
-        <rect x="0" y="0" width="12" height="${cardH}" fill="#FF5A1F" rx="4"/>
+        <rect x="0" y="0" width="430" height="${cardH}" fill="${factCardBg}" rx="2"/>
         <svg x="26" y="${cardH > 150 ? 20 : 16}" width="24" height="24" viewBox="0 0 24 24">
           ${iconSvg}
         </svg>
@@ -608,7 +606,6 @@ async function generateWhatsAppSvg(options: EventSocialOptions): Promise<string>
     <!-- WhatsApp Bottom Action Box: NO QR CODE, Clear Message Link CTA -->
     <g transform="translate(96, 730)">
       <rect x="0" y="0" width="888" height="234" fill="${isLight ? '#f2fbf5' : '#0c1d12'}" stroke="#25D366" stroke-width="3" rx="14"/>
-      <rect x="0" y="0" width="16" height="234" fill="#25D366" rx="6"/>
 
       <!-- WhatsApp Action Text -->
       <g transform="translate(44, 28)">
@@ -666,7 +663,6 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
 
   // Fact cards: Solid dark forest cards (#111713) for high contrast and plakat feel
   const factCardBg = isLight ? '#111713' : isBlack ? '#090d0b' : isOrange ? '#1c0e09' : '#182019'
-  const factCardStroke = isLight ? '#111713' : isBlack ? '#1e2420' : isOrange ? 'rgba(255,90,31,0.3)' : '#2D3B2F'
   const factCardH = options.format === 'story' ? 170 : options.format === 'portrait' ? 155 : 155
 
   const { mainTitle, subTitle } = parseTitleAndSubtitle(options.title, options.subtitle, options.locationStr)
@@ -703,8 +699,7 @@ export async function generateEventSocialSvg(options: EventSocialOptions): Promi
       return `
       <!-- ${f.label} -->
       <g transform="translate(${cardX}, ${cardY})">
-        <rect x="0" y="0" width="430" height="${factCardH}" fill="${factCardBg}" stroke="${factCardStroke}" stroke-width="${isLight ? '2' : '2.5'}" rx="10"/>
-        <rect x="0" y="0" width="12" height="${factCardH}" fill="#FF5A1F" rx="4"/>
+        <rect x="0" y="0" width="430" height="${factCardH}" fill="${factCardBg}" rx="2"/>
         <svg x="26" y="20" width="28" height="28" viewBox="0 0 24 24">
           ${iconSvg}
         </svg>
@@ -902,8 +897,7 @@ export async function generateScheduleSlideSvg(options: ScheduleSlideSocialOptio
 
           return `
           <g transform="translate(0, ${yPos})">
-            <rect x="0" y="0" width="888" height="${itemH}" fill="${isLight ? '#FFFFFF' : '#182019'}" stroke="${isLight ? '#111713' : '#2D3B2F'}" stroke-width="${isLight ? '2.5' : '2.5'}" rx="10"/>
-            <rect x="0" y="0" width="12" height="${itemH}" fill="#FF5A1F" rx="4"/>
+            <rect x="0" y="0" width="888" height="${itemH}" fill="${isLight ? '#FFFFFF' : '#182019'}" rx="2"/>
             <text x="32" y="${options.format === 'story' ? 60 : eventsCount <= 2 ? 52 : 44}" fill="#FF5A1F" font-size="${dateSize}" font-family="${FONT_DISPLAY}" letter-spacing="1.5">${escapeXml(ev.dateStr.toUpperCase())}</text>
             <text x="32" y="${options.format === 'story' ? 128 : eventsCount <= 2 ? 112 : 96}" fill="${isLight ? '#111713' : '#F1EBDD'}" font-size="${titleSize}" font-family="${FONT_DISPLAY}" letter-spacing="1">${escapeXml(ev.title.toUpperCase())}</text>
             <text x="32" y="${options.format === 'story' ? 186 : eventsCount <= 2 ? 164 : 140}" fill="${isLight ? '#4A554D' : '#C9BA99'}" font-size="${locSize}" font-family="${FONT_BODY}" font-weight="bold">${escapeXml([ev.location, ev.ageGroup].filter(Boolean).join(' • '))}</text>
